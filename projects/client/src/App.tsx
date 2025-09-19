@@ -1,14 +1,15 @@
-import { Routes, Route } from 'react-router-dom'
-import './App.css'
-import HomePage from './pages/HomePage.tsx'
-import LoginPage from './pages/LoginPage.tsx'
-import DashboardPage from './pages/DashboardPage.tsx'
-import WidgetsPage from './pages/WidgetsPage.tsx'
-import CreateCardPage from './pages/CreateCardPage.tsx'
-import NotFoundPage from './pages/NotFoundPage.tsx'
-import ProtectedRoute from './pages/ProtectedRoute.tsx'
-import CenteredLayout from './layouts/CenteredLayout.tsx'
-import FullWidthLayout from './layouts/FullWidthLayout.tsx'
+import { Routes, Route } from "react-router-dom";
+import "./App.css";
+import HomePage from "./pages/HomePage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
+import DashboardPage from "./pages/DashboardPage.tsx";
+import WidgetsPage from "./pages/WidgetsPage.tsx";
+import CreateCardPage from "./pages/CreateCardPage.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
+import MaintenancePage from "./pages/MaintenancePage.tsx";
+import ProtectedRoute from "./pages/ProtectedRoute.tsx";
+import CenteredLayout from "./layouts/CenteredLayout.tsx";
+import FullWidthLayout from "./layouts/FullWidthLayout.tsx";
 
 function App() {
   return (
@@ -33,9 +34,9 @@ function App() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <CenteredLayout>
+            <FullWidthLayout>
               <DashboardPage />
-            </CenteredLayout>
+            </FullWidthLayout>
           </ProtectedRoute>
         }
       />
@@ -43,9 +44,9 @@ function App() {
         path="/widgets"
         element={
           <ProtectedRoute>
-            <CenteredLayout>
+            <FullWidthLayout>
               <WidgetsPage />
-            </CenteredLayout>
+            </FullWidthLayout>
           </ProtectedRoute>
         }
       />
@@ -53,22 +54,40 @@ function App() {
         path="/cards/create"
         element={
           <ProtectedRoute>
-            <CenteredLayout>
+            <FullWidthLayout>
               <CreateCardPage />
-            </CenteredLayout>
+            </FullWidthLayout>
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/test"
+        element={
+          <ProtectedRoute>
+            <FullWidthLayout>
+              <DashboardPage />
+            </FullWidthLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/maintenance"
+        element={
+          <CenteredLayout>
+            <MaintenancePage />
+          </CenteredLayout>
         }
       />
       <Route
         path="*"
         element={
-          <CenteredLayout>
+          <FullWidthLayout>
             <NotFoundPage />
-          </CenteredLayout>
+          </FullWidthLayout>
         }
       />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

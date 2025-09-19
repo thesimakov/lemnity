@@ -40,14 +40,17 @@ services:
     networks:
       - app_network
     volumes:
-      - ./projects/server:/server
-      - ./projects/server/node_modules:/server/node_modules
+      - ./projects/server:/server/projects/server
+      - ./package.json:/server/package.json:ro
+      - ./pnpm-lock.yaml:/server/pnpm-lock.yaml:ro
+      - ./pnpm-workspace.yaml:/server/pnpm-workspace.yaml:ro
+      - ./projects/server/node_modules:/server/projects/server/node_modules
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ >/dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 90s
+      retries: 10
+      start_period: 120s
     restart: unless-stopped
 
   # React клиент
@@ -59,15 +62,24 @@ services:
     environment:
       VITE_API_URL: ${VITE_API_URL:-http://localhost/api}
     volumes:
-      - ./projects/client:/client
-      - ./projects/client/node_modules:/client/node_modules
+      - ./projects/client:/client/projects/client
+      - ./package.json:/client/package.json:ro
+      - ./pnpm-lock.yaml:/client/pnpm-lock.yaml:ro
+      - ./pnpm-workspace.yaml:/client/pnpm-workspace.yaml:ro
+      - ./projects/client/node_modules:/client/projects/client/node_modules
     ports:
       - "5173:5173"
-    depends_on:
-      server:
-        condition: service_healthy
+    # depends_on:
+    #   server:
+    #     condition: service_healthy
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5173/ >/dev/null 2>&1 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
     restart: unless-stopped
 
   # Nginx
@@ -80,11 +92,6 @@ services:
     volumes:
       - ./projects/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
       - ./projects/nginx/ssl:/etc/nginx/ssl:ro
-    depends_on:
-      client:
-        condition: service_started
-      server:
-        condition: service_healthy
     networks:
       - app_network
     restart: unless-stopped

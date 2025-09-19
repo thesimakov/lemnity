@@ -1,17 +1,14 @@
-import type { ReactElement } from 'react'
-import { Link } from 'react-router-dom'
+import DashboardLayout from "@/layouts/DashboardLayout/DashboardLayout";
+import Header from "@/layouts/Header/Header";
+import type { ReactElement } from "react";
 
 const DashboardPage = (): ReactElement => {
   return (
-    <div className="container">
-      <h1>Dashboard</h1>
-      <p>Protected area for admins.</p>
-      <nav style={{ display: 'flex', gap: 12 }}>
-        <Link to="/widgets">Widgets</Link>
-        <Link to="/cards/create">Create Card</Link>
-      </nav>
+    <div className="h-full flex flex-col">
+      <Header />
+      <DashboardLayout />
     </div>
-  )
-}
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;
