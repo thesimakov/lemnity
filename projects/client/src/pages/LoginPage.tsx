@@ -1,56 +1,54 @@
-import type { ReactElement } from "react";
-import { useState } from "react";
-import { useForm, Controller, type SubmitHandler } from "react-hook-form";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { Checkbox } from "@heroui/checkbox";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import loginBackground from "../assets/backgrounds/login-background.webp";
-import lemnityLogo from "../assets/logos/lemnity-logo.svg";
-import SvgIcon from "@/components/SvgIcon";
-import iconEye from "../assets/icons/eye.svg";
-import iconEyeOff from "../assets/icons/eye-off.svg";
+import type { ReactElement } from 'react'
+import { useState } from 'react'
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
+import { Input } from '@heroui/input'
+import { Button } from '@heroui/button'
+import { Checkbox } from '@heroui/checkbox'
+import * as z from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import loginBackground from '../assets/backgrounds/login-background.webp'
+import lemnityLogo from '../assets/logos/lemnity-logo.svg'
+import SvgIcon from '@/components/SvgIcon'
+import iconEye from '../assets/icons/eye.svg'
+import iconEyeOff from '../assets/icons/eye-off.svg'
 
 const loginSchema = z.object({
-  login: z.string().min(1, "Введите логин"),
-  password: z.string().min(8, "Минимум 8 символов"),
-});
+  login: z.string().min(1, 'Введите логин'),
+  password: z.string().min(8, 'Минимум 8 символов')
+})
 
 const signupSchema = z
   .object({
-    login: z.string().min(1, "Введите логин"),
-    email: z.email("Некорректный email"),
-    password: z.string().min(8, "Минимум 8 символов"),
-    passwordConfirmation: z.string().min(8, "Минимум 8 символов"),
-    acceptTerms: z
-      .boolean()
-      .refine((v) => v === true, "Чтобы продолжить, примите условия"),
+    login: z.string().min(1, 'Введите логин'),
+    email: z.email('Некорректный email'),
+    password: z.string().min(8, 'Минимум 8 символов'),
+    passwordConfirmation: z.string().min(8, 'Минимум 8 символов'),
+    acceptTerms: z.boolean().refine(v => v === true, 'Чтобы продолжить, примите условия')
   })
-  .refine((data) => data.password === data.passwordConfirmation, {
-    path: ["passwordConfirmation"],
-    message: "Пароли не совпадают",
-  });
+  .refine(data => data.password === data.passwordConfirmation, {
+    path: ['passwordConfirmation'],
+    message: 'Пароли не совпадают'
+  })
 
-type LoginForm = z.infer<typeof loginSchema>;
-type SignupForm = z.infer<typeof signupSchema>;
+type LoginForm = z.infer<typeof loginSchema>
+type SignupForm = z.infer<typeof signupSchema>
 
 const LoginPage = (): ReactElement => {
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [showSignupPassword2, setShowSignupPassword2] = useState(false);
+  const [mode, setMode] = useState<'login' | 'signup'>('login')
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [showSignupPassword, setShowSignupPassword] = useState(false)
+  const [showSignupPassword2, setShowSignupPassword2] = useState(false)
 
   const {
     register: registerLogin,
     handleSubmit: handleSubmitLogin,
     formState: { errors: loginErrors, isSubmitting: isLoginSubmitting },
     reset: resetLogin,
-    getValues: getLoginValues,
+    getValues: getLoginValues
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { login: "", password: "" },
-  });
+    defaultValues: { login: '', password: '' }
+  })
 
   const {
     register: registerSignup,
@@ -58,59 +56,55 @@ const LoginPage = (): ReactElement => {
     control: controlSignup,
     formState: { errors: signupErrors, isSubmitting: isSignupSubmitting },
     reset: resetSignup,
-    getValues: getSignupValues,
+    getValues: getSignupValues
   } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      login: "",
-      email: "",
-      password: "",
-      passwordConfirmation: "",
-      acceptTerms: false,
-    },
-  });
+      login: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
+      acceptTerms: false
+    }
+  })
 
-  const onLoginSubmit: SubmitHandler<LoginForm> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("login", data);
-  };
+  const onLoginSubmit: SubmitHandler<LoginForm> = async data => {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    console.log('login', data)
+  }
 
-  const onSignupSubmit: SubmitHandler<SignupForm> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("signup", data);
-  };
+  const onSignupSubmit: SubmitHandler<SignupForm> = async data => {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    console.log('signup', data)
+  }
 
-  const tabClass = (id: "login" | "signup"): string =>
+  const tabClass = (id: 'login' | 'signup'): string =>
     `px-4 py-2 text-sm font-medium rounded-md transition ${
-      mode === id
-        ? "bg-white text-gray-900 shadow"
-        : "text-gray-500 hover:text-gray-900"
-    }`;
+      mode === id ? 'bg-white text-gray-900 shadow' : 'text-gray-500 hover:text-gray-900'
+    }`
 
   const switchToLogin = (): void => {
-    resetLogin(getLoginValues());
-    setMode("login");
-  };
+    resetLogin(getLoginValues())
+    setMode('login')
+  }
 
   const switchToSignup = (): void => {
-    resetSignup(getSignupValues());
-    setMode("signup");
-  };
+    resetSignup(getSignupValues())
+    setMode('signup')
+  }
 
   return (
     <div className="grid h-full grid-cols-1 md:grid-cols-2">
       <div className="flex h-full w-full items-center justify-center bg-white px-6 sm:px-10 md:px-12">
-
         <div className="">
           <div className="mb-4.5 text-center">
-
             <div className="w-3/5 mx-auto">
               <SvgIcon src={lemnityLogo} />
-            </div>  
-            {mode === "signup" ? (
+            </div>
+            {mode === 'signup' ? (
               <p className="mt-2 text-sm text-gray-500">
-                Попробуйте LeMNITY<br />
-                7 дней бесплатно!
+                Попробуйте LeMNITY
+                <br />7 дней бесплатно!
               </p>
             ) : null}
           </div>
@@ -121,7 +115,7 @@ const LoginPage = (): ReactElement => {
                 variant="light"
                 size="sm"
                 radius="sm"
-                className={`${tabClass("login")} flex-1 h-full font-normal`}
+                className={`${tabClass('login')} flex-1 h-full font-normal`}
                 onPress={switchToLogin}
               >
                 Войти
@@ -130,7 +124,7 @@ const LoginPage = (): ReactElement => {
                 variant="light"
                 size="sm"
                 radius="sm"
-                className={`${tabClass("signup")} flex-1 h-full font-normal`}
+                className={`${tabClass('signup')} flex-1 h-full font-normal`}
                 onPress={switchToSignup}
               >
                 Регистрация
@@ -138,29 +132,27 @@ const LoginPage = (): ReactElement => {
             </div>
           </div>
 
-          {mode === "login" ? (
+          {mode === 'login' ? (
             <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-2">
               <Input
                 placeholder="Ваш логин"
                 variant="bordered"
                 classNames={{
-                  inputWrapper:
-                    "md:h-13 rounded-[6px] border border-gray-300 bg-white",
-                  input: "text-gray-900 placeholder:text-gray-400",
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
+                  input: 'text-gray-900 placeholder:text-gray-400'
                 }}
-                {...registerLogin("login")}
+                {...registerLogin('login')}
                 isInvalid={!!loginErrors.login}
                 errorMessage={loginErrors.login?.message}
               />
               <Input
-                type={showLoginPassword ? "text" : "password"}
+                type={showLoginPassword ? 'text' : 'password'}
                 placeholder="Ваш пароль"
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  inputWrapper:
-                    "md:h-13 rounded-[6px] border border-gray-300 bg-white pr-2",
-                  input: "text-gray-900 placeholder:text-gray-400",
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white pr-2',
+                  input: 'text-gray-900 placeholder:text-gray-400'
                 }}
                 endContent={
                   <Button
@@ -168,18 +160,17 @@ const LoginPage = (): ReactElement => {
                     variant="light"
                     size="sm"
                     className="!bg-transparent min-w-0 h-auto px-1 text-xs text-gray-500 hover:text-gray-900"
-                    onPress={() => setShowLoginPassword((v) => !v)}
+                    onPress={() => setShowLoginPassword(v => !v)}
                   >
                     <SvgIcon src={showLoginPassword ? iconEyeOff : iconEye} />
                   </Button>
                 }
-                {...registerLogin("password")}
+                {...registerLogin('password')}
                 isInvalid={!!loginErrors.password}
                 errorMessage={loginErrors.password?.message}
               />
               <Button
-                className="h-12 w-full font-medium"
-                color="primary"
+                className="h-12 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
                 type="submit"
                 isLoading={isLoginSubmitting}
               >
@@ -199,11 +190,10 @@ const LoginPage = (): ReactElement => {
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  inputWrapper:
-                    "md:h-13 rounded-[6px] border border-gray-300 bg-white",
-                  input: "text-gray-900 placeholder:text-gray-400",
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
+                  input: 'text-gray-900 placeholder:text-gray-400'
                 }}
-                {...registerSignup("login")}
+                {...registerSignup('login')}
                 isInvalid={!!signupErrors.login}
                 errorMessage={signupErrors.login?.message}
               />
@@ -212,23 +202,21 @@ const LoginPage = (): ReactElement => {
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  inputWrapper:
-                    "md:h-13 rounded-[6px] border border-gray-300 bg-white",
-                  input: "text-gray-900 placeholder:text-gray-400",
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
+                  input: 'text-gray-900 placeholder:text-gray-400'
                 }}
-                {...registerSignup("email")}
+                {...registerSignup('email')}
                 isInvalid={!!signupErrors.email}
                 errorMessage={signupErrors.email?.message}
               />
               <Input
-                type={showSignupPassword ? "text" : "password"}
+                type={showSignupPassword ? 'text' : 'password'}
                 placeholder="Пароль"
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  inputWrapper:
-                    "md:h-13 rounded-[6px] border border-gray-300 bg-white pr-2",
-                  input: "text-gray-900 placeholder:text-gray-400",
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white pr-2',
+                  input: 'text-gray-900 placeholder:text-gray-400'
                 }}
                 endContent={
                   <Button
@@ -236,24 +224,23 @@ const LoginPage = (): ReactElement => {
                     variant="light"
                     size="sm"
                     className="!bg-transparent min-w-0 h-auto px-1 text-xs text-gray-500 hover:text-gray-900"
-                    onPress={() => setShowSignupPassword((v) => !v)}
+                    onPress={() => setShowSignupPassword(v => !v)}
                   >
                     <SvgIcon src={showSignupPassword ? iconEyeOff : iconEye} />
                   </Button>
                 }
-                {...registerSignup("password")}
+                {...registerSignup('password')}
                 isInvalid={!!signupErrors.password}
                 errorMessage={signupErrors.password?.message}
               />
               <Input
-                type={showSignupPassword2 ? "text" : "password"}
+                type={showSignupPassword2 ? 'text' : 'password'}
                 placeholder="Повторите пароль"
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  inputWrapper:
-                    "md:h-13 rounded-[6px] border border-gray-300 bg-white pr-2",
-                  input: "text-gray-900 placeholder:text-gray-400",
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white pr-2',
+                  input: 'text-gray-900 placeholder:text-gray-400'
                 }}
                 endContent={
                   <Button
@@ -261,12 +248,12 @@ const LoginPage = (): ReactElement => {
                     variant="light"
                     size="sm"
                     className="!bg-transparent min-w-0 h-auto px-1 text-xs text-gray-500 hover:text-gray-900"
-                    onPress={() => setShowSignupPassword2((v) => !v)}
+                    onPress={() => setShowSignupPassword2(v => !v)}
                   >
                     <SvgIcon src={showSignupPassword2 ? iconEyeOff : iconEye} />
                   </Button>
                 }
-                {...registerSignup("passwordConfirmation")}
+                {...registerSignup('passwordConfirmation')}
                 isInvalid={!!signupErrors.passwordConfirmation}
                 errorMessage={signupErrors.passwordConfirmation?.message}
               />
@@ -277,27 +264,27 @@ const LoginPage = (): ReactElement => {
                 render={({ field }) => (
                   <div>
                     <Checkbox
+                      variant="default"
                       isSelected={field.value}
                       onValueChange={field.onChange}
-                      classNames={{ label: "text-xs text-gray-600" }}
+                      classNames={{ label: 'text-xs text-gray-600' }}
                     >
-                      Нажимая на кнопку “Начать”, вы даете согласие<br />на обработку
+                      Нажимая на кнопку “Начать”, вы даете согласие
+                      <br />
+                      на обработку
                       <a className="ml-1 text-primary hover:underline" href="#">
                         персональных данных
                       </a>
                     </Checkbox>
                     {signupErrors.acceptTerms ? (
-                      <p className="mt-1 text-xs text-danger">
-                        {signupErrors.acceptTerms.message}
-                      </p>
+                      <p className="mt-1 text-xs text-danger">{signupErrors.acceptTerms.message}</p>
                     ) : null}
                   </div>
                 )}
               />
 
               <Button
-                className="h-12 w-full font-medium"
-                color="primary"
+                className="h-12 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
                 type="submit"
                 isLoading={isSignupSubmitting}
               >
@@ -337,7 +324,7 @@ const LoginPage = (): ReactElement => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage
