@@ -264,10 +264,13 @@ const LoginPage = (): ReactElement => {
                 render={({ field }) => (
                   <div>
                     <Checkbox
-                      variant="default"
+                      radius="sm"
                       isSelected={field.value}
                       onValueChange={field.onChange}
-                      classNames={{ label: 'text-xs text-gray-600' }}
+                      classNames={{
+                        label: 'text-xs text-gray-600',
+                        wrapper: 'after:!bg-black before:!rounded-[6px] after:!rounded-[6px]'
+                      }}
                     >
                       Нажимая на кнопку “Начать”, вы даете согласие
                       <br />
