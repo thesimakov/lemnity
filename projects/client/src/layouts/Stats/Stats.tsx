@@ -1,43 +1,43 @@
-import React from "react";
-import StatsCard from "./StatsCard";
-import iconWallet from "../../assets/icons/wallet.svg";
-import iconBriefcase from "../../assets/icons/briefcase.svg";
-import iconUser from "../../assets/icons/user.svg";
-import iconClock from "../../assets/icons/clock.svg";
-import "./Stats.css";
-import { Select, SelectItem } from "@heroui/select";
+import React from 'react'
+import StatsCard from './StatsCard'
+import iconWallet from '../../assets/icons/wallet.svg'
+import iconBriefcase from '../../assets/icons/briefcase.svg'
+import iconUser from '../../assets/icons/user.svg'
+import iconClock from '../../assets/icons/clock.svg'
+import './Stats.css'
+import { Select, SelectItem } from '@heroui/select'
 
 const statsCards = [
   {
-    title: "Ваш баланс",
+    title: 'Ваш баланс',
     amount: 100,
-    currency: "р.",
-    tip: "Рекомендуем пополнить кошелек",
+    currency: 'р.',
+    tip: 'Рекомендуем пополнить кошелек',
     icon: iconWallet,
-    iconColor: "text-orange-500",
+    iconColor: 'text-orange-500'
   },
   {
-    title: "Проекты",
+    title: 'Проекты',
     amount: 3,
     maxAmount: 3,
     icon: iconBriefcase,
-    iconColor: "text-green-500",
+    iconColor: 'text-green-500'
   },
   {
-    title: "Посетители",
+    title: 'Посетители',
     amount: 0,
     maxAmount: 100,
     icon: iconUser,
-    iconColor: "text-purple-500",
+    iconColor: 'text-purple-500'
   },
   {
-    title: "Партнерская программа",
+    title: 'Партнерская программа',
     amount: 0,
-    currency: "руб.",
+    currency: 'руб.',
     icon: iconClock,
-    iconColor: "text-blue-500",
-  },
-];
+    iconColor: 'text-blue-500'
+  }
+]
 
 const Stats: React.FC = () => {
   const getPeriodSelector = () => {
@@ -46,17 +46,17 @@ const Stats: React.FC = () => {
         size="sm"
         className="max-w-[200px]"
         placeholder="Выберите период"
-        defaultSelectedKeys={["1"]}
+        defaultSelectedKeys={['1']}
       >
         <SelectItem key="1">За последние 24 часа</SelectItem>
         <SelectItem key="7">За последние 30 дней</SelectItem>
         <SelectItem key="30">За весь период</SelectItem>
       </Select>
-    );
-  };
+    )
+  }
 
   const getStatsCards = () => {
-    return statsCards.map((card) => (
+    return statsCards.map(card => (
       <StatsCard
         key={card.title}
         title={card.title}
@@ -65,11 +65,11 @@ const Stats: React.FC = () => {
         currency={card.currency}
         tip={card.tip}
         icon={card.icon}
-        isNegative={card.title == "Ваш баланс"}
+        isNegative={card.title == 'Ваш баланс'}
         iconColor={card.iconColor}
       />
-    ));
-  };
+    ))
+  }
 
   return (
     <div className="flex flex-col justify-between h-full gap-5">
@@ -81,7 +81,7 @@ const Stats: React.FC = () => {
         {getStatsCards()}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Stats;
+export default Stats

@@ -1,7 +1,7 @@
-import Header from "@/layouts/Header/Header";
-import DashboardLayout from "@/layouts/DashboardLayout/DashboardLayout";
-import MaintenancePage from "./MaintenancePage";
-import CenteredLayout from "@/layouts/CenteredLayout";
+import Header from '@/layouts/Header/Header'
+import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
+// import MaintenancePage from './MaintenancePage'
+// import CenteredLayout from '@/layouts/CenteredLayout'
 
 const HomePage = () => {
   return (
@@ -12,7 +12,7 @@ const HomePage = () => {
       <Header />
       <DashboardLayout />
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage

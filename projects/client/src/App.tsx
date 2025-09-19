@@ -1,15 +1,15 @@
-import { Routes, Route } from "react-router-dom";
-import "./App.css";
-import HomePage from "./pages/HomePage.tsx";
-import LoginPage from "./pages/LoginPage.tsx";
-import DashboardPage from "./pages/DashboardPage.tsx";
-import WidgetsPage from "./pages/WidgetsPage.tsx";
-import CreateCardPage from "./pages/CreateCardPage.tsx";
-import NotFoundPage from "./pages/NotFoundPage.tsx";
-import MaintenancePage from "./pages/MaintenancePage.tsx";
-import ProtectedRoute from "./pages/ProtectedRoute.tsx";
-import CenteredLayout from "./layouts/CenteredLayout.tsx";
-import FullWidthLayout from "./layouts/FullWidthLayout.tsx";
+import { Routes, Route } from 'react-router-dom'
+import './App.css'
+import HomePage from './pages/HomePage.tsx'
+import LoginPage from './pages/LoginPage.tsx'
+import DashboardPage from './pages/DashboardPage.tsx'
+import WidgetsPage from './pages/WidgetsPage.tsx'
+import CreateCardPage from './pages/CreateCardPage.tsx'
+import NotFoundPage from './pages/NotFoundPage.tsx'
+import MaintenancePage from './pages/MaintenancePage.tsx'
+import ProtectedRoute from './pages/ProtectedRoute.tsx'
+import CenteredLayout from './layouts/CenteredLayout.tsx'
+import FullWidthLayout from './layouts/FullWidthLayout.tsx'
 
 function App() {
   return (
@@ -87,7 +87,7 @@ function App() {
         }
       />
     </Routes>
-  );
+  )
 }
 
-export default App;
+export default App

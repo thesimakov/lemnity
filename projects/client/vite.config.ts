@@ -9,10 +9,7 @@ export default defineConfig({
     // https://stackoverflow.com/questions/55763428/react-native-error-enospc-system-limit-for-number-of-file-watchers-reached
     // полагаю, что node_modules(тысячи файлов), монтируемые в контейнер, триггерят эту ошибку
     watch: {
-      ignored: [
-        '**/node_modules/**',
-        '**/.pnpm-store/**',
-      ]
+      ignored: ['**/node_modules/**', '**/.pnpm-store/**']
     }
   }
 })

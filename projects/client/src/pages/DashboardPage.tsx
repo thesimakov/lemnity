@@ -1,6 +1,6 @@
-import DashboardLayout from "@/layouts/DashboardLayout/DashboardLayout";
-import Header from "@/layouts/Header/Header";
-import type { ReactElement } from "react";
+import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
+import Header from '@/layouts/Header/Header'
+import type { ReactElement } from 'react'
 
 const DashboardPage = (): ReactElement => {
   return (
@@ -8,7 +8,7 @@ const DashboardPage = (): ReactElement => {
       <Header />
       <DashboardLayout />
     </div>
-  );
-};
+  )
+}
 
-export default DashboardPage;
+export default DashboardPage

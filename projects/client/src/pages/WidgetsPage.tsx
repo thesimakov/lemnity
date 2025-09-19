@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ReactElement } from 'react'
 
 const WidgetsPage = (): ReactElement => {
   return (
@@ -6,7 +6,7 @@ const WidgetsPage = (): ReactElement => {
       <h1>Widgets</h1>
       <p>Widgets catalog page.</p>
     </div>
-  );
-};
+  )
+}
 
-export default WidgetsPage;
+export default WidgetsPage

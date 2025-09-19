@@ -1,39 +1,34 @@
-import React, { useState } from "react";
-import templateImage from "../../assets/images/template.svg";
-import AddProjectModal from "./AddProjectModal";
-import SvgIcon from "@/components/SvgIcon";
-import addIcon from "../../assets/icons/add.svg";
-import { useProjectsStore } from "@/stores/projectsStore";
+import React, { useState } from 'react'
+import templateImage from '../../assets/images/template.svg'
+import AddProjectModal from './AddProjectModal'
+import SvgIcon from '@/components/SvgIcon'
+import addIcon from '../../assets/icons/add.svg'
+import { useProjectsStore } from '@/stores/projectsStore'
 
 const AddProjectsBlock: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { addProject } = useProjectsStore();
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { addProject } = useProjectsStore()
 
   const promoBlock = () => {
     return (
       <div className="w-full flex flex-row gap-2.5 min-h-[210px] py-2.5">
         <div className="flex">
-          <img
-            src={templateImage}
-            alt="Lead Magnets Template"
-            className="h-auto object-contain"
-          />
+          <img src={templateImage} alt="Lead Magnets Template" className="h-auto object-contain" />
         </div>
 
         <div className="flex flex-col text-left flex-1 gap-5.5 p-2.5">
           <h1 className="text-[40px] font-medium leading-[1.24] tracking-[-0.25px]">
-            Эффективные <span className="text-[#5951E5]">Леджиты</span> для
-            роста продаж и базы клиентов
+            Эффективные <span className="text-[#5951E5]">Леджиты</span> для роста продаж и базы
+            клиентов
           </h1>
           <p className="text-xl leading-6 tracking-[-0.25px] flex items-center font-normal">
-            Внедряйте современные решения для всплывающих окон, чтобы повысить
-            количество лидов, расширить базу подписчиков и укрепить клиентскую
-            аудиторию.
+            Внедряйте современные решения для всплывающих окон, чтобы повысить количество лидов,
+            расширить базу подписчиков и укрепить клиентскую аудиторию.
           </p>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const addProjectButton = () => {
     return (
@@ -58,13 +53,13 @@ const AddProjectsBlock: React.FC = () => {
             className="w-[26px] h-[26px] rounded-full flex items-center justify-center
            group-hover:text-purple-600 transition-colors duration-200"
           >
-            <SvgIcon size={"26px"} src={addIcon} />
+            <SvgIcon size={'26px'} src={addIcon} />
           </div>
           <span className="text-base font-normal">Добавить проект</span>
         </button>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <div className="flex flex-col gap-[15px]">
@@ -83,15 +78,15 @@ const AddProjectsBlock: React.FC = () => {
                 visitors: { value: 0, desktop: 0, mobile: 0 },
                 impressions: { value: 0, desktop: 0, mobile: 0 },
                 conversions: { value: 0, desktop: 0, mobile: 0 },
-                activity: { value: 0, desktop: 0, mobile: 0 },
-              },
-            });
+                activity: { value: 0, desktop: 0, mobile: 0 }
+              }
+            })
           }}
         />
       )}
       {addProjectButton()}
     </div>
-  );
-};
+  )
+}
 
-export default AddProjectsBlock;
+export default AddProjectsBlock

@@ -1,22 +1,21 @@
-import React from "react";
-import { useSwitch } from "@heroui/switch";
-import type { SwitchProps } from "@heroui/switch";
-import { useMemo } from "react";
-import {cn} from "@heroui/theme"
+import React from 'react'
+import { useSwitch } from '@heroui/switch'
+import type { SwitchProps } from '@heroui/switch'
+import { cn } from '@heroui/theme'
 
-interface CustomSwitchProps extends Omit<SwitchProps, "color"> {
-  className?: string;
-  selectedColor?: string;
+interface CustomSwitchProps extends Omit<SwitchProps, 'color'> {
+  className?: string
+  selectedColor?: string
 }
 
-const CustomSwitch: React.FC<CustomSwitchProps> = (props) => {
-  const { size = "lg", selectedColor, ...rest } = props;
+const CustomSwitch: React.FC<CustomSwitchProps> = props => {
+  const { size = 'lg', selectedColor, ...rest } = props
 
   const widthClasses = {
-    sm: "w-15",
-    md: "w-16",
-    lg: "w-17",
-  };
+    sm: 'w-15',
+    md: 'w-16',
+    lg: 'w-17'
+  }
 
   const {
     slots,
@@ -25,37 +24,35 @@ const CustomSwitch: React.FC<CustomSwitchProps> = (props) => {
     getBaseProps,
     getInputProps,
     getWrapperProps,
-    getThumbProps,
+    getThumbProps
   } = useSwitch({
     size,
     ...rest
-  });
+  })
 
-  const { wrapper, thumb } = slots;
-  const wrapperBgColor = (isSelected ? (selectedColor || "!bg-green-500") : "!bg-red-500");
+  const { thumb } = slots
+  const wrapperBgColor = isSelected ? selectedColor || '!bg-green-500' : '!bg-red-500'
 
-return (
-  <Component {...getBaseProps()}>
-    <input {...getInputProps()} />
-    <div
-      {...getWrapperProps(
-        {
+  return (
+    <Component {...getBaseProps()}>
+      <input {...getInputProps()} />
+      <div
+        {...getWrapperProps({
           className: cn(
             widthClasses[size] || widthClasses.md,
-            "!bg-transparent",           // обнуляем фон от HeroUI
-            wrapperBgColor              // динамические цвета
+            '!bg-transparent', // обнуляем фон от HeroUI
+            wrapperBgColor // динамические цвета
           )
-        }
-    )}
-    >
+        })}
+      >
         <span
           className={`
-            ${isSelected ? "left-2" : "right-2"}
+            ${isSelected ? 'left-2' : 'right-2'}
             absolute text-xs font-normal text-white z-10
             transition-opacity duration-200
             `}
         >
-          {isSelected ? "Вкл" : "Выкл"}
+          {isSelected ? 'Вкл' : 'Выкл'}
         </span>
         <span
           {...getThumbProps()}
@@ -63,7 +60,7 @@ return (
         />
       </div>
     </Component>
-  );
-};
+  )
+}
 
-export default CustomSwitch;
+export default CustomSwitch

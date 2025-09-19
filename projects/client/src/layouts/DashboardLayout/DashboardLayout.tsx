@@ -1,6 +1,6 @@
-import NavigationSidebar from "./NavigationSidebar";
-import MainContent from "./MainContent";
-import ChatPanel from "./ChatPanel";
+import NavigationSidebar from './NavigationSidebar'
+import MainContent from './MainContent'
+import ChatPanel from './ChatPanel'
 
 const DashboardLayout = () => {
   return (
@@ -9,7 +9,7 @@ const DashboardLayout = () => {
       <MainContent />
       <ChatPanel />
     </div>
-  );
-};
+  )
+}
 
-export default DashboardLayout;
+export default DashboardLayout

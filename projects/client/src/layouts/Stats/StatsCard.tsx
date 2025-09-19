@@ -1,16 +1,16 @@
-import React from "react";
-import SvgIcon from "../../components/SvgIcon";
+import React from 'react'
+import SvgIcon from '../../components/SvgIcon'
 
 interface StatsCardProps {
-  title: string;
-  amount: number;
-  currency?: string;
-  iconColor?: string;
-  tip?: string;
-  isNegative?: boolean;
-  className?: string;
-  maxAmount?: number;
-  icon: string;
+  title: string
+  amount: number
+  currency?: string
+  iconColor?: string
+  tip?: string
+  isNegative?: boolean
+  className?: string
+  maxAmount?: number
+  icon: string
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({
@@ -21,21 +21,17 @@ const StatsCard: React.FC<StatsCardProps> = ({
   iconColor,
   tip,
   isNegative = false,
-  className = "",
-  maxAmount,
+  className = '',
+  maxAmount
 }) => {
   const formatAmount = (value: number) => {
-    const sign = isNegative ? "-" : "";
-    return `${sign}${Math.abs(value)}`;
-  };
+    const sign = isNegative ? '-' : ''
+    return `${sign}${Math.abs(value)}`
+  }
 
   const renderBackgroundIcon = () => (
-    <SvgIcon
-      src={icon}
-      className={`opacity-20 select-none ${iconColor || ""}`}
-      size="30%"
-    />
-  );
+    <SvgIcon src={icon} className={`opacity-20 select-none ${iconColor || ''}`} size="30%" />
+  )
 
   return (
     <div
@@ -43,7 +39,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
     min-h-0 h-auto w-full max-w-[195px]
     aspect-6/5
     bg-[#F7FBFF] rounded-[5px] border border-gray-200
-    p-2 lg:p-3 pr-0.5 md:pr-1 lg:pr-1 xl:pr-1.5 ${className || ""}`}
+    p-2 lg:p-3 pr-0.5 md:pr-1 lg:pr-1 xl:pr-1.5 ${className || ''}`}
     >
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         {renderBackgroundIcon()}
@@ -58,21 +54,16 @@ const StatsCard: React.FC<StatsCardProps> = ({
             </svg>
           </button>
         </div>
-        <div
-          className={`text-xl ${isNegative ? "text-[#FF5183]" : "text-black"}`}
-        >
-          {formatAmount(amount)} {currency}{" "}
-          {maxAmount && <span> / {maxAmount}</span>}
+        <div className={`text-xl ${isNegative ? 'text-[#FF5183]' : 'text-black'}`}>
+          {formatAmount(amount)} {currency} {maxAmount && <span> / {maxAmount}</span>}
         </div>
       </div>
 
       <div className="relative z-10 min-h-[20px]">
-        {tip && (
-          <p className="text-[10px] text-[#FF5183] leading-relaxed">{tip}</p>
-        )}
+        {tip && <p className="text-[10px] text-[#FF5183] leading-relaxed">{tip}</p>}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default StatsCard;
+export default StatsCard

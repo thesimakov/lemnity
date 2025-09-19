@@ -13,9 +13,7 @@ const ProjectListHeader = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProjectListHeader;
-
-
+export default ProjectListHeader
