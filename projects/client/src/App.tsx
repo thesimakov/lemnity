@@ -25,9 +25,9 @@ function App() {
       <Route
         path="/login"
         element={
-          <CenteredLayout>
+          <FullWidthLayout>
             <LoginPage />
-          </CenteredLayout>
+          </FullWidthLayout>
         }
       />
       <Route

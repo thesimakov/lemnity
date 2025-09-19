@@ -5,13 +5,13 @@ import CenteredLayout from "@/layouts/CenteredLayout";
 
 const HomePage = () => {
   return (
-    <CenteredLayout>
-      <MaintenancePage />
-    </CenteredLayout>
-    // <div className="h-full flex flex-col">
-    //   <Header />
-    //   <DashboardLayout />
-    // </div>
+    // <CenteredLayout>
+    //   <MaintenancePage />
+    // </CenteredLayout>
+    <div className="h-full flex flex-col">
+      <Header />
+      <DashboardLayout />
+    </div>
   );
 };
 
