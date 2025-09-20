@@ -86,8 +86,7 @@ tmp/
 temp/
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+.vscode/
 .idea
 .DS_Store
 *.suo
@@ -105,3 +104,6 @@ Desktop.ini
 package-lock.json
 yarn.lock
 # pnpm-lock.yaml (keep this for pnpm)
+
+# Prisma generated files
+projects/*/prisma/generated/

@@ -1,0 +1,71 @@
+import { useState, useRef, useEffect } from 'react'
+import userIcon from '../../assets/icons/user-circle.svg'
+import powerIcon from '../../assets/icons/power.svg'
+import useClickOutside from '../../hooks/useClickOutside'
+import { Button } from '@heroui/button'
+import SvgIcon from '../../components/SvgIcon'
+import chevronUp from '../../assets/icons/chevronUp.svg'
+import chevronDown from '../../assets/icons/chevronDown.svg'
+
+const ProfileButton = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [shouldRender, setShouldRender] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const durationTimeout = 200
+  const debounceTimeout = 30
+
+  useClickOutside(dropdownRef, () => setIsOpen(false))
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true)
+      setTimeout(() => setIsAnimating(true), debounceTimeout)
+    } else {
+      setIsAnimating(false)
+      const timer = setTimeout(() => setShouldRender(false), durationTimeout)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <Button
+        variant="solid"
+        className="bg-[#F7FBFF] h-[38px] p-1 rounded-xl flex items-center text-[#656565] gap-0 min-w-[70px]"
+        startContent={<SvgIcon src={userIcon} size={'30px'} />}
+        endContent={<SvgIcon src={isOpen ? chevronUp : chevronDown} size={'1rem'} />}
+        onPress={() => setIsOpen(!isOpen)}
+      ></Button>
+      {shouldRender && (
+        <div
+          className={`absolute top-full right-0 mt-1 bg-white rounded-md shadow-lg w-[222px] p-[10px] flex flex-col gap-[10px] transition-all duration-${durationTimeout} ease-out origin-top-right transform ${
+            isAnimating
+              ? 'opacity-100 scale-100 translate-y-0'
+              : 'opacity-0 scale-90 -translate-y-1'
+          }`}
+        >
+          <Button
+            variant="light"
+            className="gap-2.5 py-1 px-2.5 text-black font-rubik font-normal text-base justify-start"
+            startContent={<SvgIcon src={userIcon} size="20px" className="opacity-60 w-min" />}
+            onPress={() => alert('profile')}
+          >
+            Мой профиль
+          </Button>
+          <div className="h-px bg-black"></div>
+          <Button
+            variant="light"
+            className="gap-2.5 py-2 px-2.5 text-black font-rubik font-normal text-base justify-start"
+            startContent={<SvgIcon src={powerIcon} size="20px" className="opacity-60 w-min" />}
+            onPress={() => alert('logout')}
+          >
+            Выйти
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default ProfileButton

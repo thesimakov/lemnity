@@ -13,7 +13,7 @@ interface AuthState {
 }
 
 const initialState: Pick<AuthState, 'isAuthenticated' | 'token'> = {
-  isAuthenticated: false,
+  isAuthenticated: true,
   token: null
 }
 

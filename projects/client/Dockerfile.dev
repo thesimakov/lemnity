@@ -11,4 +11,4 @@ RUN npm install -g pnpm@10.15.1
 EXPOSE 5173
 
 # Запускаем dev server с hot reload
-CMD ["sh", "-c", "pnpm install --frozen-lockfile && pnpm run dev --host 0.0.0.0"]
+CMD ["sh", "-c", "pnpm install --frozen-lockfile && pnpm --filter ./projects/client run dev --host 0.0.0.0"]

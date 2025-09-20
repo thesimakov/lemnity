@@ -3,6 +3,8 @@ build
 coverage
 dist
 node_modules
+.pnpm-store/
+**/.pnpm-store/**
 
 # Ignore config files
 *.config.js
@@ -13,9 +15,11 @@ eslint.config.js
 # Ignore documentation
 *.md
 
-# Ignore other files
+# Ignore other filesß
 .gitignore
 package-lock.json
+package.json
+pnpm-lock.yaml
 
 # Ignore all HTML files:
 **/*.html
