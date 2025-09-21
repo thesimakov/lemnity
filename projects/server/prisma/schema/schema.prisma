@@ -1,6 +1,9 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  
+  // в монорепо в режиме разработки не работает корректно
+  // нужно настраивать nest assets или генерить прямо в node_modules
+  //output   = "../generated/prisma"
 }
 
 datasource db {
