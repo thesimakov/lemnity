@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "@nestjs/mapped-types": "*"
+  },
   "name": "monorepo-template",
   "version": "1.0.0",
   "description": "Full-stack monorepo template with React frontend and NestJS backend using pnpm workspaces",
@@ -29,5 +32,10 @@
   "packageManager": "pnpm@10.15.1",
   "devDependencies": {
     "prettier": "^3.6.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+        "@prisma/client"
+    ]
   }
 }
