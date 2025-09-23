@@ -11,15 +11,16 @@ import lemnityLogo from '../assets/logos/lemnity-logo.svg'
 import SvgIcon from '@/components/SvgIcon'
 import iconEye from '../assets/icons/eye.svg'
 import iconEyeOff from '../assets/icons/eye-off.svg'
+import useAuthStore from '@/stores/authStore'
+import { useNavigate } from 'react-router-dom'
 
 const loginSchema = z.object({
-  login: z.string().min(1, 'Введите логин'),
+  email: z.email('Некорректный email'),
   password: z.string().min(8, 'Минимум 8 символов')
 })
 
 const signupSchema = z
   .object({
-    login: z.string().min(1, 'Введите логин'),
     email: z.email('Некорректный email'),
     password: z.string().min(8, 'Минимум 8 символов'),
     passwordConfirmation: z.string().min(8, 'Минимум 8 символов'),
@@ -39,28 +40,34 @@ const LoginPage = (): ReactElement => {
   const [showSignupPassword, setShowSignupPassword] = useState(false)
   const [showSignupPassword2, setShowSignupPassword2] = useState(false)
 
+  const navigate = useNavigate()
+  const { login, register: registerUser } = useAuthStore()
+  const [authError, setAuthError] = useState<string | null>(null)
+  const [signupError, setSignupError] = useState<string | null>(null)
+
   const {
     register: registerLogin,
     handleSubmit: handleSubmitLogin,
-    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting },
+    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting, isValid: isLoginValid },
     reset: resetLogin,
     getValues: getLoginValues
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { login: '', password: '' }
+    mode: 'onChange',
+    defaultValues: { email: '', password: '' }
   })
 
   const {
     register: registerSignup,
     handleSubmit: handleSubmitSignup,
     control: controlSignup,
-    formState: { errors: signupErrors, isSubmitting: isSignupSubmitting },
+    formState: { errors: signupErrors, isSubmitting: isSignupSubmitting, isValid: isSignupValid },
     reset: resetSignup,
     getValues: getSignupValues
   } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
+    mode: 'onChange',
     defaultValues: {
-      login: '',
       email: '',
       password: '',
       passwordConfirmation: '',
@@ -69,13 +76,24 @@ const LoginPage = (): ReactElement => {
   })
 
   const onLoginSubmit: SubmitHandler<LoginForm> = async data => {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    console.log('login', data)
+    setAuthError(null)
+    try {
+      await login(data.email, data.password)
+      navigate('/')
+    } catch {
+      setAuthError('Неверный email или пароль')
+    }
   }
 
   const onSignupSubmit: SubmitHandler<SignupForm> = async data => {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    console.log('signup', data)
+    console.log(data)
+    setSignupError(null)
+    try {
+      await registerUser(data.email, data.password)
+      navigate('/')
+    } catch {
+      setSignupError('Не удалось зарегистрироваться. Попробуйте ещё раз')
+    }
   }
 
   const tabClass = (id: 'login' | 'signup'): string =>
@@ -134,16 +152,19 @@ const LoginPage = (): ReactElement => {
 
           {mode === 'login' ? (
             <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-2">
+              {authError ? (
+                <p className="text-danger text-sm">{authError}</p>
+              ) : null}
               <Input
-                placeholder="Ваш логин"
+                placeholder="Ваш email"
                 variant="bordered"
                 classNames={{
                   inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
                   input: 'text-gray-900 placeholder:text-gray-400'
                 }}
-                {...registerLogin('login')}
-                isInvalid={!!loginErrors.login}
-                errorMessage={loginErrors.login?.message}
+                {...registerLogin('email')}
+                isInvalid={!!loginErrors.email}
+                errorMessage={loginErrors.email?.message}
               />
               <Input
                 type={showLoginPassword ? 'text' : 'password'}
@@ -173,6 +194,7 @@ const LoginPage = (): ReactElement => {
                 className="h-12 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
                 type="submit"
                 isLoading={isLoginSubmitting}
+                isDisabled={!isLoginValid || isLoginSubmitting}
               >
                 Войти
               </Button>
@@ -185,18 +207,10 @@ const LoginPage = (): ReactElement => {
             </form>
           ) : (
             <form onSubmit={handleSubmitSignup(onSignupSubmit)} className="space-y-2">
-              <Input
-                placeholder="Логин"
-                variant="bordered"
-                radius="sm"
-                classNames={{
-                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
-                  input: 'text-gray-900 placeholder:text-gray-400'
-                }}
-                {...registerSignup('login')}
-                isInvalid={!!signupErrors.login}
-                errorMessage={signupErrors.login?.message}
-              />
+              {signupError ? (
+                <p className="text-danger text-sm">{signupError}</p>
+              ) : null}
+              
               <Input
                 placeholder="Email"
                 variant="bordered"
@@ -290,6 +304,7 @@ const LoginPage = (): ReactElement => {
                 className="h-12 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
                 type="submit"
                 isLoading={isSignupSubmitting}
+                isDisabled={!isSignupValid || isSignupSubmitting}
               >
                 Начать
               </Button>
@@ -309,11 +324,11 @@ const LoginPage = (): ReactElement => {
           )}
 
           <div className="mt-10 flex items-center justify-between text-xs text-gray-400">
-            <a href="#" className="hover:underline">
+            <a href="https://lemnity.ru/political" target="_blank" className="hover:underline">
               Политика конфиденциальности
             </a>
             <span className="mx-2">|</span>
-            <a href="https://lemnity.ru/political" className="hover:underline">
+            <a href="#" target="_blank" className="hover:underline">
               Разработка OMNITY
             </a>
           </div>

@@ -6,6 +6,8 @@ import { Button } from '@heroui/button'
 import SvgIcon from '../../components/SvgIcon'
 import chevronUp from '../../assets/icons/chevronUp.svg'
 import chevronDown from '../../assets/icons/chevronDown.svg'
+import useAuthStore from '@/stores/authStore'
+import { useNavigate } from 'react-router-dom'
 
 const ProfileButton = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,6 +30,16 @@ const ProfileButton = () => {
     }
   }, [isOpen])
 
+  const navigate = useNavigate()
+  const logout = useAuthStore(s => s.logout)
+  const sessionStatus = useAuthStore(s => s.sessionStatus)
+  const isAuthenticated = sessionStatus === 'authenticated'
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login', { replace: true })
+  }
+
   return (
     <div className="relative" ref={dropdownRef}>
       <Button
@@ -45,23 +57,36 @@ const ProfileButton = () => {
               : 'opacity-0 scale-90 -translate-y-1'
           }`}
         >
-          <Button
-            variant="light"
-            className="gap-2.5 py-1 px-2.5 text-black font-rubik font-normal text-base justify-start"
-            startContent={<SvgIcon src={userIcon} size="20px" className="opacity-60 w-min" />}
-            onPress={() => alert('profile')}
-          >
-            Мой профиль
-          </Button>
-          <div className="h-px bg-black"></div>
-          <Button
-            variant="light"
-            className="gap-2.5 py-2 px-2.5 text-black font-rubik font-normal text-base justify-start"
-            startContent={<SvgIcon src={powerIcon} size="20px" className="opacity-60 w-min" />}
-            onPress={() => alert('logout')}
-          >
-            Выйти
-          </Button>
+          {isAuthenticated ? (
+            <>
+              <Button
+                variant="light"
+                className="gap-2.5 py-1 px-2.5 text-black font-rubik font-normal text-base justify-start"
+                startContent={<SvgIcon src={userIcon} size="20px" className="opacity-60 w-min" />}
+                onPress={() => alert('profile')}
+              >
+                Мой профиль
+              </Button>
+              <div className="h-px bg-black"></div>
+              <Button
+                variant="light"
+                className="gap-2.5 py-2 px-2.5 text-black font-rubik font-normal text-base justify-start"
+                startContent={<SvgIcon src={powerIcon} size="20px" className="opacity-60 w-min" />}
+                onPress={handleLogout}
+              >
+                Выйти
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="light"
+              className="gap-2.5 py-2 px-2.5 text-black font-rubik font-normal text-base justify-start"
+              startContent={<SvgIcon src={userIcon} size="20px" className="opacity-60 w-min" />}
+              onPress={() => navigate('/login')}
+            >
+              Войти
+            </Button>
+          )}
         </div>
       )}
     </div>
