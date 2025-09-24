@@ -38,8 +38,11 @@ const useAuthStore = create<AuthState>()(
           const { accessToken } = await authService.register({ email, password })
           get().setSession(accessToken)
         },
-        setSession: (token: string) => set({ accessToken: token, sessionStatus: 'authenticated' }, false, 'auth/setSession'),
-        clearSession: () => { set(initialState, false, 'auth/clearSession') },
+        setSession: (token: string) =>
+          set({ accessToken: token, sessionStatus: 'authenticated' }, false, 'auth/setSession'),
+        clearSession: () => {
+          set(initialState, false, 'auth/clearSession')
+        },
         refreshToken: async () => {
           if (!refreshPromise) {
             refreshPromise = authService.refreshToken().finally(() => {
@@ -48,7 +51,11 @@ const useAuthStore = create<AuthState>()(
           }
           const newToken = await refreshPromise
           if (newToken) {
-            set({ accessToken: newToken, sessionStatus: 'authenticated' }, false, 'auth/refresh:success')
+            set(
+              { accessToken: newToken, sessionStatus: 'authenticated' },
+              false,
+              'auth/refresh:success'
+            )
             return newToken
           }
           set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/refresh:fail')
@@ -74,7 +81,11 @@ const useAuthStore = create<AuthState>()(
             if (isTokenExpiredOrNearExpiry(token)) {
               const newToken = await authService.refreshToken()
               if (newToken) {
-                set({ accessToken: newToken, sessionStatus: 'authenticated' }, false, 'auth/bootstrap:refresh')
+                set(
+                  { accessToken: newToken, sessionStatus: 'authenticated' },
+                  false,
+                  'auth/bootstrap:refresh'
+                )
               } else {
                 set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/bootstrap:guest')
               }
