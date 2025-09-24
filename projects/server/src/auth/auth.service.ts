@@ -39,10 +39,11 @@ export class AuthService {
     }
 
     const user = await this.userService.create(dto)
+    const publicUser = await this.userService.getPublicByIdOrThrow(user.id)
     const tokens = this.issueTokenPair(user.id)
 
     return {
-      user,
+      user: publicUser,
       ...tokens
     }
   }
