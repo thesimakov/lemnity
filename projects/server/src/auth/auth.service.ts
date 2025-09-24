@@ -1,120 +1,135 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { JwtService } from '@nestjs/jwt';
-import { AuthDto } from './dto/auth.dto';
-import { verify } from 'argon2';
-import { Response } from 'express';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException
+} from '@nestjs/common'
+import { UserService } from '../user/user.service'
+import { JwtService } from '@nestjs/jwt'
+import { AuthDto } from './dto/auth.dto'
+import { verify } from 'argon2'
+import { Response } from 'express'
+import { PasswordResetService } from '../password-reset/password-reset.service'
 
 @Injectable()
 export class AuthService {
-     readonly EXPIRES_IN_REFRESH_TOKEN_DAYS = 1
-     readonly REFRESH_TOKEN_NAME = 'refreshToken'
+  readonly EXPIRES_IN_REFRESH_TOKEN_DAYS = 1
+  readonly REFRESH_TOKEN_NAME = 'refreshToken'
 
-    constructor(
-        private jwt: JwtService,
-        private userService: UserService
-    ) {}
+  constructor(
+    private jwt: JwtService,
+    private userService: UserService,
+    private passwordResetService: PasswordResetService
+  ) {}
 
-    async login(dto: AuthDto) {
-        const {password, ...user} = await this.validateUser(dto)
-        const tokens = this.issueTokenPair(user.id)
+  async login(dto: AuthDto) {
+    const { password, ...user } = await this.validateUser(dto)
+    const tokens = this.issueTokenPair(user.id)
 
-        return {
-            user,
-            ...tokens
-        }
+    return {
+      user,
+      ...tokens
+    }
+  }
+
+  async register(dto: AuthDto) {
+    const oldUser = await this.userService.getByEmail(dto.email)
+    if (oldUser) {
+      throw new BadRequestException('User already exists')
     }
 
-    async register(dto: AuthDto) {
-        const oldUser = await this.userService.getByEmail(dto.email)
-        if (oldUser){
-            throw new BadRequestException('User already exists')
-        }
+    const user = await this.userService.create(dto)
+    const tokens = this.issueTokenPair(user.id)
 
-        const user = await this.userService.create(dto)
-        const tokens = this.issueTokenPair(user.id)
+    return {
+      user,
+      ...tokens
+    }
+  }
 
-        return {
-            user,
-            ...tokens
-        }
+  async getNewTokens(refreshToken: string) {
+    const result = await this.jwt.verifyAsync(refreshToken)
+    if (!result) {
+      throw new UnauthorizedException('Invalid refresh token')
     }
 
-    async getNewTokens(refreshToken: string){
-        const result = await this.jwt.verifyAsync(refreshToken)
-        if (!result){
-            throw new UnauthorizedException('Invalid refresh token')
-        }
-        
-        const user = await this.userService.getPublicByIdOrThrow(result.id)
-        
-        const tokens = this.issueTokenPair(user.id)
+    const user = await this.userService.getPublicByIdOrThrow(result.id)
 
-        return {
-            user,
-            ...tokens
-        }
+    const tokens = this.issueTokenPair(user.id)
+
+    return {
+      user,
+      ...tokens
+    }
+  }
+
+  async issuePasswordReset(email: string) {
+    await this.passwordResetService.request(email)
+  }
+
+  async resetPassword(rawToken: string, newPassword: string) {
+    await this.passwordResetService.reset(rawToken, newPassword)
+  }
+
+  private issueTokenPair(userId: string) {
+    const data = { id: userId }
+    const accessToken = this.jwt.sign(data, {
+      expiresIn: '1h'
+    })
+    const refreshToken = this.jwt.sign(data, {
+      expiresIn: '7d'
+    })
+
+    return { accessToken, refreshToken }
+  }
+
+  private async validateUser(dto: AuthDto) {
+    const user = await this.userService.getByEmail(dto.email)
+
+    if (!user) {
+      throw new NotFoundException('User not found')
     }
 
-    private issueTokenPair(userId: string){
-        const data = { id: userId }
-        const accessToken = this.jwt.sign(data, {
-            expiresIn: '1h'
-        })
-        const refreshToken = this.jwt.sign(data, {
-            expiresIn: '7d'
-        })
-        
-        return { accessToken, refreshToken }
+    const isValid = await verify(user.password, dto.password)
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid credentials')
     }
 
-    private async validateUser(dto: AuthDto){
-        const user = await this.userService.getByEmail(dto.email)
+    return user
+  }
 
-        if (!user){
-            throw new NotFoundException('User not found')
-        }
-
-        const isValid = await verify(user.password, dto.password)
-        if (!isValid){
-            throw new UnauthorizedException('Invalid credentials')
-        }
-
-        return user
+  private getCookieDomain(): string | undefined {
+    const url = process.env.FRONTEND_URL
+    if (!url) return undefined
+    try {
+      return new URL(url).hostname
+    } catch {
+      return url.replace(/^https?:\/\//, '').split(':')[0]
     }
+  }
 
-    private getCookieDomain(): string | undefined {
-        const url = process.env.FRONTEND_URL
-        if (!url) return undefined
-        try {
-          return new URL(url).hostname
-        } catch {
-          return url.replace(/^https?:\/\//, '').split(':')[0]
-        }
-      }
+  addRefreshTokenToResponse(res: Response, refreshToken: string) {
+    const expiresIn = new Date()
+    expiresIn.setDate(expiresIn.getDate() + this.EXPIRES_IN_REFRESH_TOKEN_DAYS)
+    const isProd = process.env.NODE_ENV === 'production'
 
-    addRefreshTokenToResponse(res: Response, refreshToken: string){
-        const expiresIn = new Date()
-        expiresIn.setDate(expiresIn.getDate() + this.EXPIRES_IN_REFRESH_TOKEN_DAYS)
-        const isProd = process.env.NODE_ENV === 'production'
+    res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
+      httpOnly: true,
+      domain: isProd ? this.getCookieDomain() : undefined,
+      expires: expiresIn,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax'
+    })
+  }
 
-        res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
-            httpOnly: true,
-            domain: isProd ? this.getCookieDomain() : undefined,
-            expires: expiresIn,
-            secure: isProd,
-            sameSite: isProd ? 'none' : 'lax',
-        })
-    }
-
-    removeRefreshTokenFromResponse(res: Response){
-        const isProd = process.env.NODE_ENV === 'production'
-        res.cookie(this.REFRESH_TOKEN_NAME, '', {
-            httpOnly: true,
-            domain: isProd ? this.getCookieDomain() : undefined,
-            expires: new Date(0),
-            secure: isProd,
-            sameSite: isProd ? 'none' : 'lax',
-        })
-    }
+  removeRefreshTokenFromResponse(res: Response) {
+    const isProd = process.env.NODE_ENV === 'production'
+    res.cookie(this.REFRESH_TOKEN_NAME, '', {
+      httpOnly: true,
+      domain: isProd ? this.getCookieDomain() : undefined,
+      expires: new Date(0),
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax'
+    })
+  }
 }

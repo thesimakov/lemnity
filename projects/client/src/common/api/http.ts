@@ -1,5 +1,4 @@
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
-import * as authService from '@services/auth.ts'
 import useAuthStore from '@stores/authStore.ts'
 
 export const http = axios.create({
@@ -9,7 +8,7 @@ export const http = axios.create({
 })
 
 http.interceptors.request.use(config => {
-  const { token } = useAuthStore.getState()
+  const { accessToken: token } = useAuthStore.getState()
   if (token) {
     config.headers = config.headers ?? {}
     config.headers.Authorization = `Bearer ${token}`
@@ -29,7 +28,7 @@ http.interceptors.response.use(
     const currentRetry = (originalConfig?.retryCount ?? 0) as number
     if (error.response?.status === 401 && originalConfig && currentRetry < 1) {
       originalConfig.retryCount = currentRetry + 1
-      const newToken = await authService.refreshToken()
+      const newToken = await useAuthStore.getState().refreshToken()
       if (newToken) {
         originalConfig.headers = originalConfig.headers ?? {}
         originalConfig.headers.Authorization = `Bearer ${newToken}`

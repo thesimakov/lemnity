@@ -4,8 +4,9 @@
 export const API = {
   AUTH: {
     LOGIN: '/auth/login' as const,
+    REGISTER: '/auth/register' as const,
     LOGOUT: '/auth/logout' as const,
-    REFRESH: '/auth/refresh' as const
+    REFRESH: '/auth/login/refresh' as const
   },
   WIDGETS: {
     LIST: '/widgets' as const, // GET

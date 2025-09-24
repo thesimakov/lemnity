@@ -1,20 +1,28 @@
-import { 
-  Controller, Post, UsePipes, ValidationPipe, HttpCode,
-  Body, Res, Req, UnauthorizedException
-} from '@nestjs/common';
-import { AuthDto } from './dto/auth.dto';
-import { AuthService } from './auth.service';
-import type { Response, Request } from 'express';
+import {
+  Controller,
+  Post,
+  UsePipes,
+  ValidationPipe,
+  HttpCode,
+  Body,
+  Res,
+  Req,
+  UnauthorizedException
+} from '@nestjs/common'
+import { AuthDto } from './dto/auth.dto'
+import { AuthService } from './auth.service'
+import type { Response, Request } from 'express'
+import { ForgotPasswordDto, ResetPasswordDto } from './dto/reset.dto'
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  
+
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('login')
-  async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response){
-    const {refreshToken, ...response} = await this.authService.login(dto)
+  async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
+    const { refreshToken, ...response } = await this.authService.login(dto)
     this.authService.addRefreshTokenToResponse(res, refreshToken)
 
     return response
@@ -23,8 +31,8 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('register')
-  async register(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response){
-    const {refreshToken, ...response} = await this.authService.register(dto)
+  async register(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
+    const { refreshToken, ...response } = await this.authService.register(dto)
     this.authService.addRefreshTokenToResponse(res, refreshToken)
 
     return response
@@ -32,7 +40,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('logout')
-  async logout(@Res({ passthrough: true }) res: Response){
+  async logout(@Res({ passthrough: true }) res: Response) {
     this.authService.removeRefreshTokenFromResponse(res)
 
     return true
@@ -40,21 +48,35 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('login/refresh')
-  async getNewTokens(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response
-  ){
+  async getNewTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshTokenFromCookies = req.cookies[this.authService.REFRESH_TOKEN_NAME]
 
-    if (!refreshTokenFromCookies){
+    if (!refreshTokenFromCookies) {
       this.authService.removeRefreshTokenFromResponse(res)
       throw new UnauthorizedException('Refresh token not found in cookies')
     }
 
-    const {refreshToken, ...response} = await this.authService.getNewTokens(refreshTokenFromCookies)
+    const { refreshToken, ...response } =
+      await this.authService.getNewTokens(refreshTokenFromCookies)
 
     this.authService.addRefreshTokenToResponse(res, refreshToken)
 
     return response
+  }
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    await this.authService.issuePasswordReset(dto.email)
+    return true
+  }
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    await this.authService.resetPassword(dto.token, dto.newPassword)
+    return true
   }
 }

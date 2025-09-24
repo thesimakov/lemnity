@@ -10,6 +10,7 @@ import MaintenancePage from './pages/MaintenancePage.tsx'
 import ProtectedRoute from './pages/ProtectedRoute.tsx'
 import CenteredLayout from './layouts/CenteredLayout.tsx'
 import FullWidthLayout from './layouts/FullWidthLayout.tsx'
+import PublicRoute from './pages/PublicRoute.tsx'
 
 function App() {
   return (
@@ -17,17 +18,21 @@ function App() {
       <Route
         path="/"
         element={
+          <ProtectedRoute>
           <FullWidthLayout>
             <HomePage />
           </FullWidthLayout>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/login"
         element={
-          <FullWidthLayout>
-            <LoginPage />
-          </FullWidthLayout>
+          <PublicRoute>
+            <FullWidthLayout>
+              <LoginPage />
+            </FullWidthLayout>
+          </PublicRoute>
         }
       />
       <Route

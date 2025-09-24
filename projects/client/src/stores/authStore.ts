@@ -1,20 +1,25 @@
 import { create } from 'zustand'
 import * as authService from '@services/auth.ts'
 import { createJSONStorage, devtools, persist } from 'zustand/middleware'
+import { isTokenExpiredOrNearExpiry } from '@common/utils/jwt'
+
+type SessionStatus = 'unknown' | 'authenticated' | 'guest'
 
 interface AuthState {
-  token: string | null
-  isAuthenticated: boolean
+  accessToken: string | null
+  sessionStatus: SessionStatus
   setSession: (token: string) => void
   clearSession: () => void
   login: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string) => Promise<void>
   refreshToken: () => Promise<string | null>
   logout: () => Promise<void>
+  bootstrap: () => Promise<void>
 }
 
-const initialState: Pick<AuthState, 'isAuthenticated' | 'token'> = {
-  isAuthenticated: true,
-  token: null
+const initialState: Pick<AuthState, 'accessToken' | 'sessionStatus'> = {
+  accessToken: null,
+  sessionStatus: 'unknown'
 }
 
 // Дедупликация параллельных вызовов refresh
@@ -23,15 +28,18 @@ let refreshPromise: Promise<string | null> | null = null
 const useAuthStore = create<AuthState>()(
   devtools(
     persist(
-      set => ({
+      (set, get) => ({
         ...initialState,
-        // TODO(backend): заменить на реальный вызов authService.login
         login: async (email: string, password: string) => {
-          const { token } = await authService.login({ email, password })
-          set({ isAuthenticated: true, token }, false, 'auth/login')
+          const { accessToken } = await authService.login({ email, password })
+          get().setSession(accessToken)
         },
-        setSession: (token: string) => set({ token }, false, 'auth/setSession'),
-        clearSession: () => set(initialState, false, 'auth/clearSession'),
+        register: async (email: string, password: string) => {
+          const { accessToken } = await authService.register({ email, password })
+          get().setSession(accessToken)
+        },
+        setSession: (token: string) => set({ accessToken: token, sessionStatus: 'authenticated' }, false, 'auth/setSession'),
+        clearSession: () => { set(initialState, false, 'auth/clearSession') },
         refreshToken: async () => {
           if (!refreshPromise) {
             refreshPromise = authService.refreshToken().finally(() => {
@@ -40,21 +48,49 @@ const useAuthStore = create<AuthState>()(
           }
           const newToken = await refreshPromise
           if (newToken) {
-            set({ token: newToken, isAuthenticated: true }, false, 'auth/refresh:success')
+            set({ accessToken: newToken, sessionStatus: 'authenticated' }, false, 'auth/refresh:success')
             return newToken
           }
+          set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/refresh:fail')
           return null
         },
         logout: async () => {
           await authService.logout()
           set(initialState, false, 'auth/logout')
+        },
+        bootstrap: async () => {
+          let token: string | null = null
+          set(s => {
+            token = s.accessToken
+            return s
+          })
+
+          try {
+            if (!token) {
+              set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/bootstrap:no-token')
+              return
+            }
+
+            if (isTokenExpiredOrNearExpiry(token)) {
+              const newToken = await authService.refreshToken()
+              if (newToken) {
+                set({ accessToken: newToken, sessionStatus: 'authenticated' }, false, 'auth/bootstrap:refresh')
+              } else {
+                set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/bootstrap:guest')
+              }
+            } else {
+              set({ sessionStatus: 'authenticated' }, false, 'auth/bootstrap:token-valid')
+            }
+          } catch {
+            set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/bootstrap:error')
+          }
         }
       }),
       {
         name: 'auth',
         version: 1,
         storage: createJSONStorage(() => localStorage),
-        partialize: s => ({ token: s.token })
+        partialize: s => ({ accessToken: s.accessToken })
       }
     ),
     { name: 'authStore' }
