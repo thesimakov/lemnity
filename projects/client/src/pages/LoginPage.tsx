@@ -7,12 +7,13 @@ import { Checkbox } from '@heroui/checkbox'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import loginBackground from '../assets/backgrounds/login-background.webp'
-import lemnityLogo from '../assets/logos/lemnity-logo.svg'
+import lemnityLogo from '@/assets/logos/lemnity-logo.svg'
 import SvgIcon from '@/components/SvgIcon'
-import iconEye from '../assets/icons/eye.svg'
-import iconEyeOff from '../assets/icons/eye-off.svg'
+import iconEye from '@/assets/icons/eye.svg'
+import iconEyeOff from '@/assets/icons/eye-off.svg'
 import useAuthStore from '@/stores/authStore'
 import { useNavigate } from 'react-router-dom'
+import * as authService from '@/services/auth'
 
 const loginSchema = z.object({
   email: z.email('Некорректный email'),
@@ -31,11 +32,16 @@ const signupSchema = z
     message: 'Пароли не совпадают'
   })
 
+const forgotSchema = z.object({ email: z.email('Некорректный email') })
+
 type LoginForm = z.infer<typeof loginSchema>
 type SignupForm = z.infer<typeof signupSchema>
+type ForgotForm = z.infer<typeof forgotSchema>
+
+type AuthMode = 'login' | 'signup' | 'forgot'
 
 const LoginPage = (): ReactElement => {
-  const [mode, setMode] = useState<'login' | 'signup'>('login')
+  const [mode, setMode] = useState<AuthMode>('login')
   const [showLoginPassword, setShowLoginPassword] = useState(false)
   const [showSignupPassword, setShowSignupPassword] = useState(false)
   const [showSignupPassword2, setShowSignupPassword2] = useState(false)
@@ -44,6 +50,8 @@ const LoginPage = (): ReactElement => {
   const { login, register: registerUser } = useAuthStore()
   const [authError, setAuthError] = useState<string | null>(null)
   const [signupError, setSignupError] = useState<string | null>(null)
+  const [forgotInfo, setForgotInfo] = useState<string | null>(null)
+  const [forgotError, setForgotError] = useState<string | null>(null)
 
   const {
     register: registerLogin,
@@ -75,6 +83,18 @@ const LoginPage = (): ReactElement => {
     }
   })
 
+  const {
+    register: registerForgot,
+    handleSubmit: handleSubmitForgot,
+    formState: { errors: forgotErrors, isSubmitting: isForgotSubmitting, isValid: isForgotValid },
+    reset: resetForgot,
+    getValues: getForgotValues
+  } = useForm<ForgotForm>({
+    resolver: zodResolver(forgotSchema),
+    mode: 'onChange',
+    defaultValues: { email: '' }
+  })
+
   const onLoginSubmit: SubmitHandler<LoginForm> = async data => {
     setAuthError(null)
     try {
@@ -86,7 +106,6 @@ const LoginPage = (): ReactElement => {
   }
 
   const onSignupSubmit: SubmitHandler<SignupForm> = async data => {
-    console.log(data)
     setSignupError(null)
     try {
       await registerUser(data.email, data.password)
@@ -96,7 +115,14 @@ const LoginPage = (): ReactElement => {
     }
   }
 
-  const tabClass = (id: 'login' | 'signup'): string =>
+  const onForgotSubmit: SubmitHandler<ForgotForm> = async data => {
+    setForgotInfo(null)
+    setForgotError(null)
+    await authService.forgotPassword(data.email).catch(() => undefined)
+    setForgotInfo('Письмо с ссылкой для сброса отправлено на указанный email')
+  }
+
+  const tabClass = (id: AuthMode): string =>
     `px-4 py-2 text-sm font-medium rounded-md transition ${
       mode === id ? 'bg-white text-gray-900 shadow' : 'text-gray-500 hover:text-gray-900'
     }`
@@ -109,6 +135,11 @@ const LoginPage = (): ReactElement => {
   const switchToSignup = (): void => {
     resetSignup(getSignupValues())
     setMode('signup')
+  }
+
+  const switchToForgot = (): void => {
+    resetForgot(getForgotValues())
+    setMode('forgot')
   }
 
   return (
@@ -127,34 +158,34 @@ const LoginPage = (): ReactElement => {
             ) : null}
           </div>
 
-          <div className="mb-2 w-full flex justify-center">
-            <div className="flex w-full h-11 rounded-lg bg-gray-100 p-1 gap-1">
-              <Button
-                variant="light"
-                size="sm"
-                radius="sm"
-                className={`${tabClass('login')} flex-1 h-full font-normal`}
-                onPress={switchToLogin}
-              >
-                Войти
-              </Button>
-              <Button
-                variant="light"
-                size="sm"
-                radius="sm"
-                className={`${tabClass('signup')} flex-1 h-full font-normal`}
-                onPress={switchToSignup}
-              >
-                Регистрация
-              </Button>
+          {mode !== 'forgot' ? (
+            <div className="mb-2 w-full flex justify-center">
+              <div className="flex w-full h-11 rounded-lg bg-gray-100 p-1 gap-1">
+                <Button
+                  variant="light"
+                  size="sm"
+                  radius="sm"
+                  className={`${tabClass('login')} flex-1 h-full font-normal`}
+                  onPress={switchToLogin}
+                >
+                  Войти
+                </Button>
+                <Button
+                  variant="light"
+                  size="sm"
+                  radius="sm"
+                  className={`${tabClass('signup')} flex-1 h-full font-normal`}
+                  onPress={switchToSignup}
+                >
+                  Регистрация
+                </Button>
+              </div>
             </div>
-          </div>
+          ) : null}
 
           {mode === 'login' ? (
             <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-2">
-              {authError ? (
-                <p className="text-danger text-sm">{authError}</p>
-              ) : null}
+              {authError ? <p className="text-danger text-sm">{authError}</p> : null}
               <Input
                 placeholder="Ваш email"
                 variant="bordered"
@@ -172,7 +203,7 @@ const LoginPage = (): ReactElement => {
                 variant="bordered"
                 radius="sm"
                 classNames={{
-                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white pr-2',
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
                   input: 'text-gray-900 placeholder:text-gray-400'
                 }}
                 endContent={
@@ -200,17 +231,20 @@ const LoginPage = (): ReactElement => {
               </Button>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Забыли пароль?</span>
-                <a className="text-primary hover:underline" href="#">
-                  Восстановить
-                </a>
+                <Button
+                  variant="light"
+                  disableAnimation
+                  className="hover:underline hover:!bg-transparent h-min px-0 min-w-0"
+                  onPress={switchToForgot}
+                >
+                  <span className="text-primary text-sm font-rubik">Восстановить</span>
+                </Button>
               </div>
             </form>
-          ) : (
+          ) : mode === 'signup' ? (
             <form onSubmit={handleSubmitSignup(onSignupSubmit)} className="space-y-2">
-              {signupError ? (
-                <p className="text-danger text-sm">{signupError}</p>
-              ) : null}
-              
+              {signupError ? <p className="text-danger text-sm">{signupError}</p> : null}
+
               <Input
                 placeholder="Email"
                 variant="bordered"
@@ -314,10 +348,43 @@ const LoginPage = (): ReactElement => {
                 <Button
                   variant="light"
                   disableAnimation
-                  className="hover:underline hover:!bg-transparent h-min"
+                  className="hover:underline hover:!bg-transparent h-min px-0 min-w-0"
                   onPress={switchToLogin}
                 >
                   <span className="text-primary text-sm font-rubik">Войти</span>
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmitForgot(onForgotSubmit)} className="space-y-2">
+              {forgotError ? <p className="text-danger text-sm">{forgotError}</p> : null}
+              {forgotInfo ? <p className="text-success text-sm">{forgotInfo}</p> : null}
+              <Input
+                placeholder="Email"
+                variant="bordered"
+                classNames={{
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
+                  input: 'text-gray-900 placeholder:text-gray-400'
+                }}
+                {...registerForgot('email')}
+                isInvalid={!!forgotErrors.email}
+                errorMessage={forgotErrors.email?.message}
+              />
+              <div className="flex gap-2">
+                <Button
+                  variant="flat"
+                  className="h-12 flex-1 font-normal rounded-[6px]"
+                  onPress={switchToLogin}
+                >
+                  Назад
+                </Button>
+                <Button
+                  className="h-12 flex-1 font-normal bg-[#5951E5] rounded-[6px] text-white"
+                  type="submit"
+                  isLoading={isForgotSubmitting}
+                  isDisabled={!isForgotValid || isForgotSubmitting}
+                >
+                  Отправить ссылку
                 </Button>
               </div>
             </form>

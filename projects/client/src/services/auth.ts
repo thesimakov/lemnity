@@ -7,7 +7,7 @@ interface IAuthPayload {
   password: string
 }
 
-type AuthResponse = { accessToken: string }
+export type AuthResponse = { accessToken: string }
 
 export async function login(payload: IAuthPayload): Promise<AuthResponse> {
   const { data } = await http.post<AuthResponse>(API.AUTH.LOGIN, payload, {
@@ -44,4 +44,12 @@ export async function logout(): Promise<void> {
   } catch {
     // игнорируем сетевые ошибки при попытке логаута
   }
+}
+
+export async function forgotPassword(email: string): Promise<void> {
+  await http.post(API.AUTH.FORGOT_PASSWORD, { email })
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<void> {
+  await http.post(API.AUTH.RESET_PASSWORD, { token, newPassword })
 }

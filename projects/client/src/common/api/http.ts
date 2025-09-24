@@ -2,9 +2,7 @@ import axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
 import useAuthStore from '@stores/authStore.ts'
 
 export const http = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api',
-  // Таймаут берём из ENV, по умолчанию 1000 мс
-  timeout: Number(import.meta.env.VITE_HTTP_TIMEOUT_MS) || 1000
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
 })
 
 http.interceptors.request.use(config => {

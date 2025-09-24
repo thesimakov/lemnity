@@ -11,6 +11,7 @@ import ProtectedRoute from './pages/ProtectedRoute.tsx'
 import CenteredLayout from './layouts/CenteredLayout.tsx'
 import FullWidthLayout from './layouts/FullWidthLayout.tsx'
 import PublicRoute from './pages/PublicRoute.tsx'
+import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
 
 function App() {
   return (
@@ -19,9 +20,9 @@ function App() {
         path="/"
         element={
           <ProtectedRoute>
-          <FullWidthLayout>
-            <HomePage />
-          </FullWidthLayout>
+            <FullWidthLayout>
+              <HomePage />
+            </FullWidthLayout>
           </ProtectedRoute>
         }
       />
@@ -31,6 +32,16 @@ function App() {
           <PublicRoute>
             <FullWidthLayout>
               <LoginPage />
+            </FullWidthLayout>
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <PublicRoute>
+            <FullWidthLayout>
+              <ResetPasswordPage />
             </FullWidthLayout>
           </PublicRoute>
         }

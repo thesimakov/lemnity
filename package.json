@@ -35,7 +35,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-        "@prisma/client"
+      "@prisma/client"
     ]
   }
 }

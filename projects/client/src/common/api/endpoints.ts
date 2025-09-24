@@ -6,7 +6,9 @@ export const API = {
     LOGIN: '/auth/login' as const,
     REGISTER: '/auth/register' as const,
     LOGOUT: '/auth/logout' as const,
-    REFRESH: '/auth/login/refresh' as const
+    REFRESH: '/auth/login/refresh' as const,
+    FORGOT_PASSWORD: '/auth/forgot-password' as const,
+    RESET_PASSWORD: '/auth/reset-password' as const
   },
   WIDGETS: {
     LIST: '/widgets' as const, // GET
