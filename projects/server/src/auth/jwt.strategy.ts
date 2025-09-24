@@ -8,16 +8,15 @@ import { UserService } from '../user/user.service'
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private configService: ConfigService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: configService.get('JWT_SECRET')
     })
   }
 
-  validate({id}: {id: string}) {
+  validate({ id }: { id: string }) {
     return this.userService.getById(id)
   }
 }
-

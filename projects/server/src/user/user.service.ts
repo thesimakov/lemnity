@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
-import { hash } from 'argon2';
-import { Prisma } from '@prisma/client';
-import { AuthDto } from 'src/auth/dto/auth.dto';
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from '../prisma.service'
+import { hash } from 'argon2'
+import { Prisma } from '@prisma/client'
+import { AuthDto } from 'src/auth/dto/auth.dto'
 
 @Injectable()
 export class UserService {
@@ -21,8 +21,8 @@ export class UserService {
         name: true,
         role: true,
         createdAt: true,
-        updatedAt: true,
-      },
+        updatedAt: true
+      }
     })
   }
 
@@ -39,5 +39,9 @@ export class UserService {
     return this.prisma.user.create({
       data: user
     })
+  }
+
+  update(args: Prisma.UserUpdateArgs) {
+    return this.prisma.user.update(args)
   }
 }
