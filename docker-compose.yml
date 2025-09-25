@@ -46,11 +46,11 @@ services:
       - ./pnpm-workspace.yaml:/server/pnpm-workspace.yaml:ro
       - ./projects/server/node_modules:/server/projects/server/node_modules
     healthcheck:
-      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/ >/dev/null 2>&1 || exit 1']
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/api/ >/dev/null 2>&1 || exit 1']
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 120s
+      start_period: 60s
     restart: unless-stopped
 
   # React клиент
@@ -69,9 +69,9 @@ services:
       - ./projects/client/node_modules:/client/projects/client/node_modules
     ports:
       - '5173:5173'
-    # depends_on:
-    #   server:
-    #     condition: service_healthy
+    depends_on:
+      server:
+        condition: service_healthy
     networks:
       - app_network
     healthcheck:
