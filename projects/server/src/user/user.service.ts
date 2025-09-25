@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import { hash } from 'argon2'
 import { Prisma } from '@prisma/client'
-import { AuthDto } from 'src/auth/dto/auth.dto'
+import { RegisterDto } from 'src/auth/dto/register.dto'
 
 @Injectable()
 export class UserService {
@@ -30,8 +30,9 @@ export class UserService {
     return this.prisma.user.findUnique({ where: { email } })
   }
 
-  async create(dto: AuthDto) {
+  async create(dto: RegisterDto) {
     const user: Prisma.UserCreateInput = {
+      name: dto.name,
       email: dto.email,
       password: await hash(dto.password)
     }
