@@ -10,6 +10,7 @@ import { AuthDto } from './dto/auth.dto'
 import { verify } from 'argon2'
 import { Response } from 'express'
 import { PasswordResetService } from '../password-reset/password-reset.service'
+import { RegisterDto } from './dto/register.dto'
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
     }
   }
 
-  async register(dto: AuthDto) {
+  async register(dto: RegisterDto) {
     const oldUser = await this.userService.getByEmail(dto.email)
     if (oldUser) {
       throw new BadRequestException('User already exists')

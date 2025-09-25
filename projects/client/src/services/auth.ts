@@ -7,6 +7,10 @@ interface IAuthPayload {
   password: string
 }
 
+interface IRegisterPayload extends IAuthPayload {
+  name: string
+}
+
 export type AuthResponse = { accessToken: string }
 
 export async function login(payload: IAuthPayload): Promise<AuthResponse> {
@@ -16,7 +20,7 @@ export async function login(payload: IAuthPayload): Promise<AuthResponse> {
   return data
 }
 
-export async function register(payload: IAuthPayload): Promise<AuthResponse> {
+export async function register(payload: IRegisterPayload): Promise<AuthResponse> {
   const { data } = await http.post<AuthResponse>(API.AUTH.REGISTER, payload, {
     withCredentials: true
   })

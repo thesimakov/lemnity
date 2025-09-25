@@ -11,7 +11,7 @@ interface AuthState {
   setSession: (token: string) => void
   clearSession: () => void
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string, name: string) => Promise<void>
   refreshToken: () => Promise<string | null>
   logout: () => Promise<void>
   bootstrap: () => Promise<void>
@@ -34,8 +34,8 @@ const useAuthStore = create<AuthState>()(
           const { accessToken } = await authService.login({ email, password })
           get().setSession(accessToken)
         },
-        register: async (email: string, password: string) => {
-          const { accessToken } = await authService.register({ email, password })
+        register: async (email: string, password: string, name: string) => {
+          const { accessToken } = await authService.register({ email, password, name })
           get().setSession(accessToken)
         },
         setSession: (token: string) =>

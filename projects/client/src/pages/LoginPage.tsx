@@ -22,6 +22,7 @@ const loginSchema = z.object({
 
 const signupSchema = z
   .object({
+    name: z.string().min(1, 'Имя обязательно'),
     email: z.email('Некорректный email'),
     password: z.string().min(8, 'Минимум 8 символов'),
     passwordConfirmation: z.string().min(8, 'Минимум 8 символов'),
@@ -76,6 +77,7 @@ const LoginPage = (): ReactElement => {
     resolver: zodResolver(signupSchema),
     mode: 'onChange',
     defaultValues: {
+      name: '',
       email: '',
       password: '',
       passwordConfirmation: '',
@@ -108,7 +110,7 @@ const LoginPage = (): ReactElement => {
   const onSignupSubmit: SubmitHandler<SignupForm> = async data => {
     setSignupError(null)
     try {
-      await registerUser(data.email, data.password)
+      await registerUser(data.email, data.password, data.name)
       navigate('/')
     } catch {
       setSignupError('Не удалось зарегистрироваться. Попробуйте ещё раз')
@@ -244,7 +246,18 @@ const LoginPage = (): ReactElement => {
           ) : mode === 'signup' ? (
             <form onSubmit={handleSubmitSignup(onSignupSubmit)} className="space-y-2">
               {signupError ? <p className="text-danger text-sm">{signupError}</p> : null}
-
+              <Input
+                placeholder="Имя"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
+                  input: 'text-gray-900 placeholder:text-gray-400'
+                }}
+                {...registerSignup('name')}
+                isInvalid={!!signupErrors.name}
+                errorMessage={signupErrors.name?.message}
+              />
               <Input
                 placeholder="Email"
                 variant="bordered"
