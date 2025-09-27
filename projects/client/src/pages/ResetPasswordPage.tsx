@@ -48,7 +48,7 @@ export default function ResetPasswordPage(): ReactElement {
     if (!token) {
       navigate('/login', { replace: true })
     }
-  }, [token])
+  }, [token, navigate])
 
   // Редирект с обратным отсчётом после успеха
   useEffect(() => {

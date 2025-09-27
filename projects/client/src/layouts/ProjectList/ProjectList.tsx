@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useRef, useEffect, useMemo, useState } from 'react'
 import { Button } from '@heroui/button'
 import { Select, SelectItem } from '@heroui/select'
 import { useProjectsStore } from '@/stores/projectsStore'
@@ -7,8 +7,11 @@ import ProjectRow from './ProjectRow'
 import ProjectListHeader from './ProjectListHeader'
 import SvgIcon from '@/components/SvgIcon'
 import addIcon from '@/assets/icons/add.svg'
+import './ProjectList.css'
 
 const ProjectList = () => {
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const topRef = useRef<HTMLDivElement | null>(null)
   const projects = useProjectsStore(s => s.projects)
   const [filter, setFilter] = useState<string>('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -19,6 +22,22 @@ const ProjectList = () => {
     return projects
   }, [projects, filter])
 
+  useEffect(() => {
+    const root = scrollRef.current
+    const target = topRef.current
+    if (!root || !target) return
+
+    const io = new IntersectionObserver(
+      ([e]) => {
+        root.classList.toggle('hasTopShadow', !e.isIntersecting)
+      },
+      { root, threshold: 0 }
+    )
+
+    io.observe(target)
+    return () => io.disconnect()
+  }, [])
+
   if (!projects.length) return null
 
   return (
@@ -28,8 +47,7 @@ const ProjectList = () => {
           <Select
             label="Ваши проекты"
             labelPlacement="outside-left"
-            variant="bordered"
-            radius="sm"
+            size="sm"
             selectedKeys={[filter]}
             onSelectionChange={keys => {
               const key = Array.from(keys)[0] as string
@@ -54,19 +72,22 @@ const ProjectList = () => {
       </div>
 
       <ProjectListHeader />
-      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-3">
-        {filteredProjects.map(project => (
-          <ProjectRow
-            key={project.id}
-            id={project.id}
-            name={project.name}
-            enabled={project.enabled}
-            visitors={project.metrics.visitors}
-            impressions={project.metrics.impressions}
-            conversions={project.metrics.conversions}
-            activityPercent={project.metrics.activity.value}
-          />
-        ))}
+      <div ref={scrollRef} className="flex-1 min-h-0 -mt-3 rounded-md scrollShadow">
+        <div ref={topRef} aria-hidden="true" className="sentinel"></div>
+        <div className="flex flex-col gap-3 pb-1">
+          {filteredProjects.map(project => (
+            <ProjectRow
+              key={project.id}
+              id={project.id}
+              name={project.name}
+              enabled={project.enabled}
+              visitors={project.metrics.visitors}
+              impressions={project.metrics.impressions}
+              conversions={project.metrics.conversions}
+              activityPercent={project.metrics.activity.value}
+            />
+          ))}
+        </div>
       </div>
 
       {isModalOpen && (

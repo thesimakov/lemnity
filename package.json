@@ -24,13 +24,15 @@
     "docker:up:prod": "docker compose -f docker-compose.prod.yml up -d",
     "docker:down:prod": "docker compose -f docker-compose.prod.yml down",
     "docker:db:prod": "docker compose -f docker-compose.prod.yml up -d postgres",
-    "dev:docker": "pnpm docker:db && pnpm dev"
+    "dev:docker": "pnpm docker:db && pnpm dev",
+    "generate:api": "bash scripts/generate-api.sh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.15.1",
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.23.4",
     "prettier": "^3.6.2"
   },
   "pnpm": {
