@@ -34,14 +34,14 @@ const useAuthStore = create<AuthState>()(
         login: async (email: string, password: string) => {
           const data = await authService.login({ email, password })
           const { user, accessToken } = data
-          
+
           get().setSession(accessToken)
           useUserStore.getState().setUser(user)
         },
         register: async (email: string, password: string, name: string) => {
           const data = await authService.register({ email, password, name })
           const { user, accessToken } = data
-          
+
           get().setSession(accessToken)
           useUserStore.getState().setUser(user)
         },
