@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { http } from '@common/api/http.ts'
 import { API } from '@common/api/endpoints.ts'
+import type { LoginResponse, RegisterResponse } from '@lemnity/api-sdk/models'
 
 interface IAuthPayload {
   email: string
@@ -11,17 +12,15 @@ interface IRegisterPayload extends IAuthPayload {
   name: string
 }
 
-export type AuthResponse = { accessToken: string }
-
-export async function login(payload: IAuthPayload): Promise<AuthResponse> {
-  const { data } = await http.post<AuthResponse>(API.AUTH.LOGIN, payload, {
+export async function login(payload: IAuthPayload): Promise<LoginResponse> {
+  const { data } = await http.post<LoginResponse>(API.AUTH.LOGIN, payload, {
     withCredentials: true
   })
   return data
 }
 
-export async function register(payload: IRegisterPayload): Promise<AuthResponse> {
-  const { data } = await http.post<AuthResponse>(API.AUTH.REGISTER, payload, {
+export async function register(payload: IRegisterPayload): Promise<RegisterResponse> {
+  const { data } = await http.post<RegisterResponse>(API.AUTH.REGISTER, payload, {
     withCredentials: true
   })
   return data

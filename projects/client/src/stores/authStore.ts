@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import * as authService from '@services/auth.ts'
 import { createJSONStorage, devtools, persist } from 'zustand/middleware'
 import { isTokenExpiredOrNearExpiry } from '@common/utils/jwt'
+import useUserStore from './userStore'
 
 type SessionStatus = 'unknown' | 'authenticated' | 'guest'
 
@@ -31,17 +32,24 @@ const useAuthStore = create<AuthState>()(
       (set, get) => ({
         ...initialState,
         login: async (email: string, password: string) => {
-          const { accessToken } = await authService.login({ email, password })
+          const data = await authService.login({ email, password })
+          const { user, accessToken } = data
+          
           get().setSession(accessToken)
+          useUserStore.getState().setUser(user)
         },
         register: async (email: string, password: string, name: string) => {
-          const { accessToken } = await authService.register({ email, password, name })
+          const data = await authService.register({ email, password, name })
+          const { user, accessToken } = data
+          
           get().setSession(accessToken)
+          useUserStore.getState().setUser(user)
         },
         setSession: (token: string) =>
           set({ accessToken: token, sessionStatus: 'authenticated' }, false, 'auth/setSession'),
         clearSession: () => {
           set(initialState, false, 'auth/clearSession')
+          useUserStore.getState().clearUser()
         },
         refreshToken: async () => {
           if (!refreshPromise) {
@@ -63,7 +71,7 @@ const useAuthStore = create<AuthState>()(
         },
         logout: async () => {
           await authService.logout()
-          set(initialState, false, 'auth/logout')
+          get().clearSession()
         },
         bootstrap: async () => {
           let token: string | null = null

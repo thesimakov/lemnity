@@ -1,6 +1,6 @@
 const ProjectListHeader = () => {
   return (
-    <div className="rounded-lg bg-white px-4 py-3">
+    <div className="rounded-lg bg-white px-4 pt-3">
       <div className="grid grid-cols-12 items-center text-sm font-medium text-gray-700">
         <div className="col-span-4 flex items-center">
           <span>Наименование</span>

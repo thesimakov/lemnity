@@ -32,6 +32,18 @@ export type ProjectsStore = ProjectsState & ProjectsActions
 const initialProjects: Project[] = [
   {
     id: '1',
+    name: 'Ресторан \u201CВкусно и точка\u201D',
+    websiteUrl: 'https://vkusno.example',
+    enabled: true,
+    metrics: {
+      visitors: { value: 0, desktop: 120, mobile: 380 },
+      impressions: { value: 0, desktop: 3320, mobile: 12780 },
+      conversions: { value: 0, desktop: 0, mobile: 0 },
+      activity: { value: 0, desktop: 0, mobile: 0 }
+    }
+  },
+  {
+    id: '1',
     name: 'Ресторан \u201CВкусно\u201D',
     websiteUrl: 'https://vkusno.example',
     enabled: true,
