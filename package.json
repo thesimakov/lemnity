@@ -34,10 +34,5 @@
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.23.4",
     "prettier": "^3.6.2"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@prisma/client"
-    ]
   }
 }

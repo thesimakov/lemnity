@@ -11,4 +11,4 @@ RUN npm install -g pnpm@10.15.1
 EXPOSE 3000
 
 # Запускаем в режиме разработки
-CMD ["sh", "-c", "pnpm install --frozen-lockfile && pnpm --filter ./projects/server exec prisma generate && pnpm --filter ./projects/server run start:dev"]
+CMD ["sh", "-c", "pnpm install --frozen-lockfile && pnpm --filter server exec prisma generate && pnpm --filter server run start:dev"]
