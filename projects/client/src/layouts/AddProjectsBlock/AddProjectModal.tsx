@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
@@ -8,7 +8,7 @@ import CustomSwitch from '@/components/CustomSwitch'
 interface AddProjectModalProps {
   isOpen: boolean
   onClose: () => void
-  onAddProject: (projectName: string, websiteUrl: string, enabled: boolean) => void
+  onAddProject: (projectName: string, websiteUrl: string, enabled?: boolean) => void
 }
 
 const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAddProject }) => {
@@ -29,9 +29,11 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
     }
   }, [isOpen])
 
+  const [submitting, setSubmitting] = useState(false)
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && !submitting) {
         onClose()
       }
     }
@@ -43,15 +45,16 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
     return () => {
       document.removeEventListener('keydown', handleEscape)
     }
-  }, [isOpen, onClose])
+  }, [isOpen, onClose, submitting])
 
-  if (!isOpen) return null
-
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose()
-    }
-  }
+  const handleBackdropClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget && !submitting) {
+        onClose()
+      }
+    },
+    [onClose, submitting]
+  )
 
   const getContent = () => {
     return (
@@ -91,18 +94,29 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
     )
   }
 
+  const handleCreate = useCallback(async () => {
+    if (submitting) return
+    console.log('handleCreate modal', projectName, websiteUrl, isEnabled)
+    setSubmitting(true)
+    try {
+      console.log('handleCreate modal try', projectName, websiteUrl, isEnabled)
+      await onAddProject(projectName, websiteUrl, isEnabled)
+      console.log('handleCreate modal try success', projectName, websiteUrl, isEnabled)
+    } finally {
+      setSubmitting(false)
+    }
+  }, [onAddProject, projectName, websiteUrl, isEnabled, submitting])
+
   const getFooter = () => {
     return (
       <div className="flex items-center justify-start gap-3">
         <Button
           variant="solid"
-          onPress={() => {
-            onAddProject(projectName, websiteUrl, isEnabled)
-            onClose()
-          }}
+          isDisabled={submitting || !projectName || !websiteUrl}
+          onPress={handleCreate}
           className="px-6 bg-[#e7f3e5] text-[#3BB240]"
         >
-          Создать
+          {submitting ? 'Создание…' : 'Создать'}
         </Button>
         <Button
           color="danger"
@@ -144,6 +158,8 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
       </div>
     )
   }
+
+  if (!isOpen) return null
 
   const modalContent = (
     <div

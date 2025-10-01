@@ -1,16 +1,67 @@
 import Header from '@/layouts/Header/Header'
 import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
+import Stats from '@/layouts/Stats/Stats'
+import bannerNewYearTemplate from '@/assets/banners/new-year-template.png'
+import AddProjectsBlock from '@/layouts/AddProjectsBlock/AddProjectsBlock'
+import ProjectList from '@/layouts/ProjectList/ProjectList'
+import AddProjectModal from '@/layouts/AddProjectsBlock/AddProjectModal'
+import { useState, useCallback } from 'react'
+import { useProjectsStore } from '@/stores/projectsStore'
+import useUserStore from '@/stores/userStore'
+
 // import MaintenancePage from './MaintenancePage'
 // import CenteredLayout from '@/layouts/CenteredLayout'
 
 const HomePage = () => {
+  const projects = useProjectsStore(s => s.projects)
+  const createProject = useProjectsStore(s => s.createProject)
+  const user = useUserStore(s => s.user)
+  const userName = user?.name || ''
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const handleOpen = useCallback(() => setIsModalOpen(true), [])
+  const handleClose = useCallback(() => setIsModalOpen(false), [])
+
+  const handleAddProject = useCallback(
+    async (name: string, url: string, enabled: boolean = true) => {
+      await createProject(name, url, enabled)
+      setIsModalOpen(false)
+    },
+    [createProject]
+  )
+
   return (
     // <CenteredLayout>
     //   <MaintenancePage />
     // </CenteredLayout>
     <div className="h-full flex flex-col">
       <Header />
-      <DashboardLayout />
+      <DashboardLayout>
+        <div className="flex flex-col gap-[1px]">
+          <span className="text-xl font-roboto">Здравствуйте, {userName}</span>
+          {/* <span className="text-sm text-gray-500">Маркетолок компании "Вкусняшки"</span> */}
+        </div>
+        <hr className="border-[#C0C0C0]" />
+        <div className="flex flex-row justify-between">
+          <div className="mr-2.5">
+            <Stats />
+          </div>
+          <div className=" h-full">
+            <img src={bannerNewYearTemplate} alt="New Year Template" className="w-full h-auto" />
+          </div>
+        </div>
+        <hr className="border-[#C0C0C0]" />
+        {projects.length > 0 ? (
+          <ProjectList onCreateClick={handleOpen} />
+        ) : (
+          <AddProjectsBlock onCreateClick={handleOpen} />
+        )}
+        <AddProjectModal
+          isOpen={isModalOpen}
+          onClose={handleClose}
+          onAddProject={handleAddProject}
+        />
+      </DashboardLayout>
     </div>
   )
 }

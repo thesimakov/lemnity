@@ -11,6 +11,7 @@ model User {
   password  String
   role      Role     @default(USER)
   passwordResetTokens PasswordResetToken[]
+  projects  Project[]
   
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

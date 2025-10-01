@@ -2,19 +2,17 @@ import { useRef, useEffect, useMemo, useState } from 'react'
 import { Button } from '@heroui/button'
 import { Select, SelectItem } from '@heroui/select'
 import { useProjectsStore } from '@/stores/projectsStore'
-import AddProjectModal from '@/layouts/AddProjectsBlock/AddProjectModal'
 import ProjectRow from './ProjectRow'
 import ProjectListHeader from './ProjectListHeader'
 import SvgIcon from '@/components/SvgIcon'
 import addIcon from '@/assets/icons/add.svg'
 import './ProjectList.css'
 
-const ProjectList = () => {
+const ProjectList: React.FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const topRef = useRef<HTMLDivElement | null>(null)
   const projects = useProjectsStore(s => s.projects)
   const [filter, setFilter] = useState<string>('all')
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const filteredProjects = useMemo(() => {
     if (filter === 'all') return projects
@@ -65,7 +63,7 @@ const ProjectList = () => {
           className="bg-[#FFB400] text-black rounded-sm"
           startContent={<SvgIcon size={'20px'} src={addIcon} />}
           color="primary"
-          onPress={() => setIsModalOpen(true)}
+          onPress={onCreateClick}
         >
           Создать проект
         </Button>
@@ -89,14 +87,6 @@ const ProjectList = () => {
           ))}
         </div>
       </div>
-
-      {isModalOpen && (
-        <AddProjectModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onAddProject={() => setIsModalOpen(false)}
-        />
-      )}
     </section>
   )
 }

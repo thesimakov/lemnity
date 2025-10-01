@@ -28,7 +28,10 @@ export class AuthController {
   @Post('login')
   @ApiResponse({ status: 403, description: 'invalid_credentials' })
   @ApiResponse({ status: 200, type: LoginResponse })
-  async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response): Promise<LoginResponse> {
+  async login(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<LoginResponse> {
     const { refreshToken, ...response } = await this.authService.login(dto)
     this.authService.addRefreshTokenToResponse(res, refreshToken)
 
@@ -39,7 +42,10 @@ export class AuthController {
   @HttpCode(200)
   @Post('register')
   @ApiResponse({ status: 200, type: RegisterResponse })
-  async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response): Promise<RegisterResponse> {
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<RegisterResponse> {
     const { refreshToken, ...response } = await this.authService.register(dto)
     this.authService.addRefreshTokenToResponse(res, refreshToken)
 
@@ -58,7 +64,10 @@ export class AuthController {
   @HttpCode(200)
   @Post('login/refresh')
   @ApiResponse({ status: 200, type: LoginResponse })
-  async getNewTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<LoginResponse> {
+  async getNewTokens(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<LoginResponse> {
     const refreshTokenFromCookies = req.cookies[this.authService.REFRESH_TOKEN_NAME]
 
     if (!refreshTokenFromCookies) {

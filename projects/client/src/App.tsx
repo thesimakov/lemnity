@@ -1,16 +1,19 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import './App.css'
 import HomePage from './pages/HomePage.tsx'
 import LoginPage from './pages/LoginPage.tsx'
 import DashboardPage from './pages/DashboardPage.tsx'
-import WidgetsPage from './pages/WidgetsPage.tsx'
-import CreateCardPage from './pages/CreateCardPage.tsx'
+// import WidgetsPage from './pages/WidgetsPage.tsx'
 import NotFoundPage from './pages/NotFoundPage.tsx'
-import MaintenancePage from './pages/MaintenancePage.tsx'
 import ProtectedRoute from './pages/ProtectedRoute.tsx'
-import CenteredLayout from './layouts/CenteredLayout.tsx'
 import FullWidthLayout from './layouts/FullWidthLayout.tsx'
 import PublicRoute from './pages/PublicRoute.tsx'
+import ProjectLayout from '@/layouts/ProjectLayout/ProjectLayout'
+import ProjectWidgetsPage from '@/pages/ProjectWidgetsPage'
+import CreateWidgetPage from '@/pages/CreateWidgetPage'
+import WidgetPage from '@/pages/WidgetPage'
+import EditWidgetPage from '@/pages/EditWidgetPage'
+import WidgetPreviewPage from '@/pages/WidgetPreviewPage'
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
 
 function App() {
@@ -57,43 +60,27 @@ function App() {
         }
       />
       <Route
-        path="/widgets"
+        path="/projects"
         element={
           <ProtectedRoute>
-            <FullWidthLayout>
-              <WidgetsPage />
-            </FullWidthLayout>
+            <Outlet />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path="/cards/create"
-        element={
-          <ProtectedRoute>
-            <FullWidthLayout>
-              <CreateCardPage />
-            </FullWidthLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/test"
-        element={
-          <ProtectedRoute>
-            <FullWidthLayout>
-              <DashboardPage />
-            </FullWidthLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/maintenance"
-        element={
-          <CenteredLayout>
-            <MaintenancePage />
-          </CenteredLayout>
-        }
-      />
+      >
+        <Route path=":projectId" element={<ProjectLayout />}>
+          <Route index element={<Navigate to="widgets" replace />} />
+          <Route path="widgets">
+            <Route index element={<ProjectWidgetsPage />} />
+            <Route path="new" element={<CreateWidgetPage />} />
+            <Route path=":widgetId">
+              <Route index element={<WidgetPage />} />
+              <Route path="edit" element={<EditWidgetPage />} />
+              <Route path="preview" element={<WidgetPreviewPage />} />
+            </Route>
+          </Route>
+        </Route>
+      </Route>
+      {/* Страница обслуживания может быть включена при необходимости */}
       <Route
         path="*"
         element={

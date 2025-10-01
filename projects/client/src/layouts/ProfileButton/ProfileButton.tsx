@@ -51,7 +51,7 @@ const ProfileButton = () => {
       ></Button>
       {shouldRender && (
         <div
-          className={`absolute top-full right-0 mt-1 bg-white rounded-md shadow-lg w-[222px] p-[10px] flex flex-col gap-[10px] transition-all duration-${durationTimeout} ease-out origin-top-right transform ${
+          className={`absolute top-full z-10 right-0 mt-1 bg-white rounded-md shadow-lg w-[222px] p-[10px] flex flex-col gap-[10px] transition-all duration-${durationTimeout} ease-out origin-top-right transform ${
             isAnimating
               ? 'opacity-100 scale-100 translate-y-0'
               : 'opacity-0 scale-90 -translate-y-1'

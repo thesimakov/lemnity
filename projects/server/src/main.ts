@@ -12,10 +12,10 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('lemnity')
     .addServer(process.env.API_URL || '/api')
-    .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, documentFactory);
-  
+    .build()
+  const documentFactory = () => SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('docs', app, documentFactory)
+
   app.setGlobalPrefix('api')
   app.use(cookieParser())
   app.enableCors({

@@ -1,13 +1,10 @@
-import React, { useState } from 'react'
+import React, { useCallback } from 'react'
 import templateImage from '../../assets/images/template.svg'
-import AddProjectModal from './AddProjectModal'
 import SvgIcon from '@/components/SvgIcon'
 import addIcon from '../../assets/icons/add.svg'
-import { useProjectsStore } from '@/stores/projectsStore'
 
-const AddProjectsBlock: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const { addProject } = useProjectsStore()
+const AddProjectsBlock: React.FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
+  const handleOpen = useCallback(() => onCreateClick?.(), [onCreateClick])
 
   const promoBlock = () => {
     return (
@@ -40,7 +37,7 @@ const AddProjectsBlock: React.FC = () => {
           <p>Для этого добавьте свой первый проект</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleOpen}
           className="group box-border flex flex-col justify-center items-center
             text-[#C0C0C0] font-roboto
             p-4 gap-[10px] w-[510px] h-[127px] rounded-[14px]
@@ -64,26 +61,6 @@ const AddProjectsBlock: React.FC = () => {
   return (
     <div className="flex flex-col gap-[15px]">
       {promoBlock()}
-      {isModalOpen && (
-        <AddProjectModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onAddProject={(projectName, websiteUrl, enabled) => {
-            addProject({
-              id: String(Date.now()),
-              name: projectName,
-              websiteUrl: websiteUrl,
-              enabled,
-              metrics: {
-                visitors: { value: 0, desktop: 0, mobile: 0 },
-                impressions: { value: 0, desktop: 0, mobile: 0 },
-                conversions: { value: 0, desktop: 0, mobile: 0 },
-                activity: { value: 0, desktop: 0, mobile: 0 }
-              }
-            })
-          }}
-        />
-      )}
       {addProjectButton()}
     </div>
   )

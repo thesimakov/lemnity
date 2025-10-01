@@ -6,6 +6,7 @@ import SvgIcon from '@/components/SvgIcon'
 import iconProjectEmblem from '@/assets/icons/project-emblem.svg'
 import { useProjectsStore } from '@/stores/projectsStore'
 import './ProjectRow.css'
+import { useNavigate } from 'react-router-dom'
 
 interface ProjectRowProps {
   id: string
@@ -26,11 +27,11 @@ const ProjectRow = ({
   activityPercent
 }: ProjectRowProps) => {
   const projects = useProjectsStore(s => s.projects)
-  const updateProject = useProjectsStore(s => s.updateProject)
-
+  const toggleProjectEnabled = useProjectsStore(s => s.toggleProjectEnabled)
+  const navigate = useNavigate()
   const handleSwitchChange = (value: boolean) => {
     const project = projects.find(p => p.id === id)
-    if (project) updateProject({ ...project, enabled: value })
+    if (project) toggleProjectEnabled(project.id, value)
   }
 
   return (
@@ -63,9 +64,30 @@ const ProjectRow = ({
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Действия проекта">
-                  <DropdownItem key="open">Открыть</DropdownItem>
-                  <DropdownItem key="widgets">Виджеты</DropdownItem>
-                  <DropdownItem key="settings">Настройки</DropdownItem>
+                  <DropdownItem
+                    key="open"
+                    onPress={() => {
+                      navigate(`/projects/${id}/widgets`)
+                    }}
+                  >
+                    Добавить виджет
+                  </DropdownItem>
+                  <DropdownItem
+                    key="widgets"
+                    onPress={() => {
+                      navigate(`/projects/${id}/widgets`)
+                    }}
+                  >
+                    Изменить виджет
+                  </DropdownItem>
+                  <DropdownItem
+                    key="settings"
+                    onPress={() => {
+                      alert('Код для вставки')
+                    }}
+                  >
+                    Код для вставки
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -87,10 +109,10 @@ const ProjectRow = ({
             value={
               (Math.round((1000 * visitors.desktop) / impressions.desktop) / 10 +
                 Math.round((1000 * visitors.mobile) / impressions.mobile) / 10) /
-              2
+                2 || 0
             }
-            desktop={Math.round((1000 * visitors.desktop) / impressions.desktop) / 10}
-            mobile={Math.round((1000 * visitors.mobile) / impressions.mobile) / 10}
+            desktop={Math.round((1000 * visitors.desktop) / impressions.desktop) / 10 || 0}
+            mobile={Math.round((1000 * visitors.mobile) / impressions.mobile) / 10 || 0}
             isPercent={true}
           />
           <MetricCard
