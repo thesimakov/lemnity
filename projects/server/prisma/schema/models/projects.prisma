@@ -1,0 +1,18 @@
+model Project {
+  id         String   @id @default(cuid())
+
+  title      String
+  websiteUrl String @map("website_url")
+  enabled    Boolean  @default(true)
+
+  // widgets    Widget[]
+
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt      @map("updated_at")
+
+  @@map("projects")
+  @@index([userId])
+}

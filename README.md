@@ -151,7 +151,7 @@ pnpm --filter client run format:fix
 
 # Только сервер
 pnpm --filter server run lint
-pnpm --filter server run format
+pnpm --filter server run format:fix
 ```
 
 ## 🚀 Развертывание

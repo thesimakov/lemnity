@@ -7,7 +7,7 @@
   "description": "Full-stack monorepo template with React frontend and NestJS backend using pnpm workspaces",
   "scripts": {
     "dev": "pnpm --parallel --recursive run dev",
-    "dev:client": "pnpm --filter client dev",
+    "dev:client": "pnpm --filter client start:dev",
     "dev:server": "pnpm --filter server start:dev",
     "build": "pnpm --recursive run build",
     "start": "pnpm --filter server start",

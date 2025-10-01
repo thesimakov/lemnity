@@ -10,6 +10,11 @@ export const API = {
     FORGOT_PASSWORD: '/auth/forgot-password' as const,
     RESET_PASSWORD: '/auth/reset-password' as const
   },
+  PROJECTS: {
+    LIST: '/projects' as const, // GET
+    CREATE: '/projects' as const, // POST
+    PROJECT: (id: string) => `/projects/${id}` as const // GET/PUT/PATCH/DELETE
+  },
   WIDGETS: {
     LIST: '/widgets' as const, // GET
     CREATE: '/widgets' as const, // POST

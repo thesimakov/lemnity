@@ -1,4 +1,3 @@
-import { LoginResponse } from "./login.entity";
+import { LoginResponse } from './login.entity'
 
-export class RegisterResponse extends LoginResponse {
-}
+export class RegisterResponse extends LoginResponse {}

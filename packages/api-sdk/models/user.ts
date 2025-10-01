@@ -34,10 +34,10 @@ export interface User {
     'email': string;
     /**
      * 
-     * @type {object}
+     * @type {string}
      * @memberof User
      */
-    'name': object | null;
+    'name'?: string;
     /**
      * 
      * @type {string}
