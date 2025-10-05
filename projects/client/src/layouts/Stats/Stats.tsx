@@ -9,33 +9,55 @@ import { Select, SelectItem } from '@heroui/select'
 
 const statsCards = [
   {
-    title: 'Ваш баланс',
-    amount: 100,
+    title: 'Баланс',
+    amount: 100.00,
     currency: 'р.',
     tip: 'Рекомендуем пополнить кошелек',
     icon: iconWallet,
-    iconColor: 'text-orange-500'
+    iconColor: 'orange-500',
+    delta: {
+      value: 100,
+      isPositive: false,
+      showArrow: false
+    }
   },
   {
-    title: 'Проекты',
-    amount: 3,
-    maxAmount: 3,
+    title: 'Показы',
+    amount: 500,
+    maxAmount: 500,
     icon: iconBriefcase,
-    iconColor: 'text-green-500'
+    iconColor: 'purple-500',
+    tip: 'Увеличить показы в вашем тарифном плане',
+    delta: {
+      value: 13,
+      isPositive: true,
+      showArrow: true
+    }
   },
   {
     title: 'Посетители',
-    amount: 0,
-    maxAmount: 100,
+    amount: 699,
     icon: iconUser,
-    iconColor: 'text-purple-500'
+    iconColor: 'yellow-500',
+    tip: 'Изменить тарифный план чтобы провести А/Б тест',
+    delta: {
+      value: 9,
+      isPositive: true,
+      showArrow: true
+    }
   },
   {
-    title: 'Партнерская программа',
-    amount: 0,
+    title: 'Партнерство',
+    amount: 12999.00,
     currency: 'руб.',
     icon: iconClock,
-    iconColor: 'text-blue-500'
+    iconColor: 'blue-500',
+    tip: 'Вывести свои доходы можно 28 ноября',
+    delta: {
+      value: 499,
+      isPositive: true,
+      showArrow: false
+    }
   }
 ]
 
@@ -65,8 +87,9 @@ const Stats: React.FC = () => {
         currency={card.currency}
         tip={card.tip}
         icon={card.icon}
-        isNegative={card.title == 'Ваш баланс'}
+        isNegative={card.amount==card.maxAmount}
         iconColor={card.iconColor}
+        delta={card.delta}
       />
     ))
   }
