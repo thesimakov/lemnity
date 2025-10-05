@@ -1,7 +1,7 @@
 import { WidgetTypeEnum } from '@lemnity/api-sdk/models'
 
 export const WidgetTypes = {
-  WHEEL_OF_FORTUNE: 'WHEEL_OF_FORTUNE',
+  WHEEL_OF_FORTUNE: WidgetTypeEnum.WHEEL_OF_FORTUNE,
   CONVEYOR_OF_GIFTS: 'CONVEYOR_OF_GIFTS',
   ACTION_TIMER: 'ACTION_TIMER',
   POSTCARD: 'POSTCARD',
@@ -20,21 +20,21 @@ export interface AvailableWidget {
 
 export const AVAILABLE_WIDGETS: AvailableWidget[] = [
   {
-    type: WidgetTypeEnum.WHEEL,
+    type: WidgetTypeEnum.WHEEL_OF_FORTUNE,
     title: 'Колесо фортуны',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'
   },
   {
-    type: WidgetTypeEnum.PIPELINE,
+    type: WidgetTypeEnum.CONVEYOR_OF_GIFTS,
     title: 'Конвейер подарков',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: WidgetTypeEnum.TIMER,
+    type: WidgetTypeEnum.ACTION_TIMER,
     title: 'Таймер акции',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
@@ -48,21 +48,21 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
     badge: 'soon'
   },
   {
-    type: 'CHEST' as WidgetTypeEnum,
+    type: WidgetTypeEnum.CHEST_WITH_ACTION,
     title: 'Сундук с акцией',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: 'ADVENT' as WidgetTypeEnum,
+    type: WidgetTypeEnum.ADVENT_CALENDAR,
     title: 'Advent календарь',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: 'TEASER' as WidgetTypeEnum,
+    type: WidgetTypeEnum.TEASER,
     title: 'Дразнилка',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,

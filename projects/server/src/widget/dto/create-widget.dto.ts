@@ -22,7 +22,7 @@ export class CreateWidgetDto {
   @ApiProperty({
     description: 'The type of the widget',
     enum: WidgetType,
-    example: WidgetType.WHEEL
+    example: WidgetType.WHEEL_OF_FORTUNE
   })
   @IsEnum(WidgetType)
   @IsNotEmpty()
