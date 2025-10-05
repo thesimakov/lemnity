@@ -8,7 +8,7 @@ import type {
   UpdateProjectResponse,
   DeleteProjectResponse,
   UpdateProjectDto
-} from '@lemnity/api-sdk/models'
+} from '@lemnity/api-sdk'
 
 export async function listProjects() {
   const res = await http.get<ProjectsResponse>(API.PROJECTS.LIST)

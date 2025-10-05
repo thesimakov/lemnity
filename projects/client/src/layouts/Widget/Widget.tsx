@@ -11,7 +11,7 @@ import { WidgetTypes } from './constants'
 import iconPencil from '@/assets/icons/pencil.svg'
 export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
 export type WidgetBadge = 'new' | 'popular' | 'soon' | null
-import type { WidgetTypeEnum } from '@lemnity/api-sdk/models'
+import type { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 interface WidgetProps {
   title?: string

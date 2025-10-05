@@ -6,7 +6,7 @@ import type {
   UpdateProjectDto,
   Widget,
   CreateWidgetDtoTypeEnum
-} from '@lemnity/api-sdk/models'
+} from '@lemnity/api-sdk'
 import * as projectsService from '@/services/projects'
 import * as widgetsService from '@/services/widgets'
 

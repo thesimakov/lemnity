@@ -11,7 +11,7 @@ import iconInfo from '@/assets/icons/info.svg'
 import Widget from '@/layouts/Widget/Widget'
 import type { WidgetBadge } from '@/layouts/Widget/Widget'
 import { AVAILABLE_WIDGETS } from '@/layouts/Widget/constants'
-import type { CreateWidgetDtoTypeEnum } from '@lemnity/api-sdk/models'
+import type { CreateWidgetDtoTypeEnum } from '@lemnity/api-sdk'
 
 const ProjectWidgetsPage = (): ReactElement => {
   const { projectId } = useParams()
