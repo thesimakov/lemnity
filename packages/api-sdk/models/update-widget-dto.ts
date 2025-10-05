@@ -53,10 +53,13 @@ export interface UpdateWidgetDto {
 }
 
 export const UpdateWidgetDtoTypeEnum = {
-    WHEEL: 'WHEEL',
-    PIPELINE: 'PIPELINE',
-    TIMER: 'TIMER',
-    POSTCARD: 'POSTCARD'
+    WHEEL_OF_FORTUNE: 'WHEEL_OF_FORTUNE',
+    CONVEYOR_OF_GIFTS: 'CONVEYOR_OF_GIFTS',
+    ACTION_TIMER: 'ACTION_TIMER',
+    POSTCARD: 'POSTCARD',
+    CHEST_WITH_ACTION: 'CHEST_WITH_ACTION',
+    ADVENT_CALENDAR: 'ADVENT_CALENDAR',
+    TEASER: 'TEASER'
 } as const;
 
 export type UpdateWidgetDtoTypeEnum = typeof UpdateWidgetDtoTypeEnum[keyof typeof UpdateWidgetDtoTypeEnum];
