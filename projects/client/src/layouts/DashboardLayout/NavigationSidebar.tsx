@@ -84,21 +84,22 @@ const NavigationSidebar = () => {
           }}
         >
           {menuItems.map(item => (
-            <ListboxItem
-              key={item.key}
-              startContent={item.icon}
-              endContent={
-                item.badge && (
-                  <span className="bg-success text-white text-[9px] font-normal px-2.5 py-0.5 leading-3.5 rounded-full h-[18px] text-center">
-                    {typeof item.badge === 'number' && item.badge > 999
-                      ? '999+'
-                      : String('+ ' + item.badge)}
-                  </span>
-                )
-              }
-            >
-              {item.href ? <Link to={item.href}>{item.label}</Link> : item.label}
-            </ListboxItem>
+              <ListboxItem
+                key={item.key}
+                startContent={item.icon}
+                href={item.href || ''}
+                endContent={
+                  item.badge && (
+                    <span className="bg-success text-white text-[9px] font-normal px-2.5 py-0.5 leading-3.5 rounded-full h-[18px] text-center">
+                      {typeof item.badge === 'number' && item.badge > 999
+                        ? '999+'
+                        : String('+ ' + item.badge)}
+                    </span>
+                  )
+                }
+              >
+                {item.label}
+              </ListboxItem>
           ))}
         </Listbox>
 

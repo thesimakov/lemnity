@@ -10,7 +10,7 @@ import { Select, SelectItem } from '@heroui/select'
 const statsCards = [
   {
     title: 'Баланс',
-    amount: 100.00,
+    amount: 100.0,
     currency: 'р.',
     tip: 'Рекомендуем пополнить кошелек',
     icon: iconWallet,
@@ -48,7 +48,7 @@ const statsCards = [
   },
   {
     title: 'Партнерство',
-    amount: 12999.00,
+    amount: 12999.0,
     currency: 'руб.',
     icon: iconClock,
     iconColor: 'blue-500',
@@ -87,7 +87,7 @@ const Stats: React.FC = () => {
         currency={card.currency}
         tip={card.tip}
         icon={card.icon}
-        isNegative={card.amount==card.maxAmount}
+        isNegative={card.amount == card.maxAmount}
         iconColor={card.iconColor}
         delta={card.delta}
       />
