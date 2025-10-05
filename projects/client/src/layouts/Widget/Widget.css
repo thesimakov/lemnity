@@ -38,25 +38,33 @@
 .badge-new {
   background: #fff5d1;
   color: #a67c00;
+  border: 1px solid #a67c00;
+  z-index: 1;
 }
 
 .badge-popular {
   background: #ffdfe1;
   color: #b4232b;
+  border: 1px solid #b4232b;
+  z-index: 1;
 }
 
 .badge-soon {
   background: #d6e9ff;
   color: #0b63c6;
+  border: 1px solid #0b63c6;
+  z-index: 1;
 }
 
 .btn-primary {
   background: #ffffff;
   color: #5951e5;
-  border: 1px solid #cfcfe6;
+  border: 1px solid #5951e5;
+  z-index: 1;
 }
 
 .btn-secondary {
   color: #5951e5;
-  border-color: #cfcfe6;
+  border: 1px solid #cfcfe6;
+  z-index: 1;
 }

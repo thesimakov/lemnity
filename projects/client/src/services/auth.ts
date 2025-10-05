@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { http } from '@common/api/http.ts'
 import { API } from '@common/api/endpoints.ts'
-import type { LoginResponse, RegisterResponse } from '@lemnity/api-sdk/models'
+import type { LoginResponse, RegisterResponse } from '@lemnity/api-sdk'
 
 interface IAuthPayload {
   email: string

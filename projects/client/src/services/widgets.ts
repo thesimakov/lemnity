@@ -1,6 +1,6 @@
 import { request } from '@common/api/httpWrapper.ts'
 import { API } from '@common/api/endpoints.ts'
-import type { Widget, CreateWidgetDto, UpdateWidgetDto } from '@lemnity/api-sdk/models'
+import type { Widget, CreateWidgetDto, UpdateWidgetDto } from '@lemnity/api-sdk'
 
 export async function listWidgets(projectId: string): Promise<Widget[]> {
   const res = await request<Widget[]>(`${API.WIDGETS.LIST}?projectId=${projectId}`, {

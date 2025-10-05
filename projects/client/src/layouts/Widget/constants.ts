@@ -1,4 +1,4 @@
-import { WidgetTypeEnum } from '@lemnity/api-sdk/models'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 export const WidgetTypes = {
   WHEEL_OF_FORTUNE: WidgetTypeEnum.WHEEL_OF_FORTUNE,

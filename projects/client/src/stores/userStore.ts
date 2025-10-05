@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { User } from '@lemnity/api-sdk/models'
+import type { User } from '@lemnity/api-sdk'
 import { createJSONStorage, devtools, persist } from 'zustand/middleware'
 
 interface UserState {
