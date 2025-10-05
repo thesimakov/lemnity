@@ -4,8 +4,17 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": { "types": "./index.ts" },
-    "./models": { "types": "./models/index.ts" },
-    "./models/*": { "types": "./models/*.ts" }
+    ".": { 
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./models": { 
+      "types": "./models/index.ts",
+      "default": "./models/index.ts"
+    },
+    "./models/*": { 
+      "types": "./models/*.ts",
+      "default": "./models/*.ts"
+    }
   }
 }

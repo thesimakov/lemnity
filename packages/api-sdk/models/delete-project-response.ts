@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { Widget } from './widget';
 
 /**
  * 
@@ -56,5 +59,11 @@ export interface DeleteProjectResponse {
      * @memberof DeleteProjectResponse
      */
     'enabled': boolean;
+    /**
+     * 
+     * @type {Array<Widget>}
+     * @memberof DeleteProjectResponse
+     */
+    'widgets'?: Array<Widget>;
 }
 

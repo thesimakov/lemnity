@@ -1,25 +1,22 @@
-// model Widget {
-//   id         String   @id @default(cuid()) @map("id")
+model Widget {
+  id         String   @id @default(cuid()) @map("id")
 
-//   projectId  String @map("project_id")
-//   project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId  String @map("project_id")
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-//   name       String
-//   type       WidgetType
-//   enabled    Boolean  @default(false)
-//   config     Json?
+  name       String
+  type       WidgetType
+  enabled    Boolean  @default(false)
+  config     Json?
 
-//   createdAt  DateTime @default(now()) @map("created_at")
-//   updatedAt  DateTime @updatedAt      @map("updated_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt      @map("updated_at")
 
-//   @@index([projectId])
-//   @@unique([projectId, name])  // или [projectId, type] — по вашему правилу уникальности
-//   @@map("widgets")
-// }
+  @@index([projectId])
+  @@unique([projectId, name])  // или [projectId, type] — по вашему правилу уникальности
+  @@map("widgets")
+}
 
-// enum WidgetType {
-//   WHEEL
-//   PIPELINE
-//   TIMER
-//   POSTCARD
-// }
+enum WidgetType {
+  WHEEL_OF_FORTUNE
+}

@@ -16,22 +16,38 @@ export class ProjectService {
       user: { connect: { id: userId } }
     }
 
-    return this.prisma.project.create({ data: project })
+    return this.prisma.project.create({
+      data: project,
+      include: { widgets: true }
+    })
   }
 
   findAll(userId: string) {
-    return this.prisma.project.findMany({ where: { userId } })
+    return this.prisma.project.findMany({
+      where: { userId },
+      include: { widgets: true }
+    })
   }
 
   findOne(userId: string, id: string) {
-    return this.prisma.project.findFirst({ where: { id, userId } })
+    return this.prisma.project.findFirst({
+      where: { id, userId },
+      include: { widgets: true }
+    })
   }
 
   update(userId: string, id: string, updateProjectDto: UpdateProjectDto) {
-    return this.prisma.project.update({ where: { id, userId }, data: updateProjectDto })
+    return this.prisma.project.update({
+      where: { id, userId },
+      data: updateProjectDto,
+      include: { widgets: true }
+    })
   }
 
   remove(userId: string, id: string) {
-    return this.prisma.project.delete({ where: { id, userId } })
+    return this.prisma.project.delete({
+      where: { id, userId },
+      include: { widgets: true }
+    })
   }
 }

@@ -3,9 +3,12 @@ import { devtools } from 'zustand/middleware'
 import type {
   Project as ApiProject,
   CreateProjectDto,
-  UpdateProjectDto
+  UpdateProjectDto,
+  Widget,
+  CreateWidgetDtoTypeEnum
 } from '@lemnity/api-sdk/models'
 import * as projectsService from '@/services/projects'
+import * as widgetsService from '@/services/widgets'
 
 export interface MetricDetails {
   value: number
@@ -25,6 +28,7 @@ export interface Project {
   name: string
   websiteUrl: string
   enabled: boolean
+  widgets: Widget[]
   metrics: ProjectMetrics
   createdAt: Date
 }
@@ -40,6 +44,20 @@ type ProjectsActions = {
   ensureLoaded: () => Promise<void>
   createProject: (title: string, websiteUrl: string, enabled?: boolean) => Promise<void>
   toggleProjectEnabled: (id: string, enabled: boolean) => Promise<void>
+  // Widget actions
+  createWidget: (
+    projectId: string,
+    name: string,
+    type: CreateWidgetDtoTypeEnum,
+    config?: Record<string, unknown>
+  ) => Promise<Widget>
+  toggleWidgetEnabled: (projectId: string, widgetId: string, enabled: boolean) => Promise<void>
+  updateWidget: (
+    projectId: string,
+    widgetId: string,
+    updates: { name?: string; config?: object }
+  ) => Promise<void>
+  deleteWidget: (projectId: string, widgetId: string) => Promise<void>
 }
 export type ProjectsStore = ProjectsState & ProjectsActions
 
@@ -51,6 +69,7 @@ function mapApiToStoreProject(p: ApiProject): Project {
     name: p.title,
     websiteUrl: p.websiteUrl,
     enabled: p.enabled,
+    widgets: p.widgets || [],
     createdAt: new Date(p.createdAt),
     metrics: {
       visitors: { value: 0, desktop: 0, mobile: 0 },
@@ -131,6 +150,108 @@ export const useProjectsStore = create<ProjectsStore>()(
           )
         } catch {
           set({ error: 'Failed to update project' }, false, 'projects/toggle:error')
+        }
+      },
+
+      // Widget actions
+      createWidget: async (
+        projectId: string,
+        name: string,
+        type: CreateWidgetDtoTypeEnum,
+        config?: Record<string, unknown>
+      ) => {
+        set({ isLoading: true, error: null }, false, 'projects/widget/create:start')
+        try {
+          const created = await widgetsService.createWidget({
+            projectId,
+            name,
+            type,
+            enabled: false,
+            config
+          })
+          set(
+            state => ({
+              projects: state.projects.map(p =>
+                p.id === projectId ? { ...p, widgets: [...p.widgets, created] } : p
+              ),
+              isLoading: false
+            }),
+            false,
+            'projects/widget/create:success'
+          )
+          return created
+        } catch (error) {
+          set(
+            { isLoading: false, error: 'Failed to create widget' },
+            false,
+            'projects/widget/create:error'
+          )
+          throw error
+        }
+      },
+
+      toggleWidgetEnabled: async (projectId: string, widgetId: string, enabled: boolean) => {
+        set({ error: null }, false, 'projects/widget/toggle:start')
+        try {
+          const updated = await widgetsService.toggleWidgetEnabled(widgetId, enabled)
+          set(
+            state => ({
+              projects: state.projects.map(p =>
+                p.id === projectId
+                  ? { ...p, widgets: p.widgets.map(w => (w.id === widgetId ? updated : w)) }
+                  : p
+              )
+            }),
+            false,
+            'projects/widget/toggle:success'
+          )
+        } catch (error) {
+          set({ error: 'Failed to toggle widget' }, false, 'projects/widget/toggle:error')
+          throw error
+        }
+      },
+
+      updateWidget: async (
+        projectId: string,
+        widgetId: string,
+        updates: { name?: string; config?: object }
+      ) => {
+        set({ error: null }, false, 'projects/widget/update:start')
+        try {
+          const updated = await widgetsService.updateWidget(widgetId, updates)
+          set(
+            state => ({
+              projects: state.projects.map(p =>
+                p.id === projectId
+                  ? { ...p, widgets: p.widgets.map(w => (w.id === widgetId ? updated : w)) }
+                  : p
+              )
+            }),
+            false,
+            'projects/widget/update:success'
+          )
+        } catch (error) {
+          set({ error: 'Failed to update widget' }, false, 'projects/widget/update:error')
+          throw error
+        }
+      },
+
+      deleteWidget: async (projectId: string, widgetId: string) => {
+        set({ error: null }, false, 'projects/widget/delete:start')
+        try {
+          await widgetsService.deleteWidget(widgetId)
+          set(
+            state => ({
+              projects: state.projects.map(p =>
+                p.id === projectId ? { ...p, widgets: p.widgets.filter(w => w.id !== widgetId) } : p
+              )
+            }),
+            false,
+            'projects/widget/delete:success'
+          )
+        } catch (error) {
+          set({ error: 'Failed to delete widget' }, false, 'projects/widget/delete:error')
+          throw error
         }
       }
     }),

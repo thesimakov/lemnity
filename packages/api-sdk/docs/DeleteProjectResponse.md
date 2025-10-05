@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **createdAt** | **string** |  | [default to undefined]
 **updatedAt** | **string** |  | [default to undefined]
 **enabled** | **boolean** |  | [default to undefined]
+**widgets** | [**Array&lt;Widget&gt;**](Widget.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -24,6 +25,7 @@ const instance: DeleteProjectResponse = {
     createdAt,
     updatedAt,
     enabled,
+    widgets,
 };
 ```
 
