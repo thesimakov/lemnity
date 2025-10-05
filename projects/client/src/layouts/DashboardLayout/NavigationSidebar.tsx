@@ -8,12 +8,14 @@ import iconTelephone from '@/assets/icons/telephone.svg'
 import { Listbox, ListboxItem } from '@heroui/listbox'
 import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
+import { Link } from 'react-router-dom'
 
 interface MenuItem {
   key: string
   icon: React.ReactNode
   label: string
   badge?: string | number
+  href?: string
 }
 
 const NavigationSidebar = () => {
@@ -21,7 +23,8 @@ const NavigationSidebar = () => {
     {
       key: 'projects',
       icon: <img src={iconProjects} alt="Проекты" className="w-5 h-5" />,
-      label: 'Проекты'
+      label: 'Проекты',
+      href: '/'
     },
     {
       key: 'requests',
@@ -94,7 +97,7 @@ const NavigationSidebar = () => {
                 )
               }
             >
-              {item.label}
+              {item.href ? <Link to={item.href}>{item.label}</Link> : item.label}
             </ListboxItem>
           ))}
         </Listbox>
