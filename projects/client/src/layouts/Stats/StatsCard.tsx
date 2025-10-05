@@ -91,9 +91,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
         </div>
       </div>
       <div className={`text-xl 2xl:text-2xl`}>
-        <span
-          className={`${isNegative || amount == maxAmount ? 'text-[#FF5183]' : 'text-black'}`}
-        >
+        <span className={`${isNegative || amount == maxAmount ? 'text-[#FF5183]' : 'text-black'}`}>
           {formatAmount(amount)} {currency}
         </span>
         {maxAmount && <span> | {maxAmount}</span>}

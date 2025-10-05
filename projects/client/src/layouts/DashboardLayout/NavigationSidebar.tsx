@@ -8,7 +8,6 @@ import iconTelephone from '@/assets/icons/telephone.svg'
 import { Listbox, ListboxItem } from '@heroui/listbox'
 import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
-import { Link } from 'react-router-dom'
 
 interface MenuItem {
   key: string
@@ -70,7 +69,7 @@ const NavigationSidebar = () => {
   )
 
   return (
-    <aside className="w-60 h-full flex flex-col justify-between py-[18px] px-[19px] rounded-l-lg sidebar-bg">
+    <aside className="w-60 h-full flex flex-col justify-between py-[18px] px-[19px] rounded-l-lg sidebar-bg transition-all duration-300 ease-in-out">
       <nav className="flex flex-col gap-1">
         <Listbox
           aria-label="Navigation menu"
@@ -84,22 +83,22 @@ const NavigationSidebar = () => {
           }}
         >
           {menuItems.map(item => (
-              <ListboxItem
-                key={item.key}
-                startContent={item.icon}
-                href={item.href || ''}
-                endContent={
-                  item.badge && (
-                    <span className="bg-success text-white text-[9px] font-normal px-2.5 py-0.5 leading-3.5 rounded-full h-[18px] text-center">
-                      {typeof item.badge === 'number' && item.badge > 999
-                        ? '999+'
-                        : String('+ ' + item.badge)}
-                    </span>
-                  )
-                }
-              >
-                {item.label}
-              </ListboxItem>
+            <ListboxItem
+              key={item.key}
+              startContent={item.icon}
+              href={item.href || ''}
+              endContent={
+                item.badge && (
+                  <span className="bg-success text-white text-[9px] font-normal px-2.5 py-0.5 leading-3.5 rounded-full h-[18px] text-center">
+                    {typeof item.badge === 'number' && item.badge > 999
+                      ? '999+'
+                      : String('+ ' + item.badge)}
+                  </span>
+                )
+              }
+            >
+              {item.label}
+            </ListboxItem>
           ))}
         </Listbox>
 
