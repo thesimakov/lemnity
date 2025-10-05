@@ -1,0 +1,55 @@
+import { ApiProperty } from '@nestjs/swagger'
+import { WidgetType, Prisma } from '@prisma/client'
+
+export class Widget {
+  @ApiProperty({
+    description: 'The unique identifier of the widget',
+    example: 'clxxx123456'
+  })
+  id: string
+
+  @ApiProperty({
+    description: 'The ID of the project this widget belongs to',
+    example: 'clxxx789012'
+  })
+  projectId: string
+
+  @ApiProperty({
+    description: 'The name of the widget',
+    example: 'My Wheel Widget'
+  })
+  name: string
+
+  @ApiProperty({
+    description: 'The type of the widget',
+    enum: WidgetType,
+    example: WidgetType.WHEEL
+  })
+  type: WidgetType
+
+  @ApiProperty({
+    description: 'Whether the widget is enabled',
+    example: true
+  })
+  enabled: boolean
+
+  @ApiProperty({
+    description: 'JSON configuration for the widget',
+    example: { colors: ['#FF0000', '#00FF00'], prizes: ['10% off', '20% off'] },
+    required: false,
+    nullable: true
+  })
+  config: Prisma.JsonValue
+
+  @ApiProperty({
+    description: 'Creation timestamp',
+    example: '2024-01-01T00:00:00.000Z'
+  })
+  createdAt: Date
+
+  @ApiProperty({
+    description: 'Last update timestamp',
+    example: '2024-01-01T00:00:00.000Z'
+  })
+  updatedAt: Date
+}

@@ -34,7 +34,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = props => {
   const wrapperBgColor = isSelected ? selectedColor || '!bg-green-500' : '!bg-red-500'
 
   return (
-    <Component {...getBaseProps()}>
+    <Component {...getBaseProps({ className: 'flex' })}>
       <input {...getInputProps()} />
       <div
         {...getWrapperProps({

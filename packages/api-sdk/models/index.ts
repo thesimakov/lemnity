@@ -1,6 +1,7 @@
 export * from './auth-dto';
 export * from './create-project-dto';
 export * from './create-project-response';
+export * from './create-widget-dto';
 export * from './delete-project-response';
 export * from './forgot-password-dto';
 export * from './get-project-response';
@@ -12,4 +13,6 @@ export * from './register-response';
 export * from './reset-password-dto';
 export * from './update-project-dto';
 export * from './update-project-response';
+export * from './update-widget-dto';
 export * from './user';
+export * from './widget';

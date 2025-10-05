@@ -18,4 +18,5 @@ export * from './apis/app-api';
 export * from './apis/auth-api';
 export * from './apis/password-reset-api';
 export * from './apis/project-api';
+export * from './apis/widgets-api';
 

@@ -5,6 +5,7 @@ apis/app-api.ts
 apis/auth-api.ts
 apis/password-reset-api.ts
 apis/project-api.ts
+apis/widgets-api.ts
 base.ts
 common.ts
 configuration.ts
@@ -13,6 +14,7 @@ docs/AuthApi.md
 docs/AuthDto.md
 docs/CreateProjectDto.md
 docs/CreateProjectResponse.md
+docs/CreateWidgetDto.md
 docs/DeleteProjectResponse.md
 docs/ForgotPasswordDto.md
 docs/GetProjectResponse.md
@@ -26,12 +28,16 @@ docs/RegisterResponse.md
 docs/ResetPasswordDto.md
 docs/UpdateProjectDto.md
 docs/UpdateProjectResponse.md
+docs/UpdateWidgetDto.md
 docs/User.md
+docs/Widget.md
+docs/WidgetsApi.md
 git_push.sh
 index.ts
 models/auth-dto.ts
 models/create-project-dto.ts
 models/create-project-response.ts
+models/create-widget-dto.ts
 models/delete-project-response.ts
 models/forgot-password-dto.ts
 models/get-project-response.ts
@@ -44,4 +50,6 @@ models/register-response.ts
 models/reset-password-dto.ts
 models/update-project-dto.ts
 models/update-project-response.ts
+models/update-widget-dto.ts
 models/user.ts
+models/widget.ts

@@ -5,7 +5,7 @@ model Project {
   websiteUrl String @map("website_url")
   enabled    Boolean  @default(true)
 
-  // widgets    Widget[]
+  widgets    Widget[]
 
   userId     String   @map("user_id")
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
