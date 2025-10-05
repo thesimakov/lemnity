@@ -11,6 +11,11 @@ interface StatsCardProps {
   className?: string
   maxAmount?: number
   icon: string
+  delta?: {
+    value: number
+    isPositive: boolean
+    showArrow?: boolean
+  }
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({
@@ -22,45 +27,77 @@ const StatsCard: React.FC<StatsCardProps> = ({
   tip,
   isNegative = false,
   className = '',
-  maxAmount
+  maxAmount,
+  delta
 }) => {
   const formatAmount = (value: number) => {
     const sign = isNegative ? '-' : ''
     return `${sign}${Math.abs(value)}`
   }
 
-  const renderBackgroundIcon = () => (
-    <SvgIcon src={icon} className={`opacity-20 select-none ${iconColor || ''}`} size="30%" />
-  )
+  const getBackgroundClass = (color: string | undefined) => {
+    if (!color) return ''
+    
+    const colorMap: { [key: string]: string } = {
+      'orange-500': 'bg-orange-500/25',
+      'blue-500': 'bg-blue-500/25',
+      'yellow-500': 'bg-yellow-500/25',
+      'purple-500': 'bg-purple-500/25'
+    }
+    
+    return colorMap[color] || ''
+  }
+
+  const getTextColorClass = (color: string | undefined) => {
+    if (!color) return ''
+    
+    const colorMap: { [key: string]: string } = {
+      'orange-500': 'text-orange-500',
+      'blue-500': 'text-blue-500',
+      'yellow-500': 'text-yellow-500',
+      'purple-500': 'text-purple-500'
+    }
+    
+    return colorMap[color] || ''
+  }
 
   return (
     <div
-      className={`relative flex flex-col justify-between font-roboto
+      className={`relative flex flex-col gap-[9px] justify-between font-roboto
     min-h-0 h-auto w-full max-w-[195px]
     aspect-6/5
     bg-[#F7FBFF] rounded-[5px] border border-gray-200
-    p-2 lg:p-3 pr-0.5 md:pr-1 lg:pr-1 xl:pr-1.5 ${className || ''}`}
+    p-1 lg:p-2 pr-0.5 md:pr-0.5 lg:pr-0.5 xl:pr-1.5 ${className || ''}`}
     >
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        {renderBackgroundIcon()}
-      </div>
-
       <div className="relative gap-2">
         <div className="flex items-start justify-between">
-          <h3 className="text-[13px] font-normal text-[#656565]">{title}</h3>
-          <button className="text-gray-400 hover:text-gray-600 transition-colors">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-            </svg>
-          </button>
+          <span className="font-normal text-xs 2xl:text-base">{title}</span>
+          {delta && (
+            <div className="flex items-center gap-1 text-xs 2xl:text-base">
+              <span className={`font-medium ${delta.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                {delta.isPositive ? '+' : '-'}{delta.value}{currency ? ' ₽' : ''}
+              </span>
+              {delta.showArrow && (
+                <span className={`${delta.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                  {delta.isPositive ? '↑' : '↓'}
+                </span>
+              )}
+            </div>
+          )}
         </div>
-        <div className={`text-xl ${isNegative ? 'text-[#FF5183]' : 'text-black'}`}>
-          {formatAmount(amount)} {currency} {maxAmount && <span> / {maxAmount}</span>}
+        <div className={`text-sm 2xl:text-xl`}>
+          <span className={`${(isNegative || amount==maxAmount) ? 'text-[#FF5183]' : 'text-black'}`}>
+            {formatAmount(amount)} {currency}
+            </span>
+          {maxAmount && <span> | {maxAmount}</span>}
         </div>
       </div>
-
-      <div className="relative z-10 min-h-[20px]">
-        {tip && <p className="text-[10px] text-[#FF5183] leading-relaxed">{tip}</p>}
+      <hr className="mt-auto border-[#C0C0C0]" />
+      <div className="relative z-10 min-h-[36px] 2xl:min-h-[50px] flex flex-row justify-between w-full">
+        {tip && <p className="text-[8px] 2xl:text-xs">{tip}</p>}
+        <div className={`${getBackgroundClass(iconColor)} ${getTextColorClass(iconColor)} ml-auto pointer-events-none h-[34px] w-[34px] min-w-[34px] min-h-[34px] flex-shrink-0 border-1 rounded-sm border-gray-200`}>
+          <SvgIcon src={icon} className={`select-none ${iconColor || ''}`} size="80%" />
+      </div>
       </div>
     </div>
   )
