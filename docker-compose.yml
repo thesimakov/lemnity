@@ -63,6 +63,7 @@ services:
       VITE_API_URL: ${VITE_API_URL:-http://localhost/api}
     volumes:
       - ./projects/client:/client/projects/client
+      - ./packages:/client/packages
       - ./package.json:/client/package.json:ro
       - ./pnpm-lock.yaml:/client/pnpm-lock.yaml:ro
       - ./pnpm-workspace.yaml:/client/pnpm-workspace.yaml:ro
