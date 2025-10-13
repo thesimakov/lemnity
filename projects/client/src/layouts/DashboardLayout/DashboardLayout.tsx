@@ -1,10 +1,19 @@
 import NavigationSidebar from './NavigationSidebar'
 import MainContent from './MainContent'
-import ChatPanel from './ChatPanel'
+import RightPanel from './RightPanel'
+import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
 import { useSidebarStore } from '@/stores/sidebarStore'
-import type { PropsWithChildren, ReactElement } from 'react'
 
-const DashboardLayout = ({ children }: PropsWithChildren): ReactElement => {
+type DashboardLayoutProps = PropsWithChildren<{
+  rightPanel?: ReactNode
+  rightPanelWidthClassName?: string
+}>
+
+const DashboardLayout = ({
+  children,
+  rightPanel,
+  rightPanelWidthClassName
+}: DashboardLayoutProps): ReactElement => {
   const { isVisible } = useSidebarStore()
 
   return (
@@ -15,7 +24,7 @@ const DashboardLayout = ({ children }: PropsWithChildren): ReactElement => {
         <NavigationSidebar />
       </div>
       <MainContent>{children}</MainContent>
-      <ChatPanel />
+      <RightPanel widthClassName={rightPanelWidthClassName}>{rightPanel}</RightPanel>
     </div>
   )
 }

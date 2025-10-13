@@ -8,6 +8,8 @@ import AddProjectModal from '@/layouts/AddProjectsBlock/AddProjectModal'
 import { useState, useCallback } from 'react'
 import { useProjectsStore } from '@/stores/projectsStore'
 import useUserStore from '@/stores/userStore'
+import { Button } from '@heroui/button'
+import chatboxIcon from '@/assets/icons/chatbox.svg'
 
 // import MaintenancePage from './MaintenancePage'
 // import CenteredLayout from '@/layouts/CenteredLayout'
@@ -30,13 +32,19 @@ const HomePage = () => {
     [createProject]
   )
 
+  const rightPanel = (
+    <Button isIconOnly variant="flat" radius="full" onPress={() => alert('chat')}>
+      <img src={chatboxIcon} alt="Chat" className="w-[22px] h-[22px]" />
+    </Button>
+  )
+
   return (
     // <CenteredLayout>
     //   <MaintenancePage />
     // </CenteredLayout>
     <div className="h-full flex flex-col">
       <Header />
-      <DashboardLayout>
+      <DashboardLayout rightPanel={rightPanel}>
         <div className="flex flex-col gap-[1px]">
           <span className="text-xl font-roboto">Здравствуйте, {userName}</span>
           {/* <span className="text-sm text-gray-500">Маркетолок компании "Вкусняшки"</span> */}

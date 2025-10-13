@@ -89,12 +89,14 @@ const StatsCard: React.FC<StatsCardProps> = ({
             </div>
           )}
         </div>
-      </div>
-      <div className={`text-xl 2xl:text-2xl`}>
-        <span className={`${isNegative || amount == maxAmount ? 'text-[#FF5183]' : 'text-black'}`}>
-          {formatAmount(amount)} {currency}
-        </span>
-        {maxAmount && <span> | {maxAmount}</span>}
+        <div className={`text-sm 2xl:text-xl`}>
+          <span
+            className={`${isNegative || amount == maxAmount ? 'text-[#FF5183]' : 'text-black'}`}
+          >
+            {formatAmount(amount)} {currency}
+          </span>
+          {maxAmount && <span> | {maxAmount}</span>}
+        </div>
       </div>
       <hr className="mt-auto border-[#C0C0C0]" />
       <div className="relative z-10 min-h-[36px] 2xl:min-h-[50px] flex flex-row justify-between w-full">

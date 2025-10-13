@@ -1,0 +1,54 @@
+.scrollShadow {
+  position: relative;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollShadow::before {
+  content: '';
+  position: sticky;
+  top: 0;
+  height: 0;
+  flex: 0 0 12px;
+  align-self: stretch;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.scrollShadow.hasTopShadow::before {
+  opacity: 1;
+}
+
+.scrollShadow::after {
+  content: '';
+  position: sticky;
+  bottom: 0;
+  height: 0;
+  flex: 0 0 12px;
+  align-self: stretch;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.scrollShadow.hasBottomShadow::after {
+  opacity: 1;
+}
+
+.sentinelTop {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+}
+
+.sentinelBot {
+  height: 1px;
+  min-height: 1px;
+  pointer-events: none;
+}
