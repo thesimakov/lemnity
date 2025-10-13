@@ -1,0 +1,107 @@
+import { RadioGroup, Radio } from '@heroui/radio'
+import { AnimatePresence, motion } from 'framer-motion'
+import SimpleTooltip from './SimpleTooltip'
+import CustomSwitch from './CustomSwitch'
+
+export type OptionItem = {
+  key: string
+  label: string
+  // Optional right-side accessory renderer (e.g., color picker, button)
+  accessory?: React.ReactNode
+  tip?: string
+  // Optional content shown BELOW the RadioGroup when this option is active
+  below?: React.ReactNode
+}
+
+export type OptionsChooserProps = {
+  title: string
+  options: OptionItem[]
+  value: string
+  onChange: (key: string) => void
+  toggle?: boolean
+  enabled?: boolean
+  onToggle?: (enabled: boolean) => void
+  noBorder?: boolean
+  classNames?: string
+}
+
+const OptionsChooser = ({
+  title,
+  options,
+  value,
+  onChange,
+  toggle,
+  enabled,
+  onToggle,
+  noBorder,
+  classNames
+}: OptionsChooserProps) => {
+  const active = options.find(o => o.key === value)
+  return (
+    <div
+      className={`flex flex-col rounded-lg p-3 overflow-hidden ${noBorder ? '' : 'border border-gray-200'} ${classNames}`}
+    >
+      <div className="flex flex-col gap-2 pb-2">
+        <div className="flex flex-row items-center justify-between">
+          <span className="text-black">{title}</span>
+          {toggle ? (
+            <CustomSwitch
+              isSelected={enabled}
+              onValueChange={onToggle}
+              selectedColor="group-data-[selected=true]:!bg-[#5951E5]"
+              className={`ml-auto`}
+              size="sm"
+            />
+          ) : null}
+        </div>
+        <RadioGroup
+          orientation="horizontal"
+          value={value}
+          onValueChange={v => onChange(String(v))}
+          classNames={{
+            wrapper: 'flex-nowrap flex gap-2'
+          }}
+        >
+          {options.map(opt => (
+            <>
+              <div key={opt.key} className="flex items-center gap-2 flex-1">
+                <Radio
+                  value={opt.key}
+                  classNames={{
+                    base: '!max-w-none flex-1 h-14 rounded-md border data-[selected=true]:border-[#D9D9E0] data-[selected=true]:bg-white border-[#E4E4E7] bg-[#F8F8FA] hover:bg-[#F1F1F4] p-2 m-0',
+                    labelWrapper: 'pl-2',
+                    label: 'text-gray-700',
+                    wrapper:
+                      'border-[#373737] group-data-[selected=true]:!border-[#373737] border-small',
+                    control: 'bg-[#373737] w-3.5 h-3.5'
+                  }}
+                >
+                  <div className="flex flex-row items-center gap-1">
+                    {opt.label}{' '}
+                    {opt?.tip ? <SimpleTooltip classNames="w-max" content={opt.tip} /> : null}
+                  </div>
+                </Radio>
+              </div>
+              {opt.accessory ? <div className="shrink">{opt.accessory}</div> : null}
+            </>
+          ))}
+        </RadioGroup>
+      </div>
+      <AnimatePresence initial={false}>
+        {active?.below ? (
+          <motion.div
+            key={`below-${active.key}`}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          >
+            {active.below}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+export default OptionsChooser

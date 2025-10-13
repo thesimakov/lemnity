@@ -1,14 +1,23 @@
 import NavigationSidebar from './NavigationSidebar'
 import MainContent from './MainContent'
-import ChatPanel from './ChatPanel'
-import type { PropsWithChildren, ReactElement } from 'react'
+import RightPanel from './RightPanel'
+import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
 
-const DashboardLayout = ({ children }: PropsWithChildren): ReactElement => {
+type DashboardLayoutProps = PropsWithChildren<{
+  rightPanel?: ReactNode
+  rightPanelWidthClassName?: string
+}>
+
+const DashboardLayout = ({
+  children,
+  rightPanel,
+  rightPanelWidthClassName
+}: DashboardLayoutProps): ReactElement => {
   return (
     <div className="flex flex-1 min-h-0 mx-5 gap-[15px]">
       <NavigationSidebar />
       <MainContent>{children}</MainContent>
-      <ChatPanel />
+      <RightPanel widthClassName={rightPanelWidthClassName}>{rightPanel}</RightPanel>
     </div>
   )
 }

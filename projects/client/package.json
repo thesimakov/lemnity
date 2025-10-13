@@ -19,6 +19,7 @@
     "@heroui/dropdown": "^2.3.26",
     "@heroui/input": "^2.4.27",
     "@heroui/listbox": "^2.3.25",
+    "@heroui/radio": "^2.3.27",
     "@heroui/select": "^2.4.27",
     "@heroui/switch": "^2.2.23",
     "@heroui/system": "^2.4.21",
