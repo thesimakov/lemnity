@@ -1,32 +1,42 @@
 import ColorAccessory from '@/components/ColorAccessory'
 import OptionsChooser, { type OptionItem } from '@/components/OptionsChooser'
 import ImageUploader from '@/components/ImageUploader'
-// import useWidgetSettingsStore from "@/stores/widgetSettingsStore"
-import { useState } from 'react'
+import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
 import { motion } from 'framer-motion'
-
-type ContentPosition = 'left' | 'right'
-type ColorScheme = 'primary' | 'custom'
+import type { ColorScheme, ContentPosition } from '@/stores/widgetSettings/types'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 
 const TemplateSettings = () => {
-  // const {
-  //     logoEnabled, setLogoEnabled,
-  //     contentPositionScheme, setContentPositionScheme,
-  //     colorScheme, setColorScheme,
-  //     customColor, setCustomColor
-  // } = useWidgetSettingsStore()
-
-  const [imageEnabled, setImageEnabled] = useState(true)
-  const [contentPositionScheme, setContentPositionScheme] = useState<ContentPosition>('left')
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('primary')
-  const [customColor, setCustomColor] = useState('#FFB74D')
+  const {
+    setTemplateImageEnabled,
+    setTemplateImageFile,
+    setContentPosition,
+    setColorScheme,
+    setCustomColor
+  } = useFormSettings()
+  const defaultTemplateSettings = STATIC_DEFAULTS.form.template?.templateSettings ?? {
+    image: { enabled: false, fileName: '', url: '' },
+    contentPosition: 'left',
+    colorScheme: 'primary',
+    customColor: '#FFFFFF'
+  }
+  const settings = useWidgetSettingsStore(s =>
+    withDefaultsPath(s.settings?.form, 'template.templateSettings', defaultTemplateSettings)
+  )
+  const getErrors = useWidgetSettingsStore(s => s.getErrors)
+  const showValidation = useWidgetSettingsStore(s => s.validationVisible)
+  const errors = showValidation ? getErrors('form.template.templateSettings') : []
+  const customColorError = errors.find(e => e.path.endsWith('customColor'))
+  const imageUrlError =
+    errors.find(e => e.path.endsWith('url')) || errors.find(e => e.path.endsWith('fileName'))
 
   const colorOptions: OptionItem[] = [
     { key: 'primary', label: 'Основная' },
     {
       key: 'custom',
       label: 'Пользовательское',
-      accessory: <ColorAccessory color={customColor} onChange={setCustomColor} />
+      accessory: <ColorAccessory color={settings?.customColor} onChange={setCustomColor} />
     }
   ]
 
@@ -44,24 +54,37 @@ const TemplateSettings = () => {
       className="overflow-hidden flex flex-col gap-3"
     >
       <ImageUploader
-        checked={imageEnabled}
-        setChecked={setImageEnabled}
+        checked={settings.image.enabled}
+        setChecked={setTemplateImageEnabled}
         title="Картинка"
         recommendedResolution="470x470"
         fileSize="менее 2 Mb"
+        onFileSelect={file => {
+          if (!file) return
+          const url = URL.createObjectURL(file)
+          setTemplateImageFile(file.name, url)
+        }}
+        isInvalid={Boolean(settings.image.enabled && imageUrlError)}
+        errorMessage={imageUrlError?.message}
       />
       <OptionsChooser
         title="Положение контента"
         options={contentPositionOptions}
-        value={contentPositionScheme}
-        onChange={k => setContentPositionScheme(k as 'left' | 'right')}
+        value={settings.contentPosition}
+        onChange={k => setContentPosition(k as ContentPosition)}
       />
       <OptionsChooser
         title="Цветовая гамма"
         options={colorOptions}
-        value={colorScheme}
-        onChange={k => setColorScheme(k as 'primary' | 'custom')}
+        value={settings.colorScheme}
+        onChange={k => {
+          setColorScheme(k as ColorScheme)
+          setCustomColor(settings.customColor)
+        }}
       />
+      {showValidation && customColorError ? (
+        <span className="text-sm text-red-500">{customColorError.message}</span>
+      ) : null}
     </motion.div>
   )
 }

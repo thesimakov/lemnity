@@ -1,7 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import SwitchableField from '@/components/SwitchableField'
-
-export type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import type { DayKey } from '@/stores/widgetSettingsStore'
+import { useShallow } from 'zustand/react/shallow'
 
 const DAY_LABEL: Record<DayKey, string> = {
   mon: 'Пн',
@@ -15,37 +18,23 @@ const DAY_LABEL: Record<DayKey, string> = {
 
 type WeekdayChooserProps = {
   title?: string
-  enabled?: boolean
-  onToggleEnabled?: (val: boolean) => void
-  selectedDays?: DayKey[]
-  onDaysChange?: (days: DayKey[]) => void
-  weekdaysOnly?: boolean
-  onWeekdaysOnlyChange?: (val: boolean) => void
 }
 
 const allWeekdays: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri']
 const allDays: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
-const WeekdayChooser = ({
-  title = 'Дни недели',
-  enabled: enabledProp,
-  onToggleEnabled,
-  selectedDays: selectedProp,
-  onDaysChange,
-  weekdaysOnly: weekdaysOnlyProp,
-  onWeekdaysOnlyChange
-}: WeekdayChooserProps) => {
-  const isControlledEnabled = typeof enabledProp === 'boolean'
-  const [enabledState, setEnabledState] = useState<boolean>(enabledProp ?? true)
-  const enabled = isControlledEnabled ? (enabledProp as boolean) : enabledState
-
-  const isControlledDays = Array.isArray(selectedProp)
-  const [daysState, setDaysState] = useState<DayKey[]>(selectedProp ?? allDays)
-  const days = isControlledDays ? (selectedProp as DayKey[]) : daysState
-
-  const isControlledWeekdaysOnly = typeof weekdaysOnlyProp === 'boolean'
-  const [weekdaysOnlyState, setWeekdaysOnlyState] = useState<boolean>(weekdaysOnlyProp ?? false)
-  const weekdaysOnly = isControlledWeekdaysOnly ? (weekdaysOnlyProp as boolean) : weekdaysOnlyState
+const WeekdayChooser = ({ title = 'Дни недели' }: WeekdayChooserProps) => {
+  // bind to store
+  const weekdays = useWidgetSettingsStore(
+    useShallow(s =>
+      withDefaultsPath(s.settings?.display, 'weekdays', STATIC_DEFAULTS.display.weekdays)
+    )
+  )
+  const { enabled, weekdaysOnly } = weekdays
+  const days = weekdays.days as DayKey[]
+  const setEnabledInStore = useWidgetSettingsStore(s => s.setWeekdaysEnabled)
+  const setDaysInStore = useWidgetSettingsStore(s => s.setWeekdays)
+  const setWeekdaysOnlyInStore = useWidgetSettingsStore(s => s.setWeekdaysOnly)
 
   // keep previous selection to restore when disabling "weekdays only"
   const prevSelectionRef = useRef<DayKey[] | null>(null)
@@ -53,13 +42,11 @@ const WeekdayChooser = ({
   const isSelected = useMemo(() => new Set(days), [days])
 
   const setEnabled = (val: boolean) => {
-    if (!isControlledEnabled) setEnabledState(val)
-    onToggleEnabled?.(val)
+    setEnabledInStore(val)
   }
 
   const updateDays = (next: DayKey[]) => {
-    if (!isControlledDays) setDaysState(next)
-    onDaysChange?.(next)
+    setDaysInStore(next)
   }
 
   const setWeekdaysOnly = (val: boolean) => {
@@ -71,8 +58,7 @@ const WeekdayChooser = ({
       updateDays(prevSelectionRef.current ?? days)
       prevSelectionRef.current = null
     }
-    if (!isControlledWeekdaysOnly) setWeekdaysOnlyState(val)
-    onWeekdaysOnlyChange?.(val)
+    setWeekdaysOnlyInStore(val)
   }
 
   const toggleDay = (day: DayKey) => {

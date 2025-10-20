@@ -8,6 +8,7 @@ import iconTelephone from '@/assets/icons/telephone.svg'
 import { Listbox, ListboxItem } from '@heroui/listbox'
 import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
+import { memo } from 'react'
 
 interface MenuItem {
   key: string
@@ -120,4 +121,4 @@ const NavigationSidebar = () => {
   )
 }
 
-export default NavigationSidebar
+export default memo(NavigationSidebar)

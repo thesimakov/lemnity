@@ -1,23 +1,30 @@
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { Input } from '@heroui/input'
 import { Radio, RadioGroup } from '@heroui/radio'
-import { useState } from 'react'
-
-type Mode = 'everyPage' | 'periodically'
+import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 
 const DontShowField = () => {
-  const [mode, setMode] = useState<Mode>('everyPage')
+  const { setDontShow } = useDisplaySettings()
+  const dontShow = useWidgetSettingsStore(s =>
+    withDefaultsPath(s.settings?.display, 'dontShow', STATIC_DEFAULTS.display.dontShow)
+  )
+  const { afterWin, afterShows } = dontShow
 
-  const getRadioDot = (value: Mode, mode: Mode) => {
+  const getRadioDot = (currentAfterWin: boolean, targetAfterWin: boolean) => {
     return (
-      <RadioGroup value={value} onValueChange={v => setMode(v as Mode)}>
+      <RadioGroup
+        value={String(currentAfterWin)}
+        onValueChange={v => setDontShow(v === 'true', afterShows)}
+      >
         <Radio
           classNames={{
             label: 'text-gray-700',
             wrapper: 'border-[#373737] group-data-[selected=true]:!border-[#373737] border-small',
             control: 'bg-[#373737] w-3.5 h-3.5'
           }}
-          value={mode}
+          value={String(targetAfterWin)}
         ></Radio>
       </RadioGroup>
     )
@@ -29,16 +36,16 @@ const DontShowField = () => {
       <div className="flex flex-row gap-2">
         <BorderedContainer
           className="w-full flex-row items-center gap-2 h-12"
-          onClick={() => setMode('everyPage')}
+          onClick={() => setDontShow(true, afterShows)}
         >
-          {getRadioDot(mode, 'everyPage')}
+          {getRadioDot(afterWin, true)}
           <span>После выигрыша</span>
         </BorderedContainer>
         <BorderedContainer
           className="w-full flex-row items-center gap-2 h-12"
-          onClick={() => setMode('periodically')}
+          onClick={() => setDontShow(false, afterShows)}
         >
-          {getRadioDot(mode, 'periodically')}
+          {getRadioDot(afterWin, false)}
           <span>После</span>
           <Input
             radius="sm"
@@ -46,6 +53,8 @@ const DontShowField = () => {
             className="min-w-[46px] w-[46px]"
             variant="bordered"
             placeholder="20"
+            value={(afterShows && String(afterShows)) || ''}
+            onChange={e => setDontShow(afterWin, Number(e.target.value) || null)}
           />
           <span>показов</span>
         </BorderedContainer>

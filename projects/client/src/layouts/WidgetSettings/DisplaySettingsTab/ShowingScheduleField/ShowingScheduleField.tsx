@@ -1,7 +1,10 @@
 import OptionsChooser from '@/components/OptionsChooser'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
-import { useState } from 'react'
 import WeekdayChooser from '../WeekdayChooser/WeekdayChooser'
+import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { useShallow } from 'zustand/react/shallow'
 
 const dateOptions = [
   { key: 'fromDate', label: 'От: Дата / Время / Год' },
@@ -14,10 +17,28 @@ const timeOptions = [
 ]
 
 const ShowingScheduleField = () => {
-  const [dateEnabled, setDateEnabled] = useState(true)
-  const [dateValue, setDateValue] = useState('fromDate')
-  const [timeValue, setTimeValue] = useState('fromTime')
-  const [timeEnabled, setTimeEnabled] = useState(true)
+  const { setScheduleDate, setScheduleTime } = useDisplaySettings()
+  const date = useWidgetSettingsStore(
+    useShallow(s =>
+      withDefaultsPath<typeof STATIC_DEFAULTS.display.schedule.date>(
+        s.settings?.display,
+        'schedule.date',
+        STATIC_DEFAULTS.display.schedule.date
+      )
+    )
+  )
+  const time = useWidgetSettingsStore(
+    useShallow(s =>
+      withDefaultsPath<typeof STATIC_DEFAULTS.display.schedule.time>(
+        s.settings?.display,
+        'schedule.time',
+        STATIC_DEFAULTS.display.schedule.time
+      )
+    )
+  )
+  const { value: dateValue, enabled: dateEnabled } = date
+  const { value: timeValue, enabled: timeEnabled } = time
+
   return (
     <BorderedContainer className="flex flex-col gap-2">
       <span>Расписание показа</span>
@@ -25,10 +46,11 @@ const ShowingScheduleField = () => {
         title="Дата показа"
         options={dateOptions}
         value={dateValue}
-        onChange={setDateValue}
-        toggle={true}
-        enabled={dateEnabled}
-        onToggle={setDateEnabled}
+        onChange={value => setScheduleDate(dateEnabled ?? true, value)}
+        showSwitch
+        switchedOn={dateEnabled}
+        isDisabled={!dateEnabled}
+        onToggle={enabled => setScheduleDate(enabled, dateValue)}
         noBorder
         classNames="!p-0"
       />
@@ -36,10 +58,11 @@ const ShowingScheduleField = () => {
         title="Время показа"
         options={timeOptions}
         value={timeValue}
-        onChange={setTimeValue}
-        toggle={true}
-        enabled={timeEnabled}
-        onToggle={setTimeEnabled}
+        onChange={value => setScheduleTime(timeEnabled ?? true, value)}
+        showSwitch
+        switchedOn={timeEnabled}
+        isDisabled={!timeEnabled}
+        onToggle={enabled => setScheduleTime(enabled, timeValue)}
         noBorder
         classNames="!p-0"
       />

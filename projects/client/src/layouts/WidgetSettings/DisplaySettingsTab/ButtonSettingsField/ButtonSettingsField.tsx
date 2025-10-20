@@ -1,11 +1,32 @@
-import { useState } from 'react'
 import { Input } from '@heroui/input'
 import ColorAccessory from '@/components/ColorAccessory'
+import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { useEffect, useState } from 'react'
+import type { Issue } from '@/stores/widgetSettings/schema'
+import { useShallow } from 'zustand/react/shallow'
 
 const ButtonSettingsField = () => {
-  const [text, setText] = useState('')
-  const [buttonColor, setButtonColor] = useState('#FFB34F')
-  const [textColor, setTextColor] = useState('#FFFFFF')
+  const { setButtonIcon } = useDisplaySettings()
+
+  const defaultButton = STATIC_DEFAULTS.display.icon.button ?? {
+    text: '',
+    buttonColor: '#5951E5',
+    textColor: '#FFFFFF'
+  }
+  const button = useWidgetSettingsStore(
+    useShallow(s => withDefaultsPath(s.settings?.display?.icon, 'button', defaultButton))
+  )
+  const { text, buttonColor, textColor } = button
+
+  const getErrors = useWidgetSettingsStore(s => s.getErrors)
+  const showValidation = useWidgetSettingsStore(s => s.validationVisible)
+  const [errors, setErrors] = useState<Issue[]>([])
+
+  useEffect(() => {
+    setErrors(showValidation ? getErrors('display.icon.button') : [])
+  }, [getErrors, showValidation, text])
 
   return (
     <div className="flex flex-col gap-2">
@@ -15,16 +36,26 @@ const ButtonSettingsField = () => {
           radius="sm"
           type="text"
           variant="bordered"
-          value={text}
-          onChange={e => setText(e.target.value)}
+          value={text ?? ''}
+          onChange={e => setButtonIcon(e.target.value, buttonColor, textColor)}
+          isInvalid={errors.some(e => e.path.endsWith('text'))}
+          errorMessage={errors.find(e => e.path.endsWith('text'))?.message}
           className="max-w-full"
           classNames={{
             inputWrapper: 'h-14',
             input: 'placeholder:text-[#AFAFAF]'
           }}
         />
-        <ColorAccessory color={buttonColor} onChange={setButtonColor} label="Кнопка" />
-        <ColorAccessory color={textColor} onChange={setTextColor} label="Текст" />
+        <ColorAccessory
+          color={buttonColor}
+          onChange={color => setButtonIcon(text, color, textColor)}
+          label="Кнопка"
+        />
+        <ColorAccessory
+          color={textColor ?? '#FFFFFF'}
+          onChange={color => setButtonIcon(text, buttonColor, color)}
+          label="Текст"
+        />
       </div>
     </div>
   )

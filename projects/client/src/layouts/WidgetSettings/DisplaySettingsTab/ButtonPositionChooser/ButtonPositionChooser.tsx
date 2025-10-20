@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
-
-export type ButtonPosition = 'bottom-left' | 'top-center' | 'bottom-right'
+import type { ButtonPosition } from '@/stores/widgetSettingsStore'
 
 type ButtonPositionChooserProps = {
   title?: string
@@ -23,7 +22,7 @@ const OptionCard = ({ selected, onClick, children }: CardProps) => {
     <button
       type="button"
       onClick={onClick}
-      className={`relative w-20 h-20 rounded-md border transition-colors ${
+      className={`relative w-20 h-20 rounded-md border border-[2px] transition-colors ${
         selected ? 'border-[#7C3AED]' : 'border-[#D4D4D8]'
       } bg-white`}
       aria-pressed={selected}
@@ -46,7 +45,7 @@ const ButtonPositionChooser = ({
           <OptionCard selected={value === 'bottom-left'} onClick={() => onChange('bottom-left')}>
             <Dot className="left-2 bottom-2" />
           </OptionCard>
-          <OptionCard selected={value === 'top-center'} onClick={() => onChange('top-center')}>
+          <OptionCard selected={value === 'top-right'} onClick={() => onChange('top-right')}>
             <Dot className="top-2 right-3" />
           </OptionCard>
           <OptionCard selected={value === 'bottom-right'} onClick={() => onChange('bottom-right')}>

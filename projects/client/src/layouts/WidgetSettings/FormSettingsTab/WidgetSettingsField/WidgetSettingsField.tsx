@@ -3,49 +3,48 @@ import { Checkbox } from '@heroui/checkbox'
 import { useCallback, useState } from 'react'
 import { Input } from '@heroui/input'
 import { Button } from '@heroui/button'
-import SectorItem, { type SectorData } from '../SectorItem/SectorItem'
+import SectorItem from '../SectorItem/SectorItem'
+import type { SectorItem as SectorData } from '@stores/widgetSettings/types'
+import { useFormSettings, type SectorItem as StoreSectorItem } from '@/stores/widgetSettingsStore'
 
 const WidgetSettingsField = () => {
-  const [randomize, setRandomize] = useState<boolean>(false)
-  const [sectors, setSectors] = useState<EditableListItem<SectorData>[]>([
-    {
-      id: '1',
-      mode: 'text',
-      text: 'Бесплатная установка',
-      icon: 'trophy',
-      color: '#FF6B6B'
-    },
-    {
-      id: '2',
-      mode: 'icon',
-      text: 'Бесплатная замерка',
-      icon: 'star',
-      color: '#4ECDC4'
-    },
-    {
-      id: '3',
-      mode: 'icon',
-      text: 'Бесплатная установка',
-      icon: 'rocket',
-      color: '#45B7D1'
-    }
-  ])
+  const {
+    settings,
+    setRandomize,
+    setSectors,
+    updateSector: updateSectorInStore,
+    addSector,
+    deleteSector
+  } = useFormSettings()
+
+  // UI state only - не сохраняется в конфигурации
+  const [openedIndex, setOpenedIndex] = useState<number | null>(null)
+
+  const sectors: EditableListItem<SectorData>[] = (settings?.sectors?.items ?? []).map(item => ({
+    id: item.id,
+    mode: item.mode,
+    text: item.text,
+    icon: item.icon,
+    color: item.color,
+    promo: item.promo,
+    chance: item.chance
+  }))
 
   const handleAdd = () => {
-    const newSector: EditableListItem<SectorData> = {
+    const newSector: StoreSectorItem = {
       id: Date.now().toString(),
       mode: 'text',
       text: 'Бесплатная установка',
       icon: 'trophy',
       color: '#98D8C8'
     }
-    setSectors([...sectors, newSector])
+    addSector(newSector)
   }
 
   const getRandomOrderCheckbox = () => {
     return (
       <Checkbox
-        isSelected={randomize}
+        isSelected={settings?.sectors?.randomize ?? false}
         onValueChange={setRandomize}
         classNames={{
           wrapper:
@@ -59,17 +58,12 @@ const WidgetSettingsField = () => {
     )
   }
 
-  const updateSector = useCallback(
+  const handleUpdateSector = useCallback(
     (index: number, updates: Partial<SectorData>) => {
-      const updated = [...sectors]
-      updated[index] = { ...updated[index], ...updates }
-      setSectors(updated)
-      console.log(index, updates, updated)
+      updateSectorInStore(index, updates)
     },
-    [sectors]
+    [updateSectorInStore]
   )
-
-  const [openedIndex, setOpenedIndex] = useState<number | null>(null)
 
   const settingsSector = (sector: EditableListItem<SectorData>, index: number) => {
     return openedIndex === index ? (
@@ -84,6 +78,8 @@ const WidgetSettingsField = () => {
           placeholder="Укажите промокод слота"
           radius="sm"
           size="lg"
+          value={sector.promo ?? ''}
+          onValueChange={val => handleUpdateSector(index, { promo: val })}
           description="Промокод можно показывать после выпадения приза"
         />
         <Input
@@ -95,6 +91,18 @@ const WidgetSettingsField = () => {
           placeholder="Вероятность выпадения"
           radius="sm"
           size="lg"
+          value={sector.chance != null ? String(sector.chance) : ''}
+          onValueChange={val => {
+            const trimmed = val.trim()
+            if (trimmed === '') {
+              handleUpdateSector(index, { chance: undefined })
+              return
+            }
+            const num = Number(trimmed)
+            if (Number.isFinite(num) && num >= 0) {
+              handleUpdateSector(index, { chance: num })
+            }
+          }}
           description="Оставьте поле пустым во всех бонусах для равномерного выпадения. Процент считается по формуле сумма всех полей ÷ количество бонусов. Посмотреть процент можно выше. Вероятность выпадения — 100%"
         />
         <div className="flex gap-3">
@@ -117,7 +125,7 @@ const WidgetSettingsField = () => {
         {getRandomOrderCheckbox()}
         <EditableList
           items={sectors}
-          onItemsChange={setSectors}
+          onItemsChange={items => setSectors(items as StoreSectorItem[])}
           maxItems={12}
           classNames={{
             index:
@@ -129,17 +137,17 @@ const WidgetSettingsField = () => {
             <SectorItem
               key={sector.id}
               sector={sector}
-              onModeChange={mode => updateSector(index, { mode })}
-              onTextChange={text => updateSector(index, { text })}
-              onIconChange={icon => updateSector(index, { icon })}
-              onColorChange={color => updateSector(index, { color })}
+              onModeChange={mode => handleUpdateSector(index, { mode })}
+              onTextChange={text => handleUpdateSector(index, { text })}
+              onIconChange={icon => handleUpdateSector(index, { icon })}
+              onColorChange={color => handleUpdateSector(index, { color })}
               onSettings={() => setOpenedIndex(prev => (prev === index ? null : index))}
             />
           )}
           renderBelow={settingsSector}
           onAdd={handleAdd}
           onDelete={(item: EditableListItem<SectorData>, index: number) => {
-            setSectors(sectors.filter(s => s.id !== item.id))
+            deleteSector(item.id)
             if (openedIndex !== null && index <= openedIndex) {
               setOpenedIndex(null)
             }

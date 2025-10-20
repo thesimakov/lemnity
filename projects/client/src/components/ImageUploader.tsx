@@ -14,6 +14,8 @@ type ImageUploaderProps = {
   classNames?: string
   hideSwitch?: boolean
   onFileSelect?: (file: File | null) => void
+  isInvalid?: boolean
+  errorMessage?: string
 }
 
 const ImageUploader = ({
@@ -25,7 +27,9 @@ const ImageUploader = ({
   formats = ['png', 'jpeg'],
   classNames,
   hideSwitch,
-  onFileSelect
+  onFileSelect,
+  isInvalid,
+  errorMessage
 }: ImageUploaderProps) => {
   const [fileName, setFileName] = useState<string>('Нажмите чтобы выбрать файл')
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -89,6 +93,7 @@ const ImageUploader = ({
           Формат: {formats.join(', ')}
         </span>
       </div>
+      {checked && isInvalid && <span className="text-sm text-red-500">{errorMessage}</span>}
     </div>
   )
 }

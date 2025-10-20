@@ -2,23 +2,41 @@ import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { Input } from '@heroui/input'
 import { Radio, RadioGroup } from '@heroui/radio'
 import { Select, SelectItem } from '@heroui/select'
-import { useState } from 'react'
-
-type Mode = 'everyPage' | 'periodically'
+import useWidgetSettingsStore, {
+  useDisplaySettings,
+  type FrequencyMode,
+  type FrequencyUnit
+} from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { useShallow } from 'zustand/react/shallow'
 
 const ShowingFrequencyField = () => {
-  const [mode, setMode] = useState<Mode>('everyPage')
+  const { setFrequency } = useDisplaySettings()
+  const frequency = useWidgetSettingsStore(
+    useShallow(s =>
+      withDefaultsPath<typeof STATIC_DEFAULTS.display.frequency>(
+        s.settings?.display,
+        'frequency',
+        STATIC_DEFAULTS.display.frequency
+      )
+    )
+  )
+  const { mode, value, unit } = frequency
 
-  const getRadioDot = (value: Mode, mode: Mode) => {
+  const getRadioDot = (currentMode: FrequencyMode | undefined, targetMode: FrequencyMode) => {
     return (
-      <RadioGroup value={value} onValueChange={v => setMode(v as Mode)}>
+      <RadioGroup
+        value={currentMode}
+        onValueChange={v => setFrequency(v as FrequencyMode, value, unit)}
+      >
         <Radio
           classNames={{
             label: 'text-gray-700',
             wrapper: 'border-[#373737] group-data-[selected=true]:!border-[#373737] border-small',
             control: 'bg-[#373737] w-3.5 h-3.5'
           }}
-          value={mode}
+          value={targetMode}
         ></Radio>
       </RadioGroup>
     )
@@ -30,14 +48,14 @@ const ShowingFrequencyField = () => {
       <div className="flex flex-row gap-2">
         <BorderedContainer
           className="w-full flex-row items-center gap-2 h-12"
-          onClick={() => setMode('everyPage')}
+          onClick={() => setFrequency('everyPage', value, unit)}
         >
           {getRadioDot(mode, 'everyPage')}
           <span>На каждой странице</span>
         </BorderedContainer>
         <BorderedContainer
           className="w-full flex-row items-center gap-2 h-12"
-          onClick={() => setMode('periodically')}
+          onClick={() => setFrequency('periodically', value, unit)}
         >
           {getRadioDot(mode, 'periodically')}
           <span className="flex shrink-0">Один раз в</span>
@@ -47,10 +65,19 @@ const ShowingFrequencyField = () => {
             className="min-w-[46px] w-[46px]"
             variant="bordered"
             placeholder="20"
+            value={(value && String(value)) || ''}
+            onChange={e => setFrequency(mode, Number(e.target.value) || 0, unit)}
           />
-          <Select onClick={() => setMode('periodically')}>
-            <SelectItem>Секунд</SelectItem>
-            <SelectItem>Минут</SelectItem>
+          <Select
+            selectedKeys={unit ? [unit] : []}
+            onSelectionChange={keys => {
+              const selected = Array.from(keys)[0] as FrequencyUnit
+              setFrequency(mode, value, selected)
+            }}
+            onClick={() => setFrequency('periodically', value, unit)}
+          >
+            <SelectItem key="sec">Секунд</SelectItem>
+            <SelectItem key="min">Минут</SelectItem>
           </Select>
         </BorderedContainer>
       </div>

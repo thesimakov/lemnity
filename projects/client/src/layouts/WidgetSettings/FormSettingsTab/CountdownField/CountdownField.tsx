@@ -1,14 +1,14 @@
 import SwitchableField from '@/components/SwitchableField'
 import { Radio, RadioGroup } from '@heroui/radio'
-import { useState } from 'react'
+import { useFormSettings } from '@/stores/widgetSettingsStore'
 
 const CountdownField = () => {
-  const [countdownEnabled, setCountdownEnabled] = useState<boolean>(false)
+  const { settings, setCountdownEnabled } = useFormSettings()
 
   return (
     <SwitchableField
       title="Обратный отсчёт"
-      enabled={countdownEnabled}
+      enabled={settings?.countdown?.enabled ?? false}
       onToggle={setCountdownEnabled}
     >
       <RadioGroup value="countdown">

@@ -1,23 +1,37 @@
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { Input } from '@heroui/input'
 import { Radio, RadioGroup } from '@heroui/radio'
-import { useState } from 'react'
-
-type Mode = 'everyPage' | 'periodically'
+import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { useShallow } from 'zustand/react/shallow'
 
 const ShowingLimitsField = () => {
-  const [mode, setMode] = useState<Mode>('everyPage')
+  const { setLimits } = useDisplaySettings()
+  const limits = useWidgetSettingsStore(
+    useShallow(s =>
+      withDefaultsPath<typeof STATIC_DEFAULTS.display.limits>(
+        s.settings?.display,
+        'limits',
+        STATIC_DEFAULTS.display.limits
+      )
+    )
+  )
+  const { afterWin, afterShows } = limits
 
-  const getRadioDot = (value: Mode, mode: Mode) => {
+  const getRadioDot = (currentAfterWin: boolean, targetAfterWin: boolean) => {
     return (
-      <RadioGroup value={value} onValueChange={v => setMode(v as Mode)}>
+      <RadioGroup
+        value={String(currentAfterWin)}
+        onValueChange={v => setLimits(v === 'true', afterShows)}
+      >
         <Radio
           classNames={{
             label: 'text-gray-700',
             wrapper: 'border-[#373737] group-data-[selected=true]:!border-[#373737] border-small',
             control: 'bg-[#373737] w-3.5 h-3.5'
           }}
-          value={mode}
+          value={String(targetAfterWin)}
         ></Radio>
       </RadioGroup>
     )
@@ -29,16 +43,16 @@ const ShowingLimitsField = () => {
       <div className="flex flex-row gap-2">
         <BorderedContainer
           className="w-full flex-row items-center gap-2 h-12"
-          onClick={() => setMode('everyPage')}
+          onClick={() => setLimits(true, afterShows)}
         >
-          {getRadioDot(mode, 'everyPage')}
+          {getRadioDot(afterWin, true)}
           <span>После выигрыша</span>
         </BorderedContainer>
         <BorderedContainer
           className="w-full flex-row items-center gap-2 h-12"
-          onClick={() => setMode('periodically')}
+          onClick={() => setLimits(false, afterShows)}
         >
-          {getRadioDot(mode, 'periodically')}
+          {getRadioDot(afterWin, false)}
           <span>После</span>
           <Input
             radius="sm"
@@ -46,6 +60,8 @@ const ShowingLimitsField = () => {
             className="min-w-[46px] w-[46px]"
             variant="bordered"
             placeholder="20"
+            value={(afterShows && String(afterShows)) || ''}
+            onChange={e => setLimits(afterWin, Number(e.target.value) || null)}
           />
           <span>показов</span>
         </BorderedContainer>

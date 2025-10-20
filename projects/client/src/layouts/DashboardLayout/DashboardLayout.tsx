@@ -3,6 +3,7 @@ import MainContent from './MainContent'
 import RightPanel from './RightPanel'
 import type { PropsWithChildren, ReactElement, ReactNode } from 'react'
 import { useSidebarStore } from '@/stores/sidebarStore'
+import { memo } from 'react'
 
 type DashboardLayoutProps = PropsWithChildren<{
   rightPanel?: ReactNode
@@ -29,4 +30,4 @@ const DashboardLayout = ({
   )
 }
 
-export default DashboardLayout
+export default memo(DashboardLayout)

@@ -2,6 +2,7 @@ import { RadioGroup, Radio } from '@heroui/radio'
 import { AnimatePresence, motion } from 'framer-motion'
 import SimpleTooltip from './SimpleTooltip'
 import CustomSwitch from './CustomSwitch'
+import { memo } from 'react'
 
 export type OptionItem = {
   key: string
@@ -16,10 +17,11 @@ export type OptionItem = {
 export type OptionsChooserProps = {
   title: string
   options: OptionItem[]
-  value: string
+  value?: string
   onChange: (key: string) => void
-  toggle?: boolean
-  enabled?: boolean
+  showSwitch?: boolean
+  switchedOn?: boolean
+  isDisabled?: boolean
   onToggle?: (enabled: boolean) => void
   noBorder?: boolean
   classNames?: string
@@ -30,8 +32,9 @@ const OptionsChooser = ({
   options,
   value,
   onChange,
-  toggle,
-  enabled,
+  showSwitch,
+  switchedOn,
+  isDisabled = false,
   onToggle,
   noBorder,
   classNames
@@ -44,9 +47,9 @@ const OptionsChooser = ({
       <div className="flex flex-col gap-2 pb-2">
         <div className="flex flex-row items-center justify-between">
           <span className="text-black">{title}</span>
-          {toggle ? (
+          {showSwitch ? (
             <CustomSwitch
-              isSelected={enabled}
+              isSelected={switchedOn}
               onValueChange={onToggle}
               selectedColor="group-data-[selected=true]:!bg-[#5951E5]"
               className={`ml-auto`}
@@ -55,6 +58,7 @@ const OptionsChooser = ({
           ) : null}
         </div>
         <RadioGroup
+          isDisabled={isDisabled}
           orientation="horizontal"
           value={value}
           onValueChange={v => onChange(String(v))}
@@ -82,7 +86,11 @@ const OptionsChooser = ({
                   </div>
                 </Radio>
               </div>
-              {opt.accessory ? <div className="shrink">{opt.accessory}</div> : null}
+              {opt.accessory ? (
+                <div className="shrink" key={`accessory-${opt.key}`}>
+                  {opt.accessory}
+                </div>
+              ) : null}
             </>
           ))}
         </RadioGroup>
@@ -104,4 +112,4 @@ const OptionsChooser = ({
   )
 }
 
-export default OptionsChooser
+export default memo(OptionsChooser)

@@ -1,14 +1,18 @@
 import ColorAccessory from '@/components/ColorAccessory'
 import { Input } from '@heroui/input'
-import { useState } from 'react'
+import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 
 const FormSettings = () => {
-  const [title, setTitle] = useState<string>('')
-  const [titleColor, setTitleColor] = useState<string>('#777777')
-  const [description, setDescription] = useState<string>('')
-  const [descriptionColor, setDescriptionColor] = useState<string>('#777777')
-  const [buttonText, setButtonText] = useState<string>('')
-  const [buttonColor, setButtonColor] = useState<string>('#FFB34F')
+  const { setFormTitle, setFormDescription, setFormButtonText } = useFormSettings()
+  const formTexts = useWidgetSettingsStore(s =>
+    withDefaultsPath(s.settings?.form, 'formTexts', STATIC_DEFAULTS.form.formTexts)
+  )
+  const { title, description, button } = formTexts
+  const { text: titleText, color: titleColor } = title
+  const { text: descriptionText, color: descriptionColor } = description
+  const { text: buttonText, color: buttonColor } = button
 
   return (
     <div className="flex flex-col gap-2 p-3 rounded-lg border border-gray-200">
@@ -21,10 +25,10 @@ const FormSettings = () => {
           variant="bordered"
           placeholder="Укажите заголовок"
           type="text"
-          onChange={e => setTitle(e.target.value)}
-          value={title}
+          onChange={e => setFormTitle(e.target.value, titleColor)}
+          value={titleText}
         />
-        <ColorAccessory color={titleColor} onChange={setTitleColor} />
+        <ColorAccessory color={titleColor} onChange={color => setFormTitle(titleText, color)} />
       </div>
       <span className="text-black">Описание</span>
       <div className="flex flex-row gap-2">
@@ -34,10 +38,13 @@ const FormSettings = () => {
           variant="bordered"
           placeholder="Можно оставить пустым"
           type="text"
-          onChange={e => setDescription(e.target.value)}
-          value={description}
+          onChange={e => setFormDescription(e.target.value, descriptionColor)}
+          value={descriptionText}
         />
-        <ColorAccessory color={descriptionColor} onChange={setDescriptionColor} />
+        <ColorAccessory
+          color={descriptionColor}
+          onChange={color => setFormDescription(descriptionText, color)}
+        />
       </div>
       <span className="text-black">Текст в кнопке</span>
       <div className="flex flex-row gap-2">
@@ -47,10 +54,13 @@ const FormSettings = () => {
           variant="bordered"
           placeholder="Крутить колесо"
           type="text"
-          onChange={e => setButtonText(e.target.value)}
+          onChange={e => setFormButtonText(e.target.value, buttonColor)}
           value={buttonText}
         />
-        <ColorAccessory color={buttonColor} onChange={setButtonColor} />
+        <ColorAccessory
+          color={buttonColor}
+          onChange={color => setFormButtonText(buttonText, color)}
+        />
       </div>
     </div>
   )
