@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@nestjs/mapped-types": "*"
+    "@nestjs/mapped-types": "*",
+    "zod": "^4.1.12"
   },
   "name": "monorepo-template",
   "version": "1.0.0",
@@ -33,6 +34,7 @@
   "packageManager": "pnpm@10.15.1",
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.23.4",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3"
   }
 }

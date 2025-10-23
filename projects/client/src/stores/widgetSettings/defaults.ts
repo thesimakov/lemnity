@@ -7,14 +7,14 @@ export const buildDefaults = (id: string): WidgetSettings => ({
   form: {
     companyLogo: { enabled: true, fileName: '', url: '' },
     template: {
-        enabled: true,
-        key: '',
-    //     templateSettings: {
-    //     image: { enabled: false, fileName: '', url: '' },
-    //     contentPosition: 'left',
-    //     colorScheme: 'primary',
-    //     customColor: '#FFFFFF'
-    //   },
+      enabled: true,
+      key: ''
+      //     templateSettings: {
+      //     image: { enabled: false, fileName: '', url: '' },
+      //     contentPosition: 'left',
+      //     colorScheme: 'primary',
+      //     customColor: '#FFFFFF'
+      //   },
     },
     formTexts: {
       title: { text: '', color: '#FFFFFF' },
@@ -66,5 +66,3 @@ export const buildDefaults = (id: string): WidgetSettings => ({
 
 // Static defaults for effective reading without widget id
 export const STATIC_DEFAULTS: WidgetSettings = buildDefaults('')
-
-

@@ -51,6 +51,7 @@ type CoreActions = {
 type ValidationState = {
   validationVisible: boolean
   setValidationVisible: (visible: boolean) => void
+  reset: () => void
 }
 export type WidgetSettingsStore = WidgetSettingsState &
   CoreActions &
@@ -133,24 +134,26 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
           validationVisible: false,
           setValidationVisible: (visible: boolean) =>
             set(state => ({ ...state, validationVisible: visible })),
+          reset: () => set({ settings: buildDefaults('') }),
           init: (id, initial) => {
             activeWidgetId = id
-            // try rehydrate this widget id from the map
-            try {
-              const raw = localStorage.getItem(PERSIST_NAME)
-              if (raw) {
-                const map = JSON.parse(raw) as Record<string, { state?: unknown } | undefined>
-                const entry = map[id]
-                const restored = (entry?.state as { settings?: unknown } | undefined)?.settings as
-                  | WidgetSettings
-                  | undefined
-                if (restored) {
-                  set({ settings: restored })
-                  return
+            // if server provided config is null/undefined, try rehydrate draft
+            if (!initial) {
+              try {
+                const raw = localStorage.getItem(PERSIST_NAME)
+                if (raw) {
+                  const map = JSON.parse(raw) as Record<string, { state?: unknown } | undefined>
+                  const entry = map[id]
+                  const restored = (entry?.state as { settings?: unknown } | undefined)
+                    ?.settings as WidgetSettings | undefined
+                  if (restored) {
+                    set({ settings: restored })
+                    return
+                  }
                 }
+              } catch {
+                // ignore
               }
-            } catch {
-              // ignore
             }
             set({ settings: initial ? { ...buildDefaults(id), ...initial } : buildDefaults(id) })
           },

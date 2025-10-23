@@ -3,10 +3,11 @@ import { CreateWidgetDto } from './dto/create-widget.dto'
 import { UpdateWidgetDto } from './dto/update-widget.dto'
 import { PrismaService } from '../prisma.service'
 import { Prisma } from '@prisma/client'
+import { ConfigService } from '../config/config.service'
 
 @Injectable()
 export class WidgetService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService, private readonly configService: ConfigService) {}
 
   async create(createWidgetDto: CreateWidgetDto, userId: string) {
     // Verify that the project belongs to the user
@@ -22,8 +23,16 @@ export class WidgetService {
       name: createWidgetDto.name,
       type: createWidgetDto.type,
       enabled: createWidgetDto.enabled ?? false,
-      config: createWidgetDto.config ?? Prisma.JsonNull,
       project: { connect: { id: createWidgetDto.projectId } }
+    }
+
+    if (createWidgetDto.config !== undefined) {
+      const { data: canonical, version } = this.configService.validateAndCanonicalize(
+        createWidgetDto.config as unknown
+      )
+
+      data.config = canonical as Prisma.InputJsonValue
+      ;(data as { configVersion?: number | null }).configVersion = version
     }
 
     return this.prisma.widget.create({ data })
@@ -71,7 +80,14 @@ export class WidgetService {
     if (updateWidgetDto.name !== undefined) data.name = updateWidgetDto.name
     if (updateWidgetDto.type !== undefined) data.type = updateWidgetDto.type
     if (updateWidgetDto.enabled !== undefined) data.enabled = updateWidgetDto.enabled
-    if (updateWidgetDto.config !== undefined) data.config = updateWidgetDto.config
+    if (updateWidgetDto.config !== undefined) {
+      // validate + migrate, persist config + version in the same update
+      const { data: canonicalConfig, version } = this.configService.validateAndCanonicalize(
+        updateWidgetDto.config as unknown
+      )
+      data.config = canonicalConfig as Prisma.InputJsonValue
+      (data as { configVersion?: number | null }).configVersion = version
+    }
 
     return this.prisma.widget.update({
       where: { id },
