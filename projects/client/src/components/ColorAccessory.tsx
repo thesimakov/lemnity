@@ -3,7 +3,7 @@ import chevronDown from '@/assets/icons/chevron-down.svg'
 
 type ColorAccessoryProps = {
   label?: string
-  color: string
+  color?: string
   onChange: (color: string) => void
   classNames?: {
     label?: string
@@ -12,7 +12,12 @@ type ColorAccessoryProps = {
   }
 }
 
-const ColorAccessory = ({ label, color, onChange, classNames }: ColorAccessoryProps) => {
+const ColorAccessory = ({
+  label,
+  color = '#FFFFFF',
+  onChange,
+  classNames
+}: ColorAccessoryProps) => {
   return (
     <label
       className={`inline-flex items-center h-14 px-3 rounded-md border-2 border-[#E4E4E7] bg-white cursor-pointer ${classNames?.label}`}

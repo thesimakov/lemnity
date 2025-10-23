@@ -1,7 +1,15 @@
 import SvgIcon from '@/components/SvgIcon'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import iconCode from '@/assets/icons/website-code.svg'
+import { memo } from 'react'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+
 const IntegrationTab = () => {
+  const scriptSnippet = useWidgetSettingsStore(
+    s => s.settings?.integration?.scriptSnippet ?? STATIC_DEFAULTS.integration.scriptSnippet
+  )
+
   return (
     <div className="flex flex-col gap-2">
       <span className="text-3xl font-normal leading-2">Внедрите механику в свой бизнес</span>
@@ -28,9 +36,8 @@ const IntegrationTab = () => {
             verticalAlign: 'middle'
           }}
         >
-          {
-            "<script id='pixel-script-poptin' src='https://cdn.popt.in/pixel.js?id=c8916a370ba66' async='true'></script>"
-          }
+          {scriptSnippet ||
+            "<script id='pixel-script-poptin' src='https://cdn.popt.in/pixel.js?id=c8916a370ba66' async='true'></script>"}
         </span>{' '}
         <div className="flex flex-row items-center gap-2">
           <div className="h-5 w-px bg-gray-900 mx-2 ml-auto" />
@@ -38,7 +45,8 @@ const IntegrationTab = () => {
             className="text-[#797979] cursor-pointer"
             onClick={() => {
               navigator.clipboard.writeText(
-                "<script id='pixel-script-poptin' src='https://cdn.popt.in/pixel.js?id=c8916a370ba66' async='true'></script>"
+                scriptSnippet ||
+                  "<script id='pixel-script-poptin' src='https://cdn.popt.in/pixel.js?id=c8916a370ba66' async='true'></script>"
               )
             }}
           >
@@ -55,4 +63,4 @@ const IntegrationTab = () => {
   )
 }
 
-export default IntegrationTab
+export default memo(IntegrationTab)

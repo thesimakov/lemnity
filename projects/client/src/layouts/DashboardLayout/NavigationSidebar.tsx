@@ -8,12 +8,14 @@ import iconTelephone from '@/assets/icons/telephone.svg'
 import { Listbox, ListboxItem } from '@heroui/listbox'
 import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
+import { memo } from 'react'
 
 interface MenuItem {
   key: string
   icon: React.ReactNode
   label: string
   badge?: string | number
+  href?: string
 }
 
 const NavigationSidebar = () => {
@@ -21,7 +23,8 @@ const NavigationSidebar = () => {
     {
       key: 'projects',
       icon: <img src={iconProjects} alt="Проекты" className="w-5 h-5" />,
-      label: 'Проекты'
+      label: 'Проекты',
+      href: '/'
     },
     {
       key: 'requests',
@@ -67,7 +70,7 @@ const NavigationSidebar = () => {
   )
 
   return (
-    <aside className="w-60 h-full flex flex-col justify-between py-[18px] px-[19px] rounded-l-lg sidebar-bg">
+    <aside className="w-60 h-full flex flex-col justify-between py-[18px] px-[19px] rounded-l-lg sidebar-bg transition-all duration-300 ease-in-out">
       <nav className="flex flex-col gap-1">
         <Listbox
           aria-label="Navigation menu"
@@ -84,6 +87,7 @@ const NavigationSidebar = () => {
             <ListboxItem
               key={item.key}
               startContent={item.icon}
+              href={item.href || ''}
               endContent={
                 item.badge && (
                   <span className="bg-success text-white text-[9px] font-normal px-2.5 py-0.5 leading-3.5 rounded-full h-[18px] text-center">
@@ -117,4 +121,4 @@ const NavigationSidebar = () => {
   )
 }
 
-export default NavigationSidebar
+export default memo(NavigationSidebar)

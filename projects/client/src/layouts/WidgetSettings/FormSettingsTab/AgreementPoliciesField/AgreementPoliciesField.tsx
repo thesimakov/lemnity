@@ -1,12 +1,25 @@
 import SwitchableField from '@/components/SwitchableField'
 import { Input, Textarea } from '@heroui/input'
-import { useState } from 'react'
+import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 
 const AgreementPoliciesField = () => {
-  const [enabled, setEnabled] = useState(true)
+  const { setAgreement } = useFormSettings()
+  const agreement = useWidgetSettingsStore(s =>
+    withDefaultsPath(s.settings?.form, 'agreement', STATIC_DEFAULTS.form.agreement)
+  )
+  const { enabled, text, policyUrl } = agreement
+  const getErrors = useWidgetSettingsStore(s => s.getErrors)
+  const showValidation = useWidgetSettingsStore(s => s.validationVisible)
+  const errors = showValidation ? getErrors('form.agreement') : []
 
   return (
-    <SwitchableField title="Согласие и политика" enabled={enabled} onToggle={setEnabled}>
+    <SwitchableField
+      title="Согласие и политика"
+      enabled={enabled}
+      onToggle={enabled => setAgreement(enabled, text ?? '', policyUrl ?? '')}
+    >
       <div className="flex flex-col gap-3">
         <Textarea
           radius="sm"
@@ -17,6 +30,10 @@ const AgreementPoliciesField = () => {
           classNames={{
             input: 'placeholder:text-[#AFAFAF]'
           }}
+          value={text ?? ''}
+          isInvalid={enabled && errors.some(e => e.path.endsWith('text'))}
+          errorMessage={errors.find(e => e.path.endsWith('text'))?.message}
+          onValueChange={text => setAgreement(enabled, text, policyUrl ?? '')}
         />
         <span className="text-lg font-normal">URL политики обработки персональных данных</span>
       </div>
@@ -28,6 +45,10 @@ const AgreementPoliciesField = () => {
         classNames={{
           input: 'placeholder:text-[#AFAFAF]'
         }}
+        value={policyUrl ?? ''}
+        isInvalid={enabled && errors.some(e => e.path.endsWith('policyUrl'))}
+        errorMessage={errors.find(e => e.path.endsWith('policyUrl'))?.message}
+        onValueChange={url => setAgreement(enabled, text ?? '', url)}
       />
     </SwitchableField>
   )

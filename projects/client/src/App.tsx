@@ -15,6 +15,7 @@ import WidgetPage from '@/pages/WidgetPage'
 import EditWidgetPage from '@/pages/EditWidgetPage'
 import WidgetPreviewPage from '@/pages/WidgetPreviewPage'
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
+import { memo } from 'react'
 
 function App() {
   return (
@@ -93,4 +94,4 @@ function App() {
   )
 }
 
-export default App
+export default memo(App)

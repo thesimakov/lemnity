@@ -4,6 +4,7 @@ import ShowingFrequencyField from '../ShowingFrequencyField/ShowingFrequencyFiel
 import DontShowField from '../DontShowField/DontShowField'
 import ShowingLimitsField from '../ShowingLimitsField/ShowingLimitsField'
 import ShowingScheduleField from '../ShowingScheduleField/ShowingScheduleField'
+import { memo } from 'react'
 
 // const showingFrequencyOptions: OptionItem[] = [
 //   { key: 'everyPage', label: 'На каждой странице' },
@@ -33,4 +34,4 @@ const TimerSettingsField = () => {
   )
 }
 
-export default TimerSettingsField
+export default memo(TimerSettingsField)

@@ -1,28 +1,43 @@
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { Checkbox } from '@heroui/checkbox'
 import { Input } from '@heroui/input'
-import { useState } from 'react'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { useShallow } from 'zustand/react/shallow'
 
 const DisplaySettingsField = () => {
-  const [showWhenUserLeaves, setShowWhenUserLeaves] = useState(false)
-  const [scrollBelow, setScrollBelow] = useState('20')
-  const [scrollBelowEnabled, setScrollBelowEnabled] = useState(false)
-  const [timerAfterOpen, setTimerAfterOpen] = useState('20')
-  const [timerAfterOpenEnabled, setTimerAfterOpenEnabled] = useState(false)
+  const showRules = useWidgetSettingsStore(
+    useShallow(s =>
+      withDefaultsPath<typeof STATIC_DEFAULTS.display.showRules>(
+        s.settings?.display,
+        'showRules',
+        STATIC_DEFAULTS.display.showRules
+      )
+    )
+  )
+  const { onExit, scrollBelow, afterOpen } = showRules
+  const showOnExit = onExit
+  const scrollBelowEnabled = scrollBelow.enabled
+  const scrollBelowPercent = scrollBelow.percent
+  const afterOpenEnabled = afterOpen.enabled
+  const afterOpenSeconds = afterOpen.seconds
+
+  const setShowOnExit = useWidgetSettingsStore(s => s.setShowOnExit)
+  const setScrollBelow = useWidgetSettingsStore(s => s.setScrollBelow)
+  const setAfterOpen = useWidgetSettingsStore(s => s.setAfterOpen)
 
   const isScrollBelowValid = (value: string) => {
     if (!scrollBelowEnabled) return true
-    if (value.length == 0) return false
+    if (value.length === 0) return false
     if (Number(value) < 0) return false
-
     return true
   }
 
   const isTimerAfterOpenValid = (value: string) => {
-    if (!timerAfterOpenEnabled) return true
-    if (value.length == 0) return false
+    if (!afterOpenEnabled) return true
+    if (value.length === 0) return false
     if (Number(value) < 0) return false
-
     return true
   }
 
@@ -32,8 +47,8 @@ const DisplaySettingsField = () => {
         <span>Настройки показа</span>
         <BorderedContainer className="h-12 py-0">
           <Checkbox
-            isSelected={showWhenUserLeaves}
-            onValueChange={setShowWhenUserLeaves}
+            isSelected={showOnExit}
+            onValueChange={setShowOnExit}
             classNames={{
               wrapper:
                 'before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
@@ -47,10 +62,7 @@ const DisplaySettingsField = () => {
         <BorderedContainer className="flex-row gap-2 items-center h-12 py-0">
           <Checkbox
             isSelected={scrollBelowEnabled}
-            onValueChange={v => {
-              setScrollBelowEnabled(v)
-              if(!v) setScrollBelow('')
-            }}
+            onValueChange={v => setScrollBelow(v, scrollBelowPercent)}
             classNames={{
               wrapper:
                 'before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
@@ -66,19 +78,20 @@ const DisplaySettingsField = () => {
             className="w-[46px]"
             variant="bordered"
             placeholder="20"
-            value={scrollBelow}
-            isInvalid={!isScrollBelowValid(scrollBelow)}
-            onChange={e => setScrollBelow(e.target.value)}
+            value={String(scrollBelowPercent ?? '')}
+            isInvalid={!isScrollBelowValid(String(scrollBelowPercent ?? ''))}
+            onChange={e => {
+              const v = e.target.value
+              const num = v === '' ? null : Number(v)
+              setScrollBelow(scrollBelowEnabled, Number.isNaN(num) ? null : num)
+            }}
           />
           <span className="text-[#797979]">% страницы сайта</span>
         </BorderedContainer>
         <BorderedContainer className="flex-row gap-2 items-center h-12 py-0">
           <Checkbox
-            isSelected={timerAfterOpenEnabled}
-            onValueChange={v => {
-              setTimerAfterOpenEnabled(v)
-              if(!v) setTimerAfterOpen('')
-            }}
+            isSelected={afterOpenEnabled}
+            onValueChange={v => setAfterOpen(v, afterOpenSeconds)}
             classNames={{
               wrapper:
                 'before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
@@ -94,9 +107,13 @@ const DisplaySettingsField = () => {
             className="w-[46px]"
             variant="bordered"
             placeholder="20"
-            value={timerAfterOpen}
-            isInvalid={!isTimerAfterOpenValid(timerAfterOpen)}
-            onChange={e => setTimerAfterOpen(e.target.value)}
+            value={String(afterOpenSeconds ?? '')}
+            isInvalid={!isTimerAfterOpenValid(String(afterOpenSeconds ?? ''))}
+            onChange={e => {
+              const v = e.target.value
+              const num = v === '' ? null : Number(v)
+              setAfterOpen(afterOpenEnabled, Number.isNaN(num) ? null : num)
+            }}
           />
           <span className="text-[#797979]">секунд после открытия страницы</span>
         </BorderedContainer>

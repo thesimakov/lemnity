@@ -4,7 +4,7 @@ import type { ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import { Breadcrumbs, BreadcrumbItem } from '@heroui/breadcrumbs'
 import { Button } from '@heroui/button'
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { useProjectsStore } from '@/stores/projectsStore'
 import SvgIcon from '@/components/SvgIcon'
 import iconEye from '@/assets/icons/eye.svg'
@@ -12,6 +12,8 @@ import FormSettingsTab from '@/layouts/WidgetSettings/FormSettingsTab/FormSettin
 import './EditWidgetPage.css'
 import DisplaySettingsTab from '@/layouts/WidgetSettings/DisplaySettingsTab/DisplaySettingsTab'
 import IntegrationTab from '@/layouts/WidgetSettings/IntegrationTab/IntegrationTab'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { updateWidget } from '@/services/widgets'
 
 const EditWidgetPage = (): ReactElement => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -24,6 +26,17 @@ const EditWidgetPage = (): ReactElement => {
   const projectName = project?.name || ''
   const widget = project?.widgets.find(w => w.id === widgetId)
   const [tab, setTab] = useState<'fields' | 'appearance' | 'integration'>('fields')
+
+  // Initialize widget settings store once per widgetId
+  useEffect(() => {
+    if (!widgetId) return
+    const store = useWidgetSettingsStore.getState()
+    if (!store.settings || store.settings.id !== widgetId) {
+      // If you have initial settings from API/project store, pass them here instead of undefined
+      // store.init(widgetId, initialSettings)
+      store.init(widgetId)
+    }
+  }, [widgetId])
 
   useEffect(() => {
     const root = scrollRef.current
@@ -56,8 +69,28 @@ const EditWidgetPage = (): ReactElement => {
     alert('Предпросмотр')
   }
 
-  const handleSave = () => {
-    alert('Сохранено')
+  const handleSave = async () => {
+    useWidgetSettingsStore.getState().setValidationVisible(true)
+    const res = useWidgetSettingsStore.getState().prepareForSave()
+    console.log('snapshot:', useWidgetSettingsStore.getState().snapshot())
+    if (!res.ok) {
+      console.warn(res.issues)
+      alert('Исправьте ошибки перед сохранением')
+      return
+    }
+    if (!widgetId) {
+      alert('Нет widgetId')
+      return
+    }
+    try {
+      await updateWidget(widgetId, { config: res.data })
+      alert('Сохранено')
+      useWidgetSettingsStore.getState().setValidationVisible(false)
+      console.log(res.data)
+    } catch (e) {
+      console.error(e)
+      alert('Ошибка сохранения')
+    }
   }
 
   const breadcrumbs = (
@@ -153,4 +186,4 @@ const EditWidgetPage = (): ReactElement => {
   )
 }
 
-export default EditWidgetPage
+export default memo(EditWidgetPage)

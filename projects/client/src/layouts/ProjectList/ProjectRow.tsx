@@ -39,7 +39,7 @@ const ProjectRow = ({
       key={id}
       className={`rounded-lg bg-white shadow-sm border border-gray-200 p-4 ${!enabled ? 'parent' : ''}`}
     >
-      <div className="grid grid-cols-12 items-center gap-2">
+      <div className="grid grid-cols-12 items-center">
         <div className="col-span-4 flex items-center gap-4">
           <div className="flex self-start">
             <SvgIcon className="text-[#9747FF]" size={'36px'} src={iconProjectEmblem} />
@@ -94,7 +94,7 @@ const ProjectRow = ({
           </div>
         </div>
 
-        <div className="col-span-8 grid grid-cols-4 gap-2">
+        <div className="col-span-8 grid grid-cols-4">
           <MetricCard
             value={visitors.desktop + visitors.mobile}
             desktop={visitors.desktop}

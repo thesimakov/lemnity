@@ -8,15 +8,7 @@ import { Radio, RadioGroup } from '@heroui/radio'
 import iconTrophy from '@/assets/icons/trophy.svg'
 import iconSparkles from '@/assets/icons/sparkles.svg'
 import iconRocket from '@/assets/icons/rocket.svg'
-
-type Mode = 'text' | 'icon'
-
-export type SectorData = {
-  mode: Mode
-  text: string
-  icon: string
-  color: string
-}
+import type { SectorItem as SectorData, SectorItemMode as Mode } from '@stores/widgetSettings/types'
 
 type SectorItemProps = {
   sector: SectorData
@@ -32,8 +24,6 @@ const prizeOptions = [
   { key: 'star', label: iconSparkles },
   { key: 'rocket', label: iconRocket }
 ]
-
-// цвета выбираются через ColorAccessory
 
 const SectorItem = ({
   sector,
@@ -66,7 +56,7 @@ const SectorItem = ({
       >
         {getRadioDot('text')}
         <Input
-          value={sector.text}
+          value={sector.text ?? ''}
           onChange={e => {
             e.stopPropagation()
           }}
@@ -87,7 +77,7 @@ const SectorItem = ({
       >
         {getRadioDot('icon')}
         <Select
-          selectedKeys={[sector.icon]}
+          selectedKeys={sector.icon ? [sector.icon] : []}
           onSelectionChange={keys => {
             const selected = Array.from(keys)[0]
             if (selected) onIconChange(String(selected))

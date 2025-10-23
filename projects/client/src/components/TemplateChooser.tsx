@@ -13,6 +13,8 @@ type TemplateChooserProps = {
   options: TemplateOption[]
   selectedKey?: string
   onChange: (key: string | null) => void
+  isInvalid?: boolean
+  errorMessage?: string
 }
 
 const TemplateChooser = ({
@@ -21,7 +23,9 @@ const TemplateChooser = ({
   onToggle,
   options,
   selectedKey,
-  onChange
+  onChange,
+  isInvalid,
+  errorMessage
 }: TemplateChooserProps) => {
   return (
     <div className="flex flex-col gap-3 p-3 rounded-lg border border-gray-200">
@@ -52,6 +56,7 @@ const TemplateChooser = ({
       >
         {item => <SelectItem key={item.key}>{item.label}</SelectItem>}
       </Select>
+      {enabled && isInvalid && <span className="text-sm text-red-500">{errorMessage}</span>}
     </div>
   )
 }
