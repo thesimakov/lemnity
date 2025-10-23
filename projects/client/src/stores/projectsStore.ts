@@ -57,6 +57,7 @@ type ProjectsActions = {
     widgetId: string,
     updates: { name?: string; config?: object }
   ) => Promise<void>
+  saveWidgetConfig: (projectId: string, widgetId: string, config: object) => Promise<Widget>
   deleteWidget: (projectId: string, widgetId: string) => Promise<void>
 }
 export type ProjectsStore = ProjectsState & ProjectsActions
@@ -232,6 +233,28 @@ export const useProjectsStore = create<ProjectsStore>()(
           )
         } catch (error) {
           set({ error: 'Failed to update widget' }, false, 'projects/widget/update:error')
+          throw error
+        }
+      },
+
+      saveWidgetConfig: async (projectId: string, widgetId: string, config: object) => {
+        set({ error: null }, false, 'projects/widget/save-config:start')
+        try {
+          const updated = await widgetsService.updateWidget(widgetId, { config })
+          set(
+            state => ({
+              projects: state.projects.map(p =>
+                p.id === projectId
+                  ? { ...p, widgets: p.widgets.map(w => (w.id === widgetId ? updated : w)) }
+                  : p
+              )
+            }),
+            false,
+            'projects/widget/save-config:success'
+          )
+          return updated
+        } catch (error) {
+          set({ error: 'Failed to save widget config' }, false, 'projects/widget/save-config:error')
           throw error
         }
       },

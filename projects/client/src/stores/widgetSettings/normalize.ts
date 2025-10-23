@@ -168,3 +168,83 @@ export function canonicalize(s: WidgetSettings): WidgetSettings {
   }
   return out
 }
+
+// Convert canonical server shape into UI WidgetSettings shape using provided defaults
+export function fromCanonical(canonical: unknown, defaults: WidgetSettings): WidgetSettings {
+  const canonicalScheme = canonical as Record<string, unknown> | null | undefined
+  if (!canonicalScheme) return defaults
+
+  const out: WidgetSettings = structuredClone(defaults)
+
+  // form
+  const form = (canonicalScheme as { form?: Record<string, unknown> }).form
+  if (form) {
+    const tpl = (form as { template?: Record<string, unknown> }).template
+    if (tpl && Object.prototype.hasOwnProperty.call(tpl, 'key')) {
+      // preset mode
+      const key = (tpl as { key?: string }).key ?? ''
+      ;(out as unknown as { form: typeof out.form }).form = {
+        ...out.form,
+        ...(form as typeof out.form),
+        template: { enabled: true, key }
+      }
+    } else if (tpl) {
+      // custom mode
+      const ts = (tpl as { templateSettings?: unknown }).templateSettings
+      ;(out as unknown as { form: typeof out.form }).form = {
+        ...out.form,
+        ...(form as typeof out.form),
+        template: {
+          enabled: false,
+          templateSettings:
+            (ts as typeof out.form.template.templateSettings) ?? out.form.template.templateSettings
+        }
+      }
+    } else {
+      ;(out as unknown as { form: typeof out.form }).form = {
+        ...out.form,
+        ...(form as typeof out.form)
+      }
+    }
+  }
+
+  // display
+  const display = (canonicalScheme as { display?: Record<string, unknown> }).display
+  if (display) {
+    const trigger = (display as { trigger?: { start?: string; timer?: unknown } }).trigger
+    const conditions = (display as { conditions?: unknown }).conditions
+    const schedule = (
+      display as { schedule?: { date?: unknown; time?: unknown; weekdays?: unknown } }
+    ).schedule
+    const icon = (display as { icon?: unknown }).icon
+
+    const startShowing = trigger?.start === 'timer' ? 'timer' : 'onClick'
+    const timer =
+      trigger?.start === 'timer'
+        ? ((trigger?.timer as typeof out.display.timer) ?? out.display.timer)
+        : out.display.timer
+    ;(out as unknown as { display: typeof out.display }).display = {
+      ...out.display,
+      icon: (icon as typeof out.display.icon) ?? out.display.icon,
+      startShowing,
+      timer,
+      showRules:
+        (conditions as { showRules?: typeof out.display.showRules })?.showRules ??
+        out.display.showRules,
+      frequency:
+        (conditions as { frequency?: typeof out.display.frequency })?.frequency ??
+        out.display.frequency,
+      dontShow:
+        (conditions as { dontShow?: typeof out.display.dontShow })?.dontShow ??
+        out.display.dontShow,
+      limits: (conditions as { limits?: typeof out.display.limits })?.limits ?? out.display.limits,
+      weekdays: (schedule?.weekdays as typeof out.display.weekdays) ?? out.display.weekdays,
+      schedule: {
+        date: (schedule?.date as typeof out.display.schedule.date) ?? out.display.schedule.date,
+        time: (schedule?.time as typeof out.display.schedule.time) ?? out.display.schedule.time
+      }
+    }
+  }
+
+  return out
+}

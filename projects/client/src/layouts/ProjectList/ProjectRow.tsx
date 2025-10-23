@@ -60,7 +60,7 @@ const ProjectRow = ({
               <Dropdown>
                 <DropdownTrigger>
                   <Button isDisabled={!enabled} size="sm" variant="flat">
-                    Редактировать
+                    Виджеты
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Действия проекта">

@@ -13,10 +13,8 @@ const WidgetPage = (): ReactElement => {
             <Link to={`/projects/${projectId}/widgets/${widgetId}/edit`} className="text-blue-600">
               Редактировать
             </Link>
-            <Link
-              to={`/projects/${projectId}/widgets/${widgetId}/preview`}
-              className="text-blue-600"
-            >
+            <Link to={`/projects/${projectId}/widgets/${widgetId}/preview`}
+              className="text-blue-600">
               Предпросмотр
             </Link>
           </div>

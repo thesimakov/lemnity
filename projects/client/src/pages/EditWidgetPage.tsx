@@ -13,7 +13,8 @@ import './EditWidgetPage.css'
 import DisplaySettingsTab from '@/layouts/WidgetSettings/DisplaySettingsTab/DisplaySettingsTab'
 import IntegrationTab from '@/layouts/WidgetSettings/IntegrationTab/IntegrationTab'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { updateWidget } from '@/services/widgets'
+import { fromCanonical } from '@/stores/widgetSettings/normalize'
+// use store action to keep state in sync after update
 
 const EditWidgetPage = (): ReactElement => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -26,17 +27,22 @@ const EditWidgetPage = (): ReactElement => {
   const projectName = project?.name || ''
   const widget = project?.widgets.find(w => w.id === widgetId)
   const [tab, setTab] = useState<'fields' | 'appearance' | 'integration'>('fields')
+  const [saving, setSaving] = useState(false)
 
   // Initialize widget settings store once per widgetId
   useEffect(() => {
     if (!widgetId) return
     const store = useWidgetSettingsStore.getState()
     if (!store.settings || store.settings.id !== widgetId) {
-      // If you have initial settings from API/project store, pass them here instead of undefined
-      // store.init(widgetId, initialSettings)
-      store.init(widgetId)
+      const base = store.settings ?? useWidgetSettingsStore.getState().settings
+      const initialSettings = widget?.config ? fromCanonical(widget.config, base) : undefined
+      store.init(widgetId, initialSettings)
     }
-  }, [widgetId])
+    return () => {
+      // cleanup draft state in memory when leaving page
+      useWidgetSettingsStore.getState().reset()
+    }
+  }, [widgetId, widget?.config])
 
   useEffect(() => {
     const root = scrollRef.current
@@ -83,13 +89,26 @@ const EditWidgetPage = (): ReactElement => {
       return
     }
     try {
-      await updateWidget(widgetId, { config: res.data })
+      if (!projectId) {
+        alert('Нет projectId')
+        return
+      }
+      setSaving(true)
+      const updated = await useProjectsStore
+        .getState()
+        .saveWidgetConfig(projectId, widgetId, res.data)
+      // Re-init settings with canonical server config (convert to UI shape)
+      const base = useWidgetSettingsStore.getState().settings
+      const next = updated.config ? fromCanonical(updated.config, base) : undefined
+      useWidgetSettingsStore.getState().init(widgetId, next)
       alert('Сохранено')
       useWidgetSettingsStore.getState().setValidationVisible(false)
       console.log(res.data)
     } catch (e) {
       console.error(e)
       alert('Ошибка сохранения')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -155,9 +174,10 @@ const EditWidgetPage = (): ReactElement => {
         <Button
           className="h-[30px] rounded-md bg-[#FFBF1A] text-black px-5"
           onPress={handleSave}
+          isDisabled={saving}
           startContent={<FloppyIcon />}
         >
-          Сохранить
+          {saving ? 'Сохранение…' : 'Сохранить'}
         </Button>
       </div>
     </div>

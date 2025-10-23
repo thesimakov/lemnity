@@ -26,7 +26,8 @@ const ProjectWidgetsPage = (): ReactElement => {
   const handleCreateWidget = async (type: CreateWidgetDtoTypeEnum, name: string) => {
     if (!projectId) return
     try {
-      await createWidget(projectId, name, type, {})
+      const created = await createWidget(projectId, name, type)
+      navigate(`/projects/${projectId}/widgets/${created.id}/edit`)
     } catch (error) {
       console.error('Failed to create widget:', error)
     }
