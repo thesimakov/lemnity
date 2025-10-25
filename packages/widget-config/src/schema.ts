@@ -54,6 +54,7 @@ export const FormCanonicalSchema = z.object({
         image: z.object({ enabled: z.boolean().optional(), fileName: z.string().optional(), url: z.string().optional() }).optional(),
         contentPosition: z.enum(['left', 'right']),
         colorScheme: z.enum(['primary', 'custom']),
+        windowFormat: z.enum(['sidePanel', 'modalWindow']),
         customColor: z.string().optional()
       })
     })
@@ -79,6 +80,16 @@ export const FormCanonicalSchema = z.object({
     )
   }),
   messages: z.object({ onWin: z.object({ enabled: z.boolean(), text: z.string() }), limitShows: z.object({ enabled: z.boolean(), text: z.string() }), limitWins: z.object({ enabled: z.boolean(), text: z.string() }), allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() }) })
+}).superRefine((val, ctx) => {
+  if (!val.template.enabled) {
+    const hasContentPosition = typeof val.template.templateSettings?.contentPosition !== 'undefined'
+    if (val.template.templateSettings?.windowFormat === 'modalWindow' && !hasContentPosition) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['template', 'templateSettings', 'contentPosition'], message: 'contentPosition обязателен при windowFormat=modalWindow' })
+    }
+    if (val.template.templateSettings?.windowFormat === 'sidePanel' && hasContentPosition) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['template', 'templateSettings', 'contentPosition'], message: 'contentPosition недопустим при windowFormat=sidePanel' })
+    }
+  }
 })
 
 export const WidgetSettingsSchema = z.object({ id: z.string(), display: DisplaySchema, form: FormCanonicalSchema, integration: z.object({ scriptSnippet: z.string() }) })

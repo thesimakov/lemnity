@@ -2,16 +2,18 @@ import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 export const WidgetTypes = {
   WHEEL_OF_FORTUNE: WidgetTypeEnum.WHEEL_OF_FORTUNE,
-  CONVEYOR_OF_GIFTS: 'CONVEYOR_OF_GIFTS',
-  ACTION_TIMER: 'ACTION_TIMER',
-  POSTCARD: 'POSTCARD',
-  TREASURE_CHEST_WITH_ACTION: 'TREASURE_CHEST_WITH_ACTION',
-  ADVENT_CALENDAR: 'ADVENT_CALENDAR',
-  TEASER: 'TEASER'
-}
+  CONVEYOR_OF_GIFTS: WidgetTypeEnum.CONVEYOR_OF_GIFTS,
+  ACTION_TIMER: WidgetTypeEnum.ACTION_TIMER,
+  POSTCARD: WidgetTypeEnum.POSTCARD,
+  CHEST_WITH_ACTION: WidgetTypeEnum.CHEST_WITH_ACTION,
+  ADVENT_CALENDAR: WidgetTypeEnum.ADVENT_CALENDAR,
+  TEASER: WidgetTypeEnum.TEASER
+} as const
+
+export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
 
 export interface AvailableWidget {
-  type: WidgetTypeEnum
+  type: WidgetType
   title: string
   description: string
   isAvailable: boolean
@@ -20,49 +22,49 @@ export interface AvailableWidget {
 
 export const AVAILABLE_WIDGETS: AvailableWidget[] = [
   {
-    type: WidgetTypeEnum.WHEEL_OF_FORTUNE,
+    type: WidgetTypes.WHEEL_OF_FORTUNE,
     title: 'Колесо фортуны',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'
   },
   {
-    type: WidgetTypeEnum.CONVEYOR_OF_GIFTS,
+    type: WidgetTypes.CONVEYOR_OF_GIFTS,
     title: 'Конвейер подарков',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: WidgetTypeEnum.ACTION_TIMER,
+    type: WidgetTypes.ACTION_TIMER,
     title: 'Таймер акции',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: WidgetTypeEnum.POSTCARD,
+    type: WidgetTypes.POSTCARD,
     title: 'Открытка',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: WidgetTypeEnum.CHEST_WITH_ACTION,
+    type: WidgetTypes.CHEST_WITH_ACTION,
     title: 'Сундук с акцией',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: WidgetTypeEnum.ADVENT_CALENDAR,
+    type: WidgetTypes.ADVENT_CALENDAR,
     title: 'Advent календарь',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'
   },
   {
-    type: WidgetTypeEnum.TEASER,
+    type: WidgetTypes.TEASER,
     title: 'Дразнилка',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,

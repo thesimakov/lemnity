@@ -209,6 +209,7 @@ export const useFormSettings = () => {
   const setTemplateKey = useWidgetSettingsStore(s => s.setTemplateKey)
   const setTemplateImageEnabled = useWidgetSettingsStore(s => s.setTemplateImageEnabled)
   const setTemplateImageFile = useWidgetSettingsStore(s => s.setTemplateImageFile)
+  const setWindowFormat = useWidgetSettingsStore(s => s.setWindowFormat)
   const setContentPosition = useWidgetSettingsStore(s => s.setContentPosition)
   const setColorScheme = useWidgetSettingsStore(s => s.setColorScheme)
   const setCustomColor = useWidgetSettingsStore(s => s.setCustomColor)
@@ -234,6 +235,7 @@ export const useFormSettings = () => {
     setTemplateKey,
     setTemplateImageEnabled,
     setTemplateImageFile,
+    setWindowFormat,
     setContentPosition,
     setColorScheme,
     setCustomColor,
