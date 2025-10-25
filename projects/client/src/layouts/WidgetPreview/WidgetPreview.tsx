@@ -6,19 +6,16 @@ import useWidgetPreviewStore, { type WidgetType } from '@/stores/widgetPreviewSt
 const WidgetPreview = () => {
   const { widgetType } = useWidgetPreviewStore()
 
-  const getWidgetPreview = useCallback(
-    (widgetType: WidgetType | null) => {
-      if (!widgetType) return null
+  const getWidgetPreview = useCallback((widgetType: WidgetType | null) => {
+    if (!widgetType) return null
 
-      switch (widgetType) {
-        case 'WHEEL_OF_FORTUNE':
-          return <WheelOfFortunePreview />
-        default:
-          return null
-      }
-    },
-    []
-  )
+    switch (widgetType) {
+      case 'WHEEL_OF_FORTUNE':
+        return <WheelOfFortunePreview />
+      default:
+        return null
+    }
+  }, [])
 
   return <WidgetPreviewLayout>{getWidgetPreview(widgetType)}</WidgetPreviewLayout>
 }

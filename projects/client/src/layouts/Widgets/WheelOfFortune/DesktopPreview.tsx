@@ -10,36 +10,52 @@ const Container = ({ children }: { children: ReactElement | ReactElement[] }) =>
   <div className="w-full h-full">{children}</div>
 )
 
-const ModalChrome = ({ children }: { children: ReactElement | ReactElement[] }) => (
-  <div className="mx-auto w-full rounded-xl bg-[#7B57F2] text-white relative">
-    <Button
-      variant="light"
-      size="sm"
-      className="absolute rounded-[4px] right-4 top-4 w-7 h-5 bg-white/30 text-white"
-    >
-      Свернуть
-    </Button>
-    {children}
-  </div>
-)
+const ModalChrome = ({ children }: { children: ReactElement | ReactElement[] }) => {
+  const template = useWidgetSettingsStore(s => s.settings.form.template)
+  const { colorScheme, customColor } = template?.templateSettings || {}
 
-const SidePanelChrome = ({ children }: { children: ReactElement | ReactElement[] }) => (
-  <div className="mx-auto w-full h-full">
-    <div className="flex h-full">
-      <div className="flex-1 justify-center" />
-      <div className="flex w-[550px] h-full items-center rounded-xl bg-[#7B57F2] text-white relative">
-        <Button
-          variant="light"
-          size="sm"
-          className="absolute rounded-[4px] right-4 top-4 w-7 h-5 bg-white/30 text-white"
+  return (
+    <div
+      style={{ backgroundColor: colorScheme === 'primary' ? '' : customColor }}
+      className="mx-auto w-full rounded-xl text-white relative"
+    >
+      <Button
+        variant="light"
+        size="sm"
+        className="absolute rounded-[4px] right-4 top-4 w-7 h-5 bg-white/30 text-white"
+      >
+        Свернуть
+      </Button>
+      {children}
+    </div>
+  )
+}
+
+const SidePanelChrome = ({ children }: { children: ReactElement | ReactElement[] }) => {
+  const template = useWidgetSettingsStore(s => s.settings.form.template)
+  const { colorScheme, customColor } = template?.templateSettings || {}
+
+  return (
+    <div className="mx-auto w-full h-full">
+      <div className="flex h-full">
+        <div className="flex-1 justify-center" />
+        <div
+          style={{ backgroundColor: colorScheme === 'primary' ? '' : customColor }}
+          className="flex w-[550px] h-full items-center rounded-xl text-white relative"
         >
-          Свернуть
-        </Button>
-        {children}
+          <Button
+            variant="light"
+            size="sm"
+            className="absolute rounded-[4px] right-4 top-4 w-7 h-5 bg-white/30 text-white"
+          >
+            Свернуть
+          </Button>
+          {children}
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 const Headline = ({ text }: { text: string }) => (
   <h2 className="text-4xl font-bold leading-tight mb-2 text-center">{text}</h2>
