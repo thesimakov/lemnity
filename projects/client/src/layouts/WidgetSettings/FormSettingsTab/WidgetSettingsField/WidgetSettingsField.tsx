@@ -34,7 +34,7 @@ const WidgetSettingsField = () => {
     const newSector: StoreSectorItem = {
       id: Date.now().toString(),
       mode: 'text',
-      text: 'Бесплатная установка',
+      text: 'Сектор',
       icon: 'trophy',
       color: '#98D8C8'
     }

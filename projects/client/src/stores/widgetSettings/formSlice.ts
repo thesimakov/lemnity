@@ -4,7 +4,8 @@ import type {
   ContactField,
   FormUpdater,
   ColorScheme,
-  ContentPosition
+  ContentPosition,
+  WindowFormat
 } from './types'
 import { mergeDeep, splitPath } from './utils'
 
@@ -15,6 +16,7 @@ export type FormActions = {
   setTemplateKey: (key: string) => void
   setTemplateImageEnabled: (enabled: boolean) => void
   setTemplateImageFile: (fileName: string, url?: string) => void
+  setWindowFormat: (format: WindowFormat) => void
   setContentPosition: (position: ContentPosition) => void
   setColorScheme: (scheme: ColorScheme) => void
   setCustomColor: (color: string) => void
@@ -54,6 +56,7 @@ export const createFormSlice = (updateForm: FormUpdater): FormSlice => {
       updateByPath('template.templateSettings.image', { enabled }),
     setTemplateImageFile: (fileName, url) =>
       updateByPath('template.templateSettings.image', { fileName, url }),
+    setWindowFormat: format => updateByPath('template.templateSettings', { windowFormat: format }),
     setContentPosition: position =>
       updateByPath('template.templateSettings', { contentPosition: position }),
     setColorScheme: scheme => updateByPath('template.templateSettings', { colorScheme: scheme }),

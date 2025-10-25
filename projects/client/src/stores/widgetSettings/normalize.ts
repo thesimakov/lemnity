@@ -1,4 +1,4 @@
-import type { WidgetSettings } from './types'
+import type { WidgetSettings, WindowFormat } from './types'
 import { mergeObjectsDeep } from './utils'
 
 export function normalize(current: WidgetSettings, defaults: WidgetSettings): WidgetSettings {
@@ -56,6 +56,11 @@ export function trimInactiveBranches(s: WidgetSettings): WidgetSettings {
       const img = ts.image as typeof ts.image & { fileName?: unknown; url?: unknown }
       delete img.fileName
       delete img.url
+    }
+
+    // Новая схема: при windowFormat='sidePanel' contentPosition недопустим — удаляем
+    if (ts && (ts as { windowFormat?: WindowFormat }).windowFormat === 'sidePanel') {
+      delete (ts as { contentPosition?: unknown }).contentPosition
     }
   }
 

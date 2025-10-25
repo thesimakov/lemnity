@@ -14,6 +14,8 @@ import DisplaySettingsTab from '@/layouts/WidgetSettings/DisplaySettingsTab/Disp
 import IntegrationTab from '@/layouts/WidgetSettings/IntegrationTab/IntegrationTab'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { fromCanonical } from '@/stores/widgetSettings/normalize'
+import WidgetPreview from '@/layouts/WidgetPreview/WidgetPreview'
+import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
 // use store action to keep state in sync after update
 
 const EditWidgetPage = (): ReactElement => {
@@ -38,11 +40,16 @@ const EditWidgetPage = (): ReactElement => {
       const initialSettings = widget?.config ? fromCanonical(widget.config, base) : undefined
       store.init(widgetId, initialSettings)
     }
+    // init preview type from widget type
+    if (widget?.type) {
+      useWidgetPreviewStore.getState().init({ initialType: widget.type })
+    }
     return () => {
       // cleanup draft state in memory when leaving page
       useWidgetSettingsStore.getState().reset()
+      useWidgetPreviewStore.getState().clear()
     }
-  }, [widgetId, widget?.config])
+  }, [widgetId, widget?.config, widget?.type])
 
   useEffect(() => {
     const root = scrollRef.current
@@ -122,10 +129,7 @@ const EditWidgetPage = (): ReactElement => {
 
   const rightPanel = (
     <div className="w-full h-full flex flex-col p-3">
-      {/* <div className="flex flex-row w-full">
-        <div className="flex-1" />
-      </div>
-      <div className="w-full h-full rounded-lg bg-[#F4F4FF] border border-[#E0E0E0]" /> */}
+      <WidgetPreview />
     </div>
   )
 
@@ -186,7 +190,7 @@ const EditWidgetPage = (): ReactElement => {
   return (
     <div className="h-full flex flex-col">
       <Header />
-      <DashboardLayout rightPanel={rightPanel} rightPanelWidthClassName="w-[400px]">
+      <DashboardLayout rightPanel={rightPanel} rightPanelWidthClassName="w-[500px]">
         <div className="flex flex-col gap-[15px] py-[5px] h-full min-h-0">
           {breadcrumbs}
           {tabsBar}

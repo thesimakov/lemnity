@@ -2,8 +2,8 @@ import ColorAccessory from '@/components/ColorAccessory'
 import OptionsChooser, { type OptionItem } from '@/components/OptionsChooser'
 import ImageUploader from '@/components/ImageUploader'
 import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
-import { motion } from 'framer-motion'
-import type { ColorScheme, ContentPosition } from '@/stores/widgetSettings/types'
+import { AnimatePresence, motion } from 'framer-motion'
+import type { ColorScheme, ContentPosition, WindowFormat } from '@/stores/widgetSettings/types'
 import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 
@@ -11,12 +11,14 @@ const TemplateSettings = () => {
   const {
     setTemplateImageEnabled,
     setTemplateImageFile,
+    setWindowFormat,
     setContentPosition,
     setColorScheme,
     setCustomColor
   } = useFormSettings()
   const defaultTemplateSettings = STATIC_DEFAULTS.form.template?.templateSettings ?? {
     image: { enabled: false, fileName: '', url: '' },
+    windowFormat: 'sidePanel',
     contentPosition: 'left',
     colorScheme: 'primary',
     customColor: '#FFFFFF'
@@ -45,6 +47,11 @@ const TemplateSettings = () => {
     { key: 'right', label: 'С правой стороны' }
   ]
 
+  const windowFormatOptions: OptionItem[] = [
+    { key: 'sidePanel', label: 'Боковая панель' },
+    { key: 'modalWindow', label: 'Модальное окно' }
+  ]
+
   return (
     <motion.div
       initial={{ opacity: 1, height: 0 }}
@@ -68,11 +75,28 @@ const TemplateSettings = () => {
         errorMessage={imageUrlError?.message}
       />
       <OptionsChooser
-        title="Положение контента"
-        options={contentPositionOptions}
-        value={settings.contentPosition}
-        onChange={k => setContentPosition(k as ContentPosition)}
+        title="Формат окна"
+        options={windowFormatOptions}
+        value={settings?.windowFormat}
+        onChange={k => setWindowFormat(k as WindowFormat)}
       />
+      <AnimatePresence>
+        {settings?.windowFormat === 'modalWindow' ? (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <OptionsChooser
+              title="Положение контента"
+              options={contentPositionOptions}
+              value={settings.contentPosition}
+              onChange={k => setContentPosition(k as ContentPosition)}
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
       <OptionsChooser
         title="Цветовая гамма"
         options={colorOptions}

@@ -11,6 +11,7 @@ export type ContactField = 'phone' | 'email' | 'initials'
 export type MessageKey = 'onWin' | 'limitShows' | 'limitWins' | 'allPrizesGiven'
 export type ColorScheme = 'primary' | 'custom'
 export type ContentPosition = 'left' | 'right'
+export type WindowFormat = 'sidePanel' | 'modalWindow'
 export type SectorItemMode = 'text' | 'icon'
 
 export type SectorItem = {
@@ -30,6 +31,7 @@ export type FormSettings = {
     key?: string
     templateSettings?: {
       image: { enabled: boolean; fileName?: string; url?: string }
+      windowFormat: WindowFormat
       contentPosition: ContentPosition
       colorScheme: ColorScheme
       customColor: string
