@@ -26,7 +26,9 @@
     "docker:down:prod": "docker compose -f docker-compose.prod.yml down",
     "docker:db:prod": "docker compose -f docker-compose.prod.yml up -d postgres",
     "dev:docker": "pnpm docker:db && pnpm dev",
-    "generate:api": "bash scripts/generate-api.sh"
+    "generate:api": "bash scripts/generate-api.sh",
+    "build:packages": "pnpm --filter './packages/**' --if-present build",
+    "postinstall": "pnpm build:packages"
   },
   "keywords": [],
   "author": "",
