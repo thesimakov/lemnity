@@ -1,4 +1,4 @@
-export * from './schema'
-export * from './migrations'
+export * from './schema.js'
+export * from './migrations.js'
 
 
