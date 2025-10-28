@@ -127,7 +127,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
           />
         }
       >
-        {button?.text || "Крутить колесо"}
+        {button?.text || ''}
       </Button>
 
       {agreementEnabled ? (
