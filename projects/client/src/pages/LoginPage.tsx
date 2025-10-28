@@ -408,8 +408,8 @@ const LoginPage = (): ReactElement => {
               Политика конфиденциальности
             </a>
             <span className="mx-2">|</span>
-            <a href="#" target="_blank" className="hover:underline">
-              Разработка OMNITY
+            <a href="https://lemnity.ru/about" target="_blank" className="hover:underline">
+              Разработка Lemnity
             </a>
           </div>
         </div>
