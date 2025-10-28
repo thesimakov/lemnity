@@ -154,8 +154,8 @@ const LoginPage = (): ReactElement => {
             </div>
             {mode === 'signup' ? (
               <p className="mt-2 text-sm text-gray-500">
-                Попробуйте LeMNITY
-                <br />7 дней бесплатно!
+                Попробуйте Lemnity
+                <br />14 дней бесплатно!
               </p>
             ) : null}
           </div>
