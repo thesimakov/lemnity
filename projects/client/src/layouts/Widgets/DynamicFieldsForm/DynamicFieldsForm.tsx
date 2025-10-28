@@ -115,7 +115,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
       <Button
         color="primary"
         variant="solid"
-        className="h-10 rounded font-normal"
+        className="w-full h-10 rounded font-normal"
         style={{ color: button?.color || '#FFBF1A' }}
         type="submit"
         isLoading={isSubmitting}
@@ -127,7 +127,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
           />
         }
       >
-        {button?.text || ''}
+        {button?.text || "Крутить колесо"}
       </Button>
 
       {agreementEnabled ? (
