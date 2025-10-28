@@ -19,7 +19,7 @@ export const buildDefaults = (id: string): WidgetSettings => ({
     formTexts: {
       title: { text: '', color: '#FFFFFF' },
       description: { text: '', color: '#FFFFFF' },
-      button: { text: '', color: '#FFFFFF' }
+      button: { text: 'Крутить колесо', color: '#FFFFFF' }
     },
     countdown: { enabled: false },
     contacts: {
