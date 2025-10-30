@@ -115,7 +115,7 @@ export const FormSchema = z
     contacts: z.object({
       phone: z.object({ enabled: z.boolean(), required: z.boolean() }),
       email: z.object({ enabled: z.boolean(), required: z.boolean() }),
-      initials: z.object({ enabled: z.boolean(), required: z.boolean() })
+      name: z.object({ enabled: z.boolean(), required: z.boolean() })
     }),
     agreement: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
     adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),

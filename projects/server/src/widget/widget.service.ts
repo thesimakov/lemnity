@@ -4,6 +4,7 @@ import { UpdateWidgetDto } from './dto/update-widget.dto'
 import { PrismaService } from '../prisma.service'
 import { Prisma } from '@prisma/client'
 import { ConfigService } from '../config/config.service'
+import { migrateToCurrent, CURRENT_VERSION } from '@lemnity/widget-config'
 
 @Injectable()
 export class WidgetService {
@@ -48,9 +49,16 @@ export class WidgetService {
       throw new ForbiddenException('Project not found or access denied')
     }
 
-    return this.prisma.widget.findMany({
+    const widgets = await this.prisma.widget.findMany({
       where: { projectId },
       orderBy: { createdAt: 'desc' }
+    })
+
+    // Migrate configs on read so clients always get the latest canonical shape
+    return widgets.map(w => {
+      if (!w.config) return w
+      const { data, version } = migrateToCurrent(w.config as unknown, w.configVersion ?? undefined)
+      return { ...w, config: data as Prisma.JsonValue, configVersion: version ?? CURRENT_VERSION }
     })
   }
 
@@ -69,6 +77,11 @@ export class WidgetService {
       throw new ForbiddenException('Access denied')
     }
 
+    // Return migrated config so the client always sees the latest shape
+    if (widget.config) {
+      const { data, version } = migrateToCurrent(widget.config as unknown, widget.configVersion ?? undefined)
+      return { ...widget, config: data as Prisma.JsonValue, configVersion: version ?? CURRENT_VERSION }
+    }
     return widget
   }
 

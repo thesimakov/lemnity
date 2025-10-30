@@ -8,10 +8,10 @@ const ContactsField = () => {
   const contacts = useWidgetSettingsStore(s =>
     withDefaultsPath(s.settings?.form, 'contacts', STATIC_DEFAULTS.form.contacts)
   )
-  const { phone, email, initials } = contacts
+  const { phone, email, name } = contacts
   const { enabled: phoneEnabled, required: phoneRequired } = phone
   const { enabled: emailEnabled, required: emailRequired } = email
-  const { enabled: initialsEnabled, required: initialsRequired } = initials
+  const { enabled: nameEnabled, required: nameRequired } = name
 
   return (
     <div className="flex flex-col p-3 rounded-lg border border-gray-200 gap-3">
@@ -36,11 +36,11 @@ const ContactsField = () => {
           onRequiredChange={required => setContactField('email', emailEnabled, required)}
         />
         <CheckboxField
-          label="Инициалы"
-          checked={initialsEnabled}
-          onChange={enabled => setContactField('initials', enabled, initialsRequired)}
-          required={initialsRequired}
-          onRequiredChange={required => setContactField('initials', initialsEnabled, required)}
+          label="Имя"
+          checked={nameEnabled}
+          onChange={enabled => setContactField('name', enabled, nameRequired)}
+          required={nameRequired}
+          onRequiredChange={required => setContactField('name', nameEnabled, required)}
         />
       </div>
     </div>

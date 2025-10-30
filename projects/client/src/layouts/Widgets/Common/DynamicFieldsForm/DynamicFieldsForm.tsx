@@ -11,6 +11,7 @@ import iconReload from '@/assets/icons/reload.svg'
 type FormFields = {
   phone?: string
   email?: string
+  name?: string
 }
 
 type DynamicFieldsFormProps = {
@@ -20,8 +21,13 @@ type DynamicFieldsFormProps = {
 const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
   const formSettings = useWidgetSettingsStore(s => s.settings.form)
   const { contacts, formTexts, agreement, adsInfo } = formSettings
-  const { phone: phoneCfg, email: emailCfg } = contacts
+  const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts
   const { title, description, button } = formTexts || {}
+  // const {
+  //   enabled: logoEnabled,
+  //   fileName: logoFileName,
+  //   url: logoUrl
+  // } = companyLogo
   const {
     enabled: agreementEnabled,
     text: agreementText,
@@ -44,29 +50,27 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
     } else {
       shape.email = z.string().optional().or(z.literal(''))
     }
-
-    let schema = z.object(shape)
-    // Если оба поля включены, но ни одно не обязательно — требуем хотя бы одно
-    if (phoneCfg.enabled && emailCfg.enabled && !phoneCfg.required && !emailCfg.required) {
-      schema = schema.refine(v => Boolean(v.phone) || Boolean(v.email), {
-        message: 'Укажите телефон или email',
-        path: ['phone']
-      })
+    if (nameCfg.enabled) {
+      const base = z
+        .string()
+        .min(1, 'Имя обязательно')
+        .regex(/^[a-zA-Z]+$/, 'Имя должно содержать только буквы')
+      shape.name = nameCfg.required ? base : base.optional().or(z.literal(''))
+    } else {
+      shape.name = z.string().optional().or(z.literal(''))
     }
-    return schema
+    return z.object(shape)
   }
-
-  const schema = buildSchema()
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<FormFields>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(buildSchema()),
     mode: 'onSubmit',
     reValidateMode: 'onChange',
-    defaultValues: { phone: '', email: '' }
+    defaultValues: { phone: '', email: '', name: '' }
   })
 
   const onSubmit = () => {
@@ -79,6 +83,9 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
       onSubmit={handleSubmit(onSubmit)}
       className={`flex flex-col gap-1.5 w-full ${centered ? 'items-center justify-center' : ''}`}
     >
+      {/* {logoEnabled ? (
+        <img src={logoUrl} alt="Logo" className="w-30 h-30 object-cover rounded-md" />
+      ) : null} */}
       {title.text && (
         <h2 className="text-2xl font-bold" style={{ color: title.color }}>
           {title.text}
@@ -89,6 +96,17 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
           {description.text}
         </p>
       )}
+
+      {nameCfg.enabled ? (
+        <Input
+          placeholder="Ваше имя"
+          variant="bordered"
+          classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+          {...register('name')}
+          isInvalid={!!errors.name}
+          errorMessage={errors.name?.message}
+        />
+      ) : null}
 
       {phoneCfg.enabled ? (
         <Input
