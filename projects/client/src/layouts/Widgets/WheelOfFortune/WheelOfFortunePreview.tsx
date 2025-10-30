@@ -1,6 +1,6 @@
 import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
-import DesktopPreview from './DesktopPreview'
-import MobilePreview from './MobilePreview'
+import DesktopPreview from '../Common/DesktopPreview/DesktopPreview'
+import MobilePreview from '../Common/MobilePreview/MobilePreview'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 const WheelOfFortunePreview = () => {
@@ -11,7 +11,6 @@ const WheelOfFortunePreview = () => {
 
   if (mode === 'mobile') return <MobilePreview />
 
-  // desktop
   if (windowFormat === 'modalWindow') {
     return (
       <div className="flex flex-col gap-10">
@@ -20,6 +19,7 @@ const WheelOfFortunePreview = () => {
       </div>
     )
   }
+
   return <DesktopPreview screen="panel" />
 }
 

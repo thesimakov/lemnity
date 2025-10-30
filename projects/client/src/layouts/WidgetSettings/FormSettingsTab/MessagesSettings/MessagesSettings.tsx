@@ -1,5 +1,5 @@
 import SwitchableField from '@/components/SwitchableField'
-import { Input } from '@heroui/input'
+import { Input, Textarea } from '@heroui/input'
 import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
 import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
@@ -31,8 +31,9 @@ const MessagesSettings = () => {
         onToggle={enabled => setMessage('onWin', enabled, onWinText)}
         title="Текст при выигрыше"
       >
-        <Input
+        <Textarea
           radius="sm"
+          minRows={2}
           placeholder="Поздравляем! Вы выиграли, заберите Ваш приз! [ промокод ]"
           classNames={{ input: 'placeholder:text-[#AFAFAF]' }}
           value={onWinText}
