@@ -12,7 +12,7 @@ const FormSettings = () => {
   const { title, description, button } = formTexts
   const { text: titleText, color: titleColor } = title
   const { text: descriptionText, color: descriptionColor } = description
-  const { text: buttonText, color: buttonColor } = button
+  const { text: buttonText, color: buttonColor, backgroundColor: buttonBackgroundColor } = button
 
   return (
     <div className="flex flex-col gap-2 p-3 rounded-lg border border-gray-200">
@@ -54,12 +54,17 @@ const FormSettings = () => {
           variant="bordered"
           placeholder="Крутить колесо"
           type="text"
-          onChange={e => setFormButtonText(e.target.value, buttonColor)}
+          onChange={e => setFormButtonText(e.target.value, buttonColor, buttonBackgroundColor)}
           value={buttonText}
         />
         <ColorAccessory
           color={buttonColor}
-          onChange={color => setFormButtonText(buttonText, color)}
+          onChange={color => setFormButtonText(buttonText, color, buttonBackgroundColor)}
+        />
+        <ColorAccessory
+          color={buttonBackgroundColor}
+          onChange={color => setFormButtonText(buttonText, buttonColor, color)}
+          label="Цвет кнопки"
         />
       </div>
     </div>

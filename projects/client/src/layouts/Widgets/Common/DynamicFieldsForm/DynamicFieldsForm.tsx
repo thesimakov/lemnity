@@ -134,7 +134,10 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
         color="primary"
         variant="solid"
         className="w-full h-10 rounded-2.5 font-normal"
-        style={{ color: button?.color || '#FFBF1A' }}
+        style={{
+          color: button?.color,
+          backgroundColor: button?.backgroundColor
+        }}
         type="submit"
         isLoading={isSubmitting}
         startContent={

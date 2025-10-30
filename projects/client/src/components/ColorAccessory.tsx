@@ -22,9 +22,9 @@ const ColorAccessory = ({
     <label
       className={`inline-flex items-center h-14 px-3 rounded-md border-2 border-[#E4E4E7] bg-white cursor-pointer ${classNames?.label}`}
     >
-      {label ? <span className="mr-2">{label}</span> : null}
+      {label ? <span className="mr-2 min-w-max">{label}</span> : null}
       <span
-        className="inline-block w-6 h-6 rounded-full border border-black"
+        className="inline-block min-w-6 w-6 h-6 rounded-full border border-black"
         style={{ backgroundColor: color }}
       />
       <input
