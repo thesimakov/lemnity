@@ -1,7 +1,9 @@
 import type { SectorItem } from '@stores/widgetSettings/types'
+import wheelPointer from '@/assets/icons/wheelPointer.svg'
 
 type WheelOfFortuneProps = {
   sectors?: number | SectorItem[]
+  className?: string
 }
 
 const MAX_SECTORS = 12
@@ -62,7 +64,7 @@ function normalizeSectors(input?: number | SectorItem[]): SectorItem[] {
   })) as SectorItem[]
 }
 
-const WheelOfFortune = ({ sectors }: WheelOfFortuneProps) => {
+const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
   const items = normalizeSectors(sectors)
   const count = items.length
 
@@ -79,7 +81,7 @@ const WheelOfFortune = ({ sectors }: WheelOfFortuneProps) => {
   const step = 360 / count
 
   return (
-    <div className="relative aspect-square w-full">
+    <div className={`relative aspect-square w-full ${className}`}>
       <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full">
         <defs>
           <linearGradient
@@ -184,6 +186,13 @@ const WheelOfFortune = ({ sectors }: WheelOfFortuneProps) => {
         {/* Center hub */}
         <circle cx={cx} cy={cy} r={10} fill="#0a1f6f" />
         <circle cx={cx} cy={cy} r={7} fill="#1736C1" />
+
+        <image
+          href={wheelPointer}
+          x={cx - rOuter + 22}
+          y={cy - rOuter + 22}
+          transform={`rotate(0, ${cx}, ${cy})`}
+        />
       </svg>
     </div>
   )

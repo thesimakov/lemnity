@@ -1,11 +1,22 @@
 import { z } from 'zod'
 
+export const IconImageSchema = z.object({
+  fileName: z.string().optional(),
+  url: z.string().optional()
+})
+
+export const IconButtonSchema = z.object({
+  text: z.string().min(1, 'Текст обязателен'),
+  buttonColor: z.string(),
+  textColor: z.string()
+})
+
 // Canonical display schema
 export const DisplaySchema = z.object({
   icon: z.object({
     type: z.enum(['image', 'button']),
-    image: z.object({ fileName: z.string().optional(), url: z.string().optional() }).optional(),
-    button: z.object({ text: z.string(), buttonColor: z.string(), textColor: z.string() }).optional(),
+    image: IconImageSchema.optional(),
+    button: IconButtonSchema.optional(),
     position: z.enum(['bottom-left', 'top-right', 'bottom-right']),
     hide: z.enum(['always', 'afterFormSending'])
   }),
@@ -59,9 +70,9 @@ export const FormCanonicalSchema = z.object({
       })
     })
   ]),
-  formTexts: z.object({ title: z.object({ text: z.string(), color: z.string() }), description: z.object({ text: z.string(), color: z.string() }), button: z.object({ text: z.string(), color: z.string() }) }),
+  formTexts: z.object({ title: z.object({ text: z.string(), color: z.string() }), description: z.object({ text: z.string(), color: z.string() }), button: z.object({ text: z.string(), color: z.string(), backgroundColor: z.string() }) }),
   countdown: z.object({ enabled: z.boolean(), endDate: z.any().optional() }),
-  contacts: z.object({ phone: z.object({ enabled: z.boolean(), required: z.boolean() }), email: z.object({ enabled: z.boolean(), required: z.boolean() }), initials: z.object({ enabled: z.boolean(), required: z.boolean() }) }),
+  contacts: z.object({ phone: z.object({ enabled: z.boolean(), required: z.boolean() }), email: z.object({ enabled: z.boolean(), required: z.boolean() }), name: z.object({ enabled: z.boolean(), required: z.boolean() }) }),
   agreement: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
   adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
   sectors: z.object({

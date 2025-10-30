@@ -7,7 +7,7 @@ export type HideIcon = 'always' | 'afterFormSending'
 export type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun'
 export type FrequencyMode = 'everyPage' | 'periodically'
 export type FrequencyUnit = 'sec' | 'min'
-export type ContactField = 'phone' | 'email' | 'initials'
+export type ContactField = 'phone' | 'email' | 'name'
 export type MessageKey = 'onWin' | 'limitShows' | 'limitWins' | 'allPrizesGiven'
 export type ColorScheme = 'primary' | 'custom'
 export type ContentPosition = 'left' | 'right'
@@ -40,13 +40,13 @@ export type FormSettings = {
   formTexts: {
     title: { text: string; color: string }
     description: { text: string; color: string }
-    button: { text: string; color: string }
+    button: { text: string; color: string; backgroundColor: string }
   }
   countdown: { enabled: boolean; endDate?: Date }
   contacts: {
     phone: { enabled: boolean; required: boolean }
     email: { enabled: boolean; required: boolean }
-    initials: { enabled: boolean; required: boolean }
+    name: { enabled: boolean; required: boolean }
   }
   agreement: { enabled: boolean; text: string; policyUrl: string }
   adsInfo: { enabled: boolean; text: string; policyUrl: string }

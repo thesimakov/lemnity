@@ -154,8 +154,9 @@ const LoginPage = (): ReactElement => {
             </div>
             {mode === 'signup' ? (
               <p className="mt-2 text-sm text-gray-500">
-                Попробуйте LeMNITY
-                <br />7 дней бесплатно!
+                Попробуйте Lemnity
+                <br />
+                14 дней бесплатно!
               </p>
             ) : null}
           </div>
@@ -408,8 +409,8 @@ const LoginPage = (): ReactElement => {
               Политика конфиденциальности
             </a>
             <span className="mx-2">|</span>
-            <a href="#" target="_blank" className="hover:underline">
-              Разработка OMNITY
+            <a href="https://lemnity.ru/about" target="_blank" className="hover:underline">
+              Разработка Lemnity
             </a>
           </div>
         </div>

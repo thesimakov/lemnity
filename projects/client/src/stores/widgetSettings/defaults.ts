@@ -7,27 +7,35 @@ export const buildDefaults = (id: string): WidgetSettings => ({
   form: {
     companyLogo: { enabled: true, fileName: '', url: '' },
     template: {
-      enabled: true,
-      key: ''
-      //     templateSettings: {
-      //     image: { enabled: false, fileName: '', url: '' },
-      //     contentPosition: 'left',
-      //     colorScheme: 'primary',
-      //     customColor: '#FFFFFF'
-      //   },
+      enabled: false,
+      key: '',
+      templateSettings: {
+        image: { enabled: false, fileName: '', url: '' },
+        windowFormat: 'modalWindow',
+        contentPosition: 'left',
+        colorScheme: 'custom',
+        customColor: '#725DFF'
+      }
     },
     formTexts: {
-      title: { text: '', color: '#FFFFFF' },
-      description: { text: '', color: '#FFFFFF' },
-      button: { text: '', color: '#FFFFFF' }
+      title: { text: 'Получите скидку в честь дня рождения компании', color: '#FFFFFF' },
+      description: {
+        text: 'Введите номер вашего телефона, крутите ленту и получите бонус',
+        color: '#FFFFFF'
+      },
+      button: { text: 'Получить скидку', color: '#FFFFFF', backgroundColor: '#0F52E6' }
     },
     countdown: { enabled: false },
     contacts: {
-      phone: { enabled: true, required: false },
+      phone: { enabled: true, required: true },
       email: { enabled: true, required: true },
-      initials: { enabled: false, required: false }
+      name: { enabled: true, required: false }
     },
-    agreement: { enabled: true, text: '', policyUrl: '' },
+    agreement: {
+      enabled: true,
+      text: 'Я даю согласие на обработку моих персональных данных ООО Компания (ИНН 0000000000) в целях обработки заявки и обратной связи. Политика конфиденциальности по ссылке.',
+      policyUrl: ''
+    },
     adsInfo: { enabled: true, text: '', policyUrl: '' },
     sectors: { randomize: false, items: [] },
     messages: {

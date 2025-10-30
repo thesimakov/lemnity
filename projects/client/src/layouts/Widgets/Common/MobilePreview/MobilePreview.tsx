@@ -1,7 +1,8 @@
 import type { ReactElement } from 'react'
-import WheelOfFortune from './WheelOfFortune'
+import WheelOfFortune from '../../WheelOfFortune/WheelOfFortune'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import DynamicFieldsForm from '../DynamicFieldsForm/DynamicFieldsForm'
+import CloseButton from '../CloseButton/CloseButton'
 
 const MobileChrome = ({ children }: { children: ReactElement | ReactElement[] }) => {
   const template = useWidgetSettingsStore(s => s.settings.form.template)
@@ -12,13 +13,7 @@ const MobileChrome = ({ children }: { children: ReactElement | ReactElement[] })
       style={{ backgroundColor: colorScheme === 'primary' ? '' : customColor }}
       className={`mx-auto w-[360px] rounded-2xl text-white p-4 relative`}
     >
-      <button
-        type="button"
-        aria-label="Закрыть"
-        className="absolute right-3 top-3 w-7 h-7 rounded-full bg-white/30 text-white"
-      >
-        ×
-      </button>
+      <CloseButton position="right" />
       {children}
     </div>
   )

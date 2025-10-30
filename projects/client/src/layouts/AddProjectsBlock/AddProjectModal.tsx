@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import React, { useCallback, useState } from 'react'
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
 import imageAddProject from '@/assets/images/add-project.svg'
 import CustomSwitch from '@/components/CustomSwitch'
+import Modal from '@/components/Modal/Modal'
 
 interface AddProjectModalProps {
   isOpen: boolean
@@ -17,44 +17,9 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
   const [projectName, setProjectName] = useState('')
   const [websiteUrl, setWebsiteUrl] = useState('')
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen])
-
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !submitting) {
-        onClose()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [isOpen, onClose, submitting])
-
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.target === e.currentTarget && !submitting) {
-        onClose()
-      }
-    },
-    [onClose, submitting]
-  )
+  // No need for local backdrop handler; handled centrally in Modal
 
   const getContent = () => {
     return (
@@ -159,33 +124,31 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
     )
   }
 
-  if (!isOpen) return null
-
-  const modalContent = (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      onClick={handleBackdropClick}
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      role="dialog"
+      closeOnBackdrop={!submitting}
+      closeOnEsc={!submitting}
+      containerClassName="max-w-5xl"
     >
-      <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
-        <div className="flex h-full">
-          <div className="flex-shrink-0 w-2/5 bg-gray-50 flex items-center justify-center">
-            <img
-              src={imageAddProject}
-              alt="add-project"
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
-          <div className="flex-1 flex flex-col p-5 gap-4.5">
-            {getHeader()}
-            {getContent()}
-            {getFooter()}
-          </div>
+      <div className="flex h-full">
+        <div className="flex-shrink-0 w-2/5 bg-gray-50 flex items-center justify-center">
+          <img
+            src={imageAddProject}
+            alt="add-project"
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
+        <div className="flex-1 flex flex-col p-5 gap-4.5">
+          {getHeader()}
+          {getContent()}
+          {getFooter()}
         </div>
       </div>
-    </div>
+    </Modal>
   )
-
-  return createPortal(modalContent, document.body)
 }
 
 export default AddProjectModal
