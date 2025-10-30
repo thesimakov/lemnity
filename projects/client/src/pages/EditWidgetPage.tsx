@@ -16,6 +16,7 @@ import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { fromCanonical } from '@/stores/widgetSettings/normalize'
 import WidgetPreview from '@/layouts/WidgetPreview/WidgetPreview'
 import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
+import PreviewModal from '@/layouts/Widgets/Common/PreviewModal'
 // use store action to keep state in sync after update
 
 const EditWidgetPage = (): ReactElement => {
@@ -30,6 +31,7 @@ const EditWidgetPage = (): ReactElement => {
   const widget = project?.widgets.find(w => w.id === widgetId)
   const [tab, setTab] = useState<'fields' | 'appearance' | 'integration'>('fields')
   const [saving, setSaving] = useState(false)
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
 
   // Initialize widget settings store once per widgetId
   useEffect(() => {
@@ -79,7 +81,11 @@ const EditWidgetPage = (): ReactElement => {
   }, [])
 
   const handlePreview = () => {
-    alert('Предпросмотр')
+    setIsPreviewModalOpen(true)
+  }
+
+  const handleClosePreview = () => {
+    setIsPreviewModalOpen(false)
   }
 
   const handleSave = async () => {
@@ -187,26 +193,41 @@ const EditWidgetPage = (): ReactElement => {
     </div>
   )
 
+  const getPreviewScreen = (): 'main' | 'prize' | 'panel' => {
+    if (widget?.type === 'WHEEL_OF_FORTUNE') {
+      return 'main' // Default to main screen for wheel of fortune
+    }
+    return 'main'
+  }
+
   return (
-    <div className="h-full flex flex-col">
-      <Header />
-      <DashboardLayout rightPanel={rightPanel} rightPanelWidthClassName="w-[500px]">
-        <div className="flex flex-col gap-[15px] py-[5px] h-full min-h-0">
-          {breadcrumbs}
-          {tabsBar}
-          <div
-            ref={scrollRef}
-            className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1 scrollShadow rounded-md overflow-hidden"
-          >
-            <div ref={topRef} aria-hidden="true" className="sentinelTop"></div>
-            {tab === 'fields' && <FormSettingsTab />}
-            {tab === 'appearance' && <DisplaySettingsTab />}
-            {tab === 'integration' && <IntegrationTab />}
-            <div ref={bottomRef} aria-hidden="true" className="sentinelBot"></div>
+    <>
+      <div className="h-full flex flex-col">
+        <Header />
+        <DashboardLayout rightPanel={rightPanel} rightPanelWidthClassName="w-[500px]">
+          <div className="flex flex-col gap-[15px] py-[5px] h-full min-h-0">
+            {breadcrumbs}
+            {tabsBar}
+            <div
+              ref={scrollRef}
+              className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1 scrollShadow rounded-md overflow-hidden"
+            >
+              <div ref={topRef} aria-hidden="true" className="sentinelTop"></div>
+              {tab === 'fields' && <FormSettingsTab />}
+              {tab === 'appearance' && <DisplaySettingsTab />}
+              {tab === 'integration' && <IntegrationTab />}
+              <div ref={bottomRef} aria-hidden="true" className="sentinelBot"></div>
+            </div>
           </div>
-        </div>
-      </DashboardLayout>
-    </div>
+        </DashboardLayout>
+      </div>
+
+      <PreviewModal
+        isOpen={isPreviewModalOpen}
+        onClose={handleClosePreview}
+        screen={getPreviewScreen()}
+      />
+    </>
   )
 }
 

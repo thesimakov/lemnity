@@ -2,6 +2,7 @@ import type { SectorItem } from '@stores/widgetSettings/types'
 
 type WheelOfFortuneProps = {
   sectors?: number | SectorItem[]
+  className?: string
 }
 
 const MAX_SECTORS = 12
@@ -62,7 +63,7 @@ function normalizeSectors(input?: number | SectorItem[]): SectorItem[] {
   })) as SectorItem[]
 }
 
-const WheelOfFortune = ({ sectors }: WheelOfFortuneProps) => {
+const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
   const items = normalizeSectors(sectors)
   const count = items.length
 
@@ -79,7 +80,7 @@ const WheelOfFortune = ({ sectors }: WheelOfFortuneProps) => {
   const step = 360 / count
 
   return (
-    <div className="relative aspect-square w-full">
+    <div className={`relative aspect-square w-full ${className}`}>
       <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full">
         <defs>
           <linearGradient

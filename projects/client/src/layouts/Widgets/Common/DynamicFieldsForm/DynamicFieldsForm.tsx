@@ -94,7 +94,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
         <Input
           placeholder="Номер телефона"
           variant="bordered"
-          classNames={{ inputWrapper: 'h-10 rounded bg-white', input: 'text-black' }}
+          classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
           {...register('phone')}
           isInvalid={!!errors.phone}
           errorMessage={errors.phone?.message}
@@ -105,7 +105,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
         <Input
           placeholder="Ваш email"
           variant="bordered"
-          classNames={{ inputWrapper: 'h-10 rounded bg-white', input: 'text-black' }}
+          classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
           {...register('email')}
           isInvalid={!!errors.email}
           errorMessage={errors.email?.message}
@@ -115,7 +115,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
       <Button
         color="primary"
         variant="solid"
-        className="w-full h-10 rounded font-normal"
+        className="w-full h-10 rounded-2.5 font-normal"
         style={{ color: button?.color || '#FFBF1A' }}
         type="submit"
         isLoading={isSubmitting}

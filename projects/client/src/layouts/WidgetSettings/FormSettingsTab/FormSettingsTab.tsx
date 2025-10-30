@@ -89,7 +89,7 @@ const FormSettingsTab = () => {
                 image: { enabled: false, fileName: '', url: '' },
                 contentPosition: 'left',
                 colorScheme: 'primary',
-                customColor: '#FFFFFF'
+                customColor: '#725DFF'
               }
               setTemplateImageEnabled(d.image.enabled ?? false)
               setContentPosition(d.contentPosition)
