@@ -41,6 +41,7 @@ services:
       - app_network
     volumes:
       - ./projects/server:/server/projects/server
+      - ./packages:/server/packages
       - ./package.json:/server/package.json:ro
       - ./pnpm-lock.yaml:/server/pnpm-lock.yaml:ro
       - ./pnpm-workspace.yaml:/server/pnpm-workspace.yaml:ro
