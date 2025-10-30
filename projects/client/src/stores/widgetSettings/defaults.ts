@@ -23,9 +23,9 @@ export const buildDefaults = (id: string): WidgetSettings => ({
     },
     countdown: { enabled: false },
     contacts: {
-      phone: { enabled: true, required: false },
+      phone: { enabled: true, required: true },
       email: { enabled: true, required: true },
-      initials: { enabled: false, required: false }
+      name: { enabled: true, required: false }
     },
     agreement: { enabled: true, text: '', policyUrl: '' },
     adsInfo: { enabled: true, text: '', policyUrl: '' },
