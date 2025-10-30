@@ -6,10 +6,13 @@ import iconLight from '../../assets/icons/light.svg'
 import iconBell from '../../assets/icons/bell.svg'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import SvgIcon from '@/components/SvgIcon'
-import iconMenuToggle from '@/assets/icons/menu-open.svg'
+import iconMenuOpened from '@/assets/icons/menu-opened.svg'
+import iconMenuClosed from '@/assets/icons/menu-closed.svg'
 
 const Header = () => {
-  const { toggle, isVisible } = useSidebarStore()
+  const { isVisible, toggle } = useSidebarStore()
+
+  const getAriaLabel = () => (isVisible ? 'Свернуть боковую панель' : 'Показать боковую панель')
 
   return (
     <header className="h-[70px] min-h-[70px] flex items-center justify-between mx-5">
@@ -23,9 +26,13 @@ const Header = () => {
           className="p-0 m-0 bg-transparent w-[38px] h-[38px]"
           color="default"
           onClick={toggle}
-          aria-label={isVisible ? 'Скрыть боковую панель' : 'Показать боковую панель'}
+          aria-label={getAriaLabel()}
         >
-          <SvgIcon src={iconMenuToggle} className="text-gray-500" size="24px" />
+          <SvgIcon
+            src={isVisible ? iconMenuOpened : iconMenuClosed}
+            className="text-gray-500"
+            size="24px"
+          />
         </Button>
       </div>
 
