@@ -23,7 +23,7 @@ export const buildDefaults = (id: string): WidgetSettings => ({
         text: 'Введите номер вашего телефона, крутите ленту и получите бонус',
         color: '#FFFFFF'
       },
-      button: { text: 'Получить скидку', color: '#FFFFFF', backgroundColor: '#0F52E6' }
+      button: { text: 'Получить скидку', color: '#FFFFFF', backgroundColor: '#0F52E6', icon: 'rocket' }
     },
     countdown: { enabled: false },
     contacts: {

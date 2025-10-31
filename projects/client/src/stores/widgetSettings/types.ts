@@ -40,7 +40,7 @@ export type FormSettings = {
   formTexts: {
     title: { text: string; color: string }
     description: { text: string; color: string }
-    button: { text: string; color: string; backgroundColor: string }
+    button: { text: string; color: string; backgroundColor: string; icon: string }
   }
   countdown: { enabled: boolean; endDate?: Date }
   contacts: {

@@ -8,9 +8,9 @@ import { Tooltip } from '@heroui/tooltip'
 import { Button } from '@heroui/button'
 import SvgIcon from '@/components/SvgIcon'
 import iconInfo from '@/assets/icons/info.svg'
-import Widget from '@/layouts/Widget/Widget'
-import type { WidgetBadge } from '@/layouts/Widget/Widget'
-import { AVAILABLE_WIDGETS } from '@/layouts/Widget/constants'
+import Widget from '@/layouts/WidgetCard/WidgetCard'
+import type { WidgetBadge } from '@/layouts/WidgetCard/WidgetCard'
+import { AVAILABLE_WIDGETS } from '@/layouts/Widgets/constants'
 import type { CreateWidgetDtoTypeEnum } from '@lemnity/api-sdk'
 
 const ProjectWidgetsPage = (): ReactElement => {

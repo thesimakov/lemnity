@@ -109,7 +109,12 @@ export const FormSchema = z
     formTexts: z.object({
       title: z.object({ text: z.string(), color: z.string() }),
       description: z.object({ text: z.string(), color: z.string() }),
-      button: z.object({ text: z.string(), color: z.string(), backgroundColor: z.string() })
+      button: z.object({
+        text: z.string(),
+        color: z.string(),
+        backgroundColor: z.string(),
+        icon: z.string()
+      })
     }),
     countdown: z.object({ enabled: z.boolean(), endDate: z.any().optional() }),
     contacts: z.object({
