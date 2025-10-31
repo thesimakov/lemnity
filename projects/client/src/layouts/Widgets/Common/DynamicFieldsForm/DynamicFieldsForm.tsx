@@ -54,7 +54,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
       const base = z
         .string()
         .min(1, 'Имя обязательно')
-        .regex(/^[a-zA-Z]+$/, 'Имя должно содержать только буквы')
+        .regex(/^[a-zA-Zа-яА-Я]+$/, 'Имя должно содержать только буквы')
       shape.name = nameCfg.required ? base : base.optional().or(z.literal(''))
     } else {
       shape.name = z.string().optional().or(z.literal(''))
@@ -65,6 +65,8 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    getValues,
     formState: { errors, isSubmitting }
   } = useForm<FormFields>({
     resolver: zodResolver(buildSchema()),
@@ -103,6 +105,12 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
           variant="bordered"
           classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
           {...register('name')}
+          value={getValues('name')}
+          onChange={e => {
+            const onlyLetters = e.target.value.replace(/[^a-zA-Zа-яА-Я]+/g, '').trim()
+            console.log(onlyLetters)
+            setValue('name', onlyLetters, { shouldValidate: true, shouldDirty: true })
+          }}
           isInvalid={!!errors.name}
           errorMessage={errors.name?.message}
         />
