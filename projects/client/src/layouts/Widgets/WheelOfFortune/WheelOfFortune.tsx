@@ -1,5 +1,6 @@
 import type { SectorItem } from '@stores/widgetSettings/types'
 import wheelPointer from '@/assets/icons/wheelPointer.svg'
+import { memo } from 'react'
 
 type WheelOfFortuneProps = {
   sectors?: number | SectorItem[]
@@ -60,7 +61,9 @@ function normalizeSectors(input?: number | SectorItem[]): SectorItem[] {
     id: String(i),
     mode: 'text',
     text: '',
-    color: DEFAULT_COLORS[i % DEFAULT_COLORS.length]
+    color: DEFAULT_COLORS[i % DEFAULT_COLORS.length],
+    isWin: false,
+    textSize: 16
   })) as SectorItem[]
 }
 
@@ -81,7 +84,7 @@ const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
   const step = 360 / count
 
   return (
-    <div className={`relative aspect-square w-full ${className}`}>
+    <div className={`aspect-square w-full ${className}`}>
       <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full">
         <defs>
           <linearGradient
@@ -161,10 +164,11 @@ const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
                   x={lp.x}
                   y={lp.y}
                   fill="#ffffff"
-                  className="text-3xl font-bold text-white text-center align-center"
+                  className="font-bold text-white text-center align-center"
                   textAnchor="middle"
                   dominantBaseline="middle"
                   transform={`rotate(${mid}, ${lp.x}, ${lp.y})`}
+                  fontSize={item.textSize}
                 >
                   {item.text}
                 </text>
@@ -198,4 +202,4 @@ const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
   )
 }
 
-export default WheelOfFortune
+export default memo(WheelOfFortune)

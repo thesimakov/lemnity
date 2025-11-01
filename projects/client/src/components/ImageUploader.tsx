@@ -85,7 +85,7 @@ const ImageUploader = ({
             onChange={handleFileChange}
           />
         </label>
-        <span className="text-sm text-gray-600 shrink-0 leading-tight">
+        <span className="text-sm text-gray-600 shrink leading-tight">
           Размер файла: {fileSize}
           <br />
           Рекомендуемый размер: {recommendedResolution}

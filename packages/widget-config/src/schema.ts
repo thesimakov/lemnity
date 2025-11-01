@@ -70,7 +70,7 @@ export const FormCanonicalSchema = z.object({
       })
     })
   ]),
-  formTexts: z.object({ title: z.object({ text: z.string(), color: z.string() }), description: z.object({ text: z.string(), color: z.string() }), button: z.object({ text: z.string(), color: z.string(), backgroundColor: z.string() }) }),
+  formTexts: z.object({ title: z.object({ text: z.string(), color: z.string() }), description: z.object({ text: z.string(), color: z.string() }), button: z.object({ text: z.string(), color: z.string(), backgroundColor: z.string(), icon: z.string() }) }),
   countdown: z.object({ enabled: z.boolean(), endDate: z.any().optional() }),
   contacts: z.object({ phone: z.object({ enabled: z.boolean(), required: z.boolean() }), email: z.object({ enabled: z.boolean(), required: z.boolean() }), name: z.object({ enabled: z.boolean(), required: z.boolean() }) }),
   agreement: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
@@ -78,7 +78,7 @@ export const FormCanonicalSchema = z.object({
   sectors: z.object({
     randomize: z.boolean(),
     items: z.array(
-      z.object({ id: z.string(), mode: z.enum(['text', 'icon']), text: z.string().optional(), icon: z.string().optional(), color: z.string(), promo: z.string().optional(), chance: z.number().nonnegative().optional() }).superRefine((v, ctx) => {
+      z.object({ id: z.string(), mode: z.enum(['text', 'icon']), text: z.string().optional(), icon: z.string().optional(), color: z.string(), promo: z.string().optional(), chance: z.number().nonnegative().optional(), isWin: z.boolean().optional(), textSize: z.number().nonnegative().optional() }).superRefine((v, ctx) => {
         if (v.mode === 'text') {
           if (!v.text) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['text'], message: 'text обязателен при mode=text' })
           if (typeof v.icon !== 'undefined') ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['icon'], message: 'icon не должен присутствовать при mode=text' })

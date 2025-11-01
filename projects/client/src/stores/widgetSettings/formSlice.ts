@@ -22,7 +22,7 @@ export type FormActions = {
   setCustomColor: (color: string) => void
   setFormTitle: (text: string, color: string) => void
   setFormDescription: (text: string, color: string) => void
-  setFormButtonText: (text: string, color: string, backgroundColor: string) => void
+  setFormButtonText: (text: string, color: string, backgroundColor: string, icon: string) => void
   setCountdownEnabled: (enabled: boolean) => void
   setContactField: (field: ContactField, enabled: boolean, required: boolean) => void
   setAgreement: (enabled: boolean, text: string, policyUrl: string) => void
@@ -64,8 +64,8 @@ export const createFormSlice = (updateForm: FormUpdater): FormSlice => {
     setFormTitle: (text, color) => updateByPath('formTexts', { title: { text, color } }),
     setFormDescription: (text, color) =>
       updateByPath('formTexts', { description: { text, color } }),
-    setFormButtonText: (text, color, backgroundColor) =>
-      updateByPath('formTexts', { button: { text, color, backgroundColor } }),
+    setFormButtonText: (text, color, backgroundColor, icon) =>
+      updateByPath('formTexts', { button: { text, color, backgroundColor, icon } }),
     setCountdownEnabled: enabled => updateByPath('countdown', { enabled }),
     setContactField: (field, enabled, required) =>
       updateByPath('contacts', { [field]: { enabled, required } } as Record<string, unknown>),

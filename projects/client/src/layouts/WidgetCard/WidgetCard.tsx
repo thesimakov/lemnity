@@ -6,8 +6,8 @@ import SvgIcon from '@/components/SvgIcon'
 import iconProjectEmblem from '@/assets/icons/project-emblem.svg'
 import iconEye from '@/assets/icons/eye.svg'
 import iconAdd from '@/assets/icons/add.svg'
-import './Widget.css'
-import { WidgetTypes } from './constants'
+import './WidgetCard.css'
+import { WidgetTypes } from '../Widgets/constants'
 import iconPencil from '@/assets/icons/pencil.svg'
 export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
 export type WidgetBadge = 'new' | 'popular' | 'soon' | null

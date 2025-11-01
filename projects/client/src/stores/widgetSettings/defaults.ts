@@ -23,7 +23,12 @@ export const buildDefaults = (id: string): WidgetSettings => ({
         text: 'Введите номер вашего телефона, крутите ленту и получите бонус',
         color: '#FFFFFF'
       },
-      button: { text: 'Получить скидку', color: '#FFFFFF', backgroundColor: '#0F52E6' }
+      button: {
+        text: 'Получить скидку',
+        color: '#FFFFFF',
+        backgroundColor: '#0F52E6',
+        icon: 'rocket'
+      }
     },
     countdown: { enabled: false },
     contacts: {
@@ -39,10 +44,10 @@ export const buildDefaults = (id: string): WidgetSettings => ({
     adsInfo: { enabled: true, text: '', policyUrl: '' },
     sectors: { randomize: false, items: [] },
     messages: {
-      onWin: { enabled: true, text: '' },
-      limitShows: { enabled: true, text: '' },
-      limitWins: { enabled: true, text: '' },
-      allPrizesGiven: { enabled: true, text: '' }
+      onWin: { enabled: true, text: 'Ура!\r\nВы выиграли' },
+      limitShows: { enabled: true, text: 'Вы уже видели эту игру' },
+      limitWins: { enabled: true, text: 'Вы уже выиграли' },
+      allPrizesGiven: { enabled: true, text: 'Вы уже получили все призы' }
     }
   },
   display: {

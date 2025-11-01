@@ -22,6 +22,8 @@ export type SectorItem = {
   color: string
   promo?: string
   chance?: number
+  isWin?: boolean
+  textSize: number
 }
 
 export type FormSettings = {
@@ -40,7 +42,7 @@ export type FormSettings = {
   formTexts: {
     title: { text: string; color: string }
     description: { text: string; color: string }
-    button: { text: string; color: string; backgroundColor: string }
+    button: { text: string; color: string; backgroundColor: string; icon: string }
   }
   countdown: { enabled: boolean; endDate?: Date }
   contacts: {

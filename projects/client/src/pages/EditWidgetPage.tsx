@@ -146,7 +146,7 @@ const EditWidgetPage = (): ReactElement => {
   )
 
   const tabsBar = (
-    <div className="w-full bg-[#F5F6F8] border border-[#E6E6E6] rounded-xl px-3 py-2 flex items-center justify-between">
+    <div className="w-full bg-[#F5F6F8] border border-[#E6E6E6] rounded-xl px-3 py-2 gap-2 flex flex-wrap items-center justify-between">
       <div className="flex items-center gap-2">
         <Button
           size="md"
@@ -173,7 +173,7 @@ const EditWidgetPage = (): ReactElement => {
           Интеграция
         </Button>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <Button
           className="h-[30px] rounded-md text-black bg-[#69C8F4] px-5"
           onPress={handlePreview}

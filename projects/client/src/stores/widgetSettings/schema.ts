@@ -109,7 +109,12 @@ export const FormSchema = z
     formTexts: z.object({
       title: z.object({ text: z.string(), color: z.string() }),
       description: z.object({ text: z.string(), color: z.string() }),
-      button: z.object({ text: z.string(), color: z.string(), backgroundColor: z.string() })
+      button: z.object({
+        text: z.string(),
+        color: z.string(),
+        backgroundColor: z.string(),
+        icon: z.string()
+      })
     }),
     countdown: z.object({ enabled: z.boolean(), endDate: z.any().optional() }),
     contacts: z.object({
@@ -130,7 +135,9 @@ export const FormSchema = z
             icon: z.string().optional(),
             color: z.string(),
             promo: z.string().optional(),
-            chance: z.number().nonnegative().optional()
+            chance: z.number().nonnegative().optional(),
+            isWin: z.boolean().optional(),
+            textSize: z.number().nonnegative().optional()
           })
           .superRefine((v, ctx) => {
             if (v.mode === 'text') {
