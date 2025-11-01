@@ -7,9 +7,15 @@ const Headline = ({ text }: { text: string }) => (
 const RewardContent = () => {
   const messages = useWidgetSettingsStore(s => s.settings.form.messages)
   const { onWin } = messages
+  const { enabled: companyLogoEnabled, url: companyLogoUrl } = useWidgetSettingsStore(
+    s => s.settings.form.companyLogo
+  )
 
   return (
-    <div className="flex flex-col gap-4 max-w-[500px] items-center justify-center">
+    <div className="flex flex-col gap-4 max-w-[300px] items-center justify-center">
+      {companyLogoEnabled && (
+        <img src={companyLogoUrl} alt="Company Logo" className="w-25 h-12.5 object-contain" />
+      )}
       {onWin?.enabled && <Headline text={onWin?.text} />}
       <div className="h-10 w-full rounded-full bg-[#FFF57F] text-black font-medium flex items-center justify-center">
         Скидка 10%

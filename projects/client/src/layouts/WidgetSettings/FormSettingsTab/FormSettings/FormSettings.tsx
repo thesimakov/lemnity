@@ -47,10 +47,7 @@ const FormSettings = () => {
         }}
         renderValue={items => {
           return items.map(item => (
-            <SvgIcon
-              src={icons.find(opt => opt.key === item.textValue)!.label}
-              size={'20px'}
-            />
+            <SvgIcon src={icons.find(opt => opt.key === item.textValue)!.label} size={'20px'} />
           ))
         }}
       >

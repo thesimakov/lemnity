@@ -20,14 +20,12 @@ type DynamicFieldsFormProps = {
 
 const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
   const formSettings = useWidgetSettingsStore(s => s.settings.form)
-  const { contacts, formTexts, agreement, adsInfo } = formSettings
+  const { contacts, formTexts, agreement, adsInfo, companyLogo } = formSettings
   const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts
   const { title, description, button } = formTexts || {}
-  // const {
-  //   enabled: logoEnabled,
-  //   fileName: logoFileName,
-  //   url: logoUrl
-  // } = companyLogo
+
+  const { enabled: logoEnabled, url: logoUrl } = companyLogo
+
   const {
     enabled: agreementEnabled,
     text: agreementText,
@@ -83,11 +81,11 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col gap-1.5 w-full ${centered ? 'items-center justify-center' : ''}`}
+      className={`flex flex-col gap-2 mx-10 w-full ${centered ? 'items-center justify-center' : ''}`}
     >
-      {/* {logoEnabled ? (
-        <img src={logoUrl} alt="Logo" className="w-30 h-30 object-cover rounded-md" />
-      ) : null} */}
+      {logoEnabled ? (
+        <img src={logoUrl} alt="Logo" className="w-25 h-12.5 object-contain rounded-md" />
+      ) : null}
       {title.text && (
         <h2 className="text-2xl font-bold" style={{ color: title.color }}>
           {title.text}
