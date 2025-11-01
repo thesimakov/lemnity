@@ -11,6 +11,7 @@ import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
 import { memo } from 'react'
 import { useSidebarStore } from '@/stores/sidebarStore'
+import { Button } from '@heroui/button'
 
 interface MenuItem {
   key: string
@@ -46,28 +47,54 @@ const NavigationSidebar = () => {
   const getFooter = () => (
     <div className="rounded-lg border border-default-200 flex flex-col justify-between gap-3.5 pt-1.5 p-3.5">
       <div className="flex items-center gap-3.5">
-        <div className="flex-1 bg-gray-200 rounded-lg relative p-3.5 gap-3.5">
-          <p className="text-sm font-normal text-default-900 text-center">Ваш менеджер</p>
-          <p className="text-sm font-semibold text-default-900 text-center">Иван Иванов</p>
-          <p className="text-xs text-default-500 text-center">[#000874]</p>
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-success border-2 border-background rounded-full"></div>
+        <div className="flex-1 rounded-lg relative">
+          <p className="font-normal text-default-900 text-center">Техническая поддержка</p>
         </div>
       </div>
+      <Button
+        radius="sm"
+        color="default"
+        variant="solid"
+        className="w-full h-10 rounded-2.5 font-normal text-base"
+        style={
+          {
+            // color: button?.color,
+            // backgroundColor: button?.backgroundColor
+          }
+        }
+        // isLoading={isSubmitting}
+        // startContent={
+        //   <SvgIcon
+        //     src={iconReload}
+        //     size={'16px'}
+        //     // className={`w-min text-[${button?.color || '#FFBF1A'}]`}
+        //   />
+        // }
+      >
+        {/* {button?.text || ''} */}
+        Написать
+      </Button>
       <a
         href="mailto:support@lemnity.ru"
-        className="text-sm text-black text-center font-normal hover:underline"
+        className="text-sm text-black text-center font-normal underline underline-offset-2"
       >
         support@lemnity.ru
       </a>
       <div className="flex justify-center gap-4">
-        <button className="text-default-400 hover:text-default-600 transition-colors">
-          <img src={iconPaperAirplane} alt="Выйти" className="w-4 h-4" />
+      <button className="text-default-400 hover:text-default-600 transition-colors">
+          <a href="https://t.me/lemnity_ru" target="_blank">
+          <img src={iconPaperAirplane} alt="Телеграм" className="w-4 h-4" />
+          </a>
         </button>
         <button className="text-default-400 hover:text-default-600 transition-colors">
-          <img src={iconEnvelope} alt="Выйти" className="w-4 h-4" />
+          <a href="mailto:support@lemnity.ru" target="_blank">
+          <img src={iconEnvelope} alt="Почта" className="w-4 h-4" />
+          </a>
         </button>
         <button className="text-default-400 hover:text-default-600 transition-colors">
-          <img src={iconTelephone} alt="Выйти" className="w-4 h-4" />
+          <a href="tel:+79821300012" target="_blank">
+          <img src={iconTelephone} alt="Телефон" className="w-4 h-4" />
+          </a>
         </button>
       </div>
     </div>
