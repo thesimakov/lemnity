@@ -48,7 +48,7 @@ const NavigationSidebar = () => {
     <div className="rounded-lg border border-default-200 flex flex-col justify-between gap-3.5 pt-1.5 p-3.5">
       <div className="flex items-center gap-3.5">
         <div className="flex-1 rounded-lg relative">
-          <p className="text-normal font-normal text-default-900 text-center">Техническая поддержка</p>
+          <p className="font-normal text-default-900 text-center">Техническая поддержка</p>
         </div>
       </div>
       <Button
@@ -62,7 +62,6 @@ const NavigationSidebar = () => {
             // backgroundColor: button?.backgroundColor
           }
         }
-        type="submit"
         // isLoading={isSubmitting}
         // startContent={
         //   <SvgIcon
