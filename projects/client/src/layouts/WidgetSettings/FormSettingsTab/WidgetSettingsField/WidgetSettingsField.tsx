@@ -27,7 +27,9 @@ const WidgetSettingsField = () => {
     icon: item.icon,
     color: item.color,
     promo: item.promo,
-    chance: item.chance
+    chance: item.chance,
+    isWin: item.isWin,
+    textSize: item.textSize
   }))
 
   const handleAdd = () => {
@@ -36,7 +38,9 @@ const WidgetSettingsField = () => {
       mode: 'text',
       text: 'Сектор',
       icon: 'trophy',
-      color: '#98D8C8'
+      color: '#98D8C8',
+      isWin: false,
+      textSize: 16
     }
     addSector(newSector)
   }
@@ -105,6 +109,18 @@ const WidgetSettingsField = () => {
           }}
           description="Оставьте поле пустым во всех бонусах для равномерного выпадения. Процент считается по формуле сумма всех полей ÷ количество бонусов. Посмотреть процент можно выше. Вероятность выпадения — 100%"
         />
+        <Checkbox
+          isSelected={sector.isWin ?? false}
+          onValueChange={checked => handleUpdateSector(index, { isWin: checked })}
+          classNames={{
+            wrapper:
+              'before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
+            base: 'max-w-full',
+            label: 'text-gray-500 text-sm'
+          }}
+        >
+          Это выигрыш
+        </Checkbox>
         <div className="flex gap-3">
           <Button radius="sm" className="bg-[#C8E9C7] text-[#138C26]">
             Сохранить
@@ -137,6 +153,7 @@ const WidgetSettingsField = () => {
             <SectorItem
               key={sector.id}
               sector={sector}
+              onTextSizeChange={textSize => handleUpdateSector(index, { textSize })}
               onModeChange={mode => handleUpdateSector(index, { mode })}
               onTextChange={text => handleUpdateSector(index, { text })}
               onIconChange={icon => handleUpdateSector(index, { icon })}

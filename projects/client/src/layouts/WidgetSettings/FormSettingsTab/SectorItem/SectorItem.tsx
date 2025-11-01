@@ -9,11 +9,13 @@ import iconTrophy from '@/assets/icons/trophy.svg'
 import iconSparkles from '@/assets/icons/sparkles.svg'
 import iconRocket from '@/assets/icons/rocket.svg'
 import type { SectorItem as SectorData, SectorItemMode as Mode } from '@stores/widgetSettings/types'
+import NumberField from '@/components/NumberField'
 
 type SectorItemProps = {
   sector: SectorData
   onModeChange: (mode: Mode) => void
   onTextChange: (text: string) => void
+  onTextSizeChange: (textSize: number) => void
   onIconChange: (icon: string) => void
   onColorChange: (color: string) => void
   onSettings: () => void
@@ -29,6 +31,7 @@ const SectorItem = ({
   sector,
   onModeChange,
   onTextChange,
+  onTextSizeChange,
   onIconChange,
   onColorChange,
   onSettings
@@ -51,7 +54,7 @@ const SectorItem = ({
   const radioInput = () => {
     return (
       <div
-        className={`flex items-center gap-2 flex-1 h-10 rounded-md border px-3 border-[#E4E4E7]`}
+        className={`flex items-center gap-2 flex-1 h-10 rounded-md border pl-3 pr-0.5 border-[#E4E4E7]`}
         onClick={() => onModeChange('text')}
       >
         {getRadioDot('text')}
@@ -64,6 +67,15 @@ const SectorItem = ({
           variant="bordered"
           radius="sm"
           classNames={{ inputWrapper: 'h-8 border-none shadow-none px-0' }}
+          endContent={
+            <NumberField
+              max={99}
+              min={1}
+              noBorder
+              value={sector.textSize}
+              onChange={onTextSizeChange}
+            />
+          }
         />
       </div>
     )

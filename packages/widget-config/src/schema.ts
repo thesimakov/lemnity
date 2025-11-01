@@ -78,7 +78,7 @@ export const FormCanonicalSchema = z.object({
   sectors: z.object({
     randomize: z.boolean(),
     items: z.array(
-      z.object({ id: z.string(), mode: z.enum(['text', 'icon']), text: z.string().optional(), icon: z.string().optional(), color: z.string(), promo: z.string().optional(), chance: z.number().nonnegative().optional() }).superRefine((v, ctx) => {
+      z.object({ id: z.string(), mode: z.enum(['text', 'icon']), text: z.string().optional(), icon: z.string().optional(), color: z.string(), promo: z.string().optional(), chance: z.number().nonnegative().optional(), isWin: z.boolean().optional(), textSize: z.number().nonnegative().optional() }).superRefine((v, ctx) => {
         if (v.mode === 'text') {
           if (!v.text) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['text'], message: 'text обязателен при mode=text' })
           if (typeof v.icon !== 'undefined') ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['icon'], message: 'icon не должен присутствовать при mode=text' })

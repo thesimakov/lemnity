@@ -81,7 +81,7 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col gap-2 mx-10 w-full ${centered ? 'items-center justify-center' : ''}`}
+      className={`flex flex-col gap-3 mx-10 w-full ${centered ? 'items-center justify-center' : ''}`}
     >
       {logoEnabled ? (
         <img src={logoUrl} alt="Logo" className="w-25 h-12.5 object-contain rounded-md" />

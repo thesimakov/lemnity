@@ -81,19 +81,19 @@ const NavigationSidebar = () => {
         support@lemnity.ru
       </a>
       <div className="flex justify-center gap-4">
-      <button className="text-default-400 hover:text-default-600 transition-colors">
+        <button className="text-default-400 hover:text-default-600 transition-colors">
           <a href="https://t.me/lemnity_ru" target="_blank">
-          <img src={iconPaperAirplane} alt="Телеграм" className="w-4 h-4" />
+            <img src={iconPaperAirplane} alt="Телеграм" className="w-4 h-4" />
           </a>
         </button>
         <button className="text-default-400 hover:text-default-600 transition-colors">
           <a href="mailto:support@lemnity.ru" target="_blank">
-          <img src={iconEnvelope} alt="Почта" className="w-4 h-4" />
+            <img src={iconEnvelope} alt="Почта" className="w-4 h-4" />
           </a>
         </button>
         <button className="text-default-400 hover:text-default-600 transition-colors">
           <a href="tel:+79821300012" target="_blank">
-          <img src={iconTelephone} alt="Телефон" className="w-4 h-4" />
+            <img src={iconTelephone} alt="Телефон" className="w-4 h-4" />
           </a>
         </button>
       </div>

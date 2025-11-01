@@ -82,12 +82,15 @@ const DesktopPreview = (
   )
 
   const body = (
-    <div className="flex items-center justify-center w-full h-full gap-4 p-10">
+    <div
+      className={`flex items-center justify-center w-full h-full gap-4 ${screen === 'panel' ? 'py-10' : 'p-10'}`}
+    >
       {contentPosition === 'left' ? (
         <>
           {screen === 'main' || screen === 'panel' ? <DynamicFieldsForm /> : <RewardContent />}
           {screen !== 'prize' ? (
             <WheelOfFortune
+              className={screen === 'panel' ? 'scale-200 translate-x-25' : ''}
               sectors={
                 sectors.randomize
                   ? [...sectors.items].sort(() => Math.random() - 0.5)
@@ -100,6 +103,7 @@ const DesktopPreview = (
         <>
           {screen !== 'prize' ? (
             <WheelOfFortune
+              className={screen === 'panel' ? 'scale-200 -translate-x-25' : ''}
               sectors={
                 sectors.randomize
                   ? [...sectors.items].sort(() => Math.random() - 0.5)
@@ -107,11 +111,7 @@ const DesktopPreview = (
               }
             />
           ) : null}
-          {screen === 'main' || screen === 'panel' ? (
-            <DynamicFieldsForm centered />
-          ) : (
-            <RewardContent />
-          )}
+          {screen === 'main' || screen === 'panel' ? <DynamicFieldsForm /> : <RewardContent />}
         </>
       )}
     </div>
