@@ -67,10 +67,12 @@ const SidePanelChrome = ({
 interface DesktopPreviewProps {
   screen: DesktopScreen
   hideCloseButton?: boolean
+  onSubmit: () => void
+  spinTrigger?: number
 }
 
 const DesktopPreview = (
-  { screen, hideCloseButton = false }: DesktopPreviewProps,
+  { screen, hideCloseButton = false, onSubmit, spinTrigger }: DesktopPreviewProps,
   ref: Ref<HTMLDivElement> | undefined
 ) => {
   // pull settings to ensure re-render on changes; future use: colors/texts
@@ -83,19 +85,25 @@ const DesktopPreview = (
 
   const body = (
     <div
-      className={`flex items-center justify-center w-full h-full gap-4 ${screen === 'panel' ? 'py-10' : 'p-10'}`}
+      className={`grid grid-cols-${screen !== 'prize' ? '2' : '1'} items-center justify-center w-full h-full ${screen === 'panel' ? 'py-10' : ''}`}
     >
       {contentPosition === 'left' ? (
         <>
-          {screen === 'main' || screen === 'panel' ? <DynamicFieldsForm /> : <RewardContent />}
+          {screen === 'main' || screen === 'panel' ? (
+            <DynamicFieldsForm onSubmit={onSubmit} />
+          ) : (
+            <RewardContent />
+          )}
           {screen !== 'prize' ? (
             <WheelOfFortune
               className={screen === 'panel' ? 'scale-200 translate-x-25' : ''}
+              pointerPositionDeg={0}
               sectors={
                 sectors.randomize
                   ? [...sectors.items].sort(() => Math.random() - 0.5)
                   : sectors.items
               }
+              spinTrigger={spinTrigger}
             />
           ) : null}
         </>
@@ -104,14 +112,20 @@ const DesktopPreview = (
           {screen !== 'prize' ? (
             <WheelOfFortune
               className={screen === 'panel' ? 'scale-200 -translate-x-25' : ''}
+              pointerPositionDeg={180}
               sectors={
                 sectors.randomize
                   ? [...sectors.items].sort(() => Math.random() - 0.5)
                   : sectors.items
               }
+              spinTrigger={spinTrigger}
             />
           ) : null}
-          {screen === 'main' || screen === 'panel' ? <DynamicFieldsForm /> : <RewardContent />}
+          {screen === 'main' || screen === 'panel' ? (
+            <DynamicFieldsForm onSubmit={onSubmit} />
+          ) : (
+            <RewardContent />
+          )}
         </>
       )}
     </div>

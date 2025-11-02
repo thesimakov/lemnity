@@ -12,7 +12,7 @@ const RewardContent = () => {
   )
 
   return (
-    <div className="flex flex-col gap-4 max-w-[300px] items-center justify-center">
+    <div className="flex flex-col gap-4 max-w-[300px] items-center justify-self-center">
       {companyLogoEnabled && (
         <img src={companyLogoUrl} alt="Company Logo" className="w-25 h-12.5 object-contain" />
       )}

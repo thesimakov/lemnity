@@ -10,6 +10,12 @@ export type NumberFieldProps = {
   step?: number
   disabled?: boolean
   noBorder?: boolean
+  classNames?: {
+    base?: string
+    input?: string
+    inputWrapper?: string
+    label?: string
+  }
 }
 
 const NumberField = ({
@@ -20,7 +26,13 @@ const NumberField = ({
   max,
   step = 1,
   disabled = false,
-  noBorder = false
+  noBorder = false,
+  classNames = {
+    base: '',
+    input: '',
+    inputWrapper: '',
+    label: ''
+  }
 }: NumberFieldProps) => {
   const handleChange = (val: string) => {
     const trimmed = val.trim()
@@ -61,9 +73,10 @@ const NumberField = ({
         radius="sm"
         variant="bordered"
         classNames={{
-          base: 'w-16',
-          input: 'text-center',
-          inputWrapper: 'px-0 w-full min-h-8 h-8 bg-white border-gray-200'
+          label: classNames?.label,
+          base: classNames?.base,
+          input: 'text-center ' + classNames?.input,
+          inputWrapper: 'px-0 w-full bg-white border-gray-200 ' + classNames?.inputWrapper
         }}
       />
     </>

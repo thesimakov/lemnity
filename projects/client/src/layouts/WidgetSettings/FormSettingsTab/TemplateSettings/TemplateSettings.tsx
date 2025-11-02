@@ -78,7 +78,12 @@ const TemplateSettings = () => {
         title="Формат окна"
         options={windowFormatOptions}
         value={settings?.windowFormat}
-        onChange={k => setWindowFormat(k as WindowFormat)}
+        onChange={k => {
+          if (k === 'sidePanel') {
+            setContentPosition('right')
+          }
+          setWindowFormat(k as WindowFormat)
+        }}
       />
       <AnimatePresence>
         {settings?.windowFormat === 'modalWindow' ? (

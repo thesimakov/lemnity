@@ -3,19 +3,26 @@ import WheelOfFortunePreview from '../Widgets/WheelOfFortune/WheelOfFortunePrevi
 import WidgetPreviewLayout from './WidgetPreviewLayout/WidgetPreviewLayout'
 import useWidgetPreviewStore, { type WidgetType } from '@/stores/widgetPreviewStore'
 
-const WidgetPreview = () => {
+type WidgetPreviewProps = {
+  spinTrigger?: number
+}
+
+const WidgetPreview = ({ spinTrigger }: WidgetPreviewProps) => {
   const { widgetType } = useWidgetPreviewStore()
 
-  const getWidgetPreview = useCallback((widgetType: WidgetType | null) => {
-    if (!widgetType) return null
+  const getWidgetPreview = useCallback(
+    (widgetType: WidgetType | null) => {
+      if (!widgetType) return null
 
-    switch (widgetType) {
-      case 'WHEEL_OF_FORTUNE':
-        return <WheelOfFortunePreview />
-      default:
-        return null
-    }
-  }, [])
+      switch (widgetType) {
+        case 'WHEEL_OF_FORTUNE':
+          return <WheelOfFortunePreview spinTrigger={spinTrigger} />
+        default:
+          return null
+      }
+    },
+    [spinTrigger]
+  )
 
   return <WidgetPreviewLayout>{getWidgetPreview(widgetType)}</WidgetPreviewLayout>
 }

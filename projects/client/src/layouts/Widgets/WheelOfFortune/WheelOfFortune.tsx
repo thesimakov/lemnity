@@ -1,10 +1,13 @@
 import type { SectorItem } from '@stores/widgetSettings/types'
-import wheelPointer from '@/assets/icons/wheelPointer.svg'
-import { memo } from 'react'
+import wheelPointer from '@/assets/icons/wheel-pointer.svg'
+import { memo, useEffect, useRef } from 'react'
+import { motion, useAnimation } from 'framer-motion'
 
 type WheelOfFortuneProps = {
   sectors?: number | SectorItem[]
   className?: string
+  pointerPositionDeg?: number // позиция указателя в градусах
+  spinTrigger?: number // изменение этого значения запускает анимацию
 }
 
 const MAX_SECTORS = 12
@@ -63,19 +66,29 @@ function normalizeSectors(input?: number | SectorItem[]): SectorItem[] {
     text: '',
     color: DEFAULT_COLORS[i % DEFAULT_COLORS.length],
     isWin: false,
-    textSize: 16
+    textSize: 16,
+    iconSize: 16,
+    textColor: '#ffffff',
+    chance: 0
   })) as SectorItem[]
 }
 
-const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
+const WheelOfFortune = ({
+  sectors,
+  className,
+  pointerPositionDeg,
+  spinTrigger
+}: WheelOfFortuneProps) => {
   const items = normalizeSectors(sectors)
   const count = items.length
+  const controls = useAnimation()
+  const prevSpinTriggerRef = useRef(spinTrigger)
 
   const size = 360 // px
   const cx = size / 2
   const cy = size / 2
   const totalR = size / 2
-  const outerRingW = 14
+  const outerRingW = 8
   const innerRingW = 6
   const ringGap = 2
   const rOuter = totalR - outerRingW / 2
@@ -83,9 +96,31 @@ const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
   const rDisk = totalR - outerRingW - ringGap - innerRingW - ringGap
   const step = 360 / count
 
+  useEffect(() => {
+    if (spinTrigger !== undefined && spinTrigger !== prevSpinTriggerRef.current) {
+      prevSpinTriggerRef.current = spinTrigger
+      // Запускаем анимацию: несколько полных оборотов + случайный угол
+      const fullRotations = 5 // количество полных оборотов
+      const randomAngle = Math.random() * 360 // случайный финальный угол
+      const totalRotation = fullRotations * 360 + randomAngle
+
+      controls.start({
+        rotate: totalRotation,
+        transition: {
+          duration: 4,
+          ease: [0.4, 0.0, 0.2, 1] // ease-out: быстрое начало, медленное окончание
+        }
+      })
+    }
+  }, [spinTrigger, controls])
+
   return (
     <div className={`aspect-square w-full ${className}`}>
-      <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full">
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        className="w-full h-full"
+        style={{ overflow: 'visible' }}
+      >
         <defs>
           <linearGradient
             id="outerRimGrad"
@@ -127,75 +162,95 @@ const WheelOfFortune = ({ sectors, className }: WheelOfFortuneProps) => {
           </linearGradient>
         </defs>
 
-        <circle
-          cx={cx}
-          cy={cy}
-          r={rOuter}
-          fill="none"
-          stroke="url(#outerRimGrad)"
-          strokeWidth={outerRingW}
-        />
-        <circle
-          cx={cx}
-          cy={cy}
-          r={rInner}
-          fill="none"
-          stroke="url(#innerRimGrad)"
-          strokeWidth={innerRingW}
-        />
+        <motion.g animate={controls} style={{ transformOrigin: `${cx}px ${cy}px` }}>
+          <circle
+            cx={cx}
+            cy={cy}
+            r={rOuter}
+            fill="none"
+            stroke="url(#outerRimGrad)"
+            strokeWidth={outerRingW}
+          />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={rInner}
+            fill="none"
+            stroke="url(#innerRimGrad)"
+            strokeWidth={innerRingW}
+          />
 
-        {/* Content disk */}
-        <circle cx={cx} cy={cy} r={rDisk} fill="#ffffff" />
+          {/* Content disk */}
+          <circle cx={cx} cy={cy} r={rDisk} fill="#ffffff" />
 
-        {items.map((item, i) => {
-          const start = i * step - 90
-          const end = (i + 1) * step - 90
-          const mid = start + step / 2
-          const path = sectorPath(cx, cy, rDisk, start, end)
-          const labelR = (rDisk - 20) * 0.65
-          const lp = polar(cx, cy, labelR, mid)
-          const iconR = (rDisk - 20) * 0.45
-          const ip = polar(cx, cy, iconR, mid)
-          return (
-            <g key={item.id ?? i}>
-              <path d={path} fill={item.color} />
-              {item.mode === 'text' && item.text ? (
-                <text
-                  x={lp.x}
-                  y={lp.y}
-                  fill="#ffffff"
-                  className="font-bold text-white text-center align-center"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  transform={`rotate(${mid}, ${lp.x}, ${lp.y})`}
-                  fontSize={item.textSize}
-                >
-                  {item.text}
-                </text>
-              ) : null}
-              {item.mode === 'icon' && item.icon ? (
-                <image
-                  href={item.icon}
-                  x={ip.x - 12}
-                  y={ip.y - 12}
-                  width={24}
-                  height={24}
-                  transform={`rotate(${mid}, ${ip.x}, ${ip.y})`}
-                />
-              ) : null}
-            </g>
-          )
-        })}
+          {items.map((item, i) => {
+            const start = i * step - 90
+            const end = (i + 1) * step - 90
+            const mid = start + step / 2
+            const path = sectorPath(cx, cy, rDisk, start, end)
+            const labelR = (rDisk - 20) * 1.06
+            const lp = polar(cx, cy, labelR, mid)
+            const iconR = (rDisk - 20) * 0.45
+            const ip = polar(cx, cy, iconR, mid)
+            const shift = 0.8 // для корректировки позиции текста
+            return (
+              <g key={item.id ?? i}>
+                <path d={path} fill={item.color} />
+                {item.mode === 'text' && item.text ? (
+                  <text
+                    x={lp.x}
+                    y={lp.y}
+                    className="font-normal text-white text-center align-center"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    transform={`rotate(${mid - shift}, ${lp.x}, ${lp.y})`}
+                    fontSize={item.textSize}
+                    fill={item.textColor}
+                  >
+                    {(() => {
+                      const lines = item.text.split('\n')
+                      const lineHeight = item.textSize * 1.2
+                      const totalHeight = (lines.length - 1) * lineHeight
+                      const startOffset = -totalHeight / 2
+                      return lines.map((line, lineIndex) => (
+                        <tspan
+                          key={lineIndex}
+                          x={lp.x}
+                          dy={lineIndex === 0 ? startOffset : lineHeight}
+                          textAnchor="end"
+                        >
+                          {line}
+                        </tspan>
+                      ))
+                    })()}
+                  </text>
+                ) : null}
+                {item.mode === 'icon' && item.icon ? (
+                  <image
+                    href={item.icon}
+                    x={ip.x - 12}
+                    y={ip.y - 12}
+                    width={item.iconSize}
+                    height={item.iconSize}
+                    transform={`rotate(${mid}, ${ip.x}, ${ip.y})`}
+                  />
+                ) : null}
+              </g>
+            )
+          })}
 
-        {/* Center hub */}
-        <circle cx={cx} cy={cy} r={10} fill="#0a1f6f" />
-        <circle cx={cx} cy={cy} r={7} fill="#1736C1" />
+          {/* Center hub */}
+          <circle cx={cx} cy={cy} r={10} fill="#0a1f6f" />
+          <circle cx={cx} cy={cy} r={7} fill="#1736C1" />
+        </motion.g>
 
+        {/* Указатель вне анимированной группы, чтобы не вращался */}
         <image
           href={wheelPointer}
-          x={cx - rOuter + 22}
-          y={cy - rOuter + 22}
-          transform={`rotate(0, ${cx}, ${cy})`}
+          x={cx - rOuter + 52}
+          y={cy - rOuter + 52}
+          transform={`rotate(${pointerPositionDeg ?? 0}, ${cx}, ${cy})`}
+          className="scale-70"
         />
       </svg>
     </div>
