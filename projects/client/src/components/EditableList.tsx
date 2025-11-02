@@ -71,7 +71,7 @@ const EditableList = <T,>({
   const canAddMore = !maxItems || items.length < maxItems
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 h-full">
       {items.map((item, index) => {
         const below = renderBelow?.(item, index)
         return (
@@ -84,7 +84,7 @@ const EditableList = <T,>({
                   </span>
                 </div>
               )}
-              <div className="flex-1">{renderItem(item, index)}</div>
+              <div className="flex-1 h-full">{renderItem(item, index)}</div>
               {canReorder && (
                 <div className={`flex flex-col gap-1 ${classNames?.reorder}`}>
                   <button

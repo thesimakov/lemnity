@@ -6,6 +6,9 @@ import { Button } from '@heroui/button'
 import SectorItem from '../SectorItem/SectorItem'
 import type { SectorItem as SectorData } from '@stores/widgetSettings/types'
 import { useFormSettings, type SectorItem as StoreSectorItem } from '@/stores/widgetSettingsStore'
+import NumberField from '@/components/NumberField'
+import ColorAccessory from '@/components/ColorAccessory'
+import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 
 const WidgetSettingsField = () => {
   const {
@@ -29,8 +32,15 @@ const WidgetSettingsField = () => {
     promo: item.promo,
     chance: item.chance,
     isWin: item.isWin,
-    textSize: item.textSize
+    textSize: item.textSize,
+    iconSize: item.iconSize,
+    textColor: item.textColor
   }))
+
+  const generateRandomHexColor = () =>
+    `#${Math.floor(Math.random() * 0xffffff)
+      .toString(16)
+      .padStart(6, '0')}`
 
   const handleAdd = () => {
     const newSector: StoreSectorItem = {
@@ -38,11 +48,15 @@ const WidgetSettingsField = () => {
       mode: 'text',
       text: 'Сектор',
       icon: 'trophy',
-      color: '#98D8C8',
+      color: generateRandomHexColor(),
       isWin: false,
-      textSize: 16
+      textSize: 16,
+      iconSize: 16,
+      textColor: '#ffffff',
+      chance: 0
     }
     addSector(newSector)
+    setOpenedIndex(sectors.length)
   }
 
   const getRandomOrderCheckbox = () => {
@@ -72,6 +86,70 @@ const WidgetSettingsField = () => {
   const settingsSector = (sector: EditableListItem<SectorData>, index: number) => {
     return openedIndex === index ? (
       <div className="bg-[#EAEAEA] border border-[#E8E8E8] rounded-lg p-4 flex flex-col gap-3">
+        <span className="text-sm">Настройки сектора</span>
+        <BorderedContainer className="grid grid-cols-4 gap-2 !p-1 !px-1.5 !border-gray-400">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm">Размер текста</span>
+            <NumberField
+              max={99}
+              min={1}
+              noBorder
+              value={sector.textSize}
+              onChange={textSize => handleUpdateSector(index, { textSize })}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm">Размер иконки</span>
+            <NumberField
+              max={99}
+              min={1}
+              noBorder
+              value={sector.iconSize}
+              onChange={iconSize => handleUpdateSector(index, { iconSize })}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm">Цвет текста / иконки</span>
+            <Input
+              variant="faded"
+              classNames={{
+                input: 'placeholder:text-[#ffffff]',
+                inputWrapper: 'bg-white !p-0'
+              }}
+              radius="sm"
+              value={sector.textColor}
+              onValueChange={textColor => handleUpdateSector(index, { textColor })}
+              startContent={
+                <ColorAccessory
+                  classNames={{ label: 'h-full px-0 border-none' }}
+                  color={sector.textColor}
+                  onChange={textColor => handleUpdateSector(index, { textColor })}
+                />
+              }
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm">Цвет сектора</span>
+            <Input
+              variant="faded"
+              classNames={{
+                input: 'placeholder:text-[#AAAAAA]',
+                inputWrapper: 'bg-white !p-0'
+              }}
+              // placeholder="Выберите цвет"
+              radius="sm"
+              value={sector.color}
+              onValueChange={color => handleUpdateSector(index, { color })}
+              startContent={
+                <ColorAccessory
+                  classNames={{ label: 'h-full px-0 border-none' }}
+                  color={sector.color}
+                  onChange={color => handleUpdateSector(index, { color })}
+                />
+              }
+            />
+          </div>
+        </BorderedContainer>
         <span className="text-md">Настройки слота</span>
         <Input
           variant="faded"
@@ -142,7 +220,7 @@ const WidgetSettingsField = () => {
         <EditableList
           items={sectors}
           onItemsChange={items => setSectors(items as StoreSectorItem[])}
-          maxItems={12}
+          maxItems={8}
           classNames={{
             index:
               'flex items-center justify-center min-w-[40px] rounded-md border h-full border-[#E8E8E8]',
@@ -157,7 +235,6 @@ const WidgetSettingsField = () => {
               onModeChange={mode => handleUpdateSector(index, { mode })}
               onTextChange={text => handleUpdateSector(index, { text })}
               onIconChange={icon => handleUpdateSector(index, { icon })}
-              onColorChange={color => handleUpdateSector(index, { color })}
               onSettings={() => setOpenedIndex(prev => (prev === index ? null : index))}
             />
           )}

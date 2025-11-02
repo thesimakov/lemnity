@@ -9,9 +9,19 @@ interface PreviewModalProps {
   isOpen: boolean
   onClose: () => void
   screen: 'main' | 'prize' | 'panel'
+  onSubmit: () => void
+  containerClassName?: string
+  spinTrigger?: number
 }
 
-const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, screen }) => {
+const PreviewModal: React.FC<PreviewModalProps> = ({
+  isOpen,
+  onClose,
+  screen,
+  onSubmit,
+  containerClassName,
+  spinTrigger
+}) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -19,7 +29,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, screen }) 
       role="dialog"
       closeOnBackdrop
       closeOnEsc
-      containerClassName="max-w-[928px] max-h-[500px]"
+      containerClassName={`max-w-[928px] max-h-[500px] ${containerClassName}`}
     >
       <div className="relative">
         <Button
@@ -31,7 +41,12 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, screen }) 
         >
           <SvgIcon src={iconCross} className="text-gray-700" size="18px" />
         </Button>
-        <DesktopPreview screen={screen} hideCloseButton />
+        <DesktopPreview
+          screen={screen}
+          hideCloseButton
+          onSubmit={onSubmit}
+          spinTrigger={spinTrigger}
+        />
       </div>
     </Modal>
   )

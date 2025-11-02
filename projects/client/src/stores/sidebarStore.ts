@@ -12,7 +12,7 @@ export const useSidebarStore = create<SidebarState>()(
   devtools(
     persist(
       set => ({
-        isVisible: true,
+        isVisible: false,
         toggle: () => set(state => ({ isVisible: !state.isVisible })),
         hide: () => set({ isVisible: false }),
         show: () => set({ isVisible: true })

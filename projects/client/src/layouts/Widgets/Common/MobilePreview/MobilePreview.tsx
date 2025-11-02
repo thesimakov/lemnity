@@ -19,7 +19,11 @@ const MobileChrome = ({ children }: { children: ReactElement | ReactElement[] })
   )
 }
 
-const MobilePreview = () => {
+type MobilePreviewProps = {
+  spinTrigger?: number
+}
+
+const MobilePreview = ({ spinTrigger }: MobilePreviewProps) => {
   const sectors = useWidgetSettingsStore(s => s.settings.form.sectors)
 
   return (
@@ -30,8 +34,9 @@ const MobilePreview = () => {
             sectors={
               sectors.randomize ? [...sectors.items].sort(() => Math.random() - 0.5) : sectors.items
             }
+            spinTrigger={spinTrigger}
           />
-          <DynamicFieldsForm centered />
+          <DynamicFieldsForm centered onSubmit={() => {}} />
         </div>
       </MobileChrome>
     </div>

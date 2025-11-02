@@ -7,6 +7,8 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { z } from 'zod'
 import iconReload from '@/assets/icons/reload.svg'
+import { Checkbox } from '@heroui/checkbox'
+import { useState } from 'react'
 
 type FormFields = {
   phone?: string
@@ -16,9 +18,12 @@ type FormFields = {
 
 type DynamicFieldsFormProps = {
   centered?: boolean
+  onSubmit: () => void
 }
 
-const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
+const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProps) => {
+  const [agreementChecked, setAgreementChecked] = useState(false)
+  const [adsInfoChecked, setAdsInfoChecked] = useState(false)
   const formSettings = useWidgetSettingsStore(s => s.settings.form)
   const { contacts, formTexts, agreement, adsInfo, companyLogo } = formSettings
   const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts
@@ -73,15 +78,10 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
     defaultValues: { phone: '', email: '', name: '' }
   })
 
-  const onSubmit = () => {
-    // Preview-only: no-op. Form will validate and show messages on submit.
-    return undefined
-  }
-
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col gap-3 mx-10 w-full ${centered ? 'items-center justify-center' : ''}`}
+      onSubmit={handleSubmit(() => onSubmit())}
+      className={`flex flex-col gap-3 px-10 w-full ${centered ? 'items-center justify-center' : ''}`}
     >
       {logoEnabled ? (
         <img src={logoUrl} alt="Logo" className="w-25 h-12.5 object-contain rounded-md" />
@@ -158,19 +158,37 @@ const DynamicFieldsForm = ({ centered = false }: DynamicFieldsFormProps) => {
       </Button>
 
       {agreementEnabled ? (
-        <div className={`text-xs opacity-90 ${centered ? 'text-center' : ''}`}>
-          {agreementText}
+        <div className="flex flex-row">
+          <Checkbox
+            isSelected={agreementChecked}
+            onValueChange={setAgreementChecked}
+            classNames={{
+              wrapper:
+                'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
+              base: 'max-w-full',
+              label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
+            }}
+          ></Checkbox>
           <Link to={agreementPolicyUrl} target="_blank">
-            {agreementPolicyUrl}
+            {agreementText}
           </Link>
         </div>
       ) : null}
 
       {adsInfoEnabled ? (
-        <div className={`text-xs opacity-90 ${centered ? 'text-center' : ''}`}>
-          {adsInfoText}
+        <div className="flex flex-row">
+          <Checkbox
+            isSelected={adsInfoChecked}
+            onValueChange={setAdsInfoChecked}
+            classNames={{
+              wrapper:
+                'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
+              base: 'max-w-full',
+              label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
+            }}
+          ></Checkbox>
           <Link to={adsInfoPolicyUrl} target="_blank">
-            {adsInfoPolicyUrl}
+            {adsInfoText}
           </Link>
         </div>
       ) : null}

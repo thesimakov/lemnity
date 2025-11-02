@@ -4,7 +4,7 @@ import type { ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import { Breadcrumbs, BreadcrumbItem } from '@heroui/breadcrumbs'
 import { Button } from '@heroui/button'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useProjectsStore } from '@/stores/projectsStore'
 import SvgIcon from '@/components/SvgIcon'
 import iconEye from '@/assets/icons/eye.svg'
@@ -20,6 +20,7 @@ import PreviewModal from '@/layouts/Widgets/Common/PreviewModal'
 // use store action to keep state in sync after update
 
 const EditWidgetPage = (): ReactElement => {
+  const [previewScreen, setPreviewScreen] = useState<'main' | 'prize' | 'panel'>('main')
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const topRef = useRef<HTMLDivElement | null>(null)
   const bottomRef = useRef<HTMLDivElement | null>(null)
@@ -32,6 +33,7 @@ const EditWidgetPage = (): ReactElement => {
   const [tab, setTab] = useState<'fields' | 'appearance' | 'integration'>('fields')
   const [saving, setSaving] = useState(false)
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
+  const [spinTrigger, setSpinTrigger] = useState(0)
 
   // Initialize widget settings store once per widgetId
   useEffect(() => {
@@ -82,6 +84,7 @@ const EditWidgetPage = (): ReactElement => {
 
   const handlePreview = () => {
     setIsPreviewModalOpen(true)
+    setPreviewScreen('main')
   }
 
   const handleClosePreview = () => {
@@ -97,6 +100,9 @@ const EditWidgetPage = (): ReactElement => {
       alert('Исправьте ошибки перед сохранением')
       return
     }
+    // Запускаем анимацию колеса
+    setSpinTrigger(prev => prev + 1)
+
     if (!widgetId) {
       alert('Нет widgetId')
       return
@@ -135,7 +141,7 @@ const EditWidgetPage = (): ReactElement => {
 
   const rightPanel = (
     <div className="w-full h-full flex flex-col p-3">
-      <WidgetPreview />
+      <WidgetPreview spinTrigger={spinTrigger} />
     </div>
   )
 
@@ -193,12 +199,12 @@ const EditWidgetPage = (): ReactElement => {
     </div>
   )
 
-  const getPreviewScreen = (): 'main' | 'prize' | 'panel' => {
-    if (widget?.type === 'WHEEL_OF_FORTUNE') {
-      return 'main' // Default to main screen for wheel of fortune
-    }
-    return 'main'
-  }
+  // const getPreviewScreen = (): 'main' | 'prize' | 'panel' => {
+  //   if (widget?.type === 'WHEEL_OF_FORTUNE') {
+  //     return 'main' // Default to main screen for wheel of fortune
+  //   }
+  //   return 'main'
+  // }
 
   return (
     <>
@@ -225,7 +231,14 @@ const EditWidgetPage = (): ReactElement => {
       <PreviewModal
         isOpen={isPreviewModalOpen}
         onClose={handleClosePreview}
-        screen={getPreviewScreen()}
+        screen={previewScreen}
+        spinTrigger={spinTrigger}
+        onSubmit={useCallback(() => {
+          setSpinTrigger(prev => prev + 1)
+          setTimeout(() => {
+            setPreviewScreen('prize')
+          }, 4000)
+        }, [setPreviewScreen])}
       />
     </>
   )

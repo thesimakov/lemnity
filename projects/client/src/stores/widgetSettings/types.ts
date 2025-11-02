@@ -21,9 +21,11 @@ export type SectorItem = {
   icon?: string
   color: string
   promo?: string
-  chance?: number
+  chance: number
   isWin?: boolean
   textSize: number
+  iconSize: number
+  textColor: string
 }
 
 export type FormSettings = {

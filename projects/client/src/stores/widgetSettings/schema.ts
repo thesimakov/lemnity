@@ -137,7 +137,9 @@ export const FormSchema = z
             promo: z.string().optional(),
             chance: z.number().nonnegative().optional(),
             isWin: z.boolean().optional(),
-            textSize: z.number().nonnegative().optional()
+            textSize: z.number().nonnegative().optional(),
+            iconSize: z.number().nonnegative().optional(),
+            textColor: z.string().optional()
           })
           .superRefine((v, ctx) => {
             if (v.mode === 'text') {
