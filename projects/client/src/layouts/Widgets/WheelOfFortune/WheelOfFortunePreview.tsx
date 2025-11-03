@@ -2,7 +2,7 @@ import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
 import DesktopPreview from '../Common/DesktopPreview/DesktopPreview'
 import MobilePreview from '../Common/MobilePreview/MobilePreview'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 type WheelOfFortunePreviewProps = {
   spinTrigger?: number
@@ -16,11 +16,12 @@ const WheelOfFortunePreview = ({ spinTrigger }: WheelOfFortunePreviewProps) => {
 
   const ref = useRef<HTMLDivElement>(null)
   const modalWindowRef = useRef<HTMLDivElement>(null)
-  const [scale, setScale] = useState(1)
 
   useEffect(() => {
     if (ref?.current && modalWindowRef?.current) {
-      setScale(ref.current.clientWidth / modalWindowRef.current.clientWidth)
+      const scaleFactor = ref.current.clientWidth / modalWindowRef.current.clientWidth
+      ref.current.style.transform = `scale(${scaleFactor})`
+      ref.current.style.transformOrigin = 'top left'
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref?.current, modalWindowRef?.current])
@@ -29,11 +30,7 @@ const WheelOfFortunePreview = ({ spinTrigger }: WheelOfFortunePreviewProps) => {
 
   if (windowFormat === 'modalWindow') {
     return (
-      <div
-        ref={ref}
-        className="flex flex-col gap-10 origin-top-left"
-        style={{ transform: `scale(${scale})` }}
-      >
+      <div ref={ref} className="flex flex-col gap-10">
         <DesktopPreview
           ref={modalWindowRef}
           screen="main"
