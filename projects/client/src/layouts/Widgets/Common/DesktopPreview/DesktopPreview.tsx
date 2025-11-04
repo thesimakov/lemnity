@@ -28,7 +28,7 @@ const ModalChrome = forwardRef(
     return (
       <div
         style={{ backgroundColor: colorScheme === 'primary' ? '' : customColor }}
-        className="mx-auto rounded-lg text-white relative p-4 w-[928px] h-[500px]"
+        className="mx-auto rounded-lg text-white relative p-4 w-[928px] min-h-[500px] flex items-center"
         ref={ref}
       >
         {!hideCloseButton && <CloseButton position="right" />}
@@ -96,7 +96,7 @@ const DesktopPreview = (
           )}
           {screen !== 'prize' ? (
             <WheelOfFortune
-              className={screen === 'panel' ? 'scale-200 translate-x-25' : ''}
+              className={screen === 'panel' ? 'scale-200 translate-x-25' : 'pr-5'}
               pointerPositionDeg={0}
               sectors={
                 sectors.randomize
@@ -111,7 +111,7 @@ const DesktopPreview = (
         <>
           {screen !== 'prize' ? (
             <WheelOfFortune
-              className={screen === 'panel' ? 'scale-200 -translate-x-25' : ''}
+              className={screen === 'panel' ? 'scale-200 -translate-x-25' : 'pr-5'}
               pointerPositionDeg={180}
               sectors={
                 sectors.randomize

@@ -67,7 +67,7 @@ const FormSettingsTab = () => {
           checked={settings?.companyLogo?.enabled ?? true}
           setChecked={setCompanyLogoEnabled}
           title="Логотип компании"
-          recommendedResolution="100x100"
+          recommendedResolution="100x50"
           fileSize="менее 2 Mb"
           formats={['png']}
           onFileSelect={handleFile}

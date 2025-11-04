@@ -2,7 +2,7 @@ import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
 import DesktopPreview from '../Common/DesktopPreview/DesktopPreview'
 import MobilePreview from '../Common/MobilePreview/MobilePreview'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 type WheelOfFortunePreviewProps = {
   spinTrigger?: number
@@ -15,32 +15,74 @@ const WheelOfFortunePreview = ({ spinTrigger }: WheelOfFortunePreviewProps) => {
   )
 
   const ref = useRef<HTMLDivElement>(null)
-  const modalWindowRef = useRef<HTMLDivElement>(null)
-  const [scale, setScale] = useState(1)
+  const mainScreenRef = useRef<HTMLDivElement>(null)
+  const prizeScreenRef = useRef<HTMLDivElement>(null)
+  const mainScreenContainerRef = useRef<HTMLDivElement>(null)
+  const prizeScreenContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (ref?.current && modalWindowRef?.current) {
-      setScale(ref.current.clientWidth / modalWindowRef.current.clientWidth)
+    const updateScale = () => {
+      if (ref?.current && mainScreenRef?.current && mainScreenContainerRef?.current) {
+        // Временно убираем transform для получения оригинальной высоты
+        mainScreenRef.current.style.transform = ''
+        
+        const scaleFactor = ref.current.clientWidth / mainScreenRef.current.clientWidth
+        const originalHeight = mainScreenRef.current.clientHeight
+        
+        mainScreenRef.current.style.transform = `scale(${scaleFactor})`
+        mainScreenRef.current.style.transformOrigin = 'top left'
+        mainScreenContainerRef.current.style.height = `${originalHeight * scaleFactor}px`
+      }
+      if (ref?.current && prizeScreenRef?.current && prizeScreenContainerRef?.current) {
+        // Временно убираем transform для получения оригинальной высоты
+        prizeScreenRef.current.style.transform = ''
+        
+        const scaleFactor = ref.current.clientWidth / prizeScreenRef.current.clientWidth
+        const originalHeight = prizeScreenRef.current.clientHeight
+        
+        prizeScreenRef.current.style.transform = `scale(${scaleFactor})`
+        prizeScreenRef.current.style.transformOrigin = 'top left'
+        prizeScreenContainerRef.current.style.height = `${originalHeight * scaleFactor}px`
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref?.current, modalWindowRef?.current])
+
+    updateScale()
+
+    const resizeObserver = new ResizeObserver(updateScale)
+    
+    if (ref.current) resizeObserver.observe(ref.current)
+    if (mainScreenRef.current) resizeObserver.observe(mainScreenRef.current)
+    if (prizeScreenRef.current) resizeObserver.observe(prizeScreenRef.current)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [windowFormat])
 
   if (mode === 'mobile') return <MobilePreview spinTrigger={spinTrigger} />
 
   if (windowFormat === 'modalWindow') {
     return (
-      <div
-        ref={ref}
-        className="flex flex-col gap-10 origin-top-left"
-        style={{ transform: `scale(${scale})` }}
-      >
-        <DesktopPreview
-          ref={modalWindowRef}
-          screen="main"
-          onSubmit={() => {}}
-          spinTrigger={spinTrigger}
-        />
-        <DesktopPreview screen="prize" onSubmit={() => {}} spinTrigger={spinTrigger} />
+      <div ref={ref} className="flex flex-col gap-2 origin-top-left">
+        <p className="font-rubik font-normal text-xs">Главный экран</p>
+        <div id="main-screen" ref={mainScreenContainerRef}>
+          <DesktopPreview
+            ref={mainScreenRef}
+            screen="main"
+            onSubmit={() => {}}
+            spinTrigger={spinTrigger}
+          />
+        </div>
+        <hr className="w-full h-px border-0 bg-default-300 self-start" />
+        <p className="font-rubik font-normal text-xs">Призовой экран</p>
+        <div ref={prizeScreenContainerRef}>
+          <DesktopPreview
+            ref={prizeScreenRef}
+            screen="prize"
+            onSubmit={() => {}}
+            spinTrigger={spinTrigger}
+          />
+        </div>
       </div>
     )
   }

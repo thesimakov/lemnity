@@ -12,7 +12,7 @@ const WidgetPreviewLayout = ({ children }: { children: React.ReactNode }) => {
     }`
 
   const tabs = () => (
-    <div className="mb-2 w-full flex justify-center">
+    <div className="w-full flex justify-center">
       <div className="flex w-full h-11 rounded-lg bg-gray-100 p-1 gap-1">
         <Button
           variant="light"

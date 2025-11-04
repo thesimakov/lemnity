@@ -29,7 +29,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
       role="dialog"
       closeOnBackdrop
       closeOnEsc
-      containerClassName={`max-w-[928px] max-h-[500px] ${containerClassName}`}
+      containerClassName={`max-w-[928px] ${containerClassName}`}
     >
       <div className="relative">
         <Button
