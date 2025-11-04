@@ -13,6 +13,7 @@ const WheelOfFortunePreview = ({ spinTrigger }: WheelOfFortunePreviewProps) => {
   const windowFormat = useWidgetSettingsStore(
     s => s.settings.form.template?.templateSettings?.windowFormat
   )
+  
 
   const ref = useRef<HTMLDivElement>(null)
   const modalWindowRef = useRef<HTMLDivElement>(null)
