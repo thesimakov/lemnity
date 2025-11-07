@@ -18,6 +18,7 @@ export type EditableListProps<T> = {
   onDelete?: (item: EditableListItem<T>, index: number) => void
   addButtonLabel?: string
   maxItems?: number
+  minItems?: number
   showIndex?: boolean
   canDelete?: boolean
   canReorder?: boolean
@@ -39,6 +40,7 @@ const EditableList = <T,>({
   onAdd,
   addButtonLabel = 'Добавить',
   maxItems,
+  minItems,
   showIndex = true,
   canDelete = true,
   canReorder = false,
@@ -112,6 +114,7 @@ const EditableList = <T,>({
                   type="button"
                   onPress={onDelete ? () => onDelete(item, index) : () => handleDelete(item.id)}
                   isIconOnly
+                  isDisabled={items.length <= (minItems ?? 0)}
                   variant="light"
                   className={`text-red-500 hover:text-red-700 p-1 ${classNames?.delete}`}
                   aria-label="Удалить"

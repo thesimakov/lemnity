@@ -13,7 +13,6 @@ const WheelOfFortunePreview = ({ spinTrigger }: WheelOfFortunePreviewProps) => {
   const windowFormat = useWidgetSettingsStore(
     s => s.settings.form.template?.templateSettings?.windowFormat
   )
-  
 
   const ref = useRef<HTMLDivElement>(null)
   const modalWindowRef = useRef<HTMLDivElement>(null)
@@ -49,11 +48,12 @@ const WheelOfFortunePreview = ({ spinTrigger }: WheelOfFortunePreviewProps) => {
         ></hr>
         <div>
           <p className="font-rubik text-[25px] mb-5">Призовой экран</p>
-          <DesktopPreview 
-            screen="prize" 
-            onSubmit={() => {}} 
+          <DesktopPreview
+            screen="prize"
+            onSubmit={() => {}}
             ref={modalWindowRef}
-            spinTrigger={spinTrigger} />
+            spinTrigger={spinTrigger}
+          />
         </div>
       </div>
     )
