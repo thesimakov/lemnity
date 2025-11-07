@@ -169,7 +169,7 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
               label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <Link to={agreementPolicyUrl} target="_blank">
+          <Link to={agreementPolicyUrl} target="_blank" className="text-xs">
             {agreementText}
           </Link>
         </div>
@@ -187,7 +187,7 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
               label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <Link to={adsInfoPolicyUrl} target="_blank">
+          <Link to={adsInfoPolicyUrl} target="_blank" className="text-xs">
             {adsInfoText}
           </Link>
         </div>
