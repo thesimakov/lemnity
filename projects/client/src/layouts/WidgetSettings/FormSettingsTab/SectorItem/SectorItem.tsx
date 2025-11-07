@@ -55,6 +55,7 @@ const SectorItem = ({
         {getRadioDot('text')}
         <div className="flex items-center gap-2 flex-1">
           <Textarea
+            placeholder={'Бонус'}
             value={sector.text ?? ''}
             onChange={e => {
               e.stopPropagation()
@@ -65,7 +66,7 @@ const SectorItem = ({
             minRows={1}
             classNames={{
               inputWrapper: 'border-none shadow-none px-0 min-h-8',
-              input: 'text-base py-0 min-h-8 resize-none overflow-hidden'
+              input: 'content-center text-base py-0 min-h-8 resize-none overflow-hidden'
             }}
           />
         </div>

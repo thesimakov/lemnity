@@ -2,6 +2,8 @@ import type { SectorItem } from '@stores/widgetSettings/types'
 import wheelPointer from '@/assets/icons/wheel-pointer.svg'
 import { memo, useEffect, useRef } from 'react'
 import { motion, useAnimation } from 'framer-motion'
+import { createDefaultSector } from './createDefaultSector'
+import { generateRandomHexColor } from '@/common/utils/generateRandomColor'
 
 type WheelOfFortuneProps = {
   sectors?: number | SectorItem[]
@@ -10,21 +12,8 @@ type WheelOfFortuneProps = {
   spinTrigger?: number // изменение этого значения запускает анимацию
 }
 
-const MAX_SECTORS = 12
-const DEFAULT_COLORS = [
-  '#43BCFF', // indigo-600
-  '#D9D9D9', // cyan-500
-  '#43BCFF', // green-500
-  '#D9D9D9', // yellow-500
-  '#43BCFF', // orange-500
-  '#D9D9D9', // red-500
-  '#43BCFF', // violet-500
-  '#D9D9D9', // blue-500
-  '#43BCFF', // emerald-500
-  '#D9D9D9', // amber-500
-  '#43BCFF', // pink-500
-  '#D9D9D9' // indigo-500
-]
+const MIN_SECTORS = 4
+const MAX_SECTORS = 8
 
 function degToRad(deg: number): number {
   return (deg * Math.PI) / 180
@@ -48,29 +37,45 @@ function sectorPath(cx: number, cy: number, r: number, startAngle: number, endAn
 }
 
 function normalizeSectors(input?: number | SectorItem[]): SectorItem[] {
-  if (Array.isArray(input)) {
+  console.log('normalizeSectors', input)
+  if (Array.isArray(input) && input.length > 0) {
     const items = input.filter(Boolean).slice(0, MAX_SECTORS)
-    if (items.length < 2) {
-      return normalizeSectors(6) // fallback to 6 if too few provided
+
+    // Определяем заполненные сектора (с текстом или с иконками)
+    const filledSectors = items.filter(
+      item =>
+        (item.mode === 'text' && item.text && item.text.trim().length) ||
+        (item.mode === 'icon' && item.icon)
+    )
+
+    // Если есть хотя бы один заполненный сектор, циклически повторяем для всех позиций
+    if (filledSectors.length > 0) {
+      return items.map((item, i) => {
+        // Берем сектор из заполненных циклически
+        const sourceSector = filledSectors[i % filledSectors.length]
+
+        return {
+          ...item, // Сохраняем все настройки текущего сектора (цвет, размер текста и т.д.)
+          mode: sourceSector.mode,
+          text: sourceSector.text,
+          icon: sourceSector.icon,
+          textColor: sourceSector.textColor,
+          textSize: sourceSector.textSize,
+          iconSize: sourceSector.iconSize
+        }
+      })
     }
-    return items.map((item, i) => ({
+
+    // Если все сектора пустые, возвращаем как есть (будем показывать "Бонус" в рендере)
+    return items.map(item => ({
       ...item,
-      color: item.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length]
+      color: item.color || generateRandomHexColor()
     }))
   }
-  const requested = typeof input === 'number' ? input : 8 // sensible default
-  const count = Math.max(2, Math.min(MAX_SECTORS, requested))
-  return Array.from({ length: count }).map((_, i) => ({
-    id: String(i),
-    mode: 'text',
-    text: '',
-    color: DEFAULT_COLORS[i % DEFAULT_COLORS.length],
-    isWin: false,
-    textSize: 16,
-    iconSize: 16,
-    textColor: '#ffffff',
-    chance: 0
-  })) as SectorItem[]
+
+  const requested = typeof input === 'number' ? input : MIN_SECTORS
+  const count = Math.min(MIN_SECTORS, Math.max(MIN_SECTORS, requested))
+  return Array.from({ length: count }).map(createDefaultSector)
 }
 
 const WheelOfFortune = ({
@@ -188,7 +193,7 @@ const WheelOfFortune = ({
             const end = (i + 1) * step - 90
             const mid = start + step / 2
             const path = sectorPath(cx, cy, rDisk, start, end)
-            const labelR = (rDisk - 20) * 1.06
+            const labelR = (rDisk - 20) * 0.65
             const lp = polar(cx, cy, labelR, mid)
             const iconR = (rDisk - 20) * 0.45
             const ip = polar(cx, cy, iconR, mid)
@@ -196,7 +201,7 @@ const WheelOfFortune = ({
             return (
               <g key={item.id ?? i}>
                 <path d={path} fill={item.color} />
-                {item.mode === 'text' && item.text ? (
+                {item.mode === 'text' ? (
                   <text
                     x={lp.x}
                     y={lp.y}
@@ -208,7 +213,9 @@ const WheelOfFortune = ({
                     fill={item.textColor}
                   >
                     {(() => {
-                      const lines = item.text.split('\n')
+                      // Если текст пустой, показываем плейсхолдер "Бонус"
+                      const displayText = item.text && item.text.trim().length ? item.text : 'Бонус'
+                      const lines = displayText.split('\n')
                       const lineHeight = item.textSize * 1.2
                       const totalHeight = (lines.length - 1) * lineHeight
                       const startOffset = -totalHeight / 2
@@ -217,7 +224,7 @@ const WheelOfFortune = ({
                           key={lineIndex}
                           x={lp.x}
                           dy={lineIndex === 0 ? startOffset : lineHeight}
-                          textAnchor="end"
+                          textAnchor="middle"
                         >
                           {line}
                         </tspan>
