@@ -59,7 +59,19 @@ export type FormSettings = {
     items: SectorItem[]
   }
   messages: {
-    onWin: { enabled: boolean; text: string }
+    onWin: {
+      enabled: boolean
+      text: string
+      textSize: number
+      description: string
+      descriptionSize: number
+      colorScheme: {
+        enabled: boolean
+        scheme: ColorScheme
+        discount: { color: string; bgColor: string }
+        promo: { color: string; bgColor: string }
+      }
+    }
     limitShows: { enabled: boolean; text: string }
     limitWins: { enabled: boolean; text: string }
     allPrizesGiven: { enabled: boolean; text: string }

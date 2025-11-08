@@ -15,7 +15,7 @@ export type OptionItem = {
 }
 
 export type OptionsChooserProps = {
-  title: string
+  title?: string
   options: OptionItem[]
   value?: string
   onChange: (key: string) => void
@@ -24,6 +24,7 @@ export type OptionsChooserProps = {
   isDisabled?: boolean
   onToggle?: (enabled: boolean) => void
   noBorder?: boolean
+  noPadding?: boolean
   classNames?: string
 }
 
@@ -37,16 +38,17 @@ const OptionsChooser = ({
   isDisabled = false,
   onToggle,
   noBorder,
+  noPadding,
   classNames
 }: OptionsChooserProps) => {
   const active = options.find(o => o.key === value)
   return (
     <div
-      className={`flex flex-col rounded-lg p-3 overflow-hidden ${noBorder ? '' : 'border border-gray-200'} ${classNames}`}
+      className={`flex flex-col rounded-lg ${noPadding ? '' : 'p-3'} overflow-hidden ${noBorder ? '' : 'border border-gray-200'} ${classNames}`}
     >
       <div className="flex flex-col gap-2 pb-2">
         <div className="flex flex-row items-center justify-between">
-          <span className="text-black">{title}</span>
+          {title ? <span className="text-black">{title}</span> : null}
           {showSwitch ? (
             <CustomSwitch
               isSelected={switchedOn}

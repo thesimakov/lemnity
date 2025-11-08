@@ -1,98 +1,49 @@
-import SwitchableField from '@/components/SwitchableField'
-import { Input, Textarea } from '@heroui/input'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import SimpleMessageField from './SimpleMessageField'
+import OnWinMessageSection from './OnWinMessageSection'
 
 const MessagesSettings = () => {
-  const { setMessage } = useFormSettings()
-  const messages = useWidgetSettingsStore(s =>
+  // Subscribe to messages branch to keep defaults consistent (no direct usage needed here)
+  useWidgetSettingsStore(s =>
     withDefaultsPath(s.settings?.form, 'messages', STATIC_DEFAULTS.form.messages)
   )
-  const { onWin, limitShows, limitWins, allPrizesGiven } = messages
+
   const getErrors = useWidgetSettingsStore(s => s.getErrors)
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
-  const errOnWin = showValidation ? getErrors('form.messages.onWin') : []
   const errLimitShows = showValidation ? getErrors('form.messages.limitShows') : []
   const errLimitWins = showValidation ? getErrors('form.messages.limitWins') : []
   const errAllPrizes = showValidation ? getErrors('form.messages.allPrizesGiven') : []
-  const { enabled: onWinEnabled, text: onWinText } = onWin
-  const { enabled: limitShowsEnabled, text: limitShowsText } = limitShows
-  const { enabled: limitWinsEnabled, text: limitWinsText } = limitWins
-  const { enabled: allPrizesGivenEnabled, text: allPrizesGivenText } = allPrizesGiven
+
+  // Keep subscriptions so updates trigger rerender
+  void errLimitShows
+  void errLimitWins
+  void errAllPrizes
 
   return (
     <div className="flex flex-col gap-3">
       <span className="text-2xl font-rubik">Настройка сообщений</span>
 
-      <SwitchableField
-        classNames={{ title: 'font-normal' }}
-        enabled={onWinEnabled}
-        onToggle={enabled => setMessage('onWin', enabled, onWinText)}
-        title="Текст при выигрыше"
-      >
-        <Textarea
-          radius="sm"
-          minRows={2}
-          placeholder="Поздравляем! Вы выиграли, заберите Ваш приз! [ промокод ]"
-          classNames={{ input: 'placeholder:text-[#AFAFAF]' }}
-          value={onWinText}
-          isInvalid={onWinEnabled && errOnWin.some(e => e.path.endsWith('text'))}
-          errorMessage={errOnWin.find(e => e.path.endsWith('text'))?.message}
-          onValueChange={text => setMessage('onWin', onWinEnabled, text)}
-        />
-      </SwitchableField>
+      <OnWinMessageSection />
 
-      <SwitchableField
-        classNames={{ title: 'font-normal' }}
-        enabled={limitShowsEnabled}
-        onToggle={enabled => setMessage('limitShows', enabled, limitShowsText)}
+      <SimpleMessageField
+        messageKey="limitShows"
         title="Сообщение при превышении лимита показов"
-      >
-        <Input
-          radius="sm"
-          placeholder="Вы уже видели эту игру"
-          classNames={{ input: 'placeholder:text-[#AFAFAF]' }}
-          value={limitShowsText}
-          isInvalid={limitShowsEnabled && errLimitShows.some(e => e.path.endsWith('text'))}
-          errorMessage={errLimitShows.find(e => e.path.endsWith('text'))?.message}
-          onValueChange={text => setMessage('limitShows', limitShowsEnabled, text)}
-        />
-      </SwitchableField>
+        placeholder="Вы уже видели эту игру"
+      />
 
-      <SwitchableField
-        classNames={{ title: 'font-normal' }}
-        enabled={limitWinsEnabled}
-        onToggle={enabled => setMessage('limitWins', enabled, limitWinsText)}
+      <SimpleMessageField
+        messageKey="limitWins"
         title="Сообщение при превышении лимита побед"
-      >
-        <Input
-          radius="sm"
-          placeholder="Вы уже получили наш приз, испытайте удачу в другой игре"
-          classNames={{ input: 'placeholder:text-[#AFAFAF]' }}
-          value={limitWinsText}
-          isInvalid={limitWinsEnabled && errLimitWins.some(e => e.path.endsWith('text'))}
-          errorMessage={errLimitWins.find(e => e.path.endsWith('text'))?.message}
-          onValueChange={text => setMessage('limitWins', limitWinsEnabled, text)}
-        />
-      </SwitchableField>
+        placeholder="Вы уже получили наш приз, испытайте удачу в другой игре"
+      />
 
-      <SwitchableField
-        classNames={{ title: 'font-normal' }}
-        enabled={allPrizesGivenEnabled}
-        onToggle={enabled => setMessage('allPrizesGiven', enabled, allPrizesGivenText)}
+      <SimpleMessageField
+        messageKey="allPrizesGiven"
         title="Сообщение при превышении лимита выигрышей"
-      >
-        <Input
-          radius="sm"
-          placeholder="Все призы выданы! Следите за новостями"
-          classNames={{ input: 'placeholder:text-[#AFAFAF]' }}
-          value={allPrizesGivenText}
-          isInvalid={allPrizesGivenEnabled && errAllPrizes.some(e => e.path.endsWith('text'))}
-          errorMessage={errAllPrizes.find(e => e.path.endsWith('text'))?.message}
-          onValueChange={text => setMessage('allPrizesGiven', allPrizesGivenEnabled, text)}
-        />
-      </SwitchableField>
+        placeholder="Все призы выданы! Следите за новостями"
+      />
     </div>
   )
 }

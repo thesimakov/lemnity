@@ -7,10 +7,6 @@ import CloseButton from '../CloseButton/CloseButton'
 
 type DesktopScreen = 'main' | 'prize' | 'panel'
 
-// const Container = ({ children }: { children: ReactElement | ReactElement[] }) => (
-//   <div className="w-full h-full p-4">{children}</div>
-// )
-
 const ModalChrome = forwardRef(
   (
     {
@@ -27,7 +23,7 @@ const ModalChrome = forwardRef(
 
     return (
       <div
-        style={{ backgroundColor: colorScheme === 'primary' ? '' : customColor }}
+        style={{ backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor }}
         className="mx-auto rounded-lg text-white relative p-4 w-[928px] min-h-[500px] flex items-center"
         ref={ref}
       >
@@ -53,7 +49,7 @@ const SidePanelChrome = ({
       <div className="flex h-full">
         <div className="flex-1 justify-center" />
         <div
-          style={{ backgroundColor: colorScheme === 'primary' ? '' : customColor }}
+          style={{ backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor }}
           className="flex w-[550px] h-full items-center rounded-l-xl text-white relative overflow-hidden"
         >
           {!hideCloseButton && <CloseButton position="left" />}

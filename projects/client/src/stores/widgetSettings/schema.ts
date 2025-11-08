@@ -11,6 +11,8 @@ export const IconImageSchema = z.object({
   url: z.string().optional()
 })
 
+export const ColorScheme = z.enum(['primary', 'custom'])
+
 export const DisplaySchemaBase = z
   .object({
     icon: z.object({
@@ -147,13 +149,13 @@ export const FormSchema = z
                 ctx.addIssue({
                   code: z.ZodIssueCode.custom,
                   path: ['text'],
-                  message: 'text обязателен при mode=text'
+                  message: 'Введите текст для сектора'
                 })
               if (typeof v.icon !== 'undefined')
                 ctx.addIssue({
                   code: z.ZodIssueCode.custom,
                   path: ['icon'],
-                  message: 'icon не должен присутствовать при mode=text'
+                  message: 'Иконка не может быть выбрана при режиме текста'
                 })
             }
             if (v.mode === 'icon') {
@@ -161,20 +163,42 @@ export const FormSchema = z
                 ctx.addIssue({
                   code: z.ZodIssueCode.custom,
                   path: ['icon'],
-                  message: 'icon обязателен при mode=icon'
+                  message: 'Выберите иконку для сектора'
                 })
               if (typeof v.text !== 'undefined')
                 ctx.addIssue({
                   code: z.ZodIssueCode.custom,
                   path: ['text'],
-                  message: 'text не должен присутствовать при mode=icon'
+                  message: 'Сектор не может иметь текст в режиме иконки'
                 })
             }
           })
       )
     }),
     messages: z.object({
-      onWin: z.object({ enabled: z.boolean(), text: z.string() }),
+      onWin: z.object({
+        enabled: z.boolean(),
+        text: z.string(),
+        textSize: z.number().nonnegative(),
+        description: z.string(),
+        descriptionSize: z.number().nonnegative(),
+        colorScheme: z.object({
+          enabled: z.boolean(),
+          scheme: ColorScheme,
+          discount: z
+            .object({
+              color: z.string(),
+              bgColor: z.string()
+            })
+            .optional(),
+          promo: z
+            .object({
+              color: z.string(),
+              bgColor: z.string()
+            })
+            .optional()
+        })
+      }),
       limitShows: z.object({ enabled: z.boolean(), text: z.string() }),
       limitWins: z.object({ enabled: z.boolean(), text: z.string() }),
       allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() })
@@ -266,8 +290,7 @@ export const FormSchema = z
     }
 
     // Messages: если включено — текст обязателен
-    const messageKeys: Array<['onWin' | 'limitShows' | 'limitWins' | 'allPrizesGiven', string]> = [
-      ['onWin', 'Текст обязателен'],
+    const messageKeys: Array<['limitShows' | 'limitWins' | 'allPrizesGiven', string]> = [
       ['limitShows', 'Текст обязателен'],
       ['limitWins', 'Текст обязателен'],
       ['allPrizesGiven', 'Текст обязателен']
@@ -276,6 +299,25 @@ export const FormSchema = z
       const m = val.messages[k]
       if (m?.enabled && (!m.text || m.text.trim().length === 0)) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['messages', k, 'text'], message: msg })
+      }
+    }
+
+    // onWin colorScheme conditional: require discount/promo only for custom
+    const cs = val.messages.onWin.colorScheme
+    if (cs.enabled && cs.scheme === 'custom') {
+      if (!cs.discount) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['messages', 'onWin', 'colorScheme', 'discount'],
+          message: 'Обязателен при пользовательской схеме'
+        })
+      }
+      if (!cs.promo) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['messages', 'onWin', 'colorScheme', 'promo'],
+          message: 'Обязателен при пользовательской схеме'
+        })
       }
     }
   })

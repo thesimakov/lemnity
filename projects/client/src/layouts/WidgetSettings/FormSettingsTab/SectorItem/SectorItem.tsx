@@ -8,6 +8,7 @@ import iconTrophy from '@/assets/icons/trophy.svg'
 import iconSparkles from '@/assets/icons/sparkles.svg'
 import iconRocket from '@/assets/icons/rocket.svg'
 import type { SectorItem as SectorData, SectorItemMode as Mode } from '@stores/widgetSettings/types'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 type SectorItemProps = {
   sector: SectorData
@@ -31,6 +32,18 @@ const SectorItem = ({
   onIconChange,
   onSettings
 }: SectorItemProps) => {
+  // derive index by id for validation path
+  const items = useWidgetSettingsStore(s => s.settings.form.sectors.items)
+  const itemIndex = items.findIndex(i => i.id === sector.id)
+  const getErrors = useWidgetSettingsStore(s => s.getErrors)
+  const showValidation = useWidgetSettingsStore(s => s.validationVisible)
+  const sectorErrs =
+    showValidation && itemIndex >= 0 ? getErrors(`form.sectors.items.${itemIndex}`) : []
+  const findErr = (suffix: string) => sectorErrs.find(e => e.path.endsWith(suffix))?.message
+
+  const invalidText = showValidation && sector.mode === 'text' && Boolean(findErr('text'))
+  const consolidatedError = invalidText ? (findErr('text') ?? 'Текст обязателен') : undefined
+
   const getRadioDot = (mode: Mode) => {
     return (
       <RadioGroup value={sector.mode} onValueChange={v => onModeChange(v as Mode)}>
@@ -49,7 +62,7 @@ const SectorItem = ({
   const radioInput = () => {
     return (
       <div
-        className={`flex items-center gap-2 flex-1 h-full rounded-md border pl-3 pr-0.5 border-[#E4E4E7]`}
+        className={`flex items-center gap-2 flex-1 h-full rounded-md border pl-3 border-[#E4E4E7]`}
         onClick={() => onModeChange('text')}
       >
         {getRadioDot('text')}
@@ -61,11 +74,9 @@ const SectorItem = ({
               e.stopPropagation()
             }}
             onValueChange={val => onTextChange(val)}
-            variant="bordered"
-            radius="sm"
             minRows={1}
             classNames={{
-              inputWrapper: 'border-none shadow-none px-0 min-h-8',
+              inputWrapper: 'rounded-l-none rounded-r-xs border-none shadow-none px-2 min-h-8',
               input: 'content-center text-base py-0 min-h-8 resize-none overflow-hidden'
             }}
           />
@@ -114,18 +125,23 @@ const SectorItem = ({
   }
 
   return (
-    <div className="flex items-center w-full h-full gap-2">
-      {radioInput()}
-      {radioIcon()}
-      <Button
-        isIconOnly
-        variant="light"
-        onPress={onSettings}
-        className="flex rounded-md border h-full border-[#E8E8E8] w-10 min-h-10"
-        aria-label="Настройки"
-      >
-        <SvgIcon src={iconSettings} size={20} className="text-[#1E73BE]" />
-      </Button>
+    <div className="flex flex-col h-full">
+      <div className="flex items-center w-full h-full gap-2">
+        {radioInput()}
+        {radioIcon()}
+        <Button
+          isIconOnly
+          variant="light"
+          onPress={onSettings}
+          className="flex rounded-md border h-full border-[#E8E8E8] w-10 min-h-10"
+          aria-label="Настройки"
+        >
+          <SvgIcon src={iconSettings} size={20} className="text-[#1E73BE]" />
+        </Button>
+      </div>
+      {consolidatedError ? (
+        <div className="text-xs text-red-500 pt-1">{consolidatedError}</div>
+      ) : null}
     </div>
   )
 }

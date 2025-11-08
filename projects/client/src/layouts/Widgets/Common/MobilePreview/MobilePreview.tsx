@@ -10,7 +10,7 @@ const MobileChrome = ({ children }: { children: ReactElement | ReactElement[] })
 
   return (
     <div
-      style={{ backgroundColor: colorScheme === 'primary' ? '' : customColor }}
+      style={{ backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor }}
       className={`mx-auto w-[360px] rounded-2xl text-white p-4 relative`}
     >
       <CloseButton position="right" />

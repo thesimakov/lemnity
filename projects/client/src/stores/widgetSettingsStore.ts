@@ -226,6 +226,15 @@ export const useFormSettings = () => {
   const addSector = useWidgetSettingsStore(s => s.addSector)
   const deleteSector = useWidgetSettingsStore(s => s.deleteSector)
   const setMessage = useWidgetSettingsStore(s => s.setMessage)
+  const setOnWinEnabled = useWidgetSettingsStore(s => s.setOnWinEnabled)
+  const setOnWinText = useWidgetSettingsStore(s => s.setOnWinText)
+  const setOnWinTextSize = useWidgetSettingsStore(s => s.setOnWinTextSize)
+  const setOnWinDescription = useWidgetSettingsStore(s => s.setOnWinDescription)
+  const setOnWinDescriptionSize = useWidgetSettingsStore(s => s.setOnWinDescriptionSize)
+  const setOnWinColorSchemeEnabled = useWidgetSettingsStore(s => s.setOnWinColorSchemeEnabled)
+  const setOnWinColorScheme = useWidgetSettingsStore(s => s.setOnWinColorScheme)
+  const setOnWinDiscountColors = useWidgetSettingsStore(s => s.setOnWinDiscountColors)
+  const setOnWinPromoColors = useWidgetSettingsStore(s => s.setOnWinPromoColors)
 
   return {
     settings,
@@ -251,7 +260,16 @@ export const useFormSettings = () => {
     updateSector,
     addSector,
     deleteSector,
-    setMessage
+    setMessage,
+    setOnWinEnabled,
+    setOnWinText,
+    setOnWinTextSize,
+    setOnWinDescription,
+    setOnWinDescriptionSize,
+    setOnWinColorSchemeEnabled,
+    setOnWinColorScheme,
+    setOnWinDiscountColors,
+    setOnWinPromoColors
   }
 }
 

@@ -6,10 +6,7 @@ type BorderedContainerProps = {
 
 const BorderedContainer = ({ children, className, onClick }: BorderedContainerProps) => {
   return (
-    <div
-      className={`flex rounded-md border border-[#E8E8E8] p-3 overflow-hidden ${className}`}
-      onClick={onClick}
-    >
+    <div className={`flex rounded-md border border-[#E8E8E8] p-3 ${className}`} onClick={onClick}>
       {children}
     </div>
   )

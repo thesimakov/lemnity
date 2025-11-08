@@ -11,6 +11,8 @@ export const IconButtonSchema = z.object({
   textColor: z.string()
 })
 
+export const ColorScheme = z.enum(['primary', 'custom'])
+
 // Canonical display schema
 export const DisplaySchema = z.object({
   icon: z.object({
@@ -64,7 +66,7 @@ export const FormCanonicalSchema = z.object({
       templateSettings: z.object({
         image: z.object({ enabled: z.boolean().optional(), fileName: z.string().optional(), url: z.string().optional() }).optional(),
         contentPosition: z.enum(['left', 'right']),
-        colorScheme: z.enum(['primary', 'custom']),
+        colorScheme: ColorScheme,
         windowFormat: z.enum(['sidePanel', 'modalWindow']),
         customColor: z.string().optional()
       })
@@ -101,7 +103,24 @@ export const FormCanonicalSchema = z.object({
       })
     )
   }),
-  messages: z.object({ onWin: z.object({ enabled: z.boolean(), text: z.string() }), limitShows: z.object({ enabled: z.boolean(), text: z.string() }), limitWins: z.object({ enabled: z.boolean(), text: z.string() }), allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() }) })
+  messages: z.object({
+    onWin: z.object({
+      enabled: z.boolean(),
+      text: z.string(),
+      textSize: z.number().nonnegative(),
+      description: z.string(),
+      descriptionSize: z.number().nonnegative(),
+      colorScheme: z.object({
+        enabled: z.boolean(),
+        scheme: ColorScheme,
+        discount: z.object({ color: z.string(), bgColor: z.string() }).optional(),
+        promo: z.object({ color: z.string(), bgColor: z.string() }).optional()
+      })
+    }),
+    limitShows: z.object({ enabled: z.boolean(), text: z.string() }),
+    limitWins: z.object({ enabled: z.boolean(), text: z.string() }),
+    allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() })
+  })
 }).superRefine((val, ctx) => {
   if (!val.template.enabled) {
     const hasContentPosition = typeof val.template.templateSettings?.contentPosition !== 'undefined'
@@ -111,6 +130,11 @@ export const FormCanonicalSchema = z.object({
     if (val.template.templateSettings?.windowFormat === 'sidePanel' && hasContentPosition) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['template', 'templateSettings', 'contentPosition'], message: 'contentPosition недопустим при windowFormat=sidePanel' })
     }
+  }
+  const cs = val.messages.onWin.colorScheme
+  if (cs.enabled && cs.scheme === 'custom') {
+    if (!cs.discount) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['messages','onWin','colorScheme','discount'], message: 'Обязателен при пользовательской схеме' })
+    if (!cs.promo) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['messages','onWin','colorScheme','promo'], message: 'Обязателен при пользовательской схеме' })
   }
 })
 
