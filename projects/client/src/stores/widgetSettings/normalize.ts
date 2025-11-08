@@ -103,7 +103,8 @@ export function trimInactiveBranches(s: WidgetSettings): WidgetSettings {
       chance?: number | undefined
     }
     if (!next.promo) delete next.promo
-    if (typeof next.chance === 'undefined' || Number.isNaN(next.chance)) delete next.chance
+    if (typeof next.chance === 'undefined' || Number.isNaN(next.chance))
+      delete (next as { chance?: unknown }).chance
 
     if (next.mode === 'text') {
       delete (next as { icon?: unknown }).icon
@@ -112,6 +113,20 @@ export function trimInactiveBranches(s: WidgetSettings): WidgetSettings {
     }
     return next
   })
+
+  // Messages.onWin: если colorScheme.scheme === 'primary', отрезаем кастомные ветви
+  if (
+    copy.form?.messages?.onWin?.colorScheme &&
+    copy.form.messages.onWin.colorScheme.scheme === 'primary'
+  ) {
+    const cs = copy.form.messages.onWin
+      .colorScheme as typeof copy.form.messages.onWin.colorScheme & {
+      discount?: unknown
+      promo?: unknown
+    }
+    delete (cs as { discount?: unknown }).discount
+    delete (cs as { promo?: unknown }).promo
+  }
 
   if (copy.display.dontShow.afterWin) {
     copy.display.dontShow.afterShows = null

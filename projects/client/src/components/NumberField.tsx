@@ -11,10 +11,12 @@ export type NumberFieldProps = {
   disabled?: boolean
   noBorder?: boolean
   classNames?: {
+    container?: string
     base?: string
     input?: string
     inputWrapper?: string
     label?: string
+    inputLabel?: string
   }
 }
 
@@ -28,10 +30,12 @@ const NumberField = ({
   disabled = false,
   noBorder = false,
   classNames = {
+    container: '',
+    label: '',
     base: '',
     input: '',
     inputWrapper: '',
-    label: ''
+    inputLabel: ''
   }
 }: NumberFieldProps) => {
   const handleChange = (val: string) => {
@@ -54,14 +58,20 @@ const NumberField = ({
   }
 
   const getInputBorder = (children: React.ReactNode) => (
-    <BorderedContainer className="flex-row items-center gap-2 px-3 h-10 border border-[#E4E4E7]">
+    <BorderedContainer
+      className={`flex items-center py-1 pr-2 border border-[#E4E4E7] ${classNames?.container}`}
+    >
       {children}
     </BorderedContainer>
   )
 
   const getInput = () => (
     <>
-      {label && <span className="text-gray-700 text-base">{label}</span>}
+      {label && (
+        <span className={`text-gray-700 text-base whitespace-nowrap mr-3 ${classNames?.label}`}>
+          {label}
+        </span>
+      )}
       <Input
         type="number"
         value={String(value)}
@@ -73,10 +83,11 @@ const NumberField = ({
         radius="sm"
         variant="bordered"
         classNames={{
-          label: classNames?.label,
-          base: classNames?.base,
-          input: 'text-center ' + classNames?.input,
-          inputWrapper: 'px-0 w-full bg-white border-gray-200 ' + classNames?.inputWrapper
+          label: classNames?.inputLabel,
+          base: `flex-1 ${classNames?.base ?? ''}`.trim(),
+          input: `min-w-[40px] text-center ${classNames?.input ?? ''}`.trim(),
+          inputWrapper:
+            `px-0 flex justify-center items-center bg-white border-gray-200 ${classNames?.inputWrapper ?? ''}`.trim()
         }}
       />
     </>
