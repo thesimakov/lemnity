@@ -165,11 +165,11 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
             classNames={{
               wrapper:
                 'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
-              base: 'max-w-full',
-              label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
+              base: 'items-start max-w-full',
+              label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <Link to={agreementPolicyUrl} target="_blank">
+          <Link to={agreementPolicyUrl} target="_blank" className="text-xs">
             {agreementText}
           </Link>
         </div>
@@ -183,11 +183,11 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
             classNames={{
               wrapper:
                 'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
-              base: 'max-w-full',
+              base: 'items-start max-w-full',
               label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <Link to={adsInfoPolicyUrl} target="_blank">
+          <Link to={adsInfoPolicyUrl} target="_blank" className="text-xs">
             {adsInfoText}
           </Link>
         </div>

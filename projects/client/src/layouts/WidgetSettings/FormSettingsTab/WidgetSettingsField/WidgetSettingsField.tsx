@@ -9,6 +9,7 @@ import { useFormSettings, type SectorItem as StoreSectorItem } from '@/stores/wi
 import NumberField from '@/components/NumberField'
 import ColorAccessory from '@/components/ColorAccessory'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import { generateRandomHexColor } from '@/common/utils/generateRandomColor'
 
 const WidgetSettingsField = () => {
   const {
@@ -37,16 +38,11 @@ const WidgetSettingsField = () => {
     textColor: item.textColor
   }))
 
-  const generateRandomHexColor = () =>
-    `#${Math.floor(Math.random() * 0xffffff)
-      .toString(16)
-      .padStart(6, '0')}`
-
   const handleAdd = () => {
     const newSector: StoreSectorItem = {
       id: Date.now().toString(),
       mode: 'text',
-      text: 'Сектор',
+      text: '',
       icon: 'trophy',
       color: generateRandomHexColor(),
       isWin: false,
@@ -56,7 +52,6 @@ const WidgetSettingsField = () => {
       chance: 0
     }
     addSector(newSector)
-    setOpenedIndex(sectors.length)
   }
 
   const getRandomOrderCheckbox = () => {
@@ -91,6 +86,7 @@ const WidgetSettingsField = () => {
           <div className="flex flex-col gap-1">
             <span className="text-sm">Размер текста</span>
             <NumberField
+              disabled={sector.mode !== 'text'}
               max={99}
               min={1}
               noBorder
@@ -101,6 +97,7 @@ const WidgetSettingsField = () => {
           <div className="flex flex-col gap-1">
             <span className="text-sm">Размер иконки</span>
             <NumberField
+              disabled={sector.mode !== 'icon'}
               max={99}
               min={1}
               noBorder
@@ -220,6 +217,7 @@ const WidgetSettingsField = () => {
         <EditableList
           items={sectors}
           onItemsChange={items => setSectors(items as StoreSectorItem[])}
+          minItems={4}
           maxItems={8}
           classNames={{
             index:

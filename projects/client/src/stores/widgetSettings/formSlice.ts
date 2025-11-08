@@ -33,6 +33,15 @@ export type FormActions = {
   addSector: (item: SectorItem) => void
   deleteSector: (id: string) => void
   setMessage: (key: MessageKey, enabled: boolean, text: string) => void
+  setOnWinEnabled: (enabled: boolean) => void
+  setOnWinText: (text: string) => void
+  setOnWinTextSize: (textSize: number) => void
+  setOnWinDescription: (description: string) => void
+  setOnWinDescriptionSize: (descriptionSize: number) => void
+  setOnWinColorSchemeEnabled: (enabled: boolean) => void
+  setOnWinColorScheme: (scheme: ColorScheme) => void
+  setOnWinDiscountColors: (color: string, bgColor: string) => void
+  setOnWinPromoColors: (color: string, bgColor: string) => void
 }
 
 export type FormSlice = {
@@ -90,6 +99,17 @@ export const createFormSlice = (updateForm: FormUpdater): FormSlice => {
         sectors: { ...s.sectors, items: s.sectors.items.filter(item => item.id !== id) }
       })),
     setMessage: (key, enabled, text) =>
-      updateForm(s => ({ ...s, messages: { ...s.messages, [key]: { enabled, text } } }))
+      updateForm(s => ({ ...s, messages: { ...s.messages, [key]: { enabled, text } } })),
+    setOnWinEnabled: enabled => updateByPath('messages.onWin', { enabled }),
+    setOnWinText: text => updateByPath('messages.onWin', { text }),
+    setOnWinTextSize: textSize => updateByPath('messages.onWin', { textSize }),
+    setOnWinDescription: description => updateByPath('messages.onWin', { description }),
+    setOnWinDescriptionSize: descriptionSize => updateByPath('messages.onWin', { descriptionSize }),
+    setOnWinColorSchemeEnabled: enabled => updateByPath('messages.onWin.colorScheme', { enabled }),
+    setOnWinColorScheme: scheme => updateByPath('messages.onWin.colorScheme', { scheme }),
+    setOnWinDiscountColors: (color, bgColor) =>
+      updateByPath('messages.onWin.colorScheme', { discount: { color, bgColor } }),
+    setOnWinPromoColors: (color, bgColor) =>
+      updateByPath('messages.onWin.colorScheme', { promo: { color, bgColor } })
   }
 }

@@ -1,5 +1,7 @@
 import type { DayKey, WidgetSettings } from './types'
+import { createDefaultSector } from '@/layouts/Widgets/WheelOfFortune/createDefaultSector'
 
+const MIN_SECTORS = 4
 const defaultDays: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
 export const buildDefaults = (id: string): WidgetSettings => ({
@@ -13,8 +15,8 @@ export const buildDefaults = (id: string): WidgetSettings => ({
         image: { enabled: false, fileName: '', url: '' },
         windowFormat: 'modalWindow',
         contentPosition: 'left',
-        colorScheme: 'custom',
-        customColor: '#725DFF'
+        colorScheme: 'primary',
+        customColor: '#46b530'
       }
     },
     formTexts: {
@@ -39,12 +41,31 @@ export const buildDefaults = (id: string): WidgetSettings => ({
     agreement: {
       enabled: true,
       text: 'Я даю согласие на обработку моих персональных данных ООО Компания (ИНН 0000000000) в целях обработки заявки и обратной связи. Политика конфиденциальности по ссылке.',
-      policyUrl: ''
+      policyUrl: 'lemnity.ru/political'
     },
-    adsInfo: { enabled: true, text: '', policyUrl: '' },
-    sectors: { randomize: false, items: [] },
+    adsInfo: {
+      enabled: true,
+      text: 'Нажимая на кнопку, вы даёте своё согласие на получение рекламно-информационной рассылки.',
+      policyUrl: 'lemnity.ru/ads'
+    },
+    sectors: {
+      randomize: false,
+      items: Array.from({ length: MIN_SECTORS }).map(createDefaultSector)
+    },
     messages: {
-      onWin: { enabled: true, text: 'Ура!\r\nВы выиграли' },
+      onWin: {
+        enabled: true,
+        text: 'Ура!\nВы выиграли',
+        textSize: 36,
+        description: 'Не забудьте использовать промокод во время\nоформления заказа!',
+        descriptionSize: 16,
+        colorScheme: {
+          enabled: true,
+          scheme: 'primary',
+          discount: { color: '#000000', bgColor: '#FFF57F' },
+          promo: { color: '#FFFFFF', bgColor: '#0069FF' }
+        }
+      },
       limitShows: { enabled: true, text: 'Вы уже видели эту игру' },
       limitWins: { enabled: true, text: 'Вы уже выиграли' },
       allPrizesGiven: { enabled: true, text: 'Вы уже получили все призы' }
