@@ -33,8 +33,9 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
 
   const {
     enabled: agreementEnabled,
-    text: agreementText,
-    policyUrl: agreementPolicyUrl
+    policyUrl,
+    agreementUrl
+
   } = agreement
   const { enabled: adsInfoEnabled, text: adsInfoText, policyUrl: adsInfoPolicyUrl } = adsInfo
 
@@ -169,9 +170,22 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
               label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <Link to={agreementPolicyUrl} target="_blank" className="text-xs">
+          <span className="text-xs">Я даю{' '}
+            <a href={agreementUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-bold">Согласие
+              </a> 
+              {' '}на обработку персональных данных в соответсвии с {' '}
+              <a href={policyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-bold">Политикой конфиденциальности.
+              </a> 
+              </span>
+          {/* <Link to={agreementPolicyUrl} target="_blank" className="text-xs">
             {agreementText}
-          </Link>
+          </Link> */}
         </div>
       ) : null}
 

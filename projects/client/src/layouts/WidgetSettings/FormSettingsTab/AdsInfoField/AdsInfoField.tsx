@@ -22,6 +22,7 @@ const AdsInfoField = () => {
     >
       <div className="flex flex-col gap-3">
         <Textarea
+          isDisabled
           radius="sm"
           variant="bordered"
           minRows={2}
