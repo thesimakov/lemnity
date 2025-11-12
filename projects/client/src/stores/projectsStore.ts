@@ -117,7 +117,6 @@ export const useProjectsStore = create<ProjectsStore>()(
       },
 
       createProject: async (title, websiteUrl, enabled = true) => {
-        console.log('project create', title, websiteUrl, enabled)
         set({ isLoading: true, error: null }, false, 'projects/create:start')
         try {
           const payload: CreateProjectDto = { title, websiteUrl, enabled }

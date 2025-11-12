@@ -37,7 +37,6 @@ function sectorPath(cx: number, cy: number, r: number, startAngle: number, endAn
 }
 
 function normalizeSectors(input?: number | SectorItem[]): SectorItem[] {
-  console.log('normalizeSectors', input)
   if (Array.isArray(input) && input.length > 0) {
     const items = input.filter(Boolean).slice(0, MAX_SECTORS)
 

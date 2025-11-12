@@ -9,11 +9,15 @@ import AgreementPoliciesField from './AgreementPoliciesField/AgreementPoliciesFi
 import AdsInfoField from './AdsInfoField/AdsInfoField'
 import WidgetSettingsField from './WidgetSettingsField/WidgetSettingsField'
 import MessagesSettings from '@/layouts/WidgetSettings/FormSettingsTab/MessagesSettings/MessagesSettings'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
+import useWidgetSettingsStore, {
+  useFormSettings,
+  useVisibleErrors
+} from '@/stores/widgetSettingsStore'
 import { memo, useCallback } from 'react'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useShallow } from 'zustand/react/shallow'
 import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import { uploadImage } from '@/api/upload'
 
 const templateOptions = [
   { key: 'template1', label: 'Новый Год' },
@@ -37,10 +41,12 @@ const FormSettingsTab = () => {
     setColorScheme,
     setCustomColor
   } = useFormSettings()
-  const getErrors = useWidgetSettingsStore(s => s.getErrors)
+
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
-  const logoErrors = showValidation ? getErrors('form.companyLogo') : []
-  const templateErrors = showValidation ? getErrors('form.template') : []
+  const logoErrors = useVisibleErrors(showValidation, 'form.companyLogo')
+  const templateErrors = useVisibleErrors(showValidation, 'form.template')
+  const companyLogo = settings?.companyLogo ?? {}
+  const { enabled, fileName, url } = companyLogo
 
   const template = useWidgetSettingsStore(
     useShallow(s =>
@@ -54,7 +60,11 @@ const FormSettingsTab = () => {
 
   const handleFile = useCallback(
     (file: File | null) => {
-      if (file) setCompanyLogoFile(file.name, URL.createObjectURL(file))
+      if (file) {
+        uploadImage(file).then(({ url }: { url: string }) => {
+          setCompanyLogoFile(file.name, url)
+        })
+      }
     },
     [setCompanyLogoFile]
   )
@@ -64,12 +74,14 @@ const FormSettingsTab = () => {
       <span className="text-xl font-rubik">Настройка формы</span>
       <div className="flex flex-col gap-3">
         <ImageUploader
-          checked={settings?.companyLogo?.enabled ?? true}
+          checked={enabled ?? true}
           setChecked={setCompanyLogoEnabled}
           title="Логотип компании"
           recommendedResolution="100x50"
           fileSize="менее 2 Mb"
           formats={['png']}
+          filename={fileName}
+          url={url}
           onFileSelect={handleFile}
           isInvalid={
             logoErrors.some(e => e.path.endsWith('fileName')) ||

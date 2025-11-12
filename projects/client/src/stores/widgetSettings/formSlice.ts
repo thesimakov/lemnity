@@ -78,8 +78,8 @@ export const createFormSlice = (updateForm: FormUpdater): FormSlice => {
     setCountdownEnabled: enabled => updateByPath('countdown', { enabled }),
     setContactField: (field, enabled, required) =>
       updateByPath('contacts', { [field]: { enabled, required } } as Record<string, unknown>),
-    setAgreement: (enabled, text, policyUrl,agreementUrl) =>
-      updateByPath('agreement', { enabled, text, policyUrl,agreementUrl }),
+    setAgreement: (enabled, text, policyUrl, agreementUrl) =>
+      updateByPath('agreement', { enabled, text, policyUrl, agreementUrl }),
     setAdsInfo: (enabled, text, policyUrl) => updateByPath('adsInfo', { enabled, text, policyUrl }),
     setRandomize: randomize => updateByPath('sectors', { randomize }),
     setSectors: items => updateByPath('sectors', { items }),

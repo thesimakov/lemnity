@@ -61,12 +61,9 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
 
   const handleCreate = useCallback(async () => {
     if (submitting) return
-    console.log('handleCreate modal', projectName, websiteUrl, isEnabled)
     setSubmitting(true)
     try {
-      console.log('handleCreate modal try', projectName, websiteUrl, isEnabled)
       await onAddProject(projectName, websiteUrl, isEnabled)
-      console.log('handleCreate modal try success', projectName, websiteUrl, isEnabled)
     } finally {
       setSubmitting(false)
     }
