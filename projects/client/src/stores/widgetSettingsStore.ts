@@ -60,6 +60,64 @@ export type WidgetSettingsStore = WidgetSettingsState &
   DisplaySlice &
   IntegrationSlice
 
+type PathRewrite = {
+  from: string
+  to: string
+  match: 'prefix' | 'exact'
+}
+
+const PATH_REWRITES: PathRewrite[] = [
+  { from: 'display.trigger.timer.', to: 'display.timer.', match: 'prefix' },
+  { from: 'display.trigger.timer', to: 'display.timer', match: 'exact' },
+  { from: 'display.trigger.', to: 'display.', match: 'prefix' },
+  { from: 'display.trigger', to: 'display', match: 'exact' },
+  { from: 'display.conditions.showRules.', to: 'display.showRules.', match: 'prefix' },
+  { from: 'display.conditions.showRules', to: 'display.showRules', match: 'exact' },
+  { from: 'display.conditions.frequency.', to: 'display.frequency.', match: 'prefix' },
+  { from: 'display.conditions.frequency', to: 'display.frequency', match: 'exact' },
+  { from: 'display.conditions.dontShow.', to: 'display.dontShow.', match: 'prefix' },
+  { from: 'display.conditions.dontShow', to: 'display.dontShow', match: 'exact' },
+  { from: 'display.conditions.limits.', to: 'display.limits.', match: 'prefix' },
+  { from: 'display.conditions.limits', to: 'display.limits', match: 'exact' },
+  { from: 'display.conditions.', to: 'display.', match: 'prefix' },
+  { from: 'display.conditions', to: 'display', match: 'exact' }
+]
+
+const mapCanonicalPath = (path: string): string => {
+  for (const rewrite of PATH_REWRITES) {
+    if (rewrite.match === 'prefix' && path.startsWith(rewrite.from)) {
+      return `${rewrite.to}${path.slice(rewrite.from.length)}`
+    }
+    if (rewrite.match === 'exact' && path === rewrite.from) {
+      return rewrite.to
+    }
+  }
+  return path
+}
+
+const dedupeIssues = (issues: Issue[]): Issue[] => {
+  const seen = new Set<string>()
+  return issues.filter(issue => {
+    const key = `${issue.path}|${issue.message}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+const computeIssues = (settings: WidgetSettings | null | undefined): Issue[] => {
+  if (!settings) return []
+  const current = validateWidgetSettingsCurrent(settings).issues
+  const normalized = normalize(settings, STATIC_DEFAULTS)
+  const trimmed = trimInactiveBranches(normalized)
+  const canonical = canonicalize(trimmed)
+  const canonicalIssues = validateWidgetSettingsCanonical(canonical).issues.map(issue => ({
+    path: mapCanonicalPath(issue.path),
+    message: issue.message
+  }))
+  return dedupeIssues([...current, ...canonicalIssues])
+}
+
 // Persist by widget id: store a map { [widgetId]: { state, version } } under one key
 const PERSIST_NAME = 'widget-settings'
 let activeWidgetId = ''
@@ -168,11 +226,11 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
             const current = get().snapshot()
             if (!current)
               return { ok: false, issues: [{ path: 'settings', message: 'Не инициализировано' }] }
-            return validateWidgetSettingsCurrent(current)
+            const issues = computeIssues(current)
+            return { ok: issues.length === 0, issues }
           },
           getErrors: (prefix?: string) => {
-            const r = get().validateNow()
-            const issues = r.issues || []
+            const issues = computeIssues(get().snapshot())
             if (!prefix) return issues
             return issues.filter(i => i.path.startsWith(prefix))
           },
@@ -199,6 +257,19 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
 )
 
 export default useWidgetSettingsStore
+
+// UI-дериват: подписывает компонент на состояние и возвращает актуальные ошибки
+export const useErrors = (prefix?: string) => {
+  const settings = useWidgetSettingsStore(s => s.settings)
+  const issues = computeIssues(settings)
+  return prefix ? issues.filter(i => i.path.startsWith(prefix)) : issues
+}
+
+// Версия с управлением видимостью, чтобы не считать вхолостую и не триггерить перерендеры
+export const useVisibleErrors = (visible: boolean, prefix?: string) => {
+  const errors = useErrors(prefix)
+  return visible ? errors : []
+}
 
 // Slice hooks for cleaner component usage
 export const useFormSettings = () => {

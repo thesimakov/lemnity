@@ -27,7 +27,7 @@ const MobilePreview = ({ spinTrigger }: MobilePreviewProps) => {
   const sectors = useWidgetSettingsStore(s => s.settings.form.sectors)
 
   return (
-    <div className="w-full rounded-2xl bg-[#F5F6F8] border border-[#E6E6E6] p-4">
+    <div className="w-full rounded-2xl bg-[#F5F6F8] border border-[#E6E6E6] p-4 overflow-y-auto">
       <MobileChrome>
         <div className="flex flex-col gap-4 items-center">
           <WheelOfFortune
@@ -36,7 +36,7 @@ const MobilePreview = ({ spinTrigger }: MobilePreviewProps) => {
             }
             spinTrigger={spinTrigger}
           />
-          <DynamicFieldsForm centered onSubmit={() => {}} />
+          <DynamicFieldsForm isMobile centered onSubmit={() => {}} />
         </div>
       </MobileChrome>
     </div>

@@ -25,14 +25,11 @@ const OnWinMessageSection = () => {
     withDefaultsPath(s.settings?.form, 'messages', STATIC_DEFAULTS.form.messages)
   )
 
-  const {
-    enabled,
-    text,
-    textSize,
-    description,
-    descriptionSize,
-    colorScheme: { enabled: schemeEnabled, scheme, discount, promo }
-  } = onWin
+  const { enabled, text, textSize, description, colorScheme, descriptionSize } = onWin
+
+  // Safe color scheme snapshot (fallback to defaults if undefined/trimmed)
+  const safeColorScheme = colorScheme ?? STATIC_DEFAULTS.form.messages.onWin.colorScheme
+  const { enabled: schemeEnabled, scheme, discount, promo } = safeColorScheme
 
   const getErrors = useWidgetSettingsStore(s => s.getErrors)
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)

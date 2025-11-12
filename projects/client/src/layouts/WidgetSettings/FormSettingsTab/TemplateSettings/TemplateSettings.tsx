@@ -1,11 +1,15 @@
 import ColorAccessory from '@/components/ColorAccessory'
 import OptionsChooser, { type OptionItem } from '@/components/OptionsChooser'
 import ImageUploader from '@/components/ImageUploader'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
+import useWidgetSettingsStore, {
+  useFormSettings,
+  useVisibleErrors
+} from '@/stores/widgetSettingsStore'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { ColorScheme, ContentPosition, WindowFormat } from '@/stores/widgetSettings/types'
 import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { uploadImage } from '@/api/upload'
 
 const TemplateSettings = () => {
   const {
@@ -30,8 +34,12 @@ const TemplateSettings = () => {
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const errors = showValidation ? getErrors('form.template.templateSettings') : []
   const customColorError = errors.find(e => e.path.endsWith('customColor'))
-  const imageUrlError =
-    errors.find(e => e.path.endsWith('url')) || errors.find(e => e.path.endsWith('fileName'))
+
+  const { image } = settings ?? {}
+  const { enabled, fileName, url } = image ?? {}
+  const imageErrors = useVisibleErrors(showValidation, 'form.template.templateSettings.image')
+  const imageUrlError = imageErrors.find(e => e.path.endsWith('url'))
+  const imageFileNameError = imageErrors.find(e => e.path.endsWith('fileName'))
 
   const colorOptions: OptionItem[] = [
     { key: 'primary', label: 'Основная' },
@@ -61,18 +69,21 @@ const TemplateSettings = () => {
       className="overflow-hidden flex flex-col gap-3"
     >
       <ImageUploader
-        checked={settings.image.enabled}
+        checked={enabled}
         setChecked={setTemplateImageEnabled}
         title="Картинка"
-        recommendedResolution="470x470"
+        recommendedResolution="500x500"
         fileSize="менее 2 Mb"
+        filename={fileName}
+        url={url}
         onFileSelect={file => {
           if (!file) return
-          const url = URL.createObjectURL(file)
-          setTemplateImageFile(file.name, url)
+          uploadImage(file).then(({ url }: { url: string }) => {
+            setTemplateImageFile(file.name, url)
+          })
         }}
-        isInvalid={Boolean(settings.image.enabled && imageUrlError)}
-        errorMessage={imageUrlError?.message}
+        isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
+        errorMessage={imageUrlError?.message || imageFileNameError?.message}
       />
       <OptionsChooser
         title="Формат окна"

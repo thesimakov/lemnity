@@ -24,17 +24,21 @@ export class ProjectService {
   }
 
   findAll(userId: string) {
-    return this.prisma.project.findMany({
-      where: { userId },
-      include: { widgets: true }
-    }).then(projects => projects.map(p => this.migrateProjectWidgets(p)))
+    return this.prisma.project
+      .findMany({
+        where: { userId },
+        include: { widgets: true }
+      })
+      .then(projects => projects.map(p => this.migrateProjectWidgets(p)))
   }
 
   findOne(userId: string, id: string) {
-    return this.prisma.project.findFirst({
-      where: { id, userId },
-      include: { widgets: true }
-    }).then(p => (p ? this.migrateProjectWidgets(p) : p))
+    return this.prisma.project
+      .findFirst({
+        where: { id, userId },
+        include: { widgets: true }
+      })
+      .then(p => (p ? this.migrateProjectWidgets(p) : p))
   }
 
   update(userId: string, id: string, updateProjectDto: UpdateProjectDto) {
@@ -52,9 +56,9 @@ export class ProjectService {
     })
   }
 
-  private migrateProjectWidgets<T extends { widgets?: Array<{ config: unknown; configVersion: number | null }> }>(
-    project: T
-  ): T {
+  private migrateProjectWidgets<
+    T extends { widgets?: Array<{ config: unknown; configVersion: number | null }> }
+  >(project: T): T {
     if (!project.widgets || project.widgets.length === 0) return project
     const widgets = project.widgets.map(w => {
       if (!w.config) return w

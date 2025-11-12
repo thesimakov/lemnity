@@ -1,6 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
-import { CURRENT_VERSION, migrateToCurrent, validateCanonical, type CanonicalWidgetSettings } from '@lemnity/widget-config'
+import {
+  CURRENT_VERSION,
+  migrateToCurrent,
+  validateCanonical,
+  type CanonicalWidgetSettings
+} from '@lemnity/widget-config'
 
 @Injectable()
 export class ConfigService {
@@ -20,4 +25,3 @@ export class ConfigService {
   //   return this.prisma.widget.update({ where: { id: widgetId }, data: { config: data, configVersion: version } })
   // }
 }
-
