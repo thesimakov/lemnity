@@ -19,6 +19,10 @@ export const API = {
     LIST: '/widgets' as const, // GET
     CREATE: '/widgets' as const, // POST
     WIDGET: (id: string) => `/widgets/${id}` as const // GET/PUT/PATCH/DELETE
+  },
+  FILES: {
+    CREATE: '/files' as const,
+    IMAGES: '/files/images' as const
   }
 } as const
 

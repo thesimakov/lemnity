@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@nestjs/mapped-types": "*",
+    "@nestjs/mapped-types": "^2.1.0",
     "zod": "^4.1.12"
   },
   "name": "monorepo-template",
@@ -14,12 +14,13 @@
     "start": "pnpm --filter server start",
     "install:client": "pnpm --filter client install",
     "install:server": "pnpm --filter server install",
-    "clean": "rm -rf node_modules projects/*/node_modules pnpm-lock.yaml",
+    "clean": "rm -rf node_modules packages/*/node_modules projects/*/node_modules",
+    "reinstall": "pnpm run clean && pnpm install",
     "build:client": "pnpm --filter client build",
     "build:server": "pnpm --filter server build",
     "format": "prettier --check . --ignore-path .gitignore",
     "format:fix": "prettier --write . --ignore-path .gitignore",
-    "docker:up": "docker compose up -d --wait",
+    "docker:up": "docker compose up -d --wait && docker compose --profile setup run --rm minio_setup",
     "docker:down": "docker compose down",
     "docker:db": "docker compose up -d postgres",
     "docker:up:prod": "docker compose -f docker-compose.prod.yml up -d",
@@ -33,9 +34,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.15.1",
+  "packageManager": "pnpm@10.21.0",
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.23.4",
+    "@openapitools/openapi-generator-cli": "^2.25.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   }
