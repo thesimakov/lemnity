@@ -4,6 +4,7 @@ import SvgIcon from '@/components/SvgIcon'
 import iconCross from '@/assets/icons/cross.svg'
 import DesktopPreview from './DesktopPreview/DesktopPreview'
 import Modal from '@/components/Modal/Modal'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 interface PreviewModalProps {
   isOpen: boolean
@@ -22,6 +23,9 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   containerClassName,
   spinTrigger
 }) => {
+  const imageUrl = useWidgetSettingsStore(
+    s => s.settings.form.template?.templateSettings?.image?.url
+  )
   return (
     <Modal
       isOpen={isOpen}
@@ -31,7 +35,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
       closeOnEsc
       containerClassName={`max-w-[928px] ${containerClassName}`}
     >
-      <div className="relative">
+      <div className="relative" style={{ backgroundImage: `url(${imageUrl})` }}>
         <Button
           isIconOnly
           variant="light"

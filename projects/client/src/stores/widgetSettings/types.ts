@@ -52,7 +52,7 @@ export type FormSettings = {
     email: { enabled: boolean; required: boolean }
     name: { enabled: boolean; required: boolean }
   }
-  agreement: { enabled: boolean; text: string; policyUrl: string }
+  agreement: { enabled: boolean; text: string; policyUrl: string; agreementUrl: string }
   adsInfo: { enabled: boolean; text: string; policyUrl: string }
   sectors: {
     randomize: boolean

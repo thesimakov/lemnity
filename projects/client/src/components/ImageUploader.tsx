@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState, useId } from 'react'
 import CustomSwitch from './CustomSwitch'
 import SvgIcon from './SvgIcon'
 import iconUpload from '@/assets/icons/upload-stub.svg'
@@ -11,11 +11,29 @@ type ImageUploaderProps = {
   recommendedResolution: string
   fileSize: string
   formats?: string[]
-  classNames?: string
+  classNames?: {
+    container?: string
+    image?: string
+    label?: string
+  }
   hideSwitch?: boolean
+  filename?: string
+  url?: string
   onFileSelect?: (file: File | null) => void
   isInvalid?: boolean
   errorMessage?: string
+}
+
+function shortenFileName(name: string, max = 40): string {
+  if (!name) return name
+  if (name.length <= max) return name
+  const dot = name.lastIndexOf('.')
+  const ext = dot > -1 ? name.slice(dot) : ''
+  const base = dot > -1 ? name.slice(0, dot) : name
+  const room = max - ext.length
+  const head = Math.ceil((room - 3) / 2)
+  const tail = Math.floor((room - 3) / 2)
+  return `${base.slice(0, Math.max(0, head))}...${base.slice(Math.max(0, base.length - tail))}${ext}`
 }
 
 const ImageUploader = ({
@@ -25,21 +43,36 @@ const ImageUploader = ({
   recommendedResolution,
   fileSize,
   formats = ['png', 'jpeg'],
-  classNames,
+  classNames = {
+    container: '',
+    image: '',
+    label: ''
+  },
   hideSwitch,
+  filename,
+  url,
   onFileSelect,
   isInvalid,
   errorMessage
 }: ImageUploaderProps) => {
-  const [fileName, setFileName] = useState<string>('Нажмите чтобы выбрать файл')
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  // Контролируемый подход: пропсы — источник правды.
+  // Локально храним только выбранный в этом сеансе файл и blob-url для превью.
+  const [localFile, setLocalFile] = useState<File | null>(null)
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+
+  const previewUrl = useMemo<string | null>(() => blobUrl ?? url ?? null, [blobUrl, url])
+  const displayName = useMemo(
+    () => shortenFileName(localFile?.name ?? filename ?? 'Нажмите чтобы выбрать файл'),
+    [localFile?.name, filename]
+  )
+  const inputId = useId()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null
-    setFileName(file ? file.name : 'Нажмите чтобы выбрать файл')
+    setLocalFile(file)
     onFileSelect?.(file)
 
-    setPreviewUrl(prev => {
+    setBlobUrl(prev => {
       if (prev) URL.revokeObjectURL(prev)
       return file ? URL.createObjectURL(file) : null
     })
@@ -47,12 +80,14 @@ const ImageUploader = ({
 
   useEffect(() => {
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
+      if (blobUrl) URL.revokeObjectURL(blobUrl)
     }
-  }, [previewUrl])
+  }, [blobUrl])
 
   return (
-    <div className={`flex flex-col gap-2 p-3 rounded-lg border border-gray-200 ${classNames}`}>
+    <div
+      className={`flex flex-col gap-2 p-3 rounded-lg border border-gray-200 ${classNames.container}`}
+    >
       <div className="flex flex-row gap-2">
         <span className="text-black">{title}</span>
         {!hideSwitch && (
@@ -65,23 +100,25 @@ const ImageUploader = ({
           />
         )}
       </div>
-      <div className="flex flex-row gap-3 w-full">
+      <div className="flex flex-row gap-3 w-full min-w-0">
         <img
-          src={previewUrl ?? imageUpload}
+          src={previewUrl || imageUpload}
           alt="image"
           className="w-14 h-14 object-cover rounded-md"
         />
         <label
-          htmlFor="img"
-          className="flex-1 h-14 flex items-center gap-3 px-3 py-2 bg-[#F4F4F5] hover:bg-[#E4E4E7] border-2 border-[#E4E4E7] rounded-md cursor-pointer transition-colors"
+          htmlFor={inputId}
+          className={`flex-1 min-w-0 h-14 flex items-center gap-3 px-3 py-2 bg-[#F4F4F5] hover:bg-[#E4E4E7] border-2 border-[#E4E4E7] rounded-md cursor-pointer transition-colors overflow-hidden ${classNames.label}`}
         >
           <SvgIcon src={iconUpload} size={20} className="text-black w-min" />
-          <span className="text-sm text-gray-700 truncate">{fileName}</span>
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <span className="block truncate text-sm text-gray-700">{displayName}</span>
+          </div>
           <input
-            id="img"
+            id={inputId}
             type="file"
             accept={`image/${formats.join(', image/')}`}
-            className="hidden"
+            className={`hidden ${classNames.image}`}
             onChange={handleFileChange}
           />
         </label>

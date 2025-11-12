@@ -94,7 +94,7 @@ const EditWidgetPage = (): ReactElement => {
   const handleSave = async () => {
     useWidgetSettingsStore.getState().setValidationVisible(true)
     const res = useWidgetSettingsStore.getState().prepareForSave()
-    console.log('snapshot:', useWidgetSettingsStore.getState().snapshot())
+
     if (!res.ok) {
       console.warn(res.issues)
       alert('Исправьте ошибки перед сохранением')
@@ -122,7 +122,6 @@ const EditWidgetPage = (): ReactElement => {
       useWidgetSettingsStore.getState().init(widgetId, next)
       alert('Сохранено')
       useWidgetSettingsStore.getState().setValidationVisible(false)
-      console.log(res.data)
     } catch (e) {
       console.error(e)
       alert('Ошибка сохранения')

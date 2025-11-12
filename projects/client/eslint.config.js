@@ -23,6 +23,9 @@ export default tseslint.config([
       parserOptions: {
         tsconfigRootDir: import.meta.dirname
       }
+    },
+    rules: {
+      'no-console': ['warn', { allow: ['error', 'warn'] }]
     }
   }
 ])

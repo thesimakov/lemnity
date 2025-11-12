@@ -124,7 +124,12 @@ export const FormSchema = z
       email: z.object({ enabled: z.boolean(), required: z.boolean() }),
       name: z.object({ enabled: z.boolean(), required: z.boolean() })
     }),
-    agreement: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
+    agreement: z.object({
+      enabled: z.boolean(),
+      text: z.string(),
+      policyUrl: z.string(),
+      agreementUrl: z.string()
+    }),
     adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
     sectors: z.object({
       randomize: z.boolean(),

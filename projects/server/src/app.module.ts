@@ -6,9 +6,17 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { ProjectModule } from './project/project.module'
 import { WidgetModule } from './widget/widget.module'
+import { FilesModule } from './files/files.module'
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, UserModule, ProjectModule, WidgetModule],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule,
+    UserModule,
+    ProjectModule,
+    WidgetModule,
+    FilesModule
+  ],
   controllers: [AppController],
   providers: [AppService]
 })

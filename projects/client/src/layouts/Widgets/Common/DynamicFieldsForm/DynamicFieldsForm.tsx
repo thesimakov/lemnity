@@ -19,9 +19,14 @@ type FormFields = {
 type DynamicFieldsFormProps = {
   centered?: boolean
   onSubmit: () => void
+  isMobile?: boolean
 }
 
-const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProps) => {
+const DynamicFieldsForm = ({
+  centered = false,
+  onSubmit,
+  isMobile = false
+}: DynamicFieldsFormProps) => {
   const [agreementChecked, setAgreementChecked] = useState(false)
   const [adsInfoChecked, setAdsInfoChecked] = useState(false)
   const formSettings = useWidgetSettingsStore(s => s.settings.form)
@@ -31,11 +36,7 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
 
   const { enabled: logoEnabled, url: logoUrl } = companyLogo
 
-  const {
-    enabled: agreementEnabled,
-    text: agreementText,
-    policyUrl: agreementPolicyUrl
-  } = agreement
+  const { enabled: agreementEnabled, policyUrl, agreementUrl } = agreement
   const { enabled: adsInfoEnabled, text: adsInfoText, policyUrl: adsInfoPolicyUrl } = adsInfo
 
   // Build schema based on settings (enabled/required flags)
@@ -81,10 +82,14 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
   return (
     <form
       onSubmit={handleSubmit(() => onSubmit())}
-      className={`flex flex-col gap-3 px-10 w-full ${centered ? 'items-center justify-center' : ''}`}
+      className={`flex flex-col gap-3 ${isMobile ? '' : 'px-10'} w-full ${centered ? 'items-center justify-center' : ''}`}
     >
-      {logoEnabled ? (
-        <img src={logoUrl} alt="Logo" className="w-25 h-12.5 object-contain rounded-md" />
+      {logoEnabled && logoUrl ? (
+        <img
+          src={logoUrl}
+          alt="Logo"
+          className={`w-25 h-12.5 object-contain ${centered ? '' : 'object-left'}`}
+        />
       ) : null}
       {title.text && (
         <h2 className="text-2xl font-bold" style={{ color: title.color }}>
@@ -106,7 +111,6 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
           value={getValues('name')}
           onChange={e => {
             const onlyLetters = e.target.value.replace(/[^a-zA-Zа-яА-Я]+/g, '').trim()
-            console.log(onlyLetters)
             setValue('name', onlyLetters, { shouldValidate: true, shouldDirty: true })
           }}
           isInvalid={!!errors.name}
@@ -169,9 +173,29 @@ const DynamicFieldsForm = ({ centered = false, onSubmit }: DynamicFieldsFormProp
               label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <Link to={agreementPolicyUrl} target="_blank" className="text-xs">
+          <span className="text-xs">
+            Я даю{' '}
+            <a
+              href={agreementUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-bold"
+            >
+              Согласие
+            </a>{' '}
+            на обработку персональных данных в соответсвии с{' '}
+            <a
+              href={policyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-bold"
+            >
+              Политикой конфиденциальности.
+            </a>
+          </span>
+          {/* <Link to={agreementPolicyUrl} target="_blank" className="text-xs">
             {agreementText}
-          </Link>
+          </Link> */}
         </div>
       ) : null}
 

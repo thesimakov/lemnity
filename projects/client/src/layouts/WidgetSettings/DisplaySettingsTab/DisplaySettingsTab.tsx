@@ -24,8 +24,7 @@ const StartShowingControl = memo(() => {
   const startShowing = useWidgetSettingsStore(
     s => s.settings?.display?.startShowing ?? STATIC_DEFAULTS.display.startShowing
   )
-  console.log('STATIC_DEFAULTS:', STATIC_DEFAULTS.display.startShowing)
-  console.log('store:', startShowing)
+
   const handleChange = useCallback(
     (v: string) => setStartShowing(v as StartShowing),
     [setStartShowing]
@@ -69,7 +68,7 @@ const IconTypeControl = memo(() => {
         below: (
           <ImageUploader
             hideSwitch
-            classNames="border-none !p-0"
+            classNames={{ container: 'border-none !p-0' }}
             title="Использовать свою картинку"
             recommendedResolution="100x100"
             fileSize="300 Kb"

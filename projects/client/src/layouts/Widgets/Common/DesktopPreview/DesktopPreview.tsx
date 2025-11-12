@@ -20,11 +20,20 @@ const ModalChrome = forwardRef(
   ) => {
     const template = useWidgetSettingsStore(s => s.settings.form.template)
     const { colorScheme, customColor } = template?.templateSettings || {}
+    const imageUrl = useWidgetSettingsStore(
+      s => s.settings.form.template?.templateSettings?.image?.url
+    )
+    const imageEnabled = useWidgetSettingsStore(
+      s => s.settings.form.template?.templateSettings?.image?.enabled
+    )
 
     return (
       <div
-        style={{ backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor }}
-        className="mx-auto rounded-lg text-white relative p-4 w-[928px] min-h-[500px] flex items-center"
+        style={{
+          ...(imageEnabled && imageUrl && { backgroundImage: `url(${imageUrl})` }),
+          backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor
+        }}
+        className="mx-auto rounded-lg text-white relative w-[928px] min-h-[500px] flex items-center"
         ref={ref}
       >
         {!hideCloseButton && <CloseButton position="right" />}
@@ -43,13 +52,22 @@ const SidePanelChrome = ({
 }) => {
   const template = useWidgetSettingsStore(s => s.settings.form.template)
   const { colorScheme, customColor } = template?.templateSettings || {}
+  const imageUrl = useWidgetSettingsStore(
+    s => s.settings.form.template?.templateSettings?.image?.url
+  )
+  const imageEnabled = useWidgetSettingsStore(
+    s => s.settings.form.template?.templateSettings?.image?.enabled
+  )
 
   return (
     <div className="mx-auto w-full h-full">
       <div className="flex h-full">
         <div className="flex-1 justify-center" />
         <div
-          style={{ backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor }}
+          style={{
+            ...(imageEnabled && imageUrl && { backgroundImage: `url(${imageUrl})` }),
+            backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor
+          }}
           className="flex w-[550px] h-full items-center rounded-l-xl text-white relative overflow-hidden"
         >
           {!hideCloseButton && <CloseButton position="left" />}
@@ -81,7 +99,7 @@ const DesktopPreview = (
 
   const body = (
     <div
-      className={`grid grid-cols-${screen !== 'prize' ? '2' : '1'} items-center justify-center w-full h-full ${screen === 'panel' ? 'py-10' : ''}`}
+      className={`grid grid-cols-${screen !== 'prize' ? '2' : '1'} p-4 items-center justify-center w-full h-full ${screen === 'panel' ? 'py-10' : ''}`}
     >
       {contentPosition === 'left' ? (
         <>
@@ -92,7 +110,7 @@ const DesktopPreview = (
           )}
           {screen !== 'prize' ? (
             <WheelOfFortune
-              className={screen === 'panel' ? 'scale-200 translate-x-25' : 'pr-5'}
+              className={screen === 'panel' ? 'scale-200 translate-x-30' : 'pr-5'}
               pointerPositionDeg={0}
               sectors={
                 sectors.randomize
@@ -107,8 +125,8 @@ const DesktopPreview = (
         <>
           {screen !== 'prize' ? (
             <WheelOfFortune
-              className={screen === 'panel' ? 'scale-200 -translate-x-25' : 'pr-5'}
-              pointerPositionDeg={180}
+              className={screen === 'panel' ? 'scale-200 -translate-x-30' : 'pl-5'}
+              pointerPositionDeg={0}
               sectors={
                 sectors.randomize
                   ? [...sectors.items].sort(() => Math.random() - 0.5)

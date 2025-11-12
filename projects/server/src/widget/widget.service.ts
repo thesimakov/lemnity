@@ -8,7 +8,10 @@ import { migrateToCurrent, CURRENT_VERSION } from '@lemnity/widget-config'
 
 @Injectable()
 export class WidgetService {
-  constructor(private readonly prisma: PrismaService, private readonly configService: ConfigService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService
+  ) {}
 
   async create(createWidgetDto: CreateWidgetDto, userId: string) {
     // Verify that the project belongs to the user
@@ -79,8 +82,15 @@ export class WidgetService {
 
     // Return migrated config so the client always sees the latest shape
     if (widget.config) {
-      const { data, version } = migrateToCurrent(widget.config as unknown, widget.configVersion ?? undefined)
-      return { ...widget, config: data as Prisma.JsonValue, configVersion: version ?? CURRENT_VERSION }
+      const { data, version } = migrateToCurrent(
+        widget.config as unknown,
+        widget.configVersion ?? undefined
+      )
+      return {
+        ...widget,
+        config: data as Prisma.JsonValue,
+        configVersion: version ?? CURRENT_VERSION
+      }
     }
     return widget
   }
@@ -99,7 +109,7 @@ export class WidgetService {
         updateWidgetDto.config as unknown
       )
       data.config = canonicalConfig as Prisma.InputJsonValue
-      (data as { configVersion?: number | null }).configVersion = version
+      ;(data as { configVersion?: number | null }).configVersion = version
     }
 
     return this.prisma.widget.update({
