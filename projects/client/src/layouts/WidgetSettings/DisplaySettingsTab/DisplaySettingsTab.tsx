@@ -1,7 +1,6 @@
 import OptionsChooser, { type OptionItem } from '@/components/OptionsChooser'
 import ImageUploader from '@/components/ImageUploader'
-import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import ButtonSettingsField from './ButtonSettingsField/ButtonSettingsField'
 import ButtonPositionChooser from './ButtonPositionChooser/ButtonPositionChooser'
 import TimerSettingsField from './TimerSettingsField/TimerSettingsField'
@@ -21,8 +20,9 @@ const iconHideOptions: OptionItem[] = [
 
 const StartShowingControl = memo(() => {
   const setStartShowing = useWidgetSettingsStore(s => s.setStartShowing)
+  const staticDefaults = useWidgetStaticDefaults()
   const startShowing = useWidgetSettingsStore(
-    s => s.settings?.display?.startShowing ?? STATIC_DEFAULTS.display.startShowing
+    s => s.settings?.display?.startShowing ?? staticDefaults.display.startShowing
   )
 
   const handleChange = useCallback(
@@ -40,8 +40,9 @@ const StartShowingControl = memo(() => {
 })
 
 const TimerSettingsConditional = memo(() => {
+  const staticDefaults = useWidgetStaticDefaults()
   const startShowing = useWidgetSettingsStore(
-    s => s.settings?.display?.startShowing ?? STATIC_DEFAULTS.display.startShowing
+    s => s.settings?.display?.startShowing ?? staticDefaults.display.startShowing
   )
   return (
     <AnimatePresence>{startShowing === 'timer' ? <TimerSettingsField /> : null}</AnimatePresence>
@@ -51,8 +52,9 @@ const TimerSettingsConditional = memo(() => {
 const IconTypeControl = memo(() => {
   const setIconType = useWidgetSettingsStore(s => s.setIconType)
   const setIconImage = useWidgetSettingsStore(s => s.setIconImage)
+  const staticDefaults = useWidgetStaticDefaults()
   const iconType = useWidgetSettingsStore(
-    s => s.settings?.display?.icon?.type ?? STATIC_DEFAULTS.display.icon.type
+    s => s.settings?.display?.icon?.type ?? staticDefaults.display.icon.type
   )
   const handleChange = useCallback((v: string) => setIconType(v as IconType), [setIconType])
   const handleFile = useCallback(
@@ -93,16 +95,18 @@ const IconTypeControl = memo(() => {
 
 const PositionControl = memo(() => {
   const setButtonPosition = useWidgetSettingsStore(s => s.setButtonPosition)
+  const staticDefaults = useWidgetStaticDefaults()
   const buttonPosition = useWidgetSettingsStore(
-    s => s.settings?.display?.icon?.position ?? STATIC_DEFAULTS.display.icon.position
+    s => s.settings?.display?.icon?.position ?? staticDefaults.display.icon.position
   )
   return <ButtonPositionChooser value={buttonPosition} onChange={setButtonPosition} />
 })
 
 const HideIconControl = memo(() => {
   const setHideIcon = useWidgetSettingsStore(s => s.setHideIcon)
+  const staticDefaults = useWidgetStaticDefaults()
   const hide = useWidgetSettingsStore(
-    s => s.settings?.display?.icon?.hide ?? STATIC_DEFAULTS.display.icon.hide
+    s => s.settings?.display?.icon?.hide ?? staticDefaults.display.icon.hide
   )
   const handleChange = useCallback((v: string) => setHideIcon(v as HideIcon), [setHideIcon])
   return (

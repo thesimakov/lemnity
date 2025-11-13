@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
-import imageAddProject from '@/assets/images/add-project.svg'
 import CustomSwitch from '@/components/CustomSwitch'
 import Modal from '@/components/Modal/Modal'
 
@@ -74,7 +73,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
       <div className="flex items-center justify-start gap-3">
         <Button
           variant="solid"
-          isDisabled={submitting || !projectName || !websiteUrl}
+          isDisabled={submitting || !projectName}
           onPress={handleCreate}
           className="px-6 bg-[#e7f3e5] text-[#3BB240]"
         >
@@ -131,13 +130,6 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
       containerClassName="max-w-5xl"
     >
       <div className="flex h-full">
-        <div className="flex-shrink-0 w-2/5 bg-gray-50 flex items-center justify-center">
-          <img
-            src={imageAddProject}
-            alt="add-project"
-            className="max-w-full max-h-full object-contain"
-          />
-        </div>
         <div className="flex-1 flex flex-col p-5 gap-4.5">
           {getHeader()}
           {getContent()}

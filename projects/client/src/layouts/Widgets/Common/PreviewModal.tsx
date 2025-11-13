@@ -2,9 +2,9 @@ import React from 'react'
 import { Button } from '@heroui/button'
 import SvgIcon from '@/components/SvgIcon'
 import iconCross from '@/assets/icons/cross.svg'
-import DesktopPreview from './DesktopPreview/DesktopPreview'
 import Modal from '@/components/Modal/Modal'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import DesktopPreview from './DesktopPreview/DesktopPreview'
 
 interface PreviewModalProps {
   isOpen: boolean
@@ -12,7 +12,6 @@ interface PreviewModalProps {
   screen: 'main' | 'prize' | 'panel'
   onSubmit: () => void
   containerClassName?: string
-  spinTrigger?: number
 }
 
 const PreviewModal: React.FC<PreviewModalProps> = ({
@@ -20,12 +19,12 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   onClose,
   screen,
   onSubmit,
-  containerClassName,
-  spinTrigger
+  containerClassName
 }) => {
   const imageUrl = useWidgetSettingsStore(
-    s => s.settings.form.template?.templateSettings?.image?.url
+    s => s?.settings?.form?.template?.templateSettings?.image?.url
   )
+
   return (
     <Modal
       isOpen={isOpen}
@@ -45,12 +44,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         >
           <SvgIcon src={iconCross} className="text-gray-700" size="18px" />
         </Button>
-        <DesktopPreview
-          screen={screen}
-          hideCloseButton
-          onSubmit={onSubmit}
-          spinTrigger={spinTrigger}
-        />
+        <DesktopPreview screen={screen} hideCloseButton onSubmit={onSubmit} />
       </div>
     </Modal>
   )

@@ -112,7 +112,7 @@ const WheelOfFortune = ({
         rotate: totalRotation,
         transition: {
           duration: 4,
-          ease: [0.4, 0.0, 0.2, 1] // ease-out: быстрое начало, медленное окончание
+          ease: [0.4, 0.0, 0.2, 1]
         }
       })
     }

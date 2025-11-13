@@ -1,18 +1,18 @@
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { Checkbox } from '@heroui/checkbox'
 import { Input } from '@heroui/input'
-import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useShallow } from 'zustand/react/shallow'
 
 const DisplaySettingsField = () => {
+  const staticDefaults = useWidgetStaticDefaults()
   const showRules = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof STATIC_DEFAULTS.display.showRules>(
+      withDefaultsPath<typeof staticDefaults.display.showRules>(
         s.settings?.display,
         'showRules',
-        STATIC_DEFAULTS.display.showRules
+        staticDefaults.display.showRules
       )
     )
   )

@@ -2,14 +2,14 @@ import ColorAccessory from '@/components/ColorAccessory'
 import OptionsChooser, { type OptionItem } from '@/components/OptionsChooser'
 import ImageUploader from '@/components/ImageUploader'
 import useWidgetSettingsStore, {
-  useFormSettings,
-  useVisibleErrors
+  useVisibleErrors,
+  useWidgetStaticDefaults
 } from '@/stores/widgetSettingsStore'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { ColorScheme, ContentPosition, WindowFormat } from '@/stores/widgetSettings/types'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { uploadImage } from '@/api/upload'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 
 const TemplateSettings = () => {
   const {
@@ -20,7 +20,8 @@ const TemplateSettings = () => {
     setColorScheme,
     setCustomColor
   } = useFormSettings()
-  const defaultTemplateSettings = STATIC_DEFAULTS.form.template?.templateSettings ?? {
+  const staticDefaults = useWidgetStaticDefaults()
+  const defaultTemplateSettings = staticDefaults.form.template?.templateSettings ?? {
     image: { enabled: false, fileName: '', url: '' },
     windowFormat: 'sidePanel',
     contentPosition: 'left',

@@ -3,21 +3,21 @@ import TemplateSettings from './TemplateSettings/TemplateSettings'
 import ImageUploader from '@/components/ImageUploader'
 import FormSettings from './FormSettings/FormSettings'
 import { AnimatePresence } from 'framer-motion'
-import CountdownField from './CountdownField/CountdownField'
 import ContactsField from './ContactsField/ContactsField'
 import AgreementPoliciesField from './AgreementPoliciesField/AgreementPoliciesField'
 import AdsInfoField from './AdsInfoField/AdsInfoField'
-import WidgetSettingsField from './WidgetSettingsField/WidgetSettingsField'
-import MessagesSettings from '@/layouts/WidgetSettings/FormSettingsTab/MessagesSettings/MessagesSettings'
 import useWidgetSettingsStore, {
-  useFormSettings,
-  useVisibleErrors
+  useVisibleErrors,
+  useWidgetStaticDefaults
 } from '@/stores/widgetSettingsStore'
 import { memo, useCallback } from 'react'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useShallow } from 'zustand/react/shallow'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
 import { uploadImage } from '@/api/upload'
+import { getWidgetDefinition } from '@/layouts/Widgets/registry'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import MessagesSettings from './MessagesSettings/MessagesSettings'
+import type { FormSettings as FormSettingsType } from '@/stores/widgetSettings/types'
 
 const templateOptions = [
   { key: 'template1', label: 'Новый Год' },
@@ -30,6 +30,9 @@ const templateOptions = [
 ]
 
 const FormSettingsTab = () => {
+  const widgetType = useWidgetSettingsStore(s => s?.settings?.widgetType)
+  const widgetDefinition = widgetType && getWidgetDefinition(widgetType)
+
   const {
     settings,
     setCompanyLogoEnabled,
@@ -41,6 +44,7 @@ const FormSettingsTab = () => {
     setColorScheme,
     setCustomColor
   } = useFormSettings()
+  const staticDefaults = useWidgetStaticDefaults()
 
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const logoErrors = useVisibleErrors(showValidation, 'form.companyLogo')
@@ -50,10 +54,10 @@ const FormSettingsTab = () => {
 
   const template = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof STATIC_DEFAULTS.form.template>(
+      withDefaultsPath<FormSettingsType['template']>(
         s.settings?.form,
         'template',
-        STATIC_DEFAULTS.form.template
+        staticDefaults?.form?.template as FormSettingsType['template']
       )
     )
   )
@@ -97,7 +101,7 @@ const FormSettingsTab = () => {
           onToggle={enabled => {
             setTemplateEnabled(enabled)
             if (!enabled) {
-              const d = STATIC_DEFAULTS.form.template?.templateSettings ?? {
+              const d = staticDefaults?.form?.template?.templateSettings ?? {
                 image: { enabled: false, fileName: '', url: '' },
                 contentPosition: 'left',
                 colorScheme: 'primary',
@@ -119,11 +123,12 @@ const FormSettingsTab = () => {
           {!(template?.enabled ?? true) ? <TemplateSettings /> : null}
         </AnimatePresence>
         <FormSettings />
-        <CountdownField />
         <ContactsField />
         <AgreementPoliciesField />
         <AdsInfoField />
-        <WidgetSettingsField />
+        {widgetDefinition?.settings.sections.map(section => (
+          <section.Component key={section.id} />
+        ))}
         <MessagesSettings />
       </div>
     </>

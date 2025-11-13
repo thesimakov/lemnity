@@ -1,9 +1,9 @@
 import { useMemo, useRef } from 'react'
 import SwitchableField from '@/components/SwitchableField'
-import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import type { DayKey } from '@/stores/widgetSettingsStore'
+import type { DisplaySettings } from '@/stores/widgetSettings/types'
 import { useShallow } from 'zustand/react/shallow'
 
 const DAY_LABEL: Record<DayKey, string> = {
@@ -24,14 +24,20 @@ const allWeekdays: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri']
 const allDays: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
 const WeekdayChooser = ({ title = 'Дни недели' }: WeekdayChooserProps) => {
+  const staticDefaults = useWidgetStaticDefaults()
   // bind to store
   const weekdays = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath(s.settings?.display, 'weekdays', STATIC_DEFAULTS.display.weekdays)
+      withDefaultsPath(s.settings?.display, 'weekdays', staticDefaults?.display?.weekdays || {})
     )
   )
-  const { enabled, weekdaysOnly } = weekdays
-  const days = weekdays.days as DayKey[]
+  const fallbackWeekdays: DisplaySettings['weekdays'] = {
+    enabled: false,
+    days: [],
+    weekdaysOnly: false
+  }
+  const safeWeekdays = (weekdays ?? fallbackWeekdays) as DisplaySettings['weekdays']
+  const { enabled, weekdaysOnly, days } = safeWeekdays
   const setEnabledInStore = useWidgetSettingsStore(s => s.setWeekdaysEnabled)
   const setDaysInStore = useWidgetSettingsStore(s => s.setWeekdays)
   const setWeekdaysOnlyInStore = useWidgetSettingsStore(s => s.setWeekdaysOnly)

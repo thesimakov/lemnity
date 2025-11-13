@@ -8,29 +8,18 @@ export type WidgetType = WidgetTypeEnum
 interface PreviewState {
   mode: PreviewMode
   setMode: (mode: PreviewMode) => void
-  widgetType: WidgetType | null
-  setWidgetType: (widgetType: WidgetType | null) => void
-
-  init: (params: { initialType: WidgetType | null }) => void
-  clear: () => void
 }
 
-const initialState: Pick<PreviewState, 'mode' | 'widgetType'> = {
-  mode: 'desktop',
-  widgetType: null
+const initialState: Pick<PreviewState, 'mode'> = {
+  mode: 'desktop'
 }
 
 const useWidgetPreviewStore = create<PreviewState>()(
   devtools(
     persist(
-      (set, get) => ({
+      set => ({
         ...initialState,
-        setMode: (mode: PreviewMode) => set({ mode }),
-        setWidgetType: (widgetType: WidgetType | null) => set({ widgetType }),
-        init: ({ initialType }) => {
-          if (get().widgetType == null) set({ widgetType: initialType })
-        },
-        clear: () => set({ widgetType: null })
+        setMode: (mode: PreviewMode) => set({ mode })
       }),
       {
         name: 'widget-preview',

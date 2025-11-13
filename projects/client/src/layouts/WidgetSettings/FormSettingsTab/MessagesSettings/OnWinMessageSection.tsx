@@ -3,13 +3,13 @@ import { Textarea } from '@heroui/input'
 import NumberField from '@/components/NumberField'
 import OptionsChooser from '@/components/OptionsChooser'
 import ColorAccessory from '@/components/ColorAccessory'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
-import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import type { ColorScheme } from '@/stores/widgetSettings/types'
 
 const OnWinMessageSection = () => {
   const {
+    settings,
     setOnWinEnabled,
     setOnWinText,
     setOnWinTextSize,
@@ -20,27 +20,30 @@ const OnWinMessageSection = () => {
     setOnWinDiscountColors,
     setOnWinPromoColors
   } = useFormSettings()
+  const defaults = useWidgetStaticDefaults()
 
-  const { onWin } = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.form, 'messages', STATIC_DEFAULTS.form.messages)
-  )
-
-  const { enabled, text, textSize, description, colorScheme, descriptionSize } = onWin
-
-  // Safe color scheme snapshot (fallback to defaults if undefined/trimmed)
-  const safeColorScheme = colorScheme ?? STATIC_DEFAULTS.form.messages.onWin.colorScheme
-  const { enabled: schemeEnabled, scheme, discount, promo } = safeColorScheme
+  const onWin = settings?.messages?.onWin ?? defaults.form.messages.onWin
 
   const getErrors = useWidgetSettingsStore(s => s.getErrors)
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const errs = showValidation ? getErrors('form.messages.onWin') : []
   const err = (suffix: string) => errs.find(e => e.path.endsWith(`onWin.${suffix}`))?.message
 
-  const isCustomSchemeActive = schemeEnabled && scheme === 'custom'
+  if (!onWin) return null
 
-  // Fallbacks when primary scheme trimmed discount/promo in trimInactiveBranches
-  const defaultDiscount = STATIC_DEFAULTS.form.messages.onWin.colorScheme.discount
-  const defaultPromo = STATIC_DEFAULTS.form.messages.onWin.colorScheme.promo
+  const { enabled, text, textSize, description, colorScheme, descriptionSize } = onWin
+  const defaultScheme = defaults.form.messages.onWin.colorScheme
+  const safeColorScheme = colorScheme ?? defaultScheme
+  const { enabled: schemeEnabled, scheme, discount, promo } = safeColorScheme
+  const isCustomSchemeActive = schemeEnabled && scheme === 'custom'
+  const defaultDiscount = defaults.form.messages.onWin.colorScheme.discount ?? {
+    color: '#000000',
+    bgColor: '#FFF57F'
+  }
+  const defaultPromo = defaults.form.messages.onWin.colorScheme.promo ?? {
+    color: '#FFFFFF',
+    bgColor: '#0069FF'
+  }
   const safeDiscount = discount ?? defaultDiscount
   const safePromo = promo ?? defaultPromo
 

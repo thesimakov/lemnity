@@ -1,7 +1,7 @@
 import ColorAccessory from '@/components/ColorAccessory'
 import { Input } from '@heroui/input'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { Select, SelectItem } from '@heroui/select'
 import SvgIcon from '@/components/SvgIcon'
@@ -9,12 +9,19 @@ import iconTrophy from '@/assets/icons/trophy.svg'
 import iconSparkles from '@/assets/icons/sparkles.svg'
 import iconRocket from '@/assets/icons/rocket.svg'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import type { FormSettings as FormSettingsType } from '@/stores/widgetSettings/types'
 
 const FormSettings = () => {
   const { setFormTitle, setFormDescription, setFormButtonText } = useFormSettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const formTexts = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.form, 'formTexts', STATIC_DEFAULTS.form.formTexts)
+    withDefaultsPath(
+      s.settings?.form,
+      'formTexts',
+      staticDefaults?.form?.formTexts as FormSettingsType['formTexts']
+    )
   )
+
   const { title, description, button } = formTexts
   const { text: titleText, color: titleColor } = title
   const { text: descriptionText, color: descriptionColor } = description
