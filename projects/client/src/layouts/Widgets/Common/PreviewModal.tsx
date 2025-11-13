@@ -4,6 +4,8 @@ import SvgIcon from '@/components/SvgIcon'
 import iconCross from '@/assets/icons/cross.svg'
 import DesktopPreview from './DesktopPreview/DesktopPreview'
 import Modal from '@/components/Modal/Modal'
+import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
+import CountDownPreview from '../CountDown/CountDownPreview'
 
 interface PreviewModalProps {
   isOpen: boolean
@@ -22,6 +24,26 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   containerClassName,
   spinTrigger
 }) => {
+  const widgetType = useWidgetPreviewStore(s => s.widgetType)
+
+  const renderContent = () => {
+    switch (widgetType) {
+      case 'WHEEL_OF_FORTUNE':
+        return (
+          <DesktopPreview
+            screen={screen}
+            hideCloseButton
+            onSubmit={onSubmit}
+            spinTrigger={spinTrigger}
+          />
+        )
+      case 'ACTION_TIMER':
+        return <CountDownPreview />
+      default:
+        return null
+    }
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -41,12 +63,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         >
           <SvgIcon src={iconCross} className="text-gray-700" size="18px" />
         </Button>
-        <DesktopPreview
-          screen={screen}
-          hideCloseButton
-          onSubmit={onSubmit}
-          spinTrigger={spinTrigger}
-        />
+        {renderContent()}
       </div>
     </Modal>
   )

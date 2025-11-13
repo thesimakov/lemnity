@@ -39,8 +39,8 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
     type: WidgetTypes.ACTION_TIMER,
     title: 'Таймер акции',
     description: 'Лиды, вовлечение, вознаграждение',
-    isAvailable: false,
-    badge: 'soon'
+    isAvailable: true,
+    badge: 'new'
   },
   {
     type: WidgetTypes.POSTCARD,

@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import WheelOfFortunePreview from '../Widgets/WheelOfFortune/WheelOfFortunePreview'
+import CountDownPreview from '../Widgets/CountDown/CountDownPreview'
 import WidgetPreviewLayout from './WidgetPreviewLayout/WidgetPreviewLayout'
 import useWidgetPreviewStore, { type WidgetType } from '@/stores/widgetPreviewStore'
 
@@ -17,6 +18,8 @@ const WidgetPreview = ({ spinTrigger }: WidgetPreviewProps) => {
       switch (widgetType) {
         case 'WHEEL_OF_FORTUNE':
           return <WheelOfFortunePreview spinTrigger={spinTrigger} />
+        case 'ACTION_TIMER':
+          return <CountDownPreview />
         default:
           return null
       }
