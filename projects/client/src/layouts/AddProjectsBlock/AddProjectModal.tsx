@@ -74,7 +74,8 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
       <div className="flex items-center justify-start gap-3">
         <Button
           variant="solid"
-          isDisabled={submitting || !projectName || !websiteUrl}
+          isDisabled={submitting || !projectName }
+          // isDisabled={submitting || !projectName || !websiteUrl}
           onPress={handleCreate}
           className="px-6 bg-[#e7f3e5] text-[#3BB240]"
         >
