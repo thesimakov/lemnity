@@ -75,8 +75,8 @@ export const FormCanonicalSchema = z.object({
   formTexts: z.object({ title: z.object({ text: z.string(), color: z.string() }), description: z.object({ text: z.string(), color: z.string() }), button: z.object({ text: z.string(), color: z.string(), backgroundColor: z.string(), icon: z.string() }) }),
   countdown: z.object({ enabled: z.boolean(), endDate: z.any().optional() }),
   contacts: z.object({ phone: z.object({ enabled: z.boolean(), required: z.boolean() }), email: z.object({ enabled: z.boolean(), required: z.boolean() }), name: z.object({ enabled: z.boolean(), required: z.boolean() }) }),
-  agreement: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string(), agreementUrl: z.string()  }),
-  adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
+  agreement: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string(), agreementUrl: z.string(),color: z.string()}),
+  adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string(),color: z.string()}),
   sectors: z.object({
     randomize: z.boolean(),
     items: z.array(

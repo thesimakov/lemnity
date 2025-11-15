@@ -43,12 +43,14 @@ export const buildDefaults = (id: string): WidgetSettings => ({
       // text: 'Я даю согласие на обработку моих персональных данных ООО Компания (ИНН 0000000000) в целях обработки заявки и обратной связи. Политика конфиденциальности по ссылке.',
       text: 'Я даю Согласие на обработку персональных данных в соотвествии с Политикой конфиденциальности',
       agreementUrl: 'lemnity.ru/agreement',
-      policyUrl: 'lemnity.ru/political'
+      policyUrl: 'lemnity.ru/political',
+      color: '#000000'
     },
     adsInfo: {
       enabled: true,
       text: 'Нажимая на кнопку, вы даёте своё согласие на получение рекламно-информационной рассылки.',
-      policyUrl: 'lemnity.ru/ads'
+      policyUrl: 'lemnity.ru/ads',
+      color: '#000000'
     },
     sectors: {
       randomize: false,
