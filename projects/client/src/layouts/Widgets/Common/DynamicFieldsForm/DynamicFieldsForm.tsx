@@ -4,7 +4,6 @@ import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
 import { z } from 'zod'
 import iconReload from '@/assets/icons/reload.svg'
 import { Checkbox } from '@heroui/checkbox'
@@ -36,8 +35,17 @@ const DynamicFieldsForm = ({
 
   const { enabled: logoEnabled, url: logoUrl } = companyLogo
 
-  const { enabled: agreementEnabled, policyUrl, agreementUrl } = agreement
-  const { enabled: adsInfoEnabled, text: adsInfoText, policyUrl: adsInfoPolicyUrl } = adsInfo
+  const { enabled: agreementEnabled, policyUrl, agreementUrl, color: agreementColor } = agreement
+  const { enabled: adsInfoEnabled, text: adsInfoText, policyUrl: adsInfoPolicyUrl, color: adsInfoColor } = adsInfo
+
+  // Normalize URL to ensure it has a protocol
+  const normalizeUrl = (url: string): string => {
+    if (!url) return url
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url
+    }
+    return `https://${url}`
+  }
 
   // Build schema based on settings (enabled/required flags)
   const buildSchema = () => {
@@ -173,22 +181,27 @@ const DynamicFieldsForm = ({
               label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <span className="text-xs">
+          <span className="text-xs" style={{ color: agreementColor }}
+          >
             Я даю{' '}
             <a
-              href={agreementUrl}
+              href={normalizeUrl(agreementUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="underline font-bold"
+              style={{ color: agreementColor }}
             >
               Согласие
             </a>{' '}
+            <a style={{ color: agreementColor }}>
             на обработку персональных данных в соответсвии с{' '}
+            </a>
             <a
-              href={policyUrl}
+              href={normalizeUrl(policyUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="underline font-bold"
+              style={{ color: agreementColor }}
             >
               Политикой конфиденциальности.
             </a>
@@ -211,9 +224,15 @@ const DynamicFieldsForm = ({
               label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <Link to={adsInfoPolicyUrl} target="_blank" className="text-xs">
+          <a
+            href={normalizeUrl(adsInfoPolicyUrl)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs hover:underline"
+            style={{ color: adsInfoColor }}
+          >
             {adsInfoText}
-          </Link>
+          </a>
         </div>
       ) : null}
     </form>

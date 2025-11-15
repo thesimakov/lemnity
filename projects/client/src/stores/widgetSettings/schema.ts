@@ -128,9 +128,10 @@ export const FormSchema = z
       enabled: z.boolean(),
       text: z.string(),
       policyUrl: z.string(),
-      agreementUrl: z.string()
+      agreementUrl: z.string(),
+      color: z.string()
     }),
-    adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string() }),
+    adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string(), color: z.string() }),
     sectors: z.object({
       randomize: z.boolean(),
       items: z.array(
