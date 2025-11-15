@@ -36,7 +36,12 @@ const DynamicFieldsForm = ({
   const { enabled: logoEnabled, url: logoUrl } = companyLogo
 
   const { enabled: agreementEnabled, policyUrl, agreementUrl, color: agreementColor } = agreement
-  const { enabled: adsInfoEnabled, text: adsInfoText, policyUrl: adsInfoPolicyUrl, color: adsInfoColor } = adsInfo
+  const {
+    enabled: adsInfoEnabled,
+    text: adsInfoText,
+    policyUrl: adsInfoPolicyUrl,
+    color: adsInfoColor
+  } = adsInfo
 
   // Normalize URL to ensure it has a protocol
   const normalizeUrl = (url: string): string => {
@@ -181,8 +186,7 @@ const DynamicFieldsForm = ({
               label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
             }}
           ></Checkbox>
-          <span className="text-xs" style={{ color: agreementColor }}
-          >
+          <span className="text-xs" style={{ color: agreementColor }}>
             Я даю{' '}
             <a
               href={normalizeUrl(agreementUrl)}
@@ -194,7 +198,7 @@ const DynamicFieldsForm = ({
               Согласие
             </a>{' '}
             <a style={{ color: agreementColor }}>
-            на обработку персональных данных в соответсвии с{' '}
+              на обработку персональных данных в соответсвии с{' '}
             </a>
             <a
               href={normalizeUrl(policyUrl)}

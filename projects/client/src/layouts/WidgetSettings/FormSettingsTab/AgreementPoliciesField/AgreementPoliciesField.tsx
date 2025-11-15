@@ -19,7 +19,9 @@ const AgreementPoliciesField = () => {
     <SwitchableField
       title="Согласие и политика"
       enabled={enabled}
-      onToggle={enabled => setAgreement(enabled, text ?? '', policyUrl ?? '', agreementUrl ?? '', color ?? '#000000')}
+      onToggle={enabled =>
+        setAgreement(enabled, text ?? '', policyUrl ?? '', agreementUrl ?? '', color ?? '#000000')
+      }
     >
       <div className="flex flex-col gap-3">
         <div className="flex flex-row gap-2">
@@ -36,11 +38,15 @@ const AgreementPoliciesField = () => {
             value={text ?? ''}
             isInvalid={enabled && errors.some(e => e.path.endsWith('text'))}
             errorMessage={errors.find(e => e.path.endsWith('text'))?.message}
-            onValueChange={text => setAgreement(enabled, text, policyUrl ?? '', agreementUrl ?? '', color ?? '#000000')}
+            onValueChange={text =>
+              setAgreement(enabled, text, policyUrl ?? '', agreementUrl ?? '', color ?? '#000000')
+            }
           />
           <ColorAccessory
             color={color ?? '#000000'}
-            onChange={newColor => setAgreement(enabled, text ?? '', policyUrl ?? '', agreementUrl ?? '', newColor)}
+            onChange={newColor =>
+              setAgreement(enabled, text ?? '', policyUrl ?? '', agreementUrl ?? '', newColor)
+            }
           />
         </div>
         <span className="text-lg font-normal">URL согласие</span>
@@ -55,7 +61,9 @@ const AgreementPoliciesField = () => {
           value={agreementUrl ?? ''}
           isInvalid={enabled && errors.some(e => e.path.endsWith('agreementUrl'))}
           errorMessage={errors.find(e => e.path.endsWith('agreementUrl'))?.message}
-          onValueChange={url => setAgreement(enabled, text ?? '', policyUrl ?? '', url, color ?? '#000000')}
+          onValueChange={url =>
+            setAgreement(enabled, text ?? '', policyUrl ?? '', url, color ?? '#000000')
+          }
         />
         <span className="text-lg font-normal">URL политики обработки персональных данных</span>
         <Input
@@ -69,7 +77,9 @@ const AgreementPoliciesField = () => {
           value={policyUrl ?? ''}
           isInvalid={enabled && errors.some(e => e.path.endsWith('policyUrl'))}
           errorMessage={errors.find(e => e.path.endsWith('policyUrl'))?.message}
-          onValueChange={url => setAgreement(enabled, text ?? '', url, agreementUrl ?? '', color ?? '#000000')}
+          onValueChange={url =>
+            setAgreement(enabled, text ?? '', url, agreementUrl ?? '', color ?? '#000000')
+          }
         />
       </div>
     </SwitchableField>

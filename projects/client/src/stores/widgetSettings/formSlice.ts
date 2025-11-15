@@ -25,7 +25,13 @@ export type FormActions = {
   setFormButtonText: (text: string, color: string, backgroundColor: string, icon: string) => void
   setCountdownEnabled: (enabled: boolean) => void
   setContactField: (field: ContactField, enabled: boolean, required: boolean) => void
-  setAgreement: (enabled: boolean, text: string, policyUrl: string, agreementUrl: string, color: string) => void
+  setAgreement: (
+    enabled: boolean,
+    text: string,
+    policyUrl: string,
+    agreementUrl: string,
+    color: string
+  ) => void
   setAdsInfo: (enabled: boolean, text: string, policyUrl: string, color: string) => void
   setRandomize: (randomize: boolean) => void
   setSectors: (items: SectorItem[]) => void
@@ -80,7 +86,8 @@ export const createFormSlice = (updateForm: FormUpdater): FormSlice => {
       updateByPath('contacts', { [field]: { enabled, required } } as Record<string, unknown>),
     setAgreement: (enabled, text, policyUrl, agreementUrl, color) =>
       updateByPath('agreement', { enabled, text, policyUrl, agreementUrl, color }),
-    setAdsInfo: (enabled, text, policyUrl, color) => updateByPath('adsInfo', { enabled, text, policyUrl, color }),
+    setAdsInfo: (enabled, text, policyUrl, color) =>
+      updateByPath('adsInfo', { enabled, text, policyUrl, color }),
     setRandomize: randomize => updateByPath('sectors', { randomize }),
     setSectors: items => updateByPath('sectors', { items }),
     updateSector: (index, updates) =>
