@@ -21,7 +21,7 @@ const TemplateSettings = () => {
     setCustomColor
   } = useFormSettings()
   const staticDefaults = useWidgetStaticDefaults()
-  const defaultTemplateSettings = staticDefaults.form.template?.templateSettings ?? {
+  const defaultTemplateSettings = staticDefaults?.form?.template?.templateSettings ?? {
     image: { enabled: false, fileName: '', url: '' },
     windowFormat: 'sidePanel',
     contentPosition: 'left',
@@ -46,7 +46,7 @@ const TemplateSettings = () => {
     { key: 'primary', label: 'Основная' },
     {
       key: 'custom',
-      label: 'Пользовательское',
+      label: 'Пользовательская',
       accessory: <ColorAccessory color={settings?.customColor} onChange={setCustomColor} />
     }
   ]

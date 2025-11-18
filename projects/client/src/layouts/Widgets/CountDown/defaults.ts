@@ -12,7 +12,8 @@ export const buildActionTimerWidgetSettings = (): ActionTimerWidgetSettings => (
     badgeColor: '#336EC2',
     eventDate: new Date(new Date().getMilliseconds() + 1000 * 60 * 60 * 24),
     enabled: true,
-    imageUrl: 'https://tdt.kto72.ru/upload/resize_cache/kto/dfc/600_600_1/Tribyut_1.jpg'
+    imageUrl: 'https://tdt.kto72.ru/upload/resize_cache/kto/dfc/600_600_1/Tribyut_1.jpg',
+    imagePosition: 'center'
   }
 })
 

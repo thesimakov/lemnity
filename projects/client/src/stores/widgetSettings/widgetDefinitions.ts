@@ -75,6 +75,8 @@ const buildStubFormSettings = (): FormSettings => ({
     policyUrl: 'lemnity.ru/ads',
     color: '#FFFFFF'
   },
+  link: '',
+  border: { enabled: true, color: '#FFFFFF' },
   messages: {
     onWin: {
       enabled: true,

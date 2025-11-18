@@ -35,8 +35,16 @@ const BadgeField = ({
           value={badgeText ?? ''}
           onValueChange={handleTextChange}
         />
-        <ColorAccessory color={badgeBackground ?? '#E9EEFF'} onChange={onBackgroundChange} />
-        <ColorAccessory color={badgeColor ?? '#336EC2'} onChange={onColorChange} />
+        <ColorAccessory
+          label="Цвет бейджа"
+          color={badgeBackground ?? '#E9EEFF'}
+          onChange={onBackgroundChange}
+        />
+        <ColorAccessory
+          label="Цвет текста"
+          color={badgeColor ?? '#336EC2'}
+          onChange={onColorChange}
+        />
       </div>
     </div>
   )

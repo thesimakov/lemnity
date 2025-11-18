@@ -13,9 +13,18 @@ import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import BadgeField from '@/layouts/Widgets/CountDown/BadgeField'
 import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
 import type { FormSettings as FormSettingsType } from '@/stores/widgetSettings/types'
+import SwitchableField from '@/components/SwitchableField'
 
 const FormSettings = () => {
-  const { setFormTitle, setFormDescription, setFormButtonText } = useFormSettings()
+  const {
+    settings,
+    setFormTitle,
+    setFormDescription,
+    setFormButtonText,
+    setFormLink,
+    setFormBorderEnabled,
+    setFormBorderColor
+  } = useFormSettings()
   const staticDefaults = useWidgetStaticDefaults()
   const formTexts = useWidgetSettingsStore(s =>
     withDefaultsPath(
@@ -150,6 +159,28 @@ const FormSettings = () => {
           label="Цвет кнопки"
         />
       </div>
+      <span className="text-black">Ссылка</span>
+      <Input
+        classNames={{ inputWrapper: 'h-14' }}
+        radius="sm"
+        variant="bordered"
+        placeholder="https://example.com"
+        type="url"
+        onChange={e => setFormLink(e.target.value)}
+        value={settings?.link ?? ''}
+      />
+      <SwitchableField
+        title="Окантовка формы"
+        enabled={settings?.border?.enabled ?? true}
+        onToggle={setFormBorderEnabled}
+        classNames={{ content: 'flex items-center gap-2' }}
+      >
+        <ColorAccessory
+          label="Цвет окантовки"
+          color={settings?.border?.color ?? '#E8E8E8'}
+          onChange={setFormBorderColor}
+        />
+      </SwitchableField>
     </div>
   )
 }

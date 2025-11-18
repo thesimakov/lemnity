@@ -13,6 +13,7 @@ export const IconImageSchema = z.object({
 })
 
 export const ColorScheme = z.enum(['primary', 'custom'])
+export const ImagePositionSchema = z.enum(['center', 'left', 'right'])
 
 export const DisplaySchemaBase = z
   .object({
@@ -138,6 +139,13 @@ export const FormSchema = z
       policyUrl: z.string(),
       color: z.string()
     }),
+    link: z.string().optional(),
+    border: z
+      .object({
+        enabled: z.boolean(),
+        color: z.string()
+      })
+      .optional(),
     messages: z.object({
       onWin: z.object({
         enabled: z.boolean(),
@@ -319,7 +327,8 @@ const ActionTimerWidgetSchema = z.object({
     eventDate: z.date(),
     enabled: z.boolean(),
     textBeforeCountdownColor: z.string(),
-    imageUrl: z.string().url().optional()
+    imageUrl: z.string().url().optional(),
+    imagePosition: ImagePositionSchema
   })
 })
 

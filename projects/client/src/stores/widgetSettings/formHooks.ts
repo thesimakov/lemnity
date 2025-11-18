@@ -37,6 +37,9 @@ export const useFormSettings = (): UseFormSettingsReturn => {
   const setOnWinPromoColors = useWidgetSettingsStore(s => s.setOnWinPromoColors)
   const setMessageEnabled = useWidgetSettingsStore(s => s.setMessageEnabled)
   const setMessageText = useWidgetSettingsStore(s => s.setMessageText)
+  const setFormLink = useWidgetSettingsStore(s => s.setFormLink)
+  const setFormBorderEnabled = useWidgetSettingsStore(s => s.setFormBorderEnabled)
+  const setFormBorderColor = useWidgetSettingsStore(s => s.setFormBorderColor)
 
   return useMemo(
     () => ({
@@ -68,7 +71,10 @@ export const useFormSettings = (): UseFormSettingsReturn => {
       setOnWinColorSchemeEnabled,
       setOnWinColorScheme,
       setMessageEnabled,
-      setMessageText
+      setMessageText,
+      setFormLink,
+      setFormBorderEnabled,
+      setFormBorderColor
     }),
     [
       settings,
@@ -99,7 +105,10 @@ export const useFormSettings = (): UseFormSettingsReturn => {
       setOnWinColorSchemeEnabled,
       setOnWinColorScheme,
       setMessageEnabled,
-      setMessageText
+      setMessageText,
+      setFormLink,
+      setFormBorderEnabled,
+      setFormBorderColor
     ]
   )
 }

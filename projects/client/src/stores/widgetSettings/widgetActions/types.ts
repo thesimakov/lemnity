@@ -1,6 +1,7 @@
 import type { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type {
   ActionTimerWidgetSettings,
+  ActionTimerImagePosition,
   ColorScheme,
   MessageKey,
   SectorItem,
@@ -36,6 +37,7 @@ export type WidgetActions = {
   setActionTimerImage: (imageUrl?: string) => void
   setTextBeforeCountdown: (textBeforeCountdown: string) => void
   setTextBeforeCountdownColor: (textBeforeCountdownColor: string) => void
+  setImagePosition: (position: ActionTimerImagePosition) => void
 }
 
 export type WidgetSlice = {

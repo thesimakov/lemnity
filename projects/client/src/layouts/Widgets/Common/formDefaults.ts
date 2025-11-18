@@ -60,6 +60,8 @@ export const buildFormSettings = ({
     policyUrl: 'lemnity.ru/ads',
     color: '#FFFFFF'
   },
+  link: '',
+  border: { enabled: true, color: '#FFFFFF' },
   messages: {
     ...defaultMessages,
     ...messages

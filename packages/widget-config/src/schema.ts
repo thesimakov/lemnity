@@ -12,6 +12,7 @@ export const IconButtonSchema = z.object({
 })
 
 export const ColorScheme = z.enum(['primary', 'custom'])
+export const ImagePosition = z.enum(['center', 'left', 'right'])
 
 // Canonical display schema
 export const DisplaySchema = z.object({
@@ -77,6 +78,8 @@ export const FormCanonicalSchema = z.object({
   contacts: z.object({ phone: z.object({ enabled: z.boolean(), required: z.boolean() }), email: z.object({ enabled: z.boolean(), required: z.boolean() }), name: z.object({ enabled: z.boolean(), required: z.boolean() }) }),
   agreement: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string(), agreementUrl: z.string(),color: z.string()}),
   adsInfo: z.object({ enabled: z.boolean(), text: z.string(), policyUrl: z.string(),color: z.string()}),
+  link: z.string().optional(),
+  border: z.object({ enabled: z.boolean(), color: z.string() }).optional(),
   sectors: z.object({
     randomize: z.boolean(),
     items: z.array(
@@ -138,7 +141,26 @@ export const FormCanonicalSchema = z.object({
   }
 })
 
-export const WidgetSettingsSchema = z.object({ id: z.string(), display: DisplaySchema, form: FormCanonicalSchema, integration: z.object({ scriptSnippet: z.string() }) })
+const WidgetSchemaExtension = z.object({
+  widget: z
+    .object({
+      countdown: z
+        .object({
+          imagePosition: ImagePosition.optional()
+        })
+        .optional()
+    })
+    .optional()
+})
+
+export const WidgetSettingsSchema = z
+  .object({
+    id: z.string(),
+    display: DisplaySchema,
+    form: FormCanonicalSchema,
+    integration: z.object({ scriptSnippet: z.string() })
+  })
+  .merge(WidgetSchemaExtension)
 
 export type CanonicalWidgetSettings = z.infer<typeof WidgetSettingsSchema>
 

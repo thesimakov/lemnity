@@ -171,7 +171,7 @@ const Modal: React.FC<ModalProps> = ({
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
         tabIndex={-1}
-        className={`relative bg-white rounded-lg shadow-xl max-h-[90vh] w-full ${containerClassName}`}
+        className={`relative bg-white rounded-2xl overflow-hidden shadow-xl max-h-[90vh] w-full ${containerClassName}`}
       >
         {children}
       </div>

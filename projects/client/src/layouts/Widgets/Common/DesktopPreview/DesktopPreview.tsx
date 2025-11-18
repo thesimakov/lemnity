@@ -26,10 +26,15 @@ const ModalChrome = forwardRef(
     return (
       <div
         style={{
-          ...(imageEnabled && imageUrl && { backgroundImage: `url(${imageUrl})` }),
+          ...(imageEnabled &&
+            imageUrl && {
+              backgroundImage: `url(${imageUrl})`,
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat'
+            }),
           backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor
         }}
-        className="mx-auto rounded-lg overflow-hidden text-white relative w-[928px] min-h-[500px] flex items-center"
+        className="mx-auto rounded-2xl overflow-hidden text-white relative w-[928px] min-h-[500px] flex items-center"
         ref={ref}
       >
         {!hideCloseButton && <CloseButton position="right" />}
