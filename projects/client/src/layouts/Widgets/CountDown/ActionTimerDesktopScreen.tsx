@@ -13,11 +13,11 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
     useWidgetSettingsStore(s => s.settings?.form.template?.templateSettings?.contentPosition) ??
     'left'
 
-  const layoutClasses = `grid grid-cols-2 items-stretch w-full h-full min-h-full`
+  const layoutClasses = `grid grid-cols-2 items-stretch w-full ${contentPosition === 'left' ? 'pl-6' : 'pr-6'}`
   const isPrize = screen === 'prize'
 
   const form = (
-    <div className="flex flex-col h-full min-h-[500px] items-center justify-between gap-6">
+    <div className="flex flex-col items-center justify-between gap-6">
       <Badge className="mx-auto" />
       <DynamicFieldsForm onSubmit={onSubmit} noPadding />
       <div></div>

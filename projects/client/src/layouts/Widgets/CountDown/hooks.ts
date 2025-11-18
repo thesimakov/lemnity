@@ -7,6 +7,8 @@ export const useActionTimerSettings = () => {
   const widget = useWidgetSettingsStore(s => s?.settings?.widget)
   const updateActionTimer = useWidgetSettingsStore(s => s.updateActionTimer)
   const setActionTimerImage = useWidgetSettingsStore(s => s.setActionTimerImage)
+  const setTextBeforeCountdown = useWidgetSettingsStore(s => s.setTextBeforeCountdown)
+  const setTextBeforeCountdownColor = useWidgetSettingsStore(s => s.setTextBeforeCountdownColor)
 
   const settings =
     widget?.type === WidgetTypeEnum.ACTION_TIMER ? (widget as ActionTimerWidgetSettings) : null
@@ -15,8 +17,10 @@ export const useActionTimerSettings = () => {
     () => ({
       settings,
       updateActionTimer,
-      setActionTimerImage
+      setActionTimerImage,
+      setTextBeforeCountdown,
+      setTextBeforeCountdownColor
     }),
-    [settings, updateActionTimer, setActionTimerImage]
+    [settings, updateActionTimer, setActionTimerImage, setTextBeforeCountdown]
   )
 }

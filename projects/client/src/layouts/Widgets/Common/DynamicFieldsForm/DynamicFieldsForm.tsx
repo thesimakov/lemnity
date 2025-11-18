@@ -123,7 +123,17 @@ const DynamicFieldsForm = ({
           </p>
         )}
         {settings?.countdown.enabled ? (
-          <Timer eventDate={timerSettings?.countdown.eventDate ?? null} variant="mobile" />
+          <>
+            {timerSettings?.countdown.textBeforeCountdown && (
+              <span
+                className="text-md text-center"
+                style={{ color: timerSettings?.countdown.textBeforeCountdownColor }}
+              >
+                {timerSettings?.countdown.textBeforeCountdown}
+              </span>
+            )}
+            <Timer eventDate={timerSettings?.countdown.eventDate ?? new Date()} variant="mobile" />
+          </>
         ) : null}
 
         {nameCfg.enabled ? (
