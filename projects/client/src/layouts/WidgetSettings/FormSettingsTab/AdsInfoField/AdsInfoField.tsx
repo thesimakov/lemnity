@@ -1,26 +1,27 @@
 import SwitchableField from '@/components/SwitchableField'
 import { Input, Textarea } from '@heroui/input'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import ColorAccessory from '@/components/ColorAccessory'
 
 const AdsInfoField = () => {
   const { setAdsInfo } = useFormSettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const adsInfo = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.form, 'adsInfo', STATIC_DEFAULTS.form.adsInfo)
+    withDefaultsPath(s.settings?.form, 'adsInfo', staticDefaults!.form.adsInfo)
   )
   const { enabled, text, policyUrl, color } = adsInfo
   const getErrors = useWidgetSettingsStore(s => s.getErrors)
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const errors = showValidation ? getErrors('form.adsInfo') : []
 
+  const handleToggle = (nextEnabled: boolean) => {
+    setAdsInfo(nextEnabled, text ?? '', policyUrl ?? '', color ?? '#000000')
+  }
+
   return (
-    <SwitchableField
-      title="Рекламная информация"
-      enabled={enabled}
-      onToggle={enabled => setAdsInfo(enabled, text ?? '', policyUrl ?? '', color ?? '#000000')}
-    >
+    <SwitchableField title="Рекламная информация" enabled={enabled} onToggle={handleToggle}>
       <div className="flex flex-col gap-3">
         <div className="flex flex-row gap-2">
           <Textarea

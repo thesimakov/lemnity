@@ -1,14 +1,17 @@
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { Input } from '@heroui/input'
 import { Radio, RadioGroup } from '@heroui/radio'
-import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, {
+  useDisplaySettings,
+  useWidgetStaticDefaults
+} from '@/stores/widgetSettingsStore'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 
 const DontShowField = () => {
   const { setDontShow } = useDisplaySettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const dontShow = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.display, 'dontShow', STATIC_DEFAULTS.display.dontShow)
+    withDefaultsPath(s.settings?.display, 'dontShow', staticDefaults.display.dontShow)
   )
   const { afterWin, afterShows } = dontShow
 

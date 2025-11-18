@@ -1,4 +1,5 @@
-import type { WidgetSettings, WindowFormat } from './types'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import type { WheelOfFortuneWidgetSettings, WidgetSettings, WindowFormat } from './types'
 import { mergeObjectsDeep } from './utils'
 
 export function normalize(current: WidgetSettings, defaults: WidgetSettings): WidgetSettings {
@@ -73,52 +74,24 @@ export function trimInactiveBranches(s: WidgetSettings): WidgetSettings {
     delete copy.form.countdown.endDate
   }
 
-  // // Agreement/AdsInfo: если выключены — обнуляем текстовые поля
-  // if (copy.form.agreement && copy.form.agreement.enabled === false) {
-  //   const a = copy.form.agreement as typeof copy.form.agreement & { text?: string; policyUrl?: string }
-  //   delete a.text
-  //   delete a.policyUrl
-  // }
-  // if (copy.form.adsInfo && copy.form.adsInfo.enabled === false) {
-  //   const a = copy.form.adsInfo as typeof copy.form.adsInfo & { text?: string; policyUrl?: string }
-  //   delete a.text
-  //   delete a.policyUrl
-  // }
+  if (copy.widget.type === WidgetTypeEnum.WHEEL_OF_FORTUNE) {
+    const wheel = copy.widget as WheelOfFortuneWidgetSettings
+    wheel.sectors.items = wheel.sectors.items.map(item => {
+      const next = { ...item } as typeof item & { promo?: string; chance?: number }
+      if (!next.promo) delete next.promo
+      if (typeof next.chance === 'undefined' || Number.isNaN(next.chance))
+        delete (next as { chance?: unknown }).chance
 
-  // // Messages: для выключенных сообщений удаляем текст
-  // const msg = copy.form.messages as typeof copy.form.messages & {
-  //   onWin?: { enabled: boolean; text?: string }
-  //   limitShows?: { enabled: boolean; text?: string }
-  //   limitWins?: { enabled: boolean; text?: string }
-  //   allPrizesGiven?: { enabled: boolean; text?: string }
-  // }
-  // if (msg.onWin && msg.onWin.enabled === false) delete msg.onWin.text
-  // if (msg.limitShows && msg.limitShows.enabled === false) delete msg.limitShows.text
-  // if (msg.limitWins && msg.limitWins.enabled === false) delete msg.limitWins.text
-  // if (msg.allPrizesGiven && msg.allPrizesGiven.enabled === false) delete msg.allPrizesGiven.text
+      if (next.mode === 'text') {
+        delete (next as { icon?: unknown }).icon
+      } else if (next.mode === 'icon') {
+        delete (next as { text?: unknown }).text
+      }
+      return next
+    })
+  }
 
-  copy.form.sectors.items = copy.form.sectors.items.map(item => {
-    const next = { ...item } as typeof item & {
-      promo?: string | undefined
-      chance?: number | undefined
-    }
-    if (!next.promo) delete next.promo
-    if (typeof next.chance === 'undefined' || Number.isNaN(next.chance))
-      delete (next as { chance?: unknown }).chance
-
-    if (next.mode === 'text') {
-      delete (next as { icon?: unknown }).icon
-    } else if (next.mode === 'icon') {
-      delete (next as { text?: unknown }).text
-    }
-    return next
-  })
-
-  // Messages.onWin: если colorScheme.scheme === 'primary', отрезаем кастомные ветви
-  if (
-    copy.form?.messages?.onWin?.colorScheme &&
-    copy.form.messages.onWin.colorScheme.scheme === 'primary'
-  ) {
+  if (copy.form.messages?.onWin?.colorScheme.scheme === 'primary') {
     const cs = copy.form.messages.onWin
       .colorScheme as typeof copy.form.messages.onWin.colorScheme & {
       discount?: unknown
@@ -186,6 +159,7 @@ export function canonicalize(s: WidgetSettings): WidgetSettings {
       template: tsOnly
     }
   }
+
   return out
 }
 
@@ -264,6 +238,18 @@ export function fromCanonical(canonical: unknown, defaults: WidgetSettings): Wid
         time: (schedule?.time as typeof out.display.schedule.time) ?? out.display.schedule.time
       }
     }
+  }
+
+  const widgetType =
+    (canonicalScheme as { widgetType?: WidgetTypeEnum }).widgetType ?? defaults.widgetType
+  ;(out as unknown as { widgetType: WidgetTypeEnum }).widgetType = widgetType
+
+  const widget = (canonicalScheme as { widget?: Record<string, unknown> }).widget
+  if (widget) {
+    ;(out as unknown as { widget: typeof out.widget }).widget = mergeObjectsDeep(
+      defaults.widget,
+      widget as typeof defaults.widget
+    )
   }
 
   return out

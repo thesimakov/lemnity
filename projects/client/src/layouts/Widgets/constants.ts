@@ -29,15 +29,15 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
     badge: 'new'
   },
   {
-    type: WidgetTypes.CONVEYOR_OF_GIFTS,
-    title: 'Конвейер подарков',
-    description: 'Лиды, вовлечение, вознаграждение',
-    isAvailable: false,
-    badge: 'soon'
-  },
-  {
     type: WidgetTypes.ACTION_TIMER,
     title: 'Таймер акции',
+    description: 'Лиды, вовлечение, вознаграждение',
+    isAvailable: true,
+    badge: 'new'
+  },
+  {
+    type: WidgetTypes.CONVEYOR_OF_GIFTS,
+    title: 'Конвейер подарков',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: false,
     badge: 'soon'

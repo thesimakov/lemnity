@@ -1,7 +1,9 @@
 import { Input } from '@heroui/input'
 import ColorAccessory from '@/components/ColorAccessory'
-import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, {
+  useDisplaySettings,
+  useWidgetStaticDefaults
+} from '@/stores/widgetSettingsStore'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useEffect, useState } from 'react'
 import type { Issue } from '@/stores/widgetSettings/schema'
@@ -10,7 +12,8 @@ import { useShallow } from 'zustand/react/shallow'
 const ButtonSettingsField = () => {
   const { setButtonIcon } = useDisplaySettings()
 
-  const defaultButton = STATIC_DEFAULTS.display.icon.button ?? {
+  const staticDefaults = useWidgetStaticDefaults()
+  const defaultButton = staticDefaults.display.icon.button ?? {
     text: '',
     buttonColor: '#5951E5',
     textColor: '#FFFFFF'

@@ -4,42 +4,65 @@ import { useCallback, useState } from 'react'
 import { Input } from '@heroui/input'
 import { Button } from '@heroui/button'
 import SectorItem from '../SectorItem/SectorItem'
-import type { SectorItem as SectorData } from '@stores/widgetSettings/types'
-import { useFormSettings, type SectorItem as StoreSectorItem } from '@/stores/widgetSettingsStore'
+import type {
+  SectorItem as SectorData,
+  WheelOfFortuneWidgetSettings
+} from '@stores/widgetSettings/types'
+import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import { useWheelOfFortuneSettings } from '@/layouts/Widgets/WheelOfFortune/hooks'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import NumberField from '@/components/NumberField'
 import ColorAccessory from '@/components/ColorAccessory'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { generateRandomHexColor } from '@/common/utils/generateRandomColor'
 
-const WidgetSettingsField = () => {
+const WheelSectorsField = () => {
   const {
     settings,
-    setRandomize,
-    setSectors,
-    updateSector: updateSectorInStore,
-    addSector,
-    deleteSector
-  } = useFormSettings()
-
+    setWheelRandomize,
+    setWheelSectors,
+    updateWheelSector,
+    addWheelSector,
+    deleteWheelSector
+  } = useWheelOfFortuneSettings()
+  const defaults = useWidgetStaticDefaults()
+  const showValidation = useWidgetSettingsStore(s => s.validationVisible)
+  const getErrors = useWidgetSettingsStore(s => s.getErrors)
   // UI state only - не сохраняется в конфигурации
   const [openedIndex, setOpenedIndex] = useState<number | null>(null)
 
-  const sectors: EditableListItem<SectorData>[] = (settings?.sectors?.items ?? []).map(item => ({
-    id: item.id,
-    mode: item.mode,
-    text: item.text,
-    icon: item.icon,
-    color: item.color,
-    promo: item.promo,
-    chance: item.chance,
-    isWin: item.isWin,
-    textSize: item.textSize,
-    iconSize: item.iconSize,
-    textColor: item.textColor
-  }))
+  const handleUpdateSector = useCallback(
+    (index: number, updates: Partial<SectorData>) => {
+      updateWheelSector(index, updates)
+    },
+    [updateWheelSector]
+  )
+
+  if (!settings && defaults.widget.type !== 'WHEEL_OF_FORTUNE') return null
+  const fallbackSectors: WheelOfFortuneWidgetSettings['sectors'] = (
+    defaults.widget as WheelOfFortuneWidgetSettings
+  ).sectors
+  const wheelSectors = (settings?.sectors ??
+    fallbackSectors) as WheelOfFortuneWidgetSettings['sectors']
+
+  const sectors: EditableListItem<SectorData>[] = (wheelSectors.items ?? []).map(
+    (item: SectorData) => ({
+      id: item.id,
+      mode: item.mode,
+      text: item.text,
+      icon: item.icon,
+      color: item.color,
+      promo: item.promo,
+      chance: item.chance,
+      isWin: item.isWin,
+      textSize: item.textSize,
+      iconSize: item.iconSize,
+      textColor: item.textColor
+    })
+  )
 
   const handleAdd = () => {
-    const newSector: StoreSectorItem = {
+    const newSector: SectorData = {
       id: Date.now().toString(),
       mode: 'text',
       text: '',
@@ -51,14 +74,14 @@ const WidgetSettingsField = () => {
       textColor: '#ffffff',
       chance: 0
     }
-    addSector(newSector)
+    addWheelSector(newSector)
   }
 
   const getRandomOrderCheckbox = () => {
     return (
       <Checkbox
-        isSelected={settings?.sectors?.randomize ?? false}
-        onValueChange={setRandomize}
+        isSelected={wheelSectors.randomize ?? false}
+        onValueChange={setWheelRandomize}
         classNames={{
           wrapper:
             'before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
@@ -70,13 +93,6 @@ const WidgetSettingsField = () => {
       </Checkbox>
     )
   }
-
-  const handleUpdateSector = useCallback(
-    (index: number, updates: Partial<SectorData>) => {
-      updateSectorInStore(index, updates)
-    },
-    [updateSectorInStore]
-  )
 
   const settingsSector = (sector: EditableListItem<SectorData>, index: number) => {
     return openedIndex === index ? (
@@ -216,7 +232,7 @@ const WidgetSettingsField = () => {
         {getRandomOrderCheckbox()}
         <EditableList
           items={sectors}
-          onItemsChange={items => setSectors(items as StoreSectorItem[])}
+          onItemsChange={items => setWheelSectors(items as SectorData[])}
           minItems={4}
           maxItems={8}
           classNames={{
@@ -229,17 +245,24 @@ const WidgetSettingsField = () => {
             <SectorItem
               key={sector.id}
               sector={sector}
-              onTextSizeChange={textSize => handleUpdateSector(index, { textSize })}
               onModeChange={mode => handleUpdateSector(index, { mode })}
               onTextChange={text => handleUpdateSector(index, { text })}
               onIconChange={icon => handleUpdateSector(index, { icon })}
               onSettings={() => setOpenedIndex(prev => (prev === index ? null : index))}
+              validationMessage={
+                showValidation
+                  ? getErrors(`widget.sectors.items.${index}`).find(err =>
+                      err.path.endsWith('text')
+                    )?.message
+                  : undefined
+              }
+              showValidation={showValidation}
             />
           )}
           renderBelow={settingsSector}
           onAdd={handleAdd}
           onDelete={(item: EditableListItem<SectorData>, index: number) => {
-            deleteSector(item.id)
+            deleteWheelSector(item.id)
             if (openedIndex !== null && index <= openedIndex) {
               setOpenedIndex(null)
             }
@@ -251,4 +274,4 @@ const WidgetSettingsField = () => {
   )
 }
 
-export default WidgetSettingsField
+export default WheelSectorsField

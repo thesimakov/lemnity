@@ -1,11 +1,7 @@
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { forwardRef, type ReactElement, type Ref } from 'react'
-import DynamicFieldsForm from '../DynamicFieldsForm/DynamicFieldsForm'
-import WheelOfFortune from '../../WheelOfFortune/WheelOfFortune'
-import RewardContent from '../RewardContent/RewardContent'
 import CloseButton from '../CloseButton/CloseButton'
-
-type DesktopScreen = 'main' | 'prize' | 'panel'
+import { getWidgetDefinition, type WidgetPreviewScreen } from '../../registry'
 
 const ModalChrome = forwardRef(
   (
@@ -18,13 +14,13 @@ const ModalChrome = forwardRef(
     },
     ref: Ref<HTMLDivElement> | undefined
   ) => {
-    const template = useWidgetSettingsStore(s => s.settings.form.template)
+    const template = useWidgetSettingsStore(s => s?.settings?.form?.template)
     const { colorScheme, customColor } = template?.templateSettings || {}
     const imageUrl = useWidgetSettingsStore(
-      s => s.settings.form.template?.templateSettings?.image?.url
+      s => s?.settings?.form?.template?.templateSettings?.image?.url
     )
     const imageEnabled = useWidgetSettingsStore(
-      s => s.settings.form.template?.templateSettings?.image?.enabled
+      s => s?.settings?.form?.template?.templateSettings?.image?.enabled
     )
 
     return (
@@ -33,7 +29,7 @@ const ModalChrome = forwardRef(
           ...(imageEnabled && imageUrl && { backgroundImage: `url(${imageUrl})` }),
           backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor
         }}
-        className="mx-auto rounded-lg text-white relative w-[928px] min-h-[500px] flex items-center"
+        className="mx-auto rounded-lg overflow-hidden text-white relative w-[928px] min-h-[500px] flex items-center"
         ref={ref}
       >
         {!hideCloseButton && <CloseButton position="right" />}
@@ -50,13 +46,13 @@ const SidePanelChrome = ({
   children: ReactElement | ReactElement[]
   hideCloseButton?: boolean
 }) => {
-  const template = useWidgetSettingsStore(s => s.settings.form.template)
+  const template = useWidgetSettingsStore(s => s?.settings?.form?.template)
   const { colorScheme, customColor } = template?.templateSettings || {}
   const imageUrl = useWidgetSettingsStore(
-    s => s.settings.form.template?.templateSettings?.image?.url
+    s => s?.settings?.form?.template?.templateSettings?.image?.url
   )
   const imageEnabled = useWidgetSettingsStore(
-    s => s.settings.form.template?.templateSettings?.image?.enabled
+    s => s?.settings?.form?.template?.templateSettings?.image?.enabled
   )
 
   return (
@@ -79,71 +75,20 @@ const SidePanelChrome = ({
 }
 
 interface DesktopPreviewProps {
-  screen: DesktopScreen
+  screen: WidgetPreviewScreen
   hideCloseButton?: boolean
   onSubmit: () => void
-  spinTrigger?: number
 }
 
 const DesktopPreview = (
-  { screen, hideCloseButton = false, onSubmit, spinTrigger }: DesktopPreviewProps,
+  { screen, hideCloseButton = false, onSubmit }: DesktopPreviewProps,
   ref: Ref<HTMLDivElement> | undefined
 ) => {
-  // pull settings to ensure re-render on changes; future use: colors/texts
-  useWidgetSettingsStore(s => s.settings)
-
-  const sectors = useWidgetSettingsStore(s => s.settings.form.sectors)
-  const contentPosition = useWidgetSettingsStore(
-    s => s.settings.form.template?.templateSettings?.contentPosition
-  )
-
-  const body = (
-    <div
-      className={`grid grid-cols-${screen !== 'prize' ? '2' : '1'} p-4 items-center justify-center w-full h-full ${screen === 'panel' ? 'py-10' : ''}`}
-    >
-      {contentPosition === 'left' ? (
-        <>
-          {screen === 'main' || screen === 'panel' ? (
-            <DynamicFieldsForm onSubmit={onSubmit} />
-          ) : (
-            <RewardContent />
-          )}
-          {screen !== 'prize' ? (
-            <WheelOfFortune
-              className={screen === 'panel' ? 'scale-200 translate-x-30' : 'pr-5'}
-              pointerPositionDeg={0}
-              sectors={
-                sectors.randomize
-                  ? [...sectors.items].sort(() => Math.random() - 0.5)
-                  : sectors.items
-              }
-              spinTrigger={spinTrigger}
-            />
-          ) : null}
-        </>
-      ) : (
-        <>
-          {screen !== 'prize' ? (
-            <WheelOfFortune
-              className={screen === 'panel' ? 'scale-200 -translate-x-30' : 'pl-5'}
-              pointerPositionDeg={0}
-              sectors={
-                sectors.randomize
-                  ? [...sectors.items].sort(() => Math.random() - 0.5)
-                  : sectors.items
-              }
-              spinTrigger={spinTrigger}
-            />
-          ) : null}
-          {screen === 'main' || screen === 'panel' ? (
-            <DynamicFieldsForm onSubmit={onSubmit} />
-          ) : (
-            <RewardContent />
-          )}
-        </>
-      )}
-    </div>
-  )
+  const widgetType = useWidgetSettingsStore(s => s?.settings?.widgetType)
+  const definition = widgetType && getWidgetDefinition(widgetType)
+  const ScreenComponent = definition?.preview?.desktopScreens?.[screen]
+  if (!ScreenComponent) return null
+  const body = <ScreenComponent screen={screen} onSubmit={onSubmit} />
 
   if (screen === 'panel') {
     return <SidePanelChrome hideCloseButton={hideCloseButton}>{body}</SidePanelChrome>

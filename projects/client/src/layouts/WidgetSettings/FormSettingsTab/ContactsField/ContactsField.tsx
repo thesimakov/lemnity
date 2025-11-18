@@ -1,12 +1,13 @@
 import CheckboxField from '@/components/CheckboxField'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 
 const ContactsField = () => {
   const { setContactField } = useFormSettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const contacts = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.form, 'contacts', STATIC_DEFAULTS.form.contacts)
+    withDefaultsPath(s.settings?.form, 'contacts', staticDefaults.form.contacts)
   )
   const { phone, email, name } = contacts
   const { enabled: phoneEnabled, required: phoneRequired } = phone

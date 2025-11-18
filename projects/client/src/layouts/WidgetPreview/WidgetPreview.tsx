@@ -1,30 +1,19 @@
-import { useCallback } from 'react'
-import WheelOfFortunePreview from '../Widgets/WheelOfFortune/WheelOfFortunePreview'
 import WidgetPreviewLayout from './WidgetPreviewLayout/WidgetPreviewLayout'
-import useWidgetPreviewStore, { type WidgetType } from '@/stores/widgetPreviewStore'
+import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { getWidgetDefinition } from '../Widgets/registry'
 
-type WidgetPreviewProps = {
-  spinTrigger?: number
-}
+const WidgetPreview = () => {
+  const mode = useWidgetPreviewStore(s => s.mode)
+  const { widgetType } = useWidgetSettingsStore(s => s?.settings) || {}
+  const definition = widgetType && getWidgetDefinition(widgetType)
+  const PanelComponent = definition?.preview?.panel
 
-const WidgetPreview = ({ spinTrigger }: WidgetPreviewProps) => {
-  const { widgetType } = useWidgetPreviewStore()
-
-  const getWidgetPreview = useCallback(
-    (widgetType: WidgetType | null) => {
-      if (!widgetType) return null
-
-      switch (widgetType) {
-        case 'WHEEL_OF_FORTUNE':
-          return <WheelOfFortunePreview spinTrigger={spinTrigger} />
-        default:
-          return null
-      }
-    },
-    [spinTrigger]
+  return (
+    <WidgetPreviewLayout>
+      {PanelComponent ? <PanelComponent mode={mode} /> : null}
+    </WidgetPreviewLayout>
   )
-
-  return <WidgetPreviewLayout>{getWidgetPreview(widgetType)}</WidgetPreviewLayout>
 }
 
 export default WidgetPreview

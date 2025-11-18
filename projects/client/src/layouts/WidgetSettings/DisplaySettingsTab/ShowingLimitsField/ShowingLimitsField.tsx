@@ -1,19 +1,22 @@
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { Input } from '@heroui/input'
 import { Radio, RadioGroup } from '@heroui/radio'
-import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, {
+  useDisplaySettings,
+  useWidgetStaticDefaults
+} from '@/stores/widgetSettingsStore'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useShallow } from 'zustand/react/shallow'
 
 const ShowingLimitsField = () => {
   const { setLimits } = useDisplaySettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const limits = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof STATIC_DEFAULTS.display.limits>(
+      withDefaultsPath<typeof staticDefaults.display.limits>(
         s.settings?.display,
         'limits',
-        STATIC_DEFAULTS.display.limits
+        staticDefaults.display.limits
       )
     )
   )

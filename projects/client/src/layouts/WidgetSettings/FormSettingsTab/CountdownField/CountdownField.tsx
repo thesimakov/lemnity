@@ -1,30 +1,53 @@
+import { useEffect, useState } from 'react'
 import SwitchableField from '@/components/SwitchableField'
-import { Radio, RadioGroup } from '@heroui/radio'
-import { useFormSettings } from '@/stores/widgetSettingsStore'
+import { Input } from '@heroui/input'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
+import { formatDateForInput } from '@/layouts/Widgets/CountDown/utils'
 
 const CountdownField = () => {
   const { settings, setCountdownEnabled } = useFormSettings()
+  const { settings: widgetSettings, updateActionTimer } = useActionTimerSettings()
+
+  const countdownForm = settings?.countdown
+  const isCountdownEnabled = countdownForm?.enabled ?? false
+  const eventDate = widgetSettings?.countdown.eventDate ?? null
+
+  const [inputValue, setInputValue] = useState(() => formatDateForInput(eventDate))
+
+  useEffect(() => {
+    setInputValue(formatDateForInput(eventDate))
+  }, [eventDate])
+
+  const handleToggle = (next: boolean) => {
+    if (isCountdownEnabled === next) return
+    setCountdownEnabled(next)
+  }
+
+  const handleDateChange = (value: string) => {
+    setInputValue(value)
+    const parsed = new Date(value)
+    if (!Number.isNaN(parsed.getTime())) {
+      const utcIso = parsed.toISOString()
+      updateActionTimer({ eventDate: utcIso })
+    }
+  }
 
   return (
     <SwitchableField
       title="Обратный отсчёт"
-      enabled={settings?.countdown?.enabled ?? false}
-      onToggle={setCountdownEnabled}
+      enabled={isCountdownEnabled}
+      onToggle={handleToggle}
+      classNames={{ content: 'flex flex-col gap-4' }}
     >
-      <RadioGroup value="countdown">
-        <Radio
-          classNames={{
-            base: '!max-w-none flex-1 h-14 rounded-md border data-[selected=true]:border-[#D9D9E0] data-[selected=true]:bg-white border-[#E4E4E7] bg-[#F8F8FA] hover:bg-[#F1F1F4] p-2 m-0',
-            labelWrapper: 'pl-2 py-1',
-            label: 'text-gray-700',
-            wrapper: 'border-[#373737] group-data-[selected=true]:!border-[#373737] border-small',
-            control: 'bg-[#373737] w-3.5 h-3.5'
-          }}
-          value="countdown"
-        >
-          Осталось: Дата / Время / Год
-        </Radio>
-      </RadioGroup>
+      <Input
+        radius="sm"
+        variant="bordered"
+        type="datetime-local"
+        value={inputValue}
+        placeholder="Выберите дату"
+        onValueChange={handleDateChange}
+      />
     </SwitchableField>
   )
 }

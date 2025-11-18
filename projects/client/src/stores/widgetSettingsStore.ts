@@ -1,7 +1,9 @@
+import { useMemo } from 'react'
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import type { PersistStorage, StorageValue } from 'zustand/middleware'
-import { buildDefaults, STATIC_DEFAULTS } from './widgetSettings/defaults'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import { buildDefaults, getStaticDefaults } from './widgetSettings/defaults'
 import { normalize, trimInactiveBranches, canonicalize } from './widgetSettings/normalize'
 import {
   validateWidgetSettingsCanonical,
@@ -14,6 +16,8 @@ import type { DisplaySlice } from './widgetSettings/displaySlice'
 import { createDisplaySlice } from './widgetSettings/displaySlice'
 import type { IntegrationSlice } from './widgetSettings/integrationSlice'
 import { createIntegrationSlice } from './widgetSettings/integrationSlice'
+import type { WidgetSlice } from './widgetSettings/widgetActions/types'
+import { createWidgetSlice } from './widgetSettings/widgetSlice'
 import type {
   WidgetSettings,
   WidgetSettingsState,
@@ -32,7 +36,6 @@ export type {
   FrequencyMode,
   FrequencyUnit,
   ContactField,
-  MessageKey,
   SectorItem,
   FormSettings,
   DisplaySettings,
@@ -40,7 +43,7 @@ export type {
 } from './widgetSettings/types'
 
 type CoreActions = {
-  init: (id: string, initial?: Partial<WidgetSettings>) => void
+  init: (id: string, widgetType: WidgetTypeEnum, initial?: Partial<WidgetSettings>) => void
   snapshot: () => WidgetSettings | null
   snapshotNormalized: () => WidgetSettings | null
   validateNow: () => { ok: boolean; issues: Issue[] }
@@ -58,7 +61,8 @@ export type WidgetSettingsStore = WidgetSettingsState &
   ValidationState &
   FormSlice &
   DisplaySlice &
-  IntegrationSlice
+  IntegrationSlice &
+  WidgetSlice
 
 type PathRewrite = {
   from: string
@@ -108,7 +112,8 @@ const dedupeIssues = (issues: Issue[]): Issue[] => {
 const computeIssues = (settings: WidgetSettings | null | undefined): Issue[] => {
   if (!settings) return []
   const current = validateWidgetSettingsCurrent(settings).issues
-  const normalized = normalize(settings, STATIC_DEFAULTS)
+  const defaults = getStaticDefaults(settings.widgetType)
+  const normalized = normalize(settings, defaults)
   const trimmed = trimInactiveBranches(normalized)
   const canonical = canonicalize(trimmed)
   const canonicalIssues = validateWidgetSettingsCanonical(canonical).issues.map(issue => ({
@@ -188,12 +193,22 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
           }))
 
         return {
-          settings: buildDefaults(''),
+          settings: null,
+          initialized: false,
           validationVisible: false,
           setValidationVisible: (visible: boolean) =>
             set(state => ({ ...state, validationVisible: visible })),
-          reset: () => set({ settings: buildDefaults('') }),
-          init: (id, initial) => {
+          reset: () =>
+            set(state => {
+              activeWidgetId = ''
+              return {
+                ...state,
+                settings: null,
+                initialized: false,
+                validationVisible: false
+              }
+            }),
+          init: (id, widgetType, initial) => {
             activeWidgetId = id
             // if server provided config is null/undefined, try rehydrate draft
             if (!initial) {
@@ -205,7 +220,16 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                   const restored = (entry?.state as { settings?: unknown } | undefined)
                     ?.settings as WidgetSettings | undefined
                   if (restored) {
-                    set({ settings: restored })
+                    // Force type consistency with requested widgetType
+                    const baseDefaults = buildDefaults(id, widgetType)
+                    const corrected: WidgetSettings = {
+                      ...restored,
+                      id,
+                      widgetType,
+                      widget:
+                        restored.widget?.type === widgetType ? restored.widget : baseDefaults.widget
+                    }
+                    set({ settings: corrected, initialized: true })
                     return
                   }
                 }
@@ -213,13 +237,26 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                 // ignore
               }
             }
-            set({ settings: initial ? { ...buildDefaults(id), ...initial } : buildDefaults(id) })
+            const baseDefaults = buildDefaults(id, widgetType)
+            set({
+              settings: initial
+                ? {
+                    ...baseDefaults,
+                    ...initial,
+                    widgetType,
+                    widget:
+                      initial.widget?.type === widgetType ? initial.widget : baseDefaults.widget
+                  }
+                : baseDefaults,
+              initialized: true
+            })
           },
           snapshot: () => get().settings,
           snapshotNormalized: () => {
             const s = get().settings
             if (!s) return null
-            const merged = normalize(s, STATIC_DEFAULTS)
+            const defaults = getStaticDefaults(s.widgetType)
+            const merged = normalize(s, defaults)
             return trimInactiveBranches(merged)
           },
           validateNow: () => {
@@ -248,7 +285,17 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
           },
           ...createFormSlice(patchForm),
           ...createDisplaySlice(patchDisplay),
-          ...createIntegrationSlice(patchIntegration)
+          ...createIntegrationSlice(patchIntegration),
+          ...createWidgetSlice(mutator => {
+            set(state => {
+              if (!state.settings) return state
+              const nextWidget = mutator(state.settings.widget)
+              return {
+                ...state,
+                settings: { ...state.settings, widget: nextWidget }
+              }
+            })
+          })
         }
       },
       { name: PERSIST_NAME, storage: mapStorage }
@@ -272,80 +319,8 @@ export const useVisibleErrors = (visible: boolean, prefix?: string) => {
 }
 
 // Slice hooks for cleaner component usage
-export const useFormSettings = () => {
-  const settings = useWidgetSettingsStore(s => s.settings.form)
-  const setCompanyLogoEnabled = useWidgetSettingsStore(s => s.setCompanyLogoEnabled)
-  const setCompanyLogoFile = useWidgetSettingsStore(s => s.setCompanyLogoFile)
-  const setTemplateEnabled = useWidgetSettingsStore(s => s.setTemplateEnabled)
-  const setTemplateKey = useWidgetSettingsStore(s => s.setTemplateKey)
-  const setTemplateImageEnabled = useWidgetSettingsStore(s => s.setTemplateImageEnabled)
-  const setTemplateImageFile = useWidgetSettingsStore(s => s.setTemplateImageFile)
-  const setWindowFormat = useWidgetSettingsStore(s => s.setWindowFormat)
-  const setContentPosition = useWidgetSettingsStore(s => s.setContentPosition)
-  const setColorScheme = useWidgetSettingsStore(s => s.setColorScheme)
-  const setCustomColor = useWidgetSettingsStore(s => s.setCustomColor)
-  const setFormTitle = useWidgetSettingsStore(s => s.setFormTitle)
-  const setFormDescription = useWidgetSettingsStore(s => s.setFormDescription)
-  const setFormButtonText = useWidgetSettingsStore(s => s.setFormButtonText)
-  const setCountdownEnabled = useWidgetSettingsStore(s => s.setCountdownEnabled)
-  const setContactField = useWidgetSettingsStore(s => s.setContactField)
-  const setAgreement = useWidgetSettingsStore(s => s.setAgreement)
-  const setAdsInfo = useWidgetSettingsStore(s => s.setAdsInfo)
-  const setRandomize = useWidgetSettingsStore(s => s.setRandomize)
-  const setSectors = useWidgetSettingsStore(s => s.setSectors)
-  const updateSector = useWidgetSettingsStore(s => s.updateSector)
-  const addSector = useWidgetSettingsStore(s => s.addSector)
-  const deleteSector = useWidgetSettingsStore(s => s.deleteSector)
-  const setMessage = useWidgetSettingsStore(s => s.setMessage)
-  const setOnWinEnabled = useWidgetSettingsStore(s => s.setOnWinEnabled)
-  const setOnWinText = useWidgetSettingsStore(s => s.setOnWinText)
-  const setOnWinTextSize = useWidgetSettingsStore(s => s.setOnWinTextSize)
-  const setOnWinDescription = useWidgetSettingsStore(s => s.setOnWinDescription)
-  const setOnWinDescriptionSize = useWidgetSettingsStore(s => s.setOnWinDescriptionSize)
-  const setOnWinColorSchemeEnabled = useWidgetSettingsStore(s => s.setOnWinColorSchemeEnabled)
-  const setOnWinColorScheme = useWidgetSettingsStore(s => s.setOnWinColorScheme)
-  const setOnWinDiscountColors = useWidgetSettingsStore(s => s.setOnWinDiscountColors)
-  const setOnWinPromoColors = useWidgetSettingsStore(s => s.setOnWinPromoColors)
-
-  return {
-    settings,
-    setCompanyLogoEnabled,
-    setCompanyLogoFile,
-    setTemplateEnabled,
-    setTemplateKey,
-    setTemplateImageEnabled,
-    setTemplateImageFile,
-    setWindowFormat,
-    setContentPosition,
-    setColorScheme,
-    setCustomColor,
-    setFormTitle,
-    setFormDescription,
-    setFormButtonText,
-    setCountdownEnabled,
-    setContactField,
-    setAgreement,
-    setAdsInfo,
-    setRandomize,
-    setSectors,
-    updateSector,
-    addSector,
-    deleteSector,
-    setMessage,
-    setOnWinEnabled,
-    setOnWinText,
-    setOnWinTextSize,
-    setOnWinDescription,
-    setOnWinDescriptionSize,
-    setOnWinColorSchemeEnabled,
-    setOnWinColorScheme,
-    setOnWinDiscountColors,
-    setOnWinPromoColors
-  }
-}
-
 export const useDisplaySettings = () => {
-  const settings = useWidgetSettingsStore(s => s.settings.display)
+  const settings = useWidgetSettingsStore(s => s.settings?.display)
   const setStartShowing = useWidgetSettingsStore(s => s.setStartShowing)
   const setTimerDelay = useWidgetSettingsStore(s => s.setTimerDelay)
   const setIconType = useWidgetSettingsStore(s => s.setIconType)
@@ -389,11 +364,16 @@ export const useDisplaySettings = () => {
 }
 
 export const useIntegrationSettings = () => {
-  const settings = useWidgetSettingsStore(s => s.settings.integration)
+  const settings = useWidgetSettingsStore(s => s.settings?.integration)
   const setScriptSnippet = useWidgetSettingsStore(s => s.setScriptSnippet)
 
   return {
     settings,
     setScriptSnippet
   }
+}
+
+export const useWidgetStaticDefaults = () => {
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
+  return useMemo(() => (widgetType ? getStaticDefaults(widgetType) : undefined), [widgetType])
 }

@@ -2,12 +2,12 @@ import SvgIcon from '@/components/SvgIcon'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import iconCode from '@/assets/icons/website-code.svg'
 import { memo } from 'react'
-import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 
 const IntegrationTab = () => {
+  const staticDefaults = useWidgetStaticDefaults()
   const scriptSnippet = useWidgetSettingsStore(
-    s => s.settings?.integration?.scriptSnippet ?? STATIC_DEFAULTS.integration.scriptSnippet
+    s => s.settings?.integration?.scriptSnippet ?? staticDefaults.integration.scriptSnippet
   )
 
   return (

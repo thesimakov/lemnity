@@ -1,8 +1,10 @@
 import OptionsChooser from '@/components/OptionsChooser'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import WeekdayChooser from '../WeekdayChooser/WeekdayChooser'
-import useWidgetSettingsStore, { useDisplaySettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, {
+  useDisplaySettings,
+  useWidgetStaticDefaults
+} from '@/stores/widgetSettingsStore'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -18,21 +20,22 @@ const timeOptions = [
 
 const ShowingScheduleField = () => {
   const { setScheduleDate, setScheduleTime } = useDisplaySettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const date = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof STATIC_DEFAULTS.display.schedule.date>(
+      withDefaultsPath<typeof staticDefaults.display.schedule.date>(
         s.settings?.display,
         'schedule.date',
-        STATIC_DEFAULTS.display.schedule.date
+        staticDefaults.display.schedule.date
       )
     )
   )
   const time = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof STATIC_DEFAULTS.display.schedule.time>(
+      withDefaultsPath<typeof staticDefaults.display.schedule.time>(
         s.settings?.display,
         'schedule.time',
-        STATIC_DEFAULTS.display.schedule.time
+        staticDefaults.display.schedule.time
       )
     )
   )

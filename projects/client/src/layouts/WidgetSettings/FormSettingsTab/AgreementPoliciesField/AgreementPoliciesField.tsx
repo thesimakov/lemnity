@@ -1,28 +1,27 @@
 import SwitchableField from '@/components/SwitchableField'
 import { Input, Textarea } from '@heroui/input'
-import useWidgetSettingsStore, { useFormSettings } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import ColorAccessory from '@/components/ColorAccessory'
 
 const AgreementPoliciesField = () => {
   const { setAgreement } = useFormSettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const agreement = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.form, 'agreement', STATIC_DEFAULTS.form.agreement)
+    withDefaultsPath(s.settings?.form, 'agreement', staticDefaults!.form.agreement)
   )
   const { enabled, text, policyUrl, agreementUrl, color } = agreement
   const getErrors = useWidgetSettingsStore(s => s.getErrors)
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const errors = showValidation ? getErrors('form.agreement') : []
 
+  const handleToggle = (nextEnabled: boolean) => {
+    setAgreement(nextEnabled, text ?? '', policyUrl ?? '', agreementUrl ?? '', color ?? '#000000')
+  }
+
   return (
-    <SwitchableField
-      title="Согласие и политика"
-      enabled={enabled}
-      onToggle={enabled =>
-        setAgreement(enabled, text ?? '', policyUrl ?? '', agreementUrl ?? '', color ?? '#000000')
-      }
-    >
+    <SwitchableField title="Согласие и политика" enabled={enabled} onToggle={handleToggle}>
       <div className="flex flex-col gap-3">
         <div className="flex flex-row gap-2">
           <Textarea
