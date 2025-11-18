@@ -1,4 +1,7 @@
-import type { ActionTimerWidgetSettings } from '@/stores/widgetSettings/types'
+import type {
+  ActionTimerWidgetSettings,
+  ActionTimerImagePosition
+} from '@/stores/widgetSettings/types'
 import type { WidgetActions, TypedWidgetUpdater } from '@/stores/widgetSettings/widgetActions/types'
 
 export const createActionTimerActions = (
@@ -23,5 +26,10 @@ export const createActionTimerActions = (
     updateWidget(widget => ({
       ...widget,
       countdown: { ...widget.countdown, textBeforeCountdownColor }
+    })),
+  setImagePosition: (position: ActionTimerImagePosition) =>
+    updateWidget(widget => ({
+      ...widget,
+      countdown: { ...widget.countdown, imagePosition: position }
     }))
 })

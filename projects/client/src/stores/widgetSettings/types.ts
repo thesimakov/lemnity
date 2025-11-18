@@ -84,12 +84,14 @@ export type WheelOfFortuneWidgetSettings = {
   }
 }
 
-export type CountdownUnitKey = 'hours' | 'minutes' | 'seconds'
+export type CountdownUnitKey = 'days' | 'hours' | 'minutes' | 'seconds'
 
 export type CountdownUnit = {
   key: CountdownUnitKey
   label: string
 }
+
+export type ActionTimerImagePosition = 'center' | 'left' | 'right'
 
 export type ActionTimerWidgetSettings = {
   type: typeof WidgetTypeEnum.ACTION_TIMER
@@ -102,6 +104,7 @@ export type ActionTimerWidgetSettings = {
     eventDate: Date | string
     enabled: boolean
     imageUrl?: string
+    imagePosition: ActionTimerImagePosition
   }
 }
 
@@ -152,6 +155,8 @@ export type FormSettings = {
   }
   adsInfo: { enabled: boolean; text: string; policyUrl: string; color: string }
   messages: FormMessages
+  link: string
+  border: { enabled: boolean; color: string }
 }
 
 export type DisplaySettings = {
