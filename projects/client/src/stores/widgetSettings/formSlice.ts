@@ -1,11 +1,10 @@
 import type {
-  MessageKey,
-  SectorItem,
   ContactField,
   FormUpdater,
   ColorScheme,
   ContentPosition,
-  WindowFormat
+  WindowFormat,
+  MessageKey
 } from './types'
 import { mergeDeep, splitPath } from './utils'
 
@@ -33,21 +32,17 @@ export type FormActions = {
     color: string
   ) => void
   setAdsInfo: (enabled: boolean, text: string, policyUrl: string, color: string) => void
-  setRandomize: (randomize: boolean) => void
-  setSectors: (items: SectorItem[]) => void
-  updateSector: (index: number, updates: Partial<SectorItem>) => void
-  addSector: (item: SectorItem) => void
-  deleteSector: (id: string) => void
-  setMessage: (key: MessageKey, enabled: boolean, text: string) => void
   setOnWinEnabled: (enabled: boolean) => void
   setOnWinText: (text: string) => void
-  setOnWinTextSize: (textSize: number) => void
+  setOnWinTextSize: (size: number) => void
   setOnWinDescription: (description: string) => void
-  setOnWinDescriptionSize: (descriptionSize: number) => void
+  setOnWinDescriptionSize: (size: number) => void
   setOnWinColorSchemeEnabled: (enabled: boolean) => void
-  setOnWinColorScheme: (scheme: ColorScheme) => void
+  setOnWinColorScheme: (scheme: 'primary' | 'custom') => void
   setOnWinDiscountColors: (color: string, bgColor: string) => void
   setOnWinPromoColors: (color: string, bgColor: string) => void
+  setMessageEnabled: (key: MessageKey, enabled: boolean) => void
+  setMessageText: (key: MessageKey, text: string) => void
 }
 
 export type FormSlice = {
@@ -88,35 +83,18 @@ export const createFormSlice = (updateForm: FormUpdater): FormSlice => {
       updateByPath('agreement', { enabled, text, policyUrl, agreementUrl, color }),
     setAdsInfo: (enabled, text, policyUrl, color) =>
       updateByPath('adsInfo', { enabled, text, policyUrl, color }),
-    setRandomize: randomize => updateByPath('sectors', { randomize }),
-    setSectors: items => updateByPath('sectors', { items }),
-    updateSector: (index, updates) =>
-      updateForm(s => ({
-        ...s,
-        sectors: {
-          ...s.sectors,
-          items: s.sectors.items.map((item, i) => (i === index ? { ...item, ...updates } : item))
-        }
-      })),
-    addSector: item =>
-      updateForm(s => ({ ...s, sectors: { ...s.sectors, items: [...s.sectors.items, item] } })),
-    deleteSector: id =>
-      updateForm(s => ({
-        ...s,
-        sectors: { ...s.sectors, items: s.sectors.items.filter(item => item.id !== id) }
-      })),
-    setMessage: (key, enabled, text) =>
-      updateForm(s => ({ ...s, messages: { ...s.messages, [key]: { enabled, text } } })),
     setOnWinEnabled: enabled => updateByPath('messages.onWin', { enabled }),
     setOnWinText: text => updateByPath('messages.onWin', { text }),
-    setOnWinTextSize: textSize => updateByPath('messages.onWin', { textSize }),
+    setOnWinTextSize: size => updateByPath('messages.onWin', { textSize: size }),
     setOnWinDescription: description => updateByPath('messages.onWin', { description }),
-    setOnWinDescriptionSize: descriptionSize => updateByPath('messages.onWin', { descriptionSize }),
+    setOnWinDescriptionSize: size => updateByPath('messages.onWin', { descriptionSize: size }),
     setOnWinColorSchemeEnabled: enabled => updateByPath('messages.onWin.colorScheme', { enabled }),
     setOnWinColorScheme: scheme => updateByPath('messages.onWin.colorScheme', { scheme }),
     setOnWinDiscountColors: (color, bgColor) =>
-      updateByPath('messages.onWin.colorScheme', { discount: { color, bgColor } }),
+      updateByPath('messages.onWin.colorScheme.discount', { color, bgColor }),
     setOnWinPromoColors: (color, bgColor) =>
-      updateByPath('messages.onWin.colorScheme', { promo: { color, bgColor } })
+      updateByPath('messages.onWin.colorScheme.promo', { color, bgColor }),
+    setMessageEnabled: (key, enabled) => updateByPath(`messages.${key}`, { enabled }),
+    setMessageText: (key, text) => updateByPath(`messages.${key}`, { text })
   }
 }

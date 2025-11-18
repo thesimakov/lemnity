@@ -8,6 +8,9 @@ import { z } from 'zod'
 import iconReload from '@/assets/icons/reload.svg'
 import { Checkbox } from '@heroui/checkbox'
 import { useState } from 'react'
+import Timer from '../../CountDown/Timer'
+import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 
 type FormFields = {
   phone?: string
@@ -19,19 +22,23 @@ type DynamicFieldsFormProps = {
   centered?: boolean
   onSubmit: () => void
   isMobile?: boolean
+  noPadding?: boolean
 }
 
 const DynamicFieldsForm = ({
   centered = false,
   onSubmit,
-  isMobile = false
+  isMobile = false,
+  noPadding = false
 }: DynamicFieldsFormProps) => {
+  const { settings } = useFormSettings()
   const [agreementChecked, setAgreementChecked] = useState(false)
   const [adsInfoChecked, setAdsInfoChecked] = useState(false)
-  const formSettings = useWidgetSettingsStore(s => s.settings.form)
+  const formSettings = useWidgetSettingsStore(s => s.settings!.form)
   const { contacts, formTexts, agreement, adsInfo, companyLogo } = formSettings
   const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts
   const { title, description, button } = formTexts || {}
+  const { settings: timerSettings } = useActionTimerSettings()
 
   const { enabled: logoEnabled, url: logoUrl } = companyLogo
 
@@ -95,7 +102,7 @@ const DynamicFieldsForm = ({
   return (
     <form
       onSubmit={handleSubmit(() => onSubmit())}
-      className={`flex flex-col gap-3 ${isMobile ? '' : 'px-10'} w-full ${centered ? 'items-center justify-center' : ''}`}
+      className={`flex flex-col gap-3 ${isMobile ? '' : noPadding ? '' : 'px-10'} w-full ${centered ? 'items-center justify-center' : ''}`}
     >
       {logoEnabled && logoUrl ? (
         <img
@@ -109,136 +116,136 @@ const DynamicFieldsForm = ({
           {title.text}
         </h2>
       )}
-      {description.text && (
-        <p className="text-xs opacity-90" style={{ color: description.color }}>
-          {description.text}
-        </p>
-      )}
+      <div className="flex flex-col gap-3 p-3 border border-[#E8E8E8] rounded-xl">
+        {description.text && (
+          <p className="text-md opacity-90" style={{ color: description.color }}>
+            {description.text}
+          </p>
+        )}
+        {settings?.countdown.enabled ? (
+          <Timer eventDate={timerSettings?.countdown.eventDate ?? null} variant="mobile" />
+        ) : null}
 
-      {nameCfg.enabled ? (
-        <Input
-          placeholder="Ваше имя"
-          variant="bordered"
-          classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
-          {...register('name')}
-          value={getValues('name')}
-          onChange={e => {
-            const onlyLetters = e.target.value.replace(/[^a-zA-Zа-яА-Я]+/g, '').trim()
-            setValue('name', onlyLetters, { shouldValidate: true, shouldDirty: true })
-          }}
-          isInvalid={!!errors.name}
-          errorMessage={errors.name?.message}
-        />
-      ) : null}
-
-      {phoneCfg.enabled ? (
-        <Input
-          placeholder="Номер телефона"
-          variant="bordered"
-          classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
-          {...register('phone')}
-          isInvalid={!!errors.phone}
-          errorMessage={errors.phone?.message}
-        />
-      ) : null}
-
-      {emailCfg.enabled ? (
-        <Input
-          placeholder="Ваш email"
-          variant="bordered"
-          classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
-          {...register('email')}
-          isInvalid={!!errors.email}
-          errorMessage={errors.email?.message}
-        />
-      ) : null}
-
-      <Button
-        color="primary"
-        variant="solid"
-        className="w-full h-10 rounded-2.5 font-normal"
-        style={{
-          color: button?.color,
-          backgroundColor: button?.backgroundColor
-        }}
-        type="submit"
-        isLoading={isSubmitting}
-        startContent={
-          <SvgIcon
-            src={iconReload}
-            size={'16px'}
-            className={`w-min text-[${button?.color || '#FFBF1A'}]`}
+        {nameCfg.enabled ? (
+          <Input
+            placeholder="Ваше имя"
+            variant="bordered"
+            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+            {...register('name')}
+            value={getValues('name')}
+            onChange={e => {
+              const onlyLetters = e.target.value.replace(/[^a-zA-Zа-яА-Я]+/g, '').trim()
+              setValue('name', onlyLetters, { shouldValidate: true, shouldDirty: true })
+            }}
+            isInvalid={!!errors.name}
+            errorMessage={errors.name?.message}
           />
-        }
-      >
-        {button?.text || ''}
-      </Button>
+        ) : null}
 
-      {agreementEnabled ? (
-        <div className="flex flex-row">
-          <Checkbox
-            isSelected={agreementChecked}
-            onValueChange={setAgreementChecked}
-            classNames={{
-              wrapper:
-                'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
-              base: 'items-start max-w-full',
-              label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
-            }}
-          ></Checkbox>
-          <span className="text-xs" style={{ color: agreementColor }}>
-            Я даю{' '}
-            <a
-              href={normalizeUrl(agreementUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline font-bold"
-              style={{ color: agreementColor }}
-            >
-              Согласие
-            </a>{' '}
-            <a style={{ color: agreementColor }}>
+        {phoneCfg.enabled ? (
+          <Input
+            placeholder="Номер телефона"
+            variant="bordered"
+            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+            {...register('phone')}
+            isInvalid={!!errors.phone}
+            errorMessage={errors.phone?.message}
+          />
+        ) : null}
+
+        {emailCfg.enabled ? (
+          <Input
+            placeholder="Ваш email"
+            variant="bordered"
+            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+            {...register('email')}
+            isInvalid={!!errors.email}
+            errorMessage={errors.email?.message}
+          />
+        ) : null}
+
+        <Button
+          color="primary"
+          variant="solid"
+          className="w-full h-10 rounded-2.5 font-normal"
+          style={{
+            color: button?.color,
+            backgroundColor: button?.backgroundColor
+          }}
+          type="submit"
+          isLoading={isSubmitting}
+          startContent={
+            <SvgIcon
+              src={iconReload}
+              size={'16px'}
+              className={`w-min text-[${button?.color || '#FFBF1A'}]`}
+            />
+          }
+        >
+          {button?.text || ''}
+        </Button>
+
+        {agreementEnabled ? (
+          <div className="flex flex-row">
+            <Checkbox
+              isSelected={agreementChecked}
+              onValueChange={setAgreementChecked}
+              classNames={{
+                wrapper:
+                  'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
+                base: 'items-start max-w-full',
+                label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
+              }}
+            ></Checkbox>
+            <span className="text-xs" style={{ color: agreementColor }}>
+              Я даю{' '}
+              <a
+                href={normalizeUrl(agreementUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-bold"
+                style={{ color: agreementColor }}
+              >
+                Согласие
+              </a>{' '}
               на обработку персональных данных в соответсвии с{' '}
-            </a>
+              <a
+                href={normalizeUrl(policyUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-bold"
+                style={{ color: agreementColor }}
+              >
+                Политикой конфиденциальности.
+              </a>
+            </span>
+          </div>
+        ) : null}
+
+        {adsInfoEnabled ? (
+          <div className="flex flex-row">
+            <Checkbox
+              isSelected={adsInfoChecked}
+              onValueChange={setAdsInfoChecked}
+              classNames={{
+                wrapper:
+                  'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
+                base: 'items-start max-w-full',
+                label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
+              }}
+            ></Checkbox>
             <a
-              href={normalizeUrl(policyUrl)}
+              href={normalizeUrl(adsInfoPolicyUrl)}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline font-bold"
-              style={{ color: agreementColor }}
+              className="text-xs hover:underline"
+              style={{ color: adsInfoColor }}
             >
-              Политикой конфиденциальности.
+              {adsInfoText}
             </a>
-          </span>
-          {/* <Link to={agreementPolicyUrl} target="_blank" className="text-xs">
-            {agreementText}
-          </Link> */}
-        </div>
-      ) : null}
-
-      {adsInfoEnabled ? (
-        <div className="flex flex-row">
-          <Checkbox
-            isSelected={adsInfoChecked}
-            onValueChange={setAdsInfoChecked}
-            classNames={{
-              wrapper:
-                'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
-              base: 'items-start max-w-full',
-              label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
-            }}
-          ></Checkbox>
-          <a
-            href={normalizeUrl(adsInfoPolicyUrl)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs hover:underline"
-            style={{ color: adsInfoColor }}
-          >
-            {adsInfoText}
-          </a>
-        </div>
-      ) : null}
+          </div>
+        ) : null}
+      </div>
     </form>
   )
 }

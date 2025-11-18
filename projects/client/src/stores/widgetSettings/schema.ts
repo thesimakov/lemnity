@@ -1,3 +1,4 @@
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import { z } from 'zod'
 
 export const IconButtonSchema = z.object({
@@ -137,55 +138,6 @@ export const FormSchema = z
       policyUrl: z.string(),
       color: z.string()
     }),
-    sectors: z.object({
-      randomize: z.boolean(),
-      items: z.array(
-        z
-          .object({
-            id: z.string(),
-            mode: z.enum(['text', 'icon']),
-            text: z.string().optional(),
-            icon: z.string().optional(),
-            color: z.string(),
-            promo: z.string().optional(),
-            chance: z.number().nonnegative().optional(),
-            isWin: z.boolean().optional(),
-            textSize: z.number().nonnegative().optional(),
-            iconSize: z.number().nonnegative().optional(),
-            textColor: z.string().optional()
-          })
-          .superRefine((v, ctx) => {
-            if (v.mode === 'text') {
-              if (!v.text)
-                ctx.addIssue({
-                  code: z.ZodIssueCode.custom,
-                  path: ['text'],
-                  message: 'Введите текст для сектора'
-                })
-              if (typeof v.icon !== 'undefined')
-                ctx.addIssue({
-                  code: z.ZodIssueCode.custom,
-                  path: ['icon'],
-                  message: 'Иконка не может быть выбрана при режиме текста'
-                })
-            }
-            if (v.mode === 'icon') {
-              if (!v.icon)
-                ctx.addIssue({
-                  code: z.ZodIssueCode.custom,
-                  path: ['icon'],
-                  message: 'Выберите иконку для сектора'
-                })
-              if (typeof v.text !== 'undefined')
-                ctx.addIssue({
-                  code: z.ZodIssueCode.custom,
-                  path: ['text'],
-                  message: 'Сектор не может иметь текст в режиме иконки'
-                })
-            }
-          })
-      )
-    }),
     messages: z.object({
       onWin: z.object({
         enabled: z.boolean(),
@@ -209,10 +161,7 @@ export const FormSchema = z
             })
             .optional()
         })
-      }),
-      limitShows: z.object({ enabled: z.boolean(), text: z.string() }),
-      limitWins: z.object({ enabled: z.boolean(), text: z.string() }),
-      allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() })
+      })
     })
   })
   .superRefine((val, ctx) => {
@@ -299,48 +248,115 @@ export const FormSchema = z
         })
       }
     }
+  })
 
-    // Messages: если включено — текст обязателен
-    const messageKeys: Array<['limitShows' | 'limitWins' | 'allPrizesGiven', string]> = [
-      ['limitShows', 'Текст обязателен'],
-      ['limitWins', 'Текст обязателен'],
-      ['allPrizesGiven', 'Текст обязателен']
-    ]
-    for (const [k, msg] of messageKeys) {
-      const m = val.messages[k]
-      if (m?.enabled && (!m.text || m.text.trim().length === 0)) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['messages', k, 'text'], message: msg })
-      }
-    }
+export const IntegrationSchema = z.object({ scriptSnippet: z.string() })
 
-    // onWin colorScheme conditional: require discount/promo only for custom
-    const cs = val.messages.onWin.colorScheme
-    if (cs.enabled && cs.scheme === 'custom') {
-      if (!cs.discount) {
+const WheelSectorSchema = z
+  .object({
+    id: z.string(),
+    mode: z.enum(['text', 'icon']),
+    text: z.string().optional(),
+    icon: z.string().optional(),
+    color: z.string(),
+    promo: z.string().optional(),
+    chance: z.number().nonnegative().optional(),
+    isWin: z.boolean().optional(),
+    textSize: z.number().nonnegative().optional(),
+    iconSize: z.number().nonnegative().optional(),
+    textColor: z.string().optional()
+  })
+  .superRefine((v, ctx) => {
+    if (v.mode === 'text') {
+      if (!v.text) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['messages', 'onWin', 'colorScheme', 'discount'],
-          message: 'Обязателен при пользовательской схеме'
+          path: ['text'],
+          message: 'Введите текст для сектора'
         })
       }
-      if (!cs.promo) {
+      if (typeof v.icon !== 'undefined') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['messages', 'onWin', 'colorScheme', 'promo'],
-          message: 'Обязателен при пользовательской схеме'
+          path: ['icon'],
+          message: 'Иконка не может быть выбрана при режиме текста'
+        })
+      }
+    }
+    if (v.mode === 'icon') {
+      if (!v.icon) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['icon'],
+          message: 'Выберите иконку для сектора'
+        })
+      }
+      if (typeof v.text !== 'undefined') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['text'],
+          message: 'Сектор не может иметь текст в режиме иконки'
         })
       }
     }
   })
 
-export const IntegrationSchema = z.object({ scriptSnippet: z.string() })
-
-export const WidgetSettingsSchemaOld = z.object({
-  id: z.string(),
-  display: DisplaySchemaBase,
-  form: FormSchema,
-  integration: IntegrationSchema
+const WheelWidgetSchema = z.object({
+  type: z.literal(WidgetTypeEnum.WHEEL_OF_FORTUNE),
+  sectors: z.object({
+    randomize: z.boolean(),
+    items: z.array(WheelSectorSchema)
+  })
 })
+
+const CountdownUnitSchema = z.object({
+  key: z.enum(['hours', 'minutes', 'seconds']),
+  label: z.string()
+})
+
+const ActionTimerWidgetSchema = z.object({
+  type: z.literal(WidgetTypeEnum.ACTION_TIMER),
+  countdown: z.object({
+    badgeText: z.string(),
+    badgeBackground: z.string(),
+    badgeColor: z.string(),
+    title: z.string(),
+    subtitle: z.string(),
+    description: z.string(),
+    highlightLabel: z.string(),
+    units: z.array(CountdownUnitSchema).min(1),
+    offerTitle: z.string(),
+    disclaimer: z.string(),
+    imageUrl: z.string().url().optional()
+  })
+})
+
+const WidgetSchemaBase = z.union([WheelWidgetSchema, ActionTimerWidgetSchema])
+
+const ensureWidgetMatchesType = (
+  widgetType: WidgetTypeEnum,
+  widget: z.infer<typeof WidgetSchemaBase>,
+  ctx: z.RefinementCtx
+) => {
+  if (widget.type !== widgetType) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['widget', 'type'],
+      message: 'Тип виджета не соответствует widgetType'
+    })
+  }
+}
+
+export const WidgetSettingsSchemaOld = z
+  .object({
+    id: z.string(),
+    widgetType: z.nativeEnum(WidgetTypeEnum),
+    widget: WidgetSchemaBase,
+    display: DisplaySchemaBase,
+    form: FormSchema,
+    integration: IntegrationSchema
+  })
+  .superRefine((val, ctx) => ensureWidgetMatchesType(val.widgetType, val.widget, ctx))
 
 export const DisplaySchema = z
   .object({
@@ -396,12 +412,16 @@ export const DisplaySchema = z
     }
   })
 
-export const WidgetSettingsSchema = z.object({
-  id: z.string(),
-  display: DisplaySchema,
-  form: FormSchema,
-  integration: IntegrationSchema
-})
+export const WidgetSettingsSchema = z
+  .object({
+    id: z.string(),
+    widgetType: z.nativeEnum(WidgetTypeEnum),
+    widget: WidgetSchemaBase,
+    display: DisplaySchema,
+    form: FormSchema,
+    integration: IntegrationSchema
+  })
+  .superRefine((val, ctx) => ensureWidgetMatchesType(val.widgetType, val.widget, ctx))
 
 export type Issue = { path: string; message: string }
 

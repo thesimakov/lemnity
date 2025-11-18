@@ -1,6 +1,5 @@
 import Header from '@/layouts/Header/Header'
 import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
-import type { ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
 import { Breadcrumbs, BreadcrumbItem } from '@heroui/breadcrumbs'
 import { Button } from '@heroui/button'
@@ -14,12 +13,13 @@ import DisplaySettingsTab from '@/layouts/WidgetSettings/DisplaySettingsTab/Disp
 import IntegrationTab from '@/layouts/WidgetSettings/IntegrationTab/IntegrationTab'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { fromCanonical } from '@/stores/widgetSettings/normalize'
+import { buildDefaults } from '@/stores/widgetSettings/defaults'
 import WidgetPreview from '@/layouts/WidgetPreview/WidgetPreview'
-import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
 import PreviewModal from '@/layouts/Widgets/Common/PreviewModal'
+import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
 // use store action to keep state in sync after update
 
-const EditWidgetPage = (): ReactElement => {
+const EditWidgetPage = () => {
   const [previewScreen, setPreviewScreen] = useState<'main' | 'prize' | 'panel'>('main')
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const topRef = useRef<HTMLDivElement | null>(null)
@@ -33,27 +33,28 @@ const EditWidgetPage = (): ReactElement => {
   const [tab, setTab] = useState<'fields' | 'appearance' | 'integration'>('fields')
   const [saving, setSaving] = useState(false)
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
-  const [spinTrigger, setSpinTrigger] = useState(0)
+  // legacy local spin state removed; use preview store instead
+  const initialized = useWidgetSettingsStore(s => s.initialized)
+  const widgetType = widget?.type
+  const widgetConfig = widget?.config
 
   // Initialize widget settings store once per widgetId
   useEffect(() => {
-    if (!widgetId) return
+    if (!widgetId || !widgetType) return
     const store = useWidgetSettingsStore.getState()
-    if (!store.settings || store.settings.id !== widgetId) {
-      const base = store.settings ?? useWidgetSettingsStore.getState().settings
-      const initialSettings = widget?.config ? fromCanonical(widget.config, base) : undefined
-      store.init(widgetId, initialSettings)
+    const shouldReinit =
+      !store.settings || store.settings.id !== widgetId || store.settings.widgetType !== widgetType
+    if (shouldReinit) {
+      const base = store.settings ?? buildDefaults(widgetId, widgetType)
+      const initialSettings = widgetConfig ? fromCanonical(widgetConfig, base) : undefined
+      store.init(widgetId, widgetType, initialSettings)
     }
-    // init preview type from widget type
-    if (widget?.type) {
-      useWidgetPreviewStore.getState().init({ initialType: widget.type })
-    }
+
     return () => {
       // cleanup draft state in memory when leaving page
       useWidgetSettingsStore.getState().reset()
-      useWidgetPreviewStore.getState().clear()
     }
-  }, [widgetId, widget?.config, widget?.type])
+  }, [widgetId, widgetType, widgetConfig])
 
   useEffect(() => {
     const root = scrollRef.current
@@ -100,13 +101,17 @@ const EditWidgetPage = (): ReactElement => {
       alert('Исправьте ошибки перед сохранением')
       return
     }
-    // Запускаем анимацию колеса
-    setSpinTrigger(prev => prev + 1)
 
     if (!widgetId) {
       alert('Нет widgetId')
       return
     }
+
+    if (!widgetType) {
+      alert('Нет widgetType')
+      return
+    }
+
     try {
       if (!projectId) {
         alert('Нет projectId')
@@ -117,9 +122,9 @@ const EditWidgetPage = (): ReactElement => {
         .getState()
         .saveWidgetConfig(projectId, widgetId, res.data)
       // Re-init settings with canonical server config (convert to UI shape)
-      const base = useWidgetSettingsStore.getState().settings
+      const base = useWidgetSettingsStore.getState().settings ?? buildDefaults(widgetId, widgetType)
       const next = updated.config ? fromCanonical(updated.config, base) : undefined
-      useWidgetSettingsStore.getState().init(widgetId, next)
+      useWidgetSettingsStore.getState().init(widgetId, widgetType, next)
       alert('Сохранено')
       useWidgetSettingsStore.getState().setValidationVisible(false)
     } catch (e) {
@@ -129,6 +134,14 @@ const EditWidgetPage = (): ReactElement => {
       setSaving(false)
     }
   }
+
+  const handleSubmit = useCallback(() => {
+    usePreviewRuntimeStore.getState().emit('wheel.spin')
+    setTimeout(() => {
+      setPreviewScreen('prize')
+    }, 5000)
+  }, [setPreviewScreen])
+  if (!initialized) return null
 
   const breadcrumbs = (
     <Breadcrumbs size="lg" itemClasses={{ item: 'text-[#5951E5]', separator: 'text-[#5951E5]' }}>
@@ -140,7 +153,7 @@ const EditWidgetPage = (): ReactElement => {
 
   const rightPanel = (
     <div className="w-full h-full flex flex-col p-3">
-      <WidgetPreview spinTrigger={spinTrigger} />
+      <WidgetPreview />
     </div>
   )
 
@@ -198,13 +211,6 @@ const EditWidgetPage = (): ReactElement => {
     </div>
   )
 
-  // const getPreviewScreen = (): 'main' | 'prize' | 'panel' => {
-  //   if (widget?.type === 'WHEEL_OF_FORTUNE') {
-  //     return 'main' // Default to main screen for wheel of fortune
-  //   }
-  //   return 'main'
-  // }
-
   return (
     <>
       <div className="h-full flex flex-col">
@@ -231,13 +237,7 @@ const EditWidgetPage = (): ReactElement => {
         isOpen={isPreviewModalOpen}
         onClose={handleClosePreview}
         screen={previewScreen}
-        spinTrigger={spinTrigger}
-        onSubmit={useCallback(() => {
-          setSpinTrigger(prev => prev + 1)
-          setTimeout(() => {
-            setPreviewScreen('prize')
-          }, 4000)
-        }, [setPreviewScreen])}
+        onSubmit={handleSubmit}
       />
     </>
   )

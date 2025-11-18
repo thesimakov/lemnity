@@ -8,15 +8,14 @@ import iconTrophy from '@/assets/icons/trophy.svg'
 import iconSparkles from '@/assets/icons/sparkles.svg'
 import iconRocket from '@/assets/icons/rocket.svg'
 import type { SectorItem as SectorData, SectorItemMode as Mode } from '@stores/widgetSettings/types'
-import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-
 type SectorItemProps = {
   sector: SectorData
   onModeChange: (mode: Mode) => void
   onTextChange: (text: string) => void
-  onTextSizeChange: (textSize: number) => void
   onIconChange: (icon: string) => void
   onSettings: () => void
+  validationMessage?: string
+  showValidation?: boolean
 }
 
 const prizeOptions = [
@@ -30,19 +29,11 @@ const SectorItem = ({
   onModeChange,
   onTextChange,
   onIconChange,
-  onSettings
+  onSettings,
+  validationMessage,
+  showValidation
 }: SectorItemProps) => {
-  // derive index by id for validation path
-  const items = useWidgetSettingsStore(s => s.settings.form.sectors.items)
-  const itemIndex = items.findIndex(i => i.id === sector.id)
-  const getErrors = useWidgetSettingsStore(s => s.getErrors)
-  const showValidation = useWidgetSettingsStore(s => s.validationVisible)
-  const sectorErrs =
-    showValidation && itemIndex >= 0 ? getErrors(`form.sectors.items.${itemIndex}`) : []
-  const findErr = (suffix: string) => sectorErrs.find(e => e.path.endsWith(suffix))?.message
-
-  const invalidText = showValidation && sector.mode === 'text' && Boolean(findErr('text'))
-  const consolidatedError = invalidText ? (findErr('text') ?? 'Текст обязателен') : undefined
+  const invalidText = Boolean(showValidation && sector.mode === 'text' && validationMessage)
 
   const getRadioDot = (mode: Mode) => {
     return (
@@ -139,8 +130,8 @@ const SectorItem = ({
           <SvgIcon src={iconSettings} size={20} className="text-[#1E73BE]" />
         </Button>
       </div>
-      {consolidatedError ? (
-        <div className="text-xs text-red-500 pt-1">{consolidatedError}</div>
+      {invalidText ? (
+        <div className="text-xs text-red-500 pt-1">{validationMessage ?? 'Текст обязателен'}</div>
       ) : null}
     </div>
   )

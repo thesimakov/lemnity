@@ -1,22 +1,19 @@
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
-import { withDefaultsPath } from '@/stores/widgetSettings/utils'
+import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 import SimpleMessageField from './SimpleMessageField'
 import OnWinMessageSection from './OnWinMessageSection'
 
 const MessagesSettings = () => {
-  // Subscribe to messages branch to keep defaults consistent (no direct usage needed here)
-  useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.form, 'messages', STATIC_DEFAULTS.form.messages)
-  )
-
+  const { settings } = useFormSettings()
   const getErrors = useWidgetSettingsStore(s => s.getErrors)
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
+
+  if (!settings?.messages) return null
   const errLimitShows = showValidation ? getErrors('form.messages.limitShows') : []
   const errLimitWins = showValidation ? getErrors('form.messages.limitWins') : []
   const errAllPrizes = showValidation ? getErrors('form.messages.allPrizesGiven') : []
 
-  // Keep subscriptions so updates trigger rerender
+  // Keep subscriptions to trigger rerender when errors change
   void errLimitShows
   void errLimitWins
   void errAllPrizes

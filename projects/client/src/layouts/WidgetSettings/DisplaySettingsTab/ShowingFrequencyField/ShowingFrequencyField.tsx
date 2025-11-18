@@ -4,21 +4,22 @@ import { Radio, RadioGroup } from '@heroui/radio'
 import { Select, SelectItem } from '@heroui/select'
 import useWidgetSettingsStore, {
   useDisplaySettings,
+  useWidgetStaticDefaults,
   type FrequencyMode,
   type FrequencyUnit
 } from '@/stores/widgetSettingsStore'
-import { STATIC_DEFAULTS } from '@/stores/widgetSettings/defaults'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useShallow } from 'zustand/react/shallow'
 
 const ShowingFrequencyField = () => {
   const { setFrequency } = useDisplaySettings()
+  const staticDefaults = useWidgetStaticDefaults()
   const frequency = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof STATIC_DEFAULTS.display.frequency>(
+      withDefaultsPath<typeof staticDefaults.display.frequency>(
         s.settings?.display,
         'frequency',
-        STATIC_DEFAULTS.display.frequency
+        staticDefaults.display.frequency
       )
     )
   )

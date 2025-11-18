@@ -1,0 +1,113 @@
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import type { ComponentType } from 'react'
+import { wheelWidgetMetadata } from './WheelOfFortune/metadata'
+import { actionTimerWidgetMetadata } from './CountDown/metadata'
+import {
+  StubWidgetPanelPreview,
+  StubDesktopScreen,
+  StubMobilePreview
+} from './Common/StubWidgetPreview'
+import {
+  WIDGET_DEFINITIONS_BASE,
+  type WidgetDefinitionBase
+} from '@/stores/widgetSettings/widgetDefinitions'
+import type { PreviewMode } from '@/stores/widgetPreviewStore'
+import { resolveWidgetDefinition } from '@/stores/widgetSettings/resolveWidgetDefinition'
+
+export type WidgetPreviewScreen = 'main' | 'prize' | 'panel'
+
+export type DesktopPreviewProps = {
+  screen: WidgetPreviewScreen
+  onSubmit: () => void
+  spinTrigger?: number
+  hideCloseButton?: boolean
+}
+
+export type MobilePreviewProps = Record<string, never>
+
+export type WidgetPanelPreviewProps = {
+  mode: PreviewMode
+}
+
+export type DesktopScreenProps = {
+  screen: WidgetPreviewScreen
+  onSubmit: () => void
+}
+
+export type WidgetSettingsSection = {
+  id: string
+  Component: ComponentType
+}
+
+export type WidgetDefinition = WidgetDefinitionBase & {
+  preview: {
+    panel: ComponentType<WidgetPanelPreviewProps>
+    desktopScreens: Partial<Record<WidgetPreviewScreen, ComponentType<DesktopScreenProps>>>
+    mobile: ComponentType<MobilePreviewProps> | null
+  }
+  settings: {
+    sections: WidgetSettingsSection[]
+  }
+}
+
+const stubSettingsSections: WidgetSettingsSection[] = []
+
+/**
+ * Полная карта определений виджетов по всем значениям WidgetTypeEnum.
+ * Для реализованных типов — реальные preview и секции.
+ * Для остальных — единые stub‑preview и пустые секции.
+ */
+const allWidgetTypes = Object.values(WidgetTypeEnum) as WidgetTypeEnum[]
+
+const baseMetadata = () => ({
+  preview: {
+    panel: StubWidgetPanelPreview,
+    desktopScreens: {
+      main: StubDesktopScreen,
+      prize: StubDesktopScreen,
+      panel: StubDesktopScreen
+    },
+    mobile: StubMobilePreview
+  },
+  settings: {
+    sections: stubSettingsSections
+  }
+})
+
+const widgetMetadata: Partial<
+  Record<WidgetTypeEnum, Pick<WidgetDefinition, 'preview' | 'settings'>>
+> = {
+  [WidgetTypeEnum.WHEEL_OF_FORTUNE]: wheelWidgetMetadata,
+  [WidgetTypeEnum.ACTION_TIMER]: actionTimerWidgetMetadata
+}
+
+const definitions: Record<WidgetTypeEnum, WidgetDefinition> = Object.fromEntries(
+  allWidgetTypes.map(widgetType => {
+    const base = WIDGET_DEFINITIONS_BASE[widgetType]
+    const metadata = widgetMetadata[widgetType] ?? baseMetadata()
+    return [
+      widgetType,
+      {
+        ...base,
+        preview: metadata.preview,
+        settings: metadata.settings
+      }
+    ]
+  })
+) as Record<WidgetTypeEnum, WidgetDefinition>
+
+/**
+ * Gets widget definition for the given widget type.
+ * Returns the full definition including preview components and settings sections.
+ *
+ * For unimplemented widget types, returns a stub definition with placeholder components.
+ */
+const resolveWidgetDefinitionForRegistry = resolveWidgetDefinition<
+  typeof definitions,
+  WidgetDefinition
+>(definitions)
+
+export const getWidgetDefinition = (widgetType: WidgetTypeEnum): WidgetDefinition =>
+  resolveWidgetDefinitionForRegistry(widgetType)
+
+export const WIDGET_DEFINITIONS = definitions

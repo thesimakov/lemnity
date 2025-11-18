@@ -1,3 +1,4 @@
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type { StateCreator } from 'zustand'
 
 export type ButtonPosition = 'bottom-left' | 'top-right' | 'bottom-right'
@@ -14,6 +15,34 @@ export type ContentPosition = 'left' | 'right'
 export type WindowFormat = 'sidePanel' | 'modalWindow'
 export type SectorItemMode = 'text' | 'icon'
 
+export type MessageColorScheme = {
+  enabled: boolean
+  scheme: ColorScheme
+  discount?: { color: string; bgColor: string }
+  promo?: { color: string; bgColor: string }
+}
+
+export type FormOnWinMessage = {
+  enabled: boolean
+  text: string
+  textSize: number
+  description: string
+  descriptionSize: number
+  colorScheme: MessageColorScheme
+}
+
+export type FormMessageEntry = {
+  enabled: boolean
+  text: string
+}
+
+export type FormMessages = {
+  onWin: FormOnWinMessage
+  limitShows: FormMessageEntry
+  limitWins: FormMessageEntry
+  allPrizesGiven: FormMessageEntry
+}
+
 export type SectorItem = {
   id: string
   mode: SectorItemMode
@@ -27,6 +56,66 @@ export type SectorItem = {
   iconSize: number
   textColor: string
 }
+
+export type WheelOfFortuneMessages = {
+  onWin: {
+    enabled: boolean
+    text: string
+    textSize: number
+    description: string
+    descriptionSize: number
+    colorScheme: {
+      enabled: boolean
+      scheme: ColorScheme
+      discount: { color: string; bgColor: string }
+      promo: { color: string; bgColor: string }
+    }
+  }
+  limitShows: { enabled: boolean; text: string }
+  limitWins: { enabled: boolean; text: string }
+  allPrizesGiven: { enabled: boolean; text: string }
+}
+
+export type WheelOfFortuneWidgetSettings = {
+  type: typeof WidgetTypeEnum.WHEEL_OF_FORTUNE
+  sectors: {
+    randomize: boolean
+    items: SectorItem[]
+  }
+}
+
+export type CountdownUnitKey = 'hours' | 'minutes' | 'seconds'
+
+export type CountdownUnit = {
+  key: CountdownUnitKey
+  label: string
+}
+
+export type ActionTimerWidgetSettings = {
+  type: typeof WidgetTypeEnum.ACTION_TIMER
+  countdown: {
+    badgeText: string
+    badgeBackground: string
+    badgeColor: string
+    eventDate: Date | string
+    enabled: boolean
+    imageUrl?: string
+  }
+}
+
+/**
+ * Stub widget settings for unimplemented widget types.
+ * Contains minimal required structure to satisfy the type system.
+ */
+export type StubWidgetSettings = {
+  type: WidgetTypeEnum
+  [key: string]: unknown
+}
+
+export type WidgetSpecificSettings =
+  | WheelOfFortuneWidgetSettings
+  | ActionTimerWidgetSettings
+  | StubWidgetSettings
 
 export type FormSettings = {
   companyLogo: { enabled: boolean; fileName?: string; url?: string }
@@ -60,28 +149,7 @@ export type FormSettings = {
     color: string
   }
   adsInfo: { enabled: boolean; text: string; policyUrl: string; color: string }
-  sectors: {
-    randomize: boolean
-    items: SectorItem[]
-  }
-  messages: {
-    onWin: {
-      enabled: boolean
-      text: string
-      textSize: number
-      description: string
-      descriptionSize: number
-      colorScheme: {
-        enabled: boolean
-        scheme: ColorScheme
-        discount: { color: string; bgColor: string }
-        promo: { color: string; bgColor: string }
-      }
-    }
-    limitShows: { enabled: boolean; text: string }
-    limitWins: { enabled: boolean; text: string }
-    allPrizesGiven: { enabled: boolean; text: string }
-  }
+  messages: FormMessages
 }
 
 export type DisplaySettings = {
@@ -119,7 +187,9 @@ export type IntegrationSettings = {
 
 export type WidgetSettings = {
   id: string
+  widgetType: WidgetTypeEnum
   form: FormSettings
+  widget: WidgetSpecificSettings
   display: DisplaySettings
   integration: IntegrationSettings
 }
@@ -130,7 +200,8 @@ export type DisplayUpdater = (mutator: (s: DisplaySettings) => DisplaySettings) 
 export type IntegrationUpdater = (mutator: (s: IntegrationSettings) => IntegrationSettings) => void
 
 export type WidgetSettingsState = {
-  settings: WidgetSettings
+  settings: WidgetSettings | null
+  initialized: boolean
 }
 
 export type StoreSlice<T> = StateCreator<T, [], [], T>
