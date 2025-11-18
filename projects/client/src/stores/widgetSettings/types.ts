@@ -94,6 +94,8 @@ export type CountdownUnit = {
 export type ActionTimerWidgetSettings = {
   type: typeof WidgetTypeEnum.ACTION_TIMER
   countdown: {
+    textBeforeCountdown: string
+    textBeforeCountdownColor: string
     badgeText: string
     badgeBackground: string
     badgeColor: string

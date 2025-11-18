@@ -309,24 +309,16 @@ const WheelWidgetSchema = z.object({
   })
 })
 
-const CountdownUnitSchema = z.object({
-  key: z.enum(['hours', 'minutes', 'seconds']),
-  label: z.string()
-})
-
 const ActionTimerWidgetSchema = z.object({
   type: z.literal(WidgetTypeEnum.ACTION_TIMER),
   countdown: z.object({
+    textBeforeCountdown: z.string(),
     badgeText: z.string(),
     badgeBackground: z.string(),
     badgeColor: z.string(),
-    title: z.string(),
-    subtitle: z.string(),
-    description: z.string(),
-    highlightLabel: z.string(),
-    units: z.array(CountdownUnitSchema).min(1),
-    offerTitle: z.string(),
-    disclaimer: z.string(),
+    eventDate: z.date(),
+    enabled: z.boolean(),
+    textBeforeCountdownColor: z.string(),
     imageUrl: z.string().url().optional()
   })
 })

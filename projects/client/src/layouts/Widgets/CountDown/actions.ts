@@ -7,17 +7,21 @@ export const createActionTimerActions = (
   updateActionTimer: (updates: Partial<ActionTimerWidgetSettings['countdown']>) =>
     updateWidget(widget => ({
       ...widget,
-      countdown: {
-        ...widget.countdown,
-        ...updates
-      }
+      countdown: { ...widget.countdown, ...updates }
     })),
   setActionTimerImage: (imageUrl?: string) =>
     updateWidget(widget => ({
       ...widget,
-      countdown: {
-        ...widget.countdown,
-        imageUrl
-      }
+      countdown: { ...widget.countdown, imageUrl }
+    })),
+  setTextBeforeCountdown: (textBeforeCountdown: string) =>
+    updateWidget(widget => ({
+      ...widget,
+      countdown: { ...widget.countdown, textBeforeCountdown }
+    })),
+  setTextBeforeCountdownColor: (textBeforeCountdownColor: string) =>
+    updateWidget(widget => ({
+      ...widget,
+      countdown: { ...widget.countdown, textBeforeCountdownColor }
     }))
 })

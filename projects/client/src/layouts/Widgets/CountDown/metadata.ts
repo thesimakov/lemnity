@@ -3,6 +3,7 @@ import CountDownPreview from './CountDownPreview'
 import ActionTimerDesktopScreen from './ActionTimerDesktopScreen'
 import ActionTimerMobileScreen from './ActionTimerMobileScreen'
 import CountdownField from '@/layouts/WidgetSettings/FormSettingsTab/CountdownField/CountdownField'
+import ActionTimerSettings from './ActionTimerSettings'
 
 export const actionTimerWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings'> = {
   preview: {
@@ -15,6 +16,9 @@ export const actionTimerWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'sett
     mobile: ActionTimerMobileScreen
   },
   settings: {
-    sections: [{ id: 'actionTimer.countdown', Component: CountdownField }]
+    sections: [
+      { id: 'actionTimer.countdown', Component: CountdownField },
+      { id: 'actionTimer.promo', Component: ActionTimerSettings }
+    ]
   }
 }

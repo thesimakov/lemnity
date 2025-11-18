@@ -34,6 +34,8 @@ export type WidgetActions = {
   setWheelOnWinPromoColors: (color: string, bgColor: string) => void
   updateActionTimer: (updates: Partial<ActionTimerWidgetSettings['countdown']>) => void
   setActionTimerImage: (imageUrl?: string) => void
+  setTextBeforeCountdown: (textBeforeCountdown: string) => void
+  setTextBeforeCountdownColor: (textBeforeCountdownColor: string) => void
 }
 
 export type WidgetSlice = {

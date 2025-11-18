@@ -1,3 +1,4 @@
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import ColorAccessory from '@/components/ColorAccessory'
 import { Input } from '@heroui/input'
 import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
@@ -9,6 +10,8 @@ import iconTrophy from '@/assets/icons/trophy.svg'
 import iconSparkles from '@/assets/icons/sparkles.svg'
 import iconRocket from '@/assets/icons/rocket.svg'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import BadgeField from '@/layouts/Widgets/CountDown/BadgeField'
+import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
 import type { FormSettings as FormSettingsType } from '@/stores/widgetSettings/types'
 
 const FormSettings = () => {
@@ -31,6 +34,10 @@ const FormSettings = () => {
     backgroundColor: buttonBackgroundColor,
     icon: buttonIcon
   } = button
+
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
+  const { settings: actionTimerSettings, updateActionTimer } = useActionTimerSettings()
+  const badgeSettings = actionTimerSettings?.countdown
 
   const icons = [
     { key: 'trophy', label: iconTrophy },
@@ -72,6 +79,18 @@ const FormSettings = () => {
   return (
     <div className="flex flex-col gap-2 p-3 rounded-lg border border-gray-200">
       <span className="text-black font-semibold pb-2">Форма</span>
+      {widgetType === WidgetTypeEnum.ACTION_TIMER && badgeSettings ? (
+        <div className="flex flex-col gap-2">
+          <BadgeField
+            badgeText={badgeSettings.badgeText}
+            badgeBackground={badgeSettings.badgeBackground}
+            badgeColor={badgeSettings.badgeColor}
+            onTextChange={text => updateActionTimer({ badgeText: text })}
+            onBackgroundChange={color => updateActionTimer({ badgeBackground: color })}
+            onColorChange={color => updateActionTimer({ badgeColor: color })}
+          />
+        </div>
+      ) : null}
       <span className="text-black">Заголовок</span>
       <div className="flex flex-row gap-2">
         <Input

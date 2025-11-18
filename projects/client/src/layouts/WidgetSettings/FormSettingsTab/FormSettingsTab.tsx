@@ -123,12 +123,12 @@ const FormSettingsTab = () => {
           {!(template?.enabled ?? true) ? <TemplateSettings /> : null}
         </AnimatePresence>
         <FormSettings />
-        <ContactsField />
-        <AgreementPoliciesField />
-        <AdsInfoField />
         {widgetDefinition?.settings.sections.map(section => (
           <section.Component key={section.id} />
         ))}
+        <ContactsField />
+        <AgreementPoliciesField />
+        <AdsInfoField />
         <MessagesSettings />
       </div>
     </>

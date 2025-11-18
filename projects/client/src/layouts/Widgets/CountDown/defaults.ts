@@ -5,6 +5,8 @@ import { buildFormSettings } from '@/layouts/Widgets/Common/formDefaults'
 export const buildActionTimerWidgetSettings = (): ActionTimerWidgetSettings => ({
   type: WidgetTypeEnum.ACTION_TIMER,
   countdown: {
+    textBeforeCountdownColor: '#FFFFFF',
+    textBeforeCountdown: 'До мероприятия осталось:',
     badgeText: 'Концерт 08.10.2025',
     badgeBackground: '#E9EEFF',
     badgeColor: '#336EC2',
