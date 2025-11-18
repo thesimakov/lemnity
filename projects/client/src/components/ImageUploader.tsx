@@ -22,6 +22,8 @@ type ImageUploaderProps = {
   onFileSelect?: (file: File | null) => void
   isInvalid?: boolean
   errorMessage?: string
+  noBorder?: boolean
+  noPadding?: boolean
 }
 
 function shortenFileName(name: string, max = 40): string {
@@ -53,7 +55,9 @@ const ImageUploader = ({
   url,
   onFileSelect,
   isInvalid,
-  errorMessage
+  errorMessage,
+  noBorder,
+  noPadding
 }: ImageUploaderProps) => {
   // Контролируемый подход: пропсы — источник правды.
   // Локально храним только выбранный в этом сеансе файл и blob-url для превью.
@@ -86,7 +90,7 @@ const ImageUploader = ({
 
   return (
     <div
-      className={`flex flex-col gap-2 p-3 rounded-lg border border-gray-200 ${classNames.container}`}
+      className={`flex flex-col gap-2 rounded-lg ${noPadding ? '' : 'p-3'} ${noBorder ? '' : 'border border-gray-200'} ${classNames.container}`}
     >
       <div className="flex flex-row gap-2">
         <span className="text-black">{title}</span>

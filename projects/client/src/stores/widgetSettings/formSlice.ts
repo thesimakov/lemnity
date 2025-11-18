@@ -43,6 +43,9 @@ export type FormActions = {
   setOnWinPromoColors: (color: string, bgColor: string) => void
   setMessageEnabled: (key: MessageKey, enabled: boolean) => void
   setMessageText: (key: MessageKey, text: string) => void
+  setFormLink: (link: string) => void
+  setFormBorderEnabled: (enabled: boolean) => void
+  setFormBorderColor: (color: string) => void
 }
 
 export type FormSlice = {
@@ -95,6 +98,9 @@ export const createFormSlice = (updateForm: FormUpdater): FormSlice => {
     setOnWinPromoColors: (color, bgColor) =>
       updateByPath('messages.onWin.colorScheme.promo', { color, bgColor }),
     setMessageEnabled: (key, enabled) => updateByPath(`messages.${key}`, { enabled }),
-    setMessageText: (key, text) => updateByPath(`messages.${key}`, { text })
+    setMessageText: (key, text) => updateByPath(`messages.${key}`, { text }),
+    setFormLink: link => updateForm(s => ({ ...s, link })),
+    setFormBorderEnabled: enabled => updateByPath('border', { enabled }),
+    setFormBorderColor: color => updateByPath('border', { color })
   }
 }

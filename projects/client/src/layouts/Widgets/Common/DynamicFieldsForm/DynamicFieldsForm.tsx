@@ -35,7 +35,7 @@ const DynamicFieldsForm = ({
   const [agreementChecked, setAgreementChecked] = useState(false)
   const [adsInfoChecked, setAdsInfoChecked] = useState(false)
   const formSettings = useWidgetSettingsStore(s => s.settings!.form)
-  const { contacts, formTexts, agreement, adsInfo, companyLogo } = formSettings
+  const { contacts, formTexts, agreement, adsInfo, companyLogo, border } = formSettings
   const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts
   const { title, description, button } = formTexts || {}
   const { settings: timerSettings } = useActionTimerSettings()
@@ -49,6 +49,10 @@ const DynamicFieldsForm = ({
     policyUrl: adsInfoPolicyUrl,
     color: adsInfoColor
   } = adsInfo
+
+  const borderSettings = border ?? { enabled: true, color: '#E8E8E8' }
+  const borderEnabled = borderSettings.enabled
+  const borderColor = borderSettings.color ?? '#E8E8E8'
 
   // Normalize URL to ensure it has a protocol
   const normalizeUrl = (url: string): string => {
@@ -112,30 +116,35 @@ const DynamicFieldsForm = ({
         />
       ) : null}
       {title.text && (
-        <h2 className="text-2xl font-bold" style={{ color: title.color }}>
+        <h2
+          className={`text-2xl font-bold ${centered ? 'text-center' : ''}`}
+          style={{ color: title.color }}
+        >
           {title.text}
         </h2>
       )}
-      <div className="flex flex-col gap-3 p-3 border border-[#E8E8E8] rounded-xl">
+      {settings?.countdown.enabled ? (
+        <>
+          {timerSettings?.countdown.textBeforeCountdown && (
+            <span
+              className="text-md text-center"
+              style={{ color: timerSettings?.countdown.textBeforeCountdownColor }}
+            >
+              {timerSettings?.countdown.textBeforeCountdown}
+            </span>
+          )}
+          <Timer eventDate={timerSettings?.countdown.eventDate ?? new Date()} variant="mobile" />
+        </>
+      ) : null}
+      <div
+        className={`flex flex-col gap-3 p-3 rounded-xl ${borderEnabled ? 'border' : ''}`}
+        style={borderEnabled ? { borderColor } : undefined}
+      >
         {description.text && (
           <p className="text-md opacity-90" style={{ color: description.color }}>
             {description.text}
           </p>
         )}
-        {settings?.countdown.enabled ? (
-          <>
-            {timerSettings?.countdown.textBeforeCountdown && (
-              <span
-                className="text-md text-center"
-                style={{ color: timerSettings?.countdown.textBeforeCountdownColor }}
-              >
-                {timerSettings?.countdown.textBeforeCountdown}
-              </span>
-            )}
-            <Timer eventDate={timerSettings?.countdown.eventDate ?? new Date()} variant="mobile" />
-          </>
-        ) : null}
-
         {nameCfg.enabled ? (
           <Input
             placeholder="Ваше имя"
