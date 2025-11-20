@@ -38,6 +38,8 @@ export type WidgetActions = {
   setTextBeforeCountdown: (textBeforeCountdown: string) => void
   setTextBeforeCountdownColor: (textBeforeCountdownColor: string) => void
   setImagePosition: (position: ActionTimerImagePosition) => void
+  setWheelBorderColor: (color: string) => void
+  setWheelBorderThickness: (thickness: number) => void
 }
 
 export type WidgetSlice = {

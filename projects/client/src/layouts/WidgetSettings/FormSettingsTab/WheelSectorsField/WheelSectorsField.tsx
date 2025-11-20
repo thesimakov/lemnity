@@ -15,6 +15,7 @@ import NumberField from '@/components/NumberField'
 import ColorAccessory from '@/components/ColorAccessory'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { generateRandomHexColor } from '@/common/utils/generateRandomColor'
+import { Slider } from '@heroui/slider'
 
 const WheelSectorsField = () => {
   const {
@@ -23,9 +24,12 @@ const WheelSectorsField = () => {
     setWheelSectors,
     updateWheelSector,
     addWheelSector,
-    deleteWheelSector
+    deleteWheelSector,
+    setWheelBorderColor,
+    setWheelBorderThickness
   } = useWheelOfFortuneSettings()
   const defaults = useWidgetStaticDefaults()
+
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const getErrors = useWidgetSettingsStore(s => s.getErrors)
   // UI state only - не сохраняется в конфигурации
@@ -38,12 +42,12 @@ const WheelSectorsField = () => {
     [updateWheelSector]
   )
 
-  if (!settings && defaults.widget.type !== 'WHEEL_OF_FORTUNE') return null
-  const fallbackSectors: WheelOfFortuneWidgetSettings['sectors'] = (
-    defaults.widget as WheelOfFortuneWidgetSettings
-  ).sectors
+  if (!settings && defaults?.widget.type !== 'WHEEL_OF_FORTUNE') return null
+  const fallbackSettings = defaults?.widget as WheelOfFortuneWidgetSettings
+  const fallbackSectors: WheelOfFortuneWidgetSettings['sectors'] = fallbackSettings.sectors
   const wheelSectors = (settings?.sectors ??
     fallbackSectors) as WheelOfFortuneWidgetSettings['sectors']
+  const wheelBorderThickness = settings?.borderThickness ?? fallbackSettings.borderThickness
 
   const sectors: EditableListItem<SectorData>[] = (wheelSectors.items ?? []).map(
     (item: SectorData) => ({
@@ -269,6 +273,32 @@ const WheelSectorsField = () => {
           }}
           addButtonLabel="Добавить сектор"
         />
+        <div className="flex-col gap-0.5">
+          <span>Контур</span>
+          <div className="flex flex-row gap-1 mt-3">
+            <ColorAccessory
+              label="Цвет"
+              color={settings?.borderColor ?? fallbackSettings.borderColor}
+              onChange={setWheelBorderColor}
+            />
+            <BorderedContainer className="flex-1 px-2.5 py-1">
+              <Slider
+                value={wheelBorderThickness}
+                className="max-w"
+                size="sm"
+                defaultValue={12}
+                label="Толщина"
+                maxValue={20}
+                minValue={0}
+                step={1}
+                onChange={value => {
+                  setWheelBorderThickness(Number(value))
+                }}
+              />
+            </BorderedContainer>
+          </div>
+          <div className="flex flex-col gap-1 mt-3"></div>
+        </div>
       </div>
     </div>
   )

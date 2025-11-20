@@ -10,7 +10,9 @@ export const buildWheelWidgetSettings = (): WheelOfFortuneWidgetSettings => ({
   sectors: {
     randomize: false,
     items: Array.from({ length: MIN_SECTORS }).map(createDefaultSector)
-  }
+  },
+  borderColor: '#0F52E6',
+  borderThickness: 12
 })
 
 export const buildWheelFormSettings = () =>

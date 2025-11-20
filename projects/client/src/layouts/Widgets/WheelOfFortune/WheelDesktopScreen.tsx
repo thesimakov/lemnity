@@ -50,6 +50,8 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
         pointerPositionDeg={0}
         sectors={items}
         spinTrigger={spinTrigger}
+        borderColor={settings?.borderColor}
+        borderThickness={settings?.borderThickness}
       />
     )
   }
