@@ -10,6 +10,8 @@ export const useWheelOfFortuneSettings = () => {
   const updateWheelSector = useWidgetSettingsStore(s => s.updateWheelSector)
   const addWheelSector = useWidgetSettingsStore(s => s.addWheelSector)
   const deleteWheelSector = useWidgetSettingsStore(s => s.deleteWheelSector)
+  const setWheelBorderColor = useWidgetSettingsStore(s => s.setWheelBorderColor)
+  const setWheelBorderThickness = useWidgetSettingsStore(s => s.setWheelBorderThickness)
 
   const settings =
     widget?.type === WidgetTypeEnum.WHEEL_OF_FORTUNE
@@ -22,7 +24,9 @@ export const useWheelOfFortuneSettings = () => {
       setWheelSectors,
       updateWheelSector,
       addWheelSector,
-      deleteWheelSector
+      deleteWheelSector,
+      setWheelBorderColor,
+      setWheelBorderThickness
     }),
     [
       settings,
@@ -30,7 +34,9 @@ export const useWheelOfFortuneSettings = () => {
       setWheelSectors,
       updateWheelSector,
       addWheelSector,
-      deleteWheelSector
+      deleteWheelSector,
+      setWheelBorderColor,
+      setWheelBorderThickness
     ]
   )
 }

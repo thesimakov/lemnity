@@ -10,6 +10,8 @@ type WheelOfFortuneProps = {
   className?: string
   pointerPositionDeg?: number // позиция указателя в градусах
   spinTrigger?: number // изменение этого значения запускает анимацию
+  borderColor?: string
+  borderThickness?: number
 }
 
 const MIN_SECTORS = 4
@@ -81,7 +83,9 @@ const WheelOfFortune = ({
   sectors,
   className,
   pointerPositionDeg,
-  spinTrigger
+  spinTrigger,
+  borderColor,
+  borderThickness
 }: WheelOfFortuneProps) => {
   const items = normalizeSectors(sectors)
   const count = items.length
@@ -95,9 +99,10 @@ const WheelOfFortune = ({
   const outerRingW = 8
   const innerRingW = 6
   const ringGap = 2
-  const rOuter = totalR - outerRingW / 2
-  const rInner = totalR - outerRingW - ringGap - innerRingW / 2
   const rDisk = totalR - outerRingW - ringGap - innerRingW - ringGap
+  const borderStrokeWidth = Math.max(0, Math.min(20, borderThickness ?? 12))
+  const rBorder = rDisk + borderStrokeWidth / 2
+  const strokeColor = borderColor ?? '#0F52E6'
   const step = 360 / count
 
   useEffect(() => {
@@ -125,67 +130,17 @@ const WheelOfFortune = ({
         className="w-full h-full"
         style={{ overflow: 'visible' }}
       >
-        <defs>
-          <linearGradient
-            id="outerRimGrad"
-            x1="0"
-            y1="0"
-            x2={String(size)}
-            y2={String(size)}
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0%" stopColor="#0E5DF8" />
-            <stop offset="31%" stopColor="#0F4EE0" />
-            <stop offset="96%" stopColor="#1026A3" />
-            <stop offset="100%" stopColor="#10249F" />
-          </linearGradient>
-          <linearGradient
-            id="innerRimGrad"
-            x1="0"
-            y1={String(size)}
-            x2={String(size)}
-            y2="0"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0%" stopColor="#FFFB90" />
-            <stop offset="14%" stopColor="#FBEA78" />
-            <stop offset="24%" stopColor="#F8DC65" />
-            <stop offset="27%" stopColor="#E6C758" />
-            <stop offset="34%" stopColor="#C5A041" />
-            <stop offset="40%" stopColor="#AD8330" />
-            <stop offset="45%" stopColor="#9E7226" />
-            <stop offset="49%" stopColor="#996C22" />
-            <stop offset="52%" stopColor="#9D7126" />
-            <stop offset="56%" stopColor="#AA8131" />
-            <stop offset="60%" stopColor="#BE9B42" />
-            <stop offset="64%" stopColor="#DABE5B" />
-            <stop offset="69%" stopColor="#FBE878" />
-            <stop offset="77%" stopColor="#FFFFAA" />
-            <stop offset="83%" stopColor="#FBE878" />
-            <stop offset="100%" stopColor="#A4631B" />
-          </linearGradient>
-        </defs>
-
         <motion.g animate={controls} style={{ transformOrigin: `${cx}px ${cy}px` }}>
           <circle
             cx={cx}
             cy={cy}
-            r={rOuter}
+            r={rBorder}
             fill="none"
-            stroke="url(#outerRimGrad)"
-            strokeWidth={outerRingW}
+            stroke={strokeColor}
+            strokeWidth={borderStrokeWidth}
+            strokeLinecap="round"
+            shapeRendering="geometricPrecision"
           />
-          <circle
-            cx={cx}
-            cy={cy}
-            r={rInner}
-            fill="none"
-            stroke="url(#innerRimGrad)"
-            strokeWidth={innerRingW}
-          />
-
-          {/* Content disk */}
-          <circle cx={cx} cy={cy} r={rDisk} fill="#ffffff" />
 
           {items.map((item, i) => {
             const start = i * step - 90
@@ -199,7 +154,7 @@ const WheelOfFortune = ({
             const shift = 0.8 // для корректировки позиции текста
             return (
               <g key={item.id ?? i}>
-                <path d={path} fill={item.color} />
+                <path d={path} fill={item.color} shapeRendering="geometricPrecision" />
                 {item.mode === 'text' ? (
                   <text
                     x={lp.x}
@@ -253,8 +208,8 @@ const WheelOfFortune = ({
         {/* Указатель вне анимированной группы, чтобы не вращался */}
         <image
           href={wheelPointer}
-          x={cx - rOuter + 52}
-          y={cy - rOuter + 52}
+          x={cx - rBorder + 47}
+          y={cy - rBorder + 47}
           transform={`rotate(${pointerPositionDeg ?? 0}, ${cx}, ${cy})`}
           className="scale-70"
         />

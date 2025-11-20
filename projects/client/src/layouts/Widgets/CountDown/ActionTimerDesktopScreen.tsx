@@ -17,7 +17,7 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const isPrize = screen === 'prize'
 
   const form = (
-    <div className="flex flex-col items-center justify-between">
+    <div className="flex flex-col items-center justify-between h-full">
       <Badge className="mx-auto mb-3" />
       <DynamicFieldsForm onSubmit={onSubmit} noPadding centered />
       <div></div>

@@ -309,13 +309,18 @@ const WheelSectorSchema = z
     }
   })
 
-const WheelWidgetSchema = z.object({
-  type: z.literal(WidgetTypeEnum.WHEEL_OF_FORTUNE),
-  sectors: z.object({
-    randomize: z.boolean(),
-    items: z.array(WheelSectorSchema)
+const WheelWidgetSchema = z
+  .object({
+    type: z.literal(WidgetTypeEnum.WHEEL_OF_FORTUNE),
+    sectors: z.object({
+      randomize: z.boolean(),
+      items: z.array(WheelSectorSchema)
+    })
   })
-})
+  .extend({
+    borderColor: z.string().optional(),
+    borderThickness: z.number().min(0).max(20).optional()
+  })
 
 const ActionTimerWidgetSchema = z.object({
   type: z.literal(WidgetTypeEnum.ACTION_TIMER),

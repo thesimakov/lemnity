@@ -1,6 +1,6 @@
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import ColorAccessory from '@/components/ColorAccessory'
-import { Input } from '@heroui/input'
+import { Input, Textarea } from '@heroui/input'
 import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { useFormSettings } from '@/stores/widgetSettings/formHooks'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
@@ -102,8 +102,12 @@ const FormSettings = () => {
       ) : null}
       <span className="text-black">Заголовок</span>
       <div className="flex flex-row gap-2">
-        <Input
-          classNames={{ inputWrapper: 'h-14' }}
+        <Textarea
+          classNames={{
+            inputWrapper: 'min-h-9',
+            input: 'min-h-9'
+          }}
+          minRows={1}
           radius="sm"
           variant="bordered"
           placeholder="Укажите заголовок"
@@ -115,9 +119,13 @@ const FormSettings = () => {
       </div>
       <span className="text-black">Описание</span>
       <div className="flex flex-row gap-2">
-        <Input
-          classNames={{ inputWrapper: 'h-14' }}
+        <Textarea
           radius="sm"
+          minRows={1}
+          classNames={{
+            inputWrapper: 'min-h-9',
+            input: 'min-h-9'
+          }}
           variant="bordered"
           placeholder="Можно оставить пустым"
           type="text"
