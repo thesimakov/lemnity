@@ -8,6 +8,10 @@ import {
   buildActionTimerWidgetSettings,
   buildActionTimerFormSettings
 } from '@/layouts/Widgets/CountDown/defaults'
+import {
+  buildFABMenuWidgetSettings,
+  buildFABMenuFormSettings
+} from '@/layouts/Widgets/FABMenu/defaults'
 import { resolveWidgetDefinition } from './resolveWidgetDefinition'
 
 export type WidgetDefinitionBase = {
@@ -105,6 +109,11 @@ const implementedWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinit
     type: WidgetTypeEnum.ACTION_TIMER,
     buildWidgetSettings: buildActionTimerWidgetSettings,
     buildFormSettings: buildActionTimerFormSettings
+  },
+  [WidgetTypeEnum.FAB_MENU]: {
+    type: WidgetTypeEnum.FAB_MENU,
+    buildWidgetSettings: buildFABMenuWidgetSettings,
+    buildFormSettings: buildFABMenuFormSettings
   }
 }
 

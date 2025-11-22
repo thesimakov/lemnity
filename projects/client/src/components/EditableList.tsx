@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import SvgIcon from './SvgIcon'
 import iconBin from '@/assets/icons/bin.svg'
 import iconAdd from '@/assets/icons/add.svg'
+import iconArrowDown from '@/assets/icons/arrow-down.svg'
+import iconArrowUp from '@/assets/icons/arrow-up.svg'
 
 export type EditableListItem<T> = T & {
   id: string
@@ -29,6 +31,7 @@ export type EditableListProps<T> = {
     reorder?: string
     add?: string
   }
+  disabledReorderIds?: string[]
 }
 
 const EditableList = <T,>({
@@ -50,7 +53,8 @@ const EditableList = <T,>({
     delete: '',
     reorder: '',
     add: ''
-  }
+  },
+  disabledReorderIds = []
 }: EditableListProps<T>) => {
   const handleDelete = (id: string) => {
     onItemsChange(items.filter(item => item.id !== id))
@@ -58,6 +62,7 @@ const EditableList = <T,>({
 
   const handleMoveUp = (index: number) => {
     if (index === 0) return
+    if (disabledReorderIds?.includes(items[index].id)) return
     const newItems = [...items]
     ;[newItems[index - 1], newItems[index]] = [newItems[index], newItems[index - 1]]
     onItemsChange(newItems)
@@ -65,6 +70,7 @@ const EditableList = <T,>({
 
   const handleMoveDown = (index: number) => {
     if (index === items.length - 1) return
+    if (disabledReorderIds?.includes(items[index].id)) return
     const newItems = [...items]
     ;[newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]]
     onItemsChange(newItems)
@@ -73,11 +79,16 @@ const EditableList = <T,>({
   const canAddMore = !maxItems || items.length < maxItems
 
   return (
-    <div className="flex flex-col gap-2 h-full">
+    <div className="flex flex-col gap-2 h-full w-full">
       {items.map((item, index) => {
         const below = renderBelow?.(item, index)
         return (
-          <div key={item.id} className={`flex flex-col gap-2`}>
+          <motion.div
+            key={item.id}
+            layout
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="flex flex-col gap-2"
+          >
             <div className={`flex items-center gap-2`}>
               {showIndex && (
                 <div className={`min-w-[40px] ${classNames?.index}`}>
@@ -86,29 +97,35 @@ const EditableList = <T,>({
                   </span>
                 </div>
               )}
-              <div className="flex-1 h-full">{renderItem(item, index)}</div>
               {canReorder && (
-                <div className={`flex flex-col gap-1 ${classNames?.reorder}`}>
-                  <button
+                <div className={`flex flex-col gap-1 ${classNames?.reorder || ''}`}>
+                  <motion.button
                     type="button"
                     onClick={() => handleMoveUp(index)}
-                    disabled={index === 0}
+                    disabled={index === 0 || disabledReorderIds?.includes(item.id)}
                     className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
                     aria-label="Переместить вверх"
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   >
-                    ↑
-                  </button>
-                  <button
+                    <SvgIcon src={iconArrowUp} size={14} className="text-current !h-2.5" />
+                  </motion.button>
+                  <motion.button
                     type="button"
                     onClick={() => handleMoveDown(index)}
-                    disabled={index === items.length - 1}
+                    disabled={index === items.length - 1 || disabledReorderIds?.includes(item.id)}
                     className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
                     aria-label="Переместить вниз"
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   >
-                    ↓
-                  </button>
+                    <SvgIcon src={iconArrowDown} size={14} className="text-current !h-2.5" />
+                  </motion.button>
                 </div>
               )}
+              <div className="flex-1 h-full">{renderItem(item, index)}</div>
               {canDelete && (
                 <Button
                   type="button"
@@ -136,7 +153,7 @@ const EditableList = <T,>({
                 </motion.div>
               ) : null}
             </AnimatePresence>
-          </div>
+          </motion.div>
         )
       })}
       {onAdd && canAddMore && (

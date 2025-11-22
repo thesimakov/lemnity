@@ -3,6 +3,7 @@
 api.ts
 apis/app-api.ts
 apis/auth-api.ts
+apis/files-api.ts
 apis/password-reset-api.ts
 apis/project-api.ts
 apis/widgets-api.ts
@@ -16,6 +17,7 @@ docs/CreateProjectDto.md
 docs/CreateProjectResponse.md
 docs/CreateWidgetDto.md
 docs/DeleteProjectResponse.md
+docs/FilesApi.md
 docs/ForgotPasswordDto.md
 docs/GetProjectResponse.md
 docs/LoginResponse.md

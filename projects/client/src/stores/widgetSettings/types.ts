@@ -122,6 +122,7 @@ export type StubWidgetSettings = {
 export type WidgetSpecificSettings =
   | WheelOfFortuneWidgetSettings
   | ActionTimerWidgetSettings
+  | FABMenuWidgetSettings
   | StubWidgetSettings
 
 export type FormSettings = {
