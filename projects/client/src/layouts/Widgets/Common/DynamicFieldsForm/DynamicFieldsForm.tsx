@@ -117,7 +117,7 @@ const DynamicFieldsForm = ({
       ) : null}
       {title.text && (
         <h2
-          className={`text-2xl font-bold ${centered ? 'text-center' : ''}`}
+          className={`text-2xl font-bold whitespace-pre-wrap ${centered ? 'text-center' : ''}`}
           style={{ color: title.color }}
         >
           {title.text}
@@ -141,7 +141,10 @@ const DynamicFieldsForm = ({
         style={borderEnabled ? { borderColor } : undefined}
       >
         {description.text && (
-          <p className="text-md opacity-90" style={{ color: description.color }}>
+          <p
+            className="text-md opacity-90 whitespace-pre-wrap"
+            style={{ color: description.color }}
+          >
             {description.text}
           </p>
         )}

@@ -148,7 +148,8 @@ const WidgetSchemaExtension = z.object({
         .object({
           imagePosition: ImagePosition.optional()
         })
-        .optional()
+        .optional(),
+      borderColor: z.string().optional()
     })
     .optional()
 })

@@ -82,6 +82,8 @@ export type WheelOfFortuneWidgetSettings = {
     randomize: boolean
     items: SectorItem[]
   }
+  borderColor: string
+  borderThickness: number
 }
 
 export type CountdownUnitKey = 'days' | 'hours' | 'minutes' | 'seconds'

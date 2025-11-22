@@ -43,5 +43,15 @@ export const createWheelActions = (
         ...widget.sectors,
         items: widget.sectors.items.filter(item => item.id !== id)
       }
+    })),
+  setWheelBorderColor: (color: string) =>
+    updateWidget(widget => ({
+      ...widget,
+      borderColor: color
+    })),
+  setWheelBorderThickness: (thickness: number) =>
+    updateWidget(widget => ({
+      ...widget,
+      borderThickness: Math.max(0, Math.min(20, thickness))
     }))
 })

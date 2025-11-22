@@ -27,7 +27,12 @@ const WheelMobileScreen = () => {
       >
         <CloseButton position="right" />
         <div className="flex flex-col gap-4 items-center">
-          <WheelOfFortune sectors={items} spinTrigger={spinTrigger} />
+          <WheelOfFortune
+            sectors={items}
+            spinTrigger={spinTrigger}
+            borderColor={settings?.borderColor}
+            borderThickness={settings?.borderThickness}
+          />
           <DynamicFieldsForm isMobile centered onSubmit={() => {}} />
         </div>
       </div>
