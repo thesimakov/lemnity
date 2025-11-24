@@ -38,7 +38,7 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
   },
   {
     type: WidgetTypes.FAB_MENU,
-    title: 'FAB меню',
+    title: 'Мультикнопка',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'

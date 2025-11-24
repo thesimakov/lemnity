@@ -1,93 +1,34 @@
 import type { PreviewMode } from '@/stores/widgetPreviewStore'
-import './FABMenuPreview.css'
-import { useFABMenuSettings } from './hooks'
-import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import type { ButtonPosition } from '@/stores/widgetSettingsStore'
-import type { FABMenuSectorItem } from './types'
-import { FAB_MENU_ICON_OPTIONS, FAB_MENU_BUTTON_PRESETS } from './buttonLibrary'
-
-const FALLBACK_SECTORS: FABMenuSectorItem[] = FAB_MENU_BUTTON_PRESETS.slice(0, 6).map(
-  (preset, index) => ({
-    id: `fallback-${preset.icon}-${index}`,
-    label: preset.label,
-    icon: preset.icon,
-    payload: preset.payload,
-    color: preset.color,
-    description: preset.description
-  })
-)
-
-const MENU_POSITION_CLASS: Record<ButtonPosition, string> = {
-  'bottom-left': 'fabMenuPreview__menu--bottom-left',
-  'bottom-right': 'fabMenuPreview__menu--bottom-right',
-  'top-right': 'fabMenuPreview__menu--bottom-right'
-}
+import FabMenuWidget from './FabMenuWidget'
 
 type FABMenuPreviewProps = {
   mode: PreviewMode
 }
 
-const getIcon = (iconKey: FABMenuSectorItem['icon']) => FAB_MENU_ICON_OPTIONS[iconKey]
-
-const formatItems = (items: FABMenuSectorItem[]): FABMenuSectorItem[] =>
-  items.length > 0 ? items : FALLBACK_SECTORS
-
-const normalizePosition = (position: ButtonPosition): ButtonPosition =>
-  position === 'bottom-left' ? 'bottom-left' : 'bottom-right'
-
 const FABMenuPreview = ({ mode }: FABMenuPreviewProps) => {
-  const { settings } = useFABMenuSettings()
-  const buttonPosition = useWidgetSettingsStore(
-    s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
-  )
-  const items = formatItems(settings?.sectors.items ?? [])
-  const safePosition = normalizePosition(buttonPosition)
-  const menuPositionClass = MENU_POSITION_CLASS[safePosition]
-
   return (
-    <div className="fabMenuPreview">
+    <div className="flex h-full flex-col gap-4">
       <div
-        className={`fabMenuPreview__canvas ${
-          mode === 'mobile' ? 'fabMenuPreview__canvas--mobile' : ''
+        className={`flex flex-1 rounded-[32px] border border-indigo-100 bg-gradient-to-br from-[#F5F6FF] to-[#EEF2FF] p-6 ${
+          mode === 'mobile' ? 'max-w-[360px] self-center w-full' : ''
         }`}
       >
-        <div className="fabMenuPreview__viewport">
-          <div className="fabMenuPreview__content">
-            <span className="fabMenuPreview__title" />
-            <span className="fabMenuPreview__text" />
-            <span className="fabMenuPreview__text" style={{ width: '80%' }} />
-            <span className="fabMenuPreview__text" style={{ width: '60%' }} />
+        <div className="relative flex h-full w-full flex-col rounded-[28px] bg-white p-8 shadow-inner shadow-indigo-50">
+          <div className="flex flex-col gap-3 text-indigo-200 absolute top-0 left-0">
+            <span className="h-6 w-2/3 rounded-full bg-current" />
+            <span className="h-3 w-11/12 rounded-full bg-current/70" />
+            <span className="h-3 w-8/12 rounded-full bg-current/60" />
+            <span className="h-3 w-7/12 rounded-full bg-current/60" />
           </div>
 
-          <div className={`fabMenuPreview__menu ${menuPositionClass}`}>
-            <div className="fabMenuPreview__menuList">
-              {items.map(item => {
-                const iconAsset = getIcon(item.icon)
-                return (
-                  <div
-                    key={item.id}
-                    className="fabMenuPreview__menuItem"
-                    style={{ background: item.color }}
-                  >
-                    <span className="fabMenuPreview__icon">
-                      {iconAsset?.showIcon ? (
-                        <img src={iconAsset.icon} alt={iconAsset.label} />
-                      ) : (
-                        <>{item.label.slice(0, 1)}</>
-                      )}
-                    </span>
-                    <span>{item.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-            <button className="fabMenuPreview__trigger" aria-label="FAB menu trigger">
-              ✦
-            </button>
-          </div>
+          <FabMenuWidget
+            anchorBaseClassName="absolute bottom-8"
+            anchorOffsetClassName={{ left: 'left-8', right: 'right-8' }}
+            listClassName="max-w-[280px]"
+            triggerClassName="h-16 w-16"
+          />
         </div>
       </div>
-      <span className="fabMenuPreview__signature">Сделано на lemnity</span>
     </div>
   )
 }

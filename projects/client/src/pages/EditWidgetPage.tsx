@@ -3,7 +3,8 @@ import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
 import { useParams } from 'react-router-dom'
 import { Breadcrumbs, BreadcrumbItem } from '@heroui/breadcrumbs'
 import { Button } from '@heroui/button'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from 'react'
+import { createPortal } from 'react-dom'
 import { useProjectsStore } from '@/stores/projectsStore'
 import SvgIcon from '@/components/SvgIcon'
 import iconEye from '@/assets/icons/eye.svg'
@@ -37,6 +38,7 @@ const EditWidgetPage = () => {
   const [tab, setTab] = useState<TabKey>('fields')
   const [saving, setSaving] = useState(false)
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
+  const [isInlinePreviewOpen, setIsInlinePreviewOpen] = useState(false)
   // legacy local spin state removed; use preview store instead
   const initialized = useWidgetSettingsStore(s => s.initialized)
   const widgetType = widget?.type
@@ -90,13 +92,24 @@ const EditWidgetPage = () => {
     return () => io.disconnect()
   }, [])
 
+  const previewLauncher = widgetDefinition?.preview?.launcher ?? 'modal'
+  const InlinePreviewComponent = widgetDefinition?.preview?.inline
+
   const handlePreview = () => {
+    if (previewLauncher === 'inline' && InlinePreviewComponent) {
+      setIsInlinePreviewOpen(true)
+      return
+    }
     setIsPreviewModalOpen(true)
     setPreviewScreen('main')
   }
 
   const handleClosePreview = () => {
     setIsPreviewModalOpen(false)
+  }
+
+  const handleCloseInlinePreview = () => {
+    setIsInlinePreviewOpen(false)
   }
 
   const handleSave = async () => {
@@ -255,14 +268,40 @@ const EditWidgetPage = () => {
         </DashboardLayout>
       </div>
 
-      <PreviewModal
-        isOpen={isPreviewModalOpen}
-        onClose={handleClosePreview}
-        screen={previewScreen}
-        onSubmit={handleSubmit}
-      />
+      {previewLauncher === 'inline' && InlinePreviewComponent ? (
+        <InlinePreviewPortal
+          isOpen={isInlinePreviewOpen}
+          onClose={handleCloseInlinePreview}
+          Component={InlinePreviewComponent}
+        />
+      ) : (
+        <PreviewModal
+          isOpen={isPreviewModalOpen}
+          onClose={handleClosePreview}
+          screen={previewScreen}
+          onSubmit={handleSubmit}
+        />
+      )}
     </>
   )
 }
 
 export default memo(EditWidgetPage)
+
+type InlinePreviewPortalProps = {
+  isOpen: boolean
+  onClose: () => void
+  Component: ComponentType<{ onClose: () => void }>
+}
+
+const InlinePreviewPortal = ({ isOpen, onClose, Component }: InlinePreviewPortalProps) => {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
+
+  if (!isOpen || !mounted) return null
+  return createPortal(<Component onClose={onClose} />, document.body)
+}

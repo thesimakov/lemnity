@@ -53,7 +53,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     label: 'Написать на email',
     buttonLabel: 'Email',
     group: 'universal',
-    color: '#1D4ED8',
+    color: '#5951E5',
     payload: { type: 'email', value: FAB_MENU_PAYLOAD_PLACEHOLDERS.email },
     description: 'Отправьте письмо на мыло'
   },
@@ -62,7 +62,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     label: 'Обратный звонок',
     buttonLabel: 'Телефон',
     group: 'universal',
-    color: '#0EA5E9',
+    color: '#5951E5',
     payload: { type: 'phone', value: FAB_MENU_PAYLOAD_PLACEHOLDERS.phone },
     description: 'Наш менеджер перезвонит'
   },
@@ -71,7 +71,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     label: 'Наш сайт',
     buttonLabel: 'Сайт',
     group: 'universal',
-    color: '#9333EA',
+    color: '#5951E5',
     payload: { type: 'link', value: 'lemnity.ru' }
   },
   {
@@ -79,7 +79,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     label: 'Забронировать',
     buttonLabel: 'Забронировать',
     group: 'universal',
-    color: '#F97316',
+    color: '#5951E5',
     payload: { type: 'script', value: FAB_MENU_PAYLOAD_PLACEHOLDERS.script }
   },
   {
@@ -87,7 +87,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     label: 'Свободная форма',
     buttonLabel: 'Свободная форма',
     group: 'universal',
-    color: '#5B21B6',
+    color: '#5951E5',
     payload: { type: 'link', value: '' },
     showIcon: false
   },
