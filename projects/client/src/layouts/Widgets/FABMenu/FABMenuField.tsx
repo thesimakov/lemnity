@@ -111,7 +111,7 @@ const FABMenuField = () => {
               isPendingSelection={sector.id === pendingSectorId}
             />
           )}
-          renderBelow={(sector) =>
+          renderBelow={sector =>
             sector.id === pendingSectorId ? (
               <FABMenuButtonPicker onClose={handlePickerCancel} onSelect={handlePresetSelect} />
             ) : null

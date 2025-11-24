@@ -1,42 +1,52 @@
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
-import type { DayKey, WidgetSettings } from './types'
-import { getWidgetDefinitionBase } from './widgetDefinitions'
+import type {
+  DisplaySettings,
+  Extendable,
+  FieldsSettings,
+  IntegrationSettings,
+  WidgetSettings
+} from './types'
+import {
+  buildStubFieldsSettings,
+  getWidgetDefinitionBase,
+  getWidgetSurfaceModes
+} from './widgetDefinitions'
+import { buildStandardDisplaySettings } from './displayDefaults'
 
-const defaultDays: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+const buildStandardIntegrationSettings = (): IntegrationSettings => ({ scriptSnippet: '' })
+
+type LooseFieldsSettings = Extendable<Record<string, unknown>>
+
+const buildLooseFieldsSettings = (): LooseFieldsSettings => ({})
+
+const buildLooseDisplaySettings = (): DisplaySettings => ({}) as DisplaySettings
+
+const buildLooseIntegrationSettings = (): IntegrationSettings => ({}) as IntegrationSettings
 
 export const buildDefaults = (id: string, widgetType: WidgetTypeEnum): WidgetSettings => {
   const definition = getWidgetDefinitionBase(widgetType)
+  const surfaces = getWidgetSurfaceModes(widgetType)
+
+  const fieldsBuilder: () => FieldsSettings | LooseFieldsSettings =
+    surfaces.fields === 'standard'
+      ? (definition.buildFieldsSettings ?? buildStubFieldsSettings)
+      : (definition.buildFieldsSettings ?? buildLooseFieldsSettings)
+  const displayBuilder =
+    surfaces.display === 'standard'
+      ? (definition.buildDisplaySettings ?? buildStandardDisplaySettings)
+      : (definition.buildDisplaySettings ?? buildLooseDisplaySettings)
+  const integrationBuilder =
+    surfaces.integration === 'standard'
+      ? (definition.buildIntegrationSettings ?? buildStandardIntegrationSettings)
+      : (definition.buildIntegrationSettings ?? buildLooseIntegrationSettings)
 
   return {
     id,
     widgetType,
-    form: definition.buildFormSettings(),
+    fields: (fieldsBuilder() ?? {}) as FieldsSettings,
     widget: definition.buildWidgetSettings(),
-    display: {
-      startShowing: 'onClick',
-      timer: { delayMs: 20000 },
-      icon: {
-        type: 'image',
-        image: { fileName: '', url: '' },
-        button: { text: '', buttonColor: '#5951E5', textColor: '#FFFFFF' },
-        position: 'bottom-left',
-        hide: 'always'
-      },
-      weekdays: { enabled: true, days: defaultDays, weekdaysOnly: false },
-      showRules: {
-        onExit: false,
-        scrollBelow: { enabled: false, percent: null },
-        afterOpen: { enabled: false, seconds: null }
-      },
-      frequency: { mode: 'everyPage' },
-      dontShow: { afterWin: false, afterShows: null },
-      limits: { afterWin: false, afterShows: null },
-      schedule: {
-        date: { enabled: true, value: 'fromDate' },
-        time: { enabled: true, value: 'fromTime' }
-      }
-    },
-    integration: { scriptSnippet: '' }
+    display: displayBuilder(),
+    integration: integrationBuilder()
   }
 }
 

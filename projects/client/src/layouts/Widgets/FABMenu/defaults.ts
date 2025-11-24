@@ -4,9 +4,14 @@ import type {
   FABMenuSectorItem,
   FABMenuWidgetSettings
 } from '@/layouts/Widgets/FABMenu/types'
-import { buildFormSettings } from '@/layouts/Widgets/Common/formDefaults'
+import type {
+  DisplaySettings,
+  FieldsSettings,
+  IntegrationSettings
+} from '@/stores/widgetSettings/types'
 import { FAB_MENU_BUTTON_PRESETS } from '@/layouts/Widgets/FABMenu/buttonLibrary'
 import { uuidv4 } from '@/common/utils/uuidv4'
+import { buildStandardDisplaySettings } from '@/stores/widgetSettings/displayDefaults'
 
 const createSectorId = (): string => uuidv4()
 
@@ -69,19 +74,12 @@ export const buildFABMenuWidgetSettings = (): FABMenuWidgetSettings => ({
   }
 })
 
-export const buildFABMenuFormSettings = () =>
-  buildFormSettings({
-    formTexts: {
-      title: { text: 'Готовы пообщаться?', color: '#FFFFFF' },
-      description: {
-        text: 'Отправьте сообщение в удобный канал и получите ответ в ближайшее время',
-        color: '#FFFFFF'
-      },
-      button: {
-        text: 'Связаться',
-        color: '#FFFFFF',
-        backgroundColor: '#1D4ED8',
-        icon: 'paper-airplane'
-      }
-    }
-  })
+export const buildFABMenuFieldsSettings = (): FieldsSettings => ({}) as FieldsSettings
+
+export const buildFABMenuDisplaySettings = (): DisplaySettings => {
+  const defaults = buildStandardDisplaySettings()
+  return { ...defaults, icon: { ...defaults.icon, position: 'bottom-right' } }
+}
+
+export const buildFABMenuIntegrationSettings = (): IntegrationSettings =>
+  ({}) as IntegrationSettings

@@ -1,45 +1,50 @@
 ## Как добавить новый тип виджета
 
-1. **Обнови Prisma enum**
-   - Добавь новое значение в `projects/server/prisma/schema/models/widgets.prisma` → `enum WidgetType`.
-
-0.5 **Синхронизация каталога виджетов**
-- После добавления нового типа открой `projects/client/src/layouts/Widgets/constants.ts` и добавь его в `WidgetTypes`/`AVAILABLE_WIDGETS`, чтобы он отображался на странице выбора виджета и имел нужный статус (available/soon).
-
-2. **Пропиши миграцию (prod/поддерживаемая ветка)**
+### 1. Prisma + API слой
+1. Добавь новое значение в `projects/server/prisma/schema/widget.prisma` → `enum WidgetType`.
+2. Прогони миграцию (боевые/поддерживаемые ветки):
    ```bash
-   cd /Users/albert/Documents/GitHub/lemnity
    pnpm --filter server exec npx prisma migrate dev --name add-<widget>
    pnpm --filter server exec npx prisma db push
    pnpm --filter server exec npx prisma generate
-   docker compose restart server
    ```
+   Для локальной разработки можно сделать `prisma migrate reset`, затем `db push` и `generate`.
+3. Перезапусти сервер, чтобы он подхватил новую схему (`docker compose restart server`).
 
-3. **Без миграций (локальная разработка, reset)**
+### 2. SDK и клиентские типы
+1. Запусти общий генератор:
    ```bash
-   cd /Users/albert/Documents/GitHub/lemnity
-   pnpm --filter server exec npx prisma migrate reset
-   pnpm --filter server exec npx prisma db push
-   pnpm --filter server exec npx prisma generate
-   docker compose restart server
+   pnpm generate:api
    ```
+   Он обновит `@lemnity/api-sdk`, чтобы новый тип оказался в `WidgetTypeEnum`.
+2. Проверь, что клиент собирается и видит свежий enum.
+3. Обнови `projects/client/src/layouts/Widgets/constants.ts` (`WidgetTypes`, `AVAILABLE_WIDGETS`, статусы), иначе UI не покажет новый виджет в списках.
 
-4. **SDK и клиент**
-   - Запусти сервер (или убедись, что он уже работает) и подгрузил новый Prisma Client.
-   - Сгенерируй API SDK:
-     ```bash
-     cd /Users/albert/Documents/GitHub/lemnity
-     pnpm generate:api
-     ```
+### 3. `@lemnity/widget-config`
+1. Создай папку `packages/widget-config/src/widgets/<WidgetName>/`.
+2. Опиши схему `widget` (например, `const widgetSchema = z.object({ ... })`).
+3. Если `fields`, `display`, `integration` отличаются от стандартных, определи свои поверхности и передай их в `buildWidgetSettingsSchema`.
+4. Добавь файл `canonicalize.ts`, который чистит неактивные ветки и специфичные поля виджета.
+5. Зарегистрируй схему и канонизатор в `packages/widget-config/src/widgets/index.ts` и `packages/widget-config/src/canonicalize.ts`.
+6. Если требуется миграция старых данных, подними `CURRENT_VERSION` и добавь шаг в `migrations.ts`.
+7. Собери пакет: `pnpm --filter @lemnity/widget-config build`.
 
-5. **Frontend**
-   - Создай папку `projects/client/src/layouts/Widgets/<WidgetName>` и добавь:
-     - Превью-компоненты (панель, desktop, mobile).
-     - `defaults.ts` / `metadata.ts` / `settings` секции рядом.
-     - Секции настроек как `WidgetSettingsSection`.
-   - Обнови `projects/client/src/stores/widgetSettings/widgetDefinitions.ts` и `layouts/Widgets/registry.ts`, импортируя данные из новой папки.
+### 4. Клиент (UI и store)
+1. Создай папку `projects/client/src/layouts/Widgets/<WidgetName>`:
+   - `defaults.ts` (widget/fields/display/integration).
+   - `metadata.ts` (preview + settings sections).
+   - Компоненты превью (`Preview`, `DesktopScreen`, `MobileScreen`) и настройки.
+2. В `projects/client/src/stores/widgetSettings/widgetDefinitions.ts` зарегистрируй билдеры (`buildWidgetSettings`, `buildFieldsSettings`, `buildDisplaySettings`, `buildIntegrationSettings`) и `settingsSurfaces`.
+3. В `layouts/Widgets/registry.ts` добавь metadata нового виджета.
+4. В `widgetSlice.ts` подключи специфичные actions (`create<Widget>Actions`), а при необходимости обнови `fieldsSlice`/`displaySlice`/`integrationSlice`.
 
-6. **Перезапуск**
-   - Всегда используем `docker compose restart server`, чтобы сервер заново подхватил
-     prisma-схемы и swagger-док.
+### 5. Серверные проверки
+1. Убедись, что `ConfigService` принимает новый тип без дополнительных правок (канонизатор уже в пакете).
+2. При необходимости добавь обработчики в resolver/контроллеры (например, если нужны специфичные DTO поля).
+3. Прогоняй `pnpm --filter server lint` и (по возможности) тесты.
+
+### 6. Проверка end-to-end
+- `pnpm --filter client lint:check`
+- Ручной прогон через страницу редактирования виджета (vite dev server).
+- Проверить, что сервер принимает сохранённый конфиг и отдаёт его обратно уже в каноническом виде.
 

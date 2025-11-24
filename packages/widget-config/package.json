@@ -5,20 +5,36 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "default": "./dist/schema.js"
+    },
+    "./migrations": {
+      "types": "./dist/migrations.d.ts",
+      "default": "./dist/migrations.js"
+    },
+    "./widgets/wheel-of-fortune": {
+      "types": "./dist/widgets/WheelOfFortune/schema.d.ts",
+      "default": "./dist/widgets/WheelOfFortune/schema.js"
+    },
+    "./widgets/action-timer": {
+      "types": "./dist/widgets/ActionTimer/schema.d.ts",
+      "default": "./dist/widgets/ActionTimer/schema.js"
+    },
+    "./widgets/fab-menu": {
+      "types": "./dist/widgets/FABMenu/schema.d.ts",
+      "default": "./dist/widgets/FABMenu/schema.js"
     }
-  },
-  "source": "src/index.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "zod": "^4.1.9"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3"
   }
 }

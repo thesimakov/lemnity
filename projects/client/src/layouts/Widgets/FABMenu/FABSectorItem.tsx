@@ -62,7 +62,7 @@ const FABSectorItem = ({
     }
 
     return items.map(item => (
-      <span className="flex items-center justify-start gap-2 text-sm">
+      <span key={item.textValue} className="flex items-center justify-start gap-2 text-sm">
         {FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].showIcon && (
           <SvgIcon
             src={FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].icon}
@@ -91,7 +91,7 @@ const FABSectorItem = ({
 
   const renderPendingTrigger = () => (
     <div
-      className="pointer-events-none flex items-center gap-3 rounded-md border border-[#D9D9E0] bg-white px-3 py-2 text-sm w-full"
+      className="pointer-events-none flex items-center gap-2 rounded-md border border-[#D9D9E0] bg-white px-3 py-2 text-sm w-full"
       aria-label="Выбрать кнопку"
     >
       <SvgIcon src={iconHeartDislike} size={16} className="text-current w-min" />

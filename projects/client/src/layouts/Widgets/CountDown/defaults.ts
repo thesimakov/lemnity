@@ -1,6 +1,6 @@
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type { ActionTimerWidgetSettings } from '@/stores/widgetSettings/types'
-import { buildFormSettings } from '@/layouts/Widgets/Common/formDefaults'
+import { buildFieldsSettings } from '@/layouts/Widgets/Common/formDefaults'
 
 export const buildActionTimerWidgetSettings = (): ActionTimerWidgetSettings => ({
   type: WidgetTypeEnum.ACTION_TIMER,
@@ -17,9 +17,9 @@ export const buildActionTimerWidgetSettings = (): ActionTimerWidgetSettings => (
   }
 })
 
-export const buildActionTimerFormSettings = () =>
+export const buildActionTimerFieldsSettings = () =>
   (() => {
-    const base = buildFormSettings({
+    const base = buildFieldsSettings({
       formTexts: {
         title: { text: 'Успейте попасть на мероприятие мечты', color: '#FFFFFF' },
         description: {

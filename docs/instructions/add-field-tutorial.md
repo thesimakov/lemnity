@@ -1,25 +1,26 @@
 # Как добавить новое поле в виджет
 
-1. **Определи поле в типах и дефолтах**
-   - Расширь соответствующий интерфейс в `src/stores/widgetSettings/types.ts`, добавив новое свойство с нужным типом/ограничениями.
-   - Обнови дефолты виджета (`layouts/<Widget>/defaults.ts` и глобальные `stores/widgetSettings/defaults.ts`), чтобы поле всегда существовало с предсказуемым значением.
-   - Если значение попадает в серверную валидацию, обнови `stores/widgetSettings/schema.ts`, добавив проверки (например, `z.number().min(...).max(...)`) и пометки `optional`, если это поле необязательно.
+1. **Согласуй схему и типы**
+   - Добавь поле в `packages/widget-config/src/widgets/<Widget>/schema.ts` (или соответствующую surface в `base.ts`, если это стандартное поле). Укажи точную zod-валидацию и обязательность.
+   - Если поле должно триммиться/очищаться, обнови `packages/widget-config/src/widgets/<Widget>/canonicalize.ts`.
+   - Обнови клиентские типы (`projects/client/src/stores/widgetSettings/types.ts`) и дефолты (`layouts/Widgets/<Widget>/defaults.ts`, а при необходимости `stores/widgetSettings/defaults.ts`), чтобы новое поле всегда имело базовое значение.
 
-2. **Добавь экшены и хук**
-   - В `layouts/<Widget>/actions.ts` добавь `set<ИмяПоля>` в `create...Actions`, чтобы можно было обновлять состояние.
-   - Зарегистрируй новый метод в `stores/widgetSettings/widgetActions/types.ts` и прокинь его через `createWidgetSlice`.
-   - Обнови хук в `layouts/<Widget>/hooks.ts`, чтобы он возвращал новый сеттер вместе с остальными настройками.
+2. **Свяжи поле со стором**
+   - В `layouts/Widgets/<Widget>/actions.ts` добавь `set<ИмяПоля>` в `create...Actions`, чтобы Zustand мог обновлять значение.
+   - Пропиши метод в `projects/client/src/stores/widgetSettings/widgetActions/types.ts` и прокинь его через `createWidgetSlice`.
+   - Обнови хук (`layouts/Widgets/<Widget>/hooks.ts` или `stores/widgetSettings/fieldsHooks.ts`), чтобы вернуть новый сеттер и текущее значение.
 
-3. **Покажи поле в UI настроек**
-   - В нужной секции настроек (`layouts/WidgetSettings/...`) добавь UI-элемент (`NumberField`, `Input`, `ColorAccessory` и т.д.).
-   - Подключи хук и передавай текущее значение, используя `useWidgetStaticDefaults`, чтобы подставить дефолты, пока настройки ещё не инициализированы.
-   - Установи `min/max`, placeholder, описание и валидацию по необходимости.
+3. **Добавь поле в UI настроек**
+   - В нужной секции (`layouts/WidgetSettings/...`) добавь компонент (`Input`, `NumberField`, `SwitchableField` и т.д.).
+   - Подключи соответствующий хук (`useFieldsSettings`, `useDisplaySettings`, специализированный hook виджета) и подставь значение с дефолтом через `useWidgetStaticDefaults`/`withDefaults`.
+   - Укажи ограничения (`min/max`, placeholder, подписи) в UI, чтобы они совпадали с требованиями схемы.
 
-4. **Передай значение в рендер виджета**
-   - Расширь пропсы компонента виджета (`layouts/<Widget>/<Widget>.tsx`) и зажми значение в нужных пределах (например, `Math.max(0, Math.min(20, field ?? default))`).
-   - Пропиши передачу поля из экранов (`DesktopScreen`, `MobileScreen` и т.п.): `field={settings?.field}`.
+4. **Передай значение в превью/рендер**
+   - Расширь пропсы экранов (`DesktopScreen`, `MobileScreen`, панель) и основной компоненты виджета.
+   - Подмешивай дефолты через `withDefaults`, прежде чем использовать значение в рендере, и при необходимости нормализуй (например, clamp по диапазону).
 
 5. **Проверка**
-   - Убедись, что новое поле есть в дефолтах, схеме и действиях, чтобы состояние было согласованным.
-   - Запусти при необходимости линтер/сборку и визуально проверь работу в настройках и предпросмотре.
+   - Проверь, что поле присутствует во всех слоях: схема `widget-config`, канонизатор, клиентские типы/дефолты, actions/hooks, UI.
+   - Прогоняй `pnpm --filter @lemnity/widget-config build`, `pnpm --filter client lint:check` и убедись, что сервер принимает/отдаёт конфиг без ошибок.
+   - В визуальном редакторе проверь, что поле сохраняется, попадает в preview и уходит на сервер в каноническом виде.
 

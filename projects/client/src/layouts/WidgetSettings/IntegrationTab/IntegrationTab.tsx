@@ -3,12 +3,24 @@ import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import iconCode from '@/assets/icons/website-code.svg'
 import { memo } from 'react'
 import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
+import SurfaceNotice from '@/layouts/WidgetSettings/Common/SurfaceNotice'
+import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 
 const IntegrationTab = () => {
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
+  const widgetDefinition = widgetType ? getWidgetDefinition(widgetType) : null
   const staticDefaults = useWidgetStaticDefaults()
   const scriptSnippet = useWidgetSettingsStore(
-    s => s.settings?.integration?.scriptSnippet ?? staticDefaults.integration.scriptSnippet
+    s => s.settings?.integration?.scriptSnippet ?? staticDefaults?.integration.scriptSnippet ?? ''
   )
+  const showStandardSurface = !widgetType || usesStandardSurface(widgetType, 'integration')
+  const CustomIntegrationSurface = widgetDefinition?.settings.surfaces?.integration
+
+  if (!showStandardSurface) {
+    if (CustomIntegrationSurface) return <CustomIntegrationSurface />
+    return <SurfaceNotice surface="integration" />
+  }
 
   return (
     <div className="flex flex-col gap-2">

@@ -1,7 +1,7 @@
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import { createDefaultSector } from './createDefaultSector'
 import type { WheelOfFortuneWidgetSettings } from '@/stores/widgetSettings/types'
-import { buildFormSettings } from '@/layouts/Widgets/Common/formDefaults'
+import { buildFieldsSettings } from '@/layouts/Widgets/Common/formDefaults'
 
 const MIN_SECTORS = 4
 
@@ -15,8 +15,8 @@ export const buildWheelWidgetSettings = (): WheelOfFortuneWidgetSettings => ({
   borderThickness: 12
 })
 
-export const buildWheelFormSettings = () =>
-  buildFormSettings({
+export const buildWheelFieldsSettings = () =>
+  buildFieldsSettings({
     formTexts: {
       title: { text: 'Получите скидку в честь дня рождения компании', color: '#FFFFFF' },
       description: {

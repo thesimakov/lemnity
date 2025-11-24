@@ -4,13 +4,13 @@ import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type { DesktopScreenProps } from '../registry'
 import Badge from './Badge'
 import RewardContent from '../Common/RewardContent/RewardContent'
-import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 
 const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
-  const companyLogo = useWidgetSettingsStore(s => s?.settings?.form.companyLogo)
-  const { settings } = useFormSettings()
+  const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
+  const { settings } = useFieldsSettings()
   const contentPosition =
-    useWidgetSettingsStore(s => s.settings?.form.template?.templateSettings?.contentPosition) ??
+    useWidgetSettingsStore(s => s.settings?.fields?.template?.templateSettings?.contentPosition) ??
     'left'
 
   const layoutClasses = `grid grid-cols-2 items-stretch w-full ${contentPosition === 'left' ? 'pl-6' : 'pr-6'}`

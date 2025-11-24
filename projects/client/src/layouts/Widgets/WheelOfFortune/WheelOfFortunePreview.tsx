@@ -10,7 +10,7 @@ type WheelOfFortunePreviewProps = {
 
 const WheelOfFortunePreview = ({ mode }: WheelOfFortunePreviewProps) => {
   const windowFormat = useWidgetSettingsStore(
-    s => s.settings.form.template?.templateSettings?.windowFormat
+    s => s.settings?.fields?.template?.templateSettings?.windowFormat
   )
 
   const ref = useRef<HTMLDivElement>(null)
@@ -27,7 +27,7 @@ const WheelOfFortunePreview = ({ mode }: WheelOfFortunePreviewProps) => {
     }
   }, [ref, modalWindowRef, mode, windowFormat])
 
-  if (mode === 'mobile') return <MobilePreview />
+  if (mode === 'mobile') return <MobilePreview children={undefined} />
 
   if (windowFormat === 'modalWindow') {
     return (

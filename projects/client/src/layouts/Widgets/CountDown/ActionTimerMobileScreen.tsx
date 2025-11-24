@@ -3,7 +3,7 @@ import CountDown from './CountDown'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 const ActionTimerMobileScreen = () => {
-  const settings = useWidgetSettingsStore(s => s?.settings?.form?.template?.templateSettings)
+  const settings = useWidgetSettingsStore(s => s?.settings?.fields?.template?.templateSettings)
   const { customColor, colorScheme } = settings || { customColor: '#F5F6F8' }
 
   const bgStyle = { backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor }

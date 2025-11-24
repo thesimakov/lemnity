@@ -5,6 +5,7 @@ type ButtonPositionChooserProps = {
   title?: string
   value: ButtonPosition
   onChange: (value: ButtonPosition) => void
+  options?: ButtonPosition[]
 }
 
 const Dot = ({ className = '' }: { className?: string }) => (
@@ -32,25 +33,37 @@ const OptionCard = ({ selected, onClick, children }: CardProps) => {
   )
 }
 
+const POSITION_DOT_CLASS: Record<ButtonPosition, string> = {
+  'bottom-left': 'left-2 bottom-2',
+  'top-right': 'top-2 right-3',
+  'bottom-right': 'bottom-2 right-3'
+}
+
+const DEFAULT_POSITIONS: ButtonPosition[] = ['bottom-left', 'top-right', 'bottom-right']
+
 const ButtonPositionChooser = ({
   title = 'Положение кнопки открытия',
   value,
-  onChange
+  onChange,
+  options
 }: ButtonPositionChooserProps) => {
+  const availableOptions = options?.length ? options : DEFAULT_POSITIONS
+  const normalizedValue = availableOptions.includes(value) ? value : availableOptions[0]
+
   return (
     <div className="flex flex-col gap-3 rounded-md border border-[#E8E8E8] p-3">
       <span className="text-black">{title}</span>
       <div className="rounded-md border border-[#E8E8E8] p-2">
         <div className="flex gap-2">
-          <OptionCard selected={value === 'bottom-left'} onClick={() => onChange('bottom-left')}>
-            <Dot className="left-2 bottom-2" />
-          </OptionCard>
-          <OptionCard selected={value === 'top-right'} onClick={() => onChange('top-right')}>
-            <Dot className="top-2 right-3" />
-          </OptionCard>
-          <OptionCard selected={value === 'bottom-right'} onClick={() => onChange('bottom-right')}>
-            <Dot className="bottom-2 right-3" />
-          </OptionCard>
+          {availableOptions.map(position => (
+            <OptionCard
+              key={position}
+              selected={normalizedValue === position}
+              onClick={() => onChange(position)}
+            >
+              <Dot className={POSITION_DOT_CLASS[position] ?? ''} />
+            </OptionCard>
+          ))}
         </div>
       </div>
     </div>

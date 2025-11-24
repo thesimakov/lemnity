@@ -1,0 +1,90 @@
+import { z } from 'zod'
+import {
+  ColorScheme,
+  type WidgetTypeId,
+  buildWidgetSettingsSchema
+} from '../base.js'
+
+const WheelSectorSchema = z
+  .object({
+    id: z.string(),
+    mode: z.enum(['text', 'icon']),
+    text: z.string().optional(),
+    icon: z.string().optional(),
+    color: z.string(),
+    promo: z.string().optional(),
+    chance: z.number().nonnegative().optional(),
+    isWin: z.boolean().optional(),
+    textSize: z.number().nonnegative().optional(),
+    iconSize: z.number().nonnegative().optional(),
+    textColor: z.string().optional()
+  })
+  .superRefine((v, ctx) => {
+    if (v.mode === 'text') {
+      if (!v.text) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['text'],
+          message: 'Введите текст для сектора'
+        })
+      }
+      if (typeof v.icon !== 'undefined') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['icon'],
+          message: 'Иконка не может быть выбрана при режиме текста'
+        })
+      }
+    }
+    if (v.mode === 'icon') {
+      if (!v.icon) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['icon'],
+          message: 'Выберите иконку для сектора'
+        })
+      }
+      if (typeof v.text !== 'undefined') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['text'],
+          message: 'Сектор не может иметь текст в режиме иконки'
+        })
+      }
+    }
+  })
+
+const WidgetType: WidgetTypeId = 'WHEEL_OF_FORTUNE'
+
+const WheelWidgetSchema = z.object({
+  type: z.literal(WidgetType),
+  sectors: z.object({
+    randomize: z.boolean(),
+    items: z.array(WheelSectorSchema)
+  }),
+  borderColor: z.string().optional(),
+  borderThickness: z.number().min(0).max(20).optional(),
+  messages: z
+    .object({
+      onWin: z.object({
+        enabled: z.boolean(),
+        text: z.string(),
+        textSize: z.number().nonnegative(),
+        description: z.string(),
+        descriptionSize: z.number().nonnegative(),
+        colorScheme: z.object({
+          enabled: z.boolean(),
+          scheme: ColorScheme,
+          discount: z.object({ color: z.string(), bgColor: z.string() }),
+          promo: z.object({ color: z.string(), bgColor: z.string() })
+        })
+      }),
+      limitShows: z.object({ enabled: z.boolean(), text: z.string() }),
+      limitWins: z.object({ enabled: z.boolean(), text: z.string() }),
+      allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() })
+    })
+    .optional()
+})
+
+export const wheelOfFortuneSchema = buildWidgetSettingsSchema(WidgetType, WheelWidgetSchema)
+

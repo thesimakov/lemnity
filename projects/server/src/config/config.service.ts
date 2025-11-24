@@ -2,8 +2,8 @@ import { Injectable, BadRequestException } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import {
   CURRENT_VERSION,
-  migrateToCurrent,
-  validateCanonical,
+  canonicalizeWidgetConfig,
+  validate,
   type CanonicalWidgetSettings
 } from '@lemnity/widget-config'
 
@@ -12,12 +12,12 @@ export class ConfigService {
   constructor(private readonly prisma: PrismaService) {}
 
   validateAndCanonicalize(raw: unknown): { data: CanonicalWidgetSettings; version: number } {
-    const migrated = migrateToCurrent(raw)
-    const validation = validateCanonical(migrated.data)
+    const canonical = canonicalizeWidgetConfig(raw)
+    const validation = validate(canonical)
     if (!validation.ok) {
       throw new BadRequestException({ message: 'Invalid widget config', issues: validation.issues })
     }
-    return { data: migrated.data as CanonicalWidgetSettings, version: CURRENT_VERSION }
+    return { data: canonical as CanonicalWidgetSettings, version: CURRENT_VERSION }
   }
 
   // async save(widgetId: string, raw: unknown) {

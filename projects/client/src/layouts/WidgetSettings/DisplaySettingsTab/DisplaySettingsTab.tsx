@@ -7,6 +7,9 @@ import TimerSettingsField from './TimerSettingsField/TimerSettingsField'
 import { AnimatePresence } from 'framer-motion'
 import type { StartShowing, IconType, HideIcon } from '@/stores/widgetSettingsStore'
 import { memo, useCallback, useMemo } from 'react'
+import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
+import SurfaceNotice from '@/layouts/WidgetSettings/Common/SurfaceNotice'
+import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 
 const startShowingOptions: OptionItem[] = [
   { key: 'onClick', label: 'При нажатии на кнопку' },
@@ -22,7 +25,7 @@ const StartShowingControl = memo(() => {
   const setStartShowing = useWidgetSettingsStore(s => s.setStartShowing)
   const staticDefaults = useWidgetStaticDefaults()
   const startShowing = useWidgetSettingsStore(
-    s => s.settings?.display?.startShowing ?? staticDefaults.display.startShowing
+    s => s.settings?.display?.startShowing ?? staticDefaults?.display?.startShowing ?? 'onClick'
   )
 
   const handleChange = useCallback(
@@ -42,7 +45,7 @@ const StartShowingControl = memo(() => {
 const TimerSettingsConditional = memo(() => {
   const staticDefaults = useWidgetStaticDefaults()
   const startShowing = useWidgetSettingsStore(
-    s => s.settings?.display?.startShowing ?? staticDefaults.display.startShowing
+    s => s.settings?.display?.startShowing ?? staticDefaults?.display?.startShowing ?? 'onClick'
   )
   return (
     <AnimatePresence>{startShowing === 'timer' ? <TimerSettingsField /> : null}</AnimatePresence>
@@ -54,7 +57,7 @@ const IconTypeControl = memo(() => {
   const setIconImage = useWidgetSettingsStore(s => s.setIconImage)
   const staticDefaults = useWidgetStaticDefaults()
   const iconType = useWidgetSettingsStore(
-    s => s.settings?.display?.icon?.type ?? staticDefaults.display.icon.type
+    s => s.settings?.display?.icon?.type ?? staticDefaults?.display?.icon?.type ?? 'image'
   )
   const handleChange = useCallback((v: string) => setIconType(v as IconType), [setIconType])
   const handleFile = useCallback(
@@ -97,7 +100,10 @@ const PositionControl = memo(() => {
   const setButtonPosition = useWidgetSettingsStore(s => s.setButtonPosition)
   const staticDefaults = useWidgetStaticDefaults()
   const buttonPosition = useWidgetSettingsStore(
-    s => s.settings?.display?.icon?.position ?? staticDefaults.display.icon.position
+    s =>
+      s.settings?.display?.icon?.position ??
+      staticDefaults?.display?.icon?.position ??
+      'bottom-left'
   )
   return <ButtonPositionChooser value={buttonPosition} onChange={setButtonPosition} />
 })
@@ -106,7 +112,7 @@ const HideIconControl = memo(() => {
   const setHideIcon = useWidgetSettingsStore(s => s.setHideIcon)
   const staticDefaults = useWidgetStaticDefaults()
   const hide = useWidgetSettingsStore(
-    s => s.settings?.display?.icon?.hide ?? staticDefaults.display.icon.hide
+    s => s.settings?.display?.icon?.hide ?? staticDefaults?.display?.icon?.hide ?? 'always'
   )
   const handleChange = useCallback((v: string) => setHideIcon(v as HideIcon), [setHideIcon])
   return (
@@ -120,6 +126,16 @@ const HideIconControl = memo(() => {
 })
 
 const DisplaySettingsTab = () => {
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
+  const widgetDefinition = widgetType ? getWidgetDefinition(widgetType) : null
+  const showStandardSurface = !widgetType || usesStandardSurface(widgetType, 'display')
+  const CustomDisplaySurface = widgetDefinition?.settings.surfaces?.display
+
+  if (!showStandardSurface) {
+    if (CustomDisplaySurface) return <CustomDisplaySurface />
+    return <SurfaceNotice surface="display" />
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <StartShowingControl />

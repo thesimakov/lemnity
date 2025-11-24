@@ -1,3 +1,4 @@
+import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type { StateCreator } from 'zustand'
 
@@ -125,7 +126,9 @@ export type WidgetSpecificSettings =
   | FABMenuWidgetSettings
   | StubWidgetSettings
 
-export type FormSettings = {
+export type Extendable<T extends Record<string, unknown>> = T & Record<string, unknown>
+
+export type FieldsSettings = Extendable<{
   companyLogo: { enabled: boolean; fileName?: string; url?: string }
   template: {
     enabled: boolean
@@ -160,9 +163,9 @@ export type FormSettings = {
   messages: FormMessages
   link: string
   border: { enabled: boolean; color: string }
-}
+}>
 
-export type DisplaySettings = {
+export type DisplaySettings = Extendable<{
   startShowing: StartShowing
   timer: { delayMs: number }
   icon: {
@@ -189,23 +192,23 @@ export type DisplaySettings = {
     date: { enabled: boolean; value: string }
     time: { enabled: boolean; value: string }
   }
-}
+}>
 
-export type IntegrationSettings = {
+export type IntegrationSettings = Extendable<{
   scriptSnippet: string
-}
+}>
 
 export type WidgetSettings = {
   id: string
   widgetType: WidgetTypeEnum
-  form: FormSettings
+  fields: FieldsSettings
   widget: WidgetSpecificSettings
   display: DisplaySettings
   integration: IntegrationSettings
 }
 
 // Utility types for slice creators
-export type FormUpdater = (mutator: (s: FormSettings) => FormSettings) => void
+export type FieldsUpdater = (mutator: (s: FieldsSettings) => FieldsSettings) => void
 export type DisplayUpdater = (mutator: (s: DisplaySettings) => DisplaySettings) => void
 export type IntegrationUpdater = (mutator: (s: IntegrationSettings) => IntegrationSettings) => void
 

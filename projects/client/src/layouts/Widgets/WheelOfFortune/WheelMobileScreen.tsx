@@ -8,7 +8,7 @@ import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
 
 const WheelMobileScreen = () => {
   const spinTrigger = usePreviewRuntimeStore(s => s.counters['wheel.spin'] ?? 0)
-  const template = useWidgetSettingsStore(s => s?.settings?.form.template)
+  const template = useWidgetSettingsStore(s => s?.settings?.fields?.template)
   const { colorScheme, customColor } = template?.templateSettings || {}
   const { settings } = useWheelOfFortuneSettings()
 
