@@ -1,4 +1,4 @@
-import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 
 const Headline = ({ text, size }: { text: string; size?: number }) => (
   <h2
@@ -30,7 +30,7 @@ export type RewardContentProps = {
 }
 
 const RewardContent = ({ companyLogo, onWin, className }: RewardContentProps) => {
-  const { settings } = useFormSettings()
+  const { settings } = useFieldsSettings()
   const defaultOnWin = settings.messages?.onWin ?? onWin
   if (!defaultOnWin?.enabled) return null
   const discountText = 'Скидка 10%'

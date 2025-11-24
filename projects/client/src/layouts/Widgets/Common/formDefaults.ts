@@ -1,7 +1,7 @@
-import type { FormMessages, FormSettings } from '@/stores/widgetSettings/types'
+import type { FormMessages, FieldsSettings } from '@/stores/widgetSettings/types'
 
-type BuildFormSettingsParams = {
-  formTexts: FormSettings['formTexts']
+type BuildFieldsSettingsParams = {
+  formTexts: FieldsSettings['formTexts']
   messages?: Partial<FormMessages>
 }
 
@@ -24,10 +24,10 @@ const defaultMessages: FormMessages = {
   allPrizesGiven: { enabled: false, text: 'Вы уже получили все призы' }
 }
 
-export const buildFormSettings = ({
+export const buildFieldsSettings = ({
   formTexts,
   messages
-}: BuildFormSettingsParams): FormSettings => ({
+}: BuildFieldsSettingsParams): FieldsSettings => ({
   companyLogo: { enabled: true, fileName: '', url: '' },
   template: {
     enabled: false,

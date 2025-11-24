@@ -10,7 +10,7 @@ type CountDownPreviewProps = {
 
 const CountDownPreview = ({ mode }: CountDownPreviewProps) => {
   const windowFormat = useWidgetSettingsStore(
-    s => s.settings.form.template?.templateSettings?.windowFormat
+    s => s.settings?.fields?.template?.templateSettings?.windowFormat
   )
 
   const ref = useRef<HTMLDivElement>(null)
@@ -28,7 +28,7 @@ const CountDownPreview = ({ mode }: CountDownPreviewProps) => {
   }, [mode, windowFormat])
 
   if (mode === 'mobile') {
-    return <MobilePreview />
+    return <MobilePreview children={undefined} />
   }
 
   if (windowFormat === 'modalWindow') {

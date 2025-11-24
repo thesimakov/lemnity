@@ -10,7 +10,7 @@ import { Checkbox } from '@heroui/checkbox'
 import { useState } from 'react'
 import Timer from '../../CountDown/Timer'
 import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
-import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 
 type FormFields = {
   phone?: string
@@ -31,24 +31,29 @@ const DynamicFieldsForm = ({
   isMobile = false,
   noPadding = false
 }: DynamicFieldsFormProps) => {
-  const { settings } = useFormSettings()
+  const { settings } = useFieldsSettings()
   const [agreementChecked, setAgreementChecked] = useState(false)
   const [adsInfoChecked, setAdsInfoChecked] = useState(false)
-  const formSettings = useWidgetSettingsStore(s => s.settings!.form)
-  const { contacts, formTexts, agreement, adsInfo, companyLogo, border } = formSettings
-  const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts
+  const fieldsSettings = useWidgetSettingsStore(s => s.settings?.fields)
+  const { contacts, formTexts, agreement, adsInfo, companyLogo, border } = fieldsSettings ?? {}
+  const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts ?? {}
   const { title, description, button } = formTexts || {}
   const { settings: timerSettings } = useActionTimerSettings()
 
-  const { enabled: logoEnabled, url: logoUrl } = companyLogo
+  const { enabled: logoEnabled, url: logoUrl } = companyLogo ?? {}
 
-  const { enabled: agreementEnabled, policyUrl, agreementUrl, color: agreementColor } = agreement
+  const {
+    enabled: agreementEnabled,
+    policyUrl,
+    agreementUrl,
+    color: agreementColor
+  } = agreement ?? {}
   const {
     enabled: adsInfoEnabled,
     text: adsInfoText,
     policyUrl: adsInfoPolicyUrl,
     color: adsInfoColor
-  } = adsInfo
+  } = adsInfo ?? {}
 
   const borderSettings = border ?? { enabled: true, color: '#E8E8E8' }
   const borderEnabled = borderSettings.enabled
@@ -66,19 +71,19 @@ const DynamicFieldsForm = ({
   // Build schema based on settings (enabled/required flags)
   const buildSchema = () => {
     const shape: Record<string, z.ZodTypeAny> = {}
-    if (phoneCfg.enabled) {
+    if (phoneCfg?.enabled) {
       const base = z.string().min(10, 'Некорректный номер телефона')
       shape.phone = phoneCfg.required ? base : base.optional().or(z.literal(''))
     } else {
       shape.phone = z.string().optional().or(z.literal(''))
     }
-    if (emailCfg.enabled) {
+    if (emailCfg?.enabled) {
       const base = z.email('Некорректный email')
       shape.email = emailCfg.required ? base : base.optional().or(z.literal(''))
     } else {
       shape.email = z.string().optional().or(z.literal(''))
     }
-    if (nameCfg.enabled) {
+    if (nameCfg?.enabled) {
       const base = z
         .string()
         .min(1, 'Имя обязательно')
@@ -115,7 +120,7 @@ const DynamicFieldsForm = ({
           className={`w-25 h-12.5 object-contain ${centered ? '' : 'object-left'}`}
         />
       ) : null}
-      {title.text && (
+      {title?.text && (
         <h2
           className={`text-2xl font-bold whitespace-pre-wrap ${centered ? 'text-center' : ''}`}
           style={{ color: title.color }}
@@ -140,7 +145,7 @@ const DynamicFieldsForm = ({
         className={`flex flex-col gap-3 p-3 rounded-xl ${borderEnabled ? 'border' : ''}`}
         style={borderEnabled ? { borderColor } : undefined}
       >
-        {description.text && (
+        {description?.text && (
           <p
             className="text-md opacity-90 whitespace-pre-wrap"
             style={{ color: description.color }}
@@ -148,7 +153,7 @@ const DynamicFieldsForm = ({
             {description.text}
           </p>
         )}
-        {nameCfg.enabled ? (
+        {nameCfg?.enabled ? (
           <Input
             placeholder="Ваше имя"
             variant="bordered"
@@ -164,7 +169,7 @@ const DynamicFieldsForm = ({
           />
         ) : null}
 
-        {phoneCfg.enabled ? (
+        {phoneCfg?.enabled ? (
           <Input
             placeholder="Номер телефона"
             variant="bordered"
@@ -175,7 +180,7 @@ const DynamicFieldsForm = ({
           />
         ) : null}
 
-        {emailCfg.enabled ? (
+        {emailCfg?.enabled ? (
           <Input
             placeholder="Ваш email"
             variant="bordered"
@@ -222,7 +227,7 @@ const DynamicFieldsForm = ({
             <span className="text-xs" style={{ color: agreementColor }}>
               Я даю{' '}
               <a
-                href={normalizeUrl(agreementUrl)}
+                href={normalizeUrl(agreementUrl ?? '')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline font-bold"
@@ -232,7 +237,7 @@ const DynamicFieldsForm = ({
               </a>{' '}
               на обработку персональных данных в соответсвии с{' '}
               <a
-                href={normalizeUrl(policyUrl)}
+                href={normalizeUrl(policyUrl ?? '')}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline font-bold"
@@ -257,7 +262,7 @@ const DynamicFieldsForm = ({
               }}
             ></Checkbox>
             <a
-              href={normalizeUrl(adsInfoPolicyUrl)}
+              href={normalizeUrl(adsInfoPolicyUrl ?? '')}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs hover:underline"

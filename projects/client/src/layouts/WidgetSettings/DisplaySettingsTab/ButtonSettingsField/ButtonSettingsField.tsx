@@ -6,14 +6,14 @@ import useWidgetSettingsStore, {
 } from '@/stores/widgetSettingsStore'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useEffect, useState } from 'react'
-import type { Issue } from '@/stores/widgetSettings/schema'
+import type { Issue } from '@lemnity/widget-config'
 import { useShallow } from 'zustand/react/shallow'
 
 const ButtonSettingsField = () => {
   const { setButtonIcon } = useDisplaySettings()
 
   const staticDefaults = useWidgetStaticDefaults()
-  const defaultButton = staticDefaults.display.icon.button ?? {
+  const defaultButton = staticDefaults?.display.icon.button ?? {
     text: '',
     buttonColor: '#5951E5',
     textColor: '#FFFFFF'

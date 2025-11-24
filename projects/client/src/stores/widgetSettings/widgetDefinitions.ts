@@ -1,19 +1,46 @@
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
-import type { FormSettings, StubWidgetSettings, WidgetSpecificSettings } from './types'
+import type { SettingsSurface } from '@lemnity/widget-config'
+import type {
+  DisplaySettings,
+  Extendable,
+  FieldsSettings,
+  IntegrationSettings,
+  StubWidgetSettings,
+  WidgetSpecificSettings
+} from './types'
 import {
   buildWheelWidgetSettings,
-  buildWheelFormSettings
+  buildWheelFieldsSettings
 } from '@/layouts/Widgets/WheelOfFortune/defaults'
 import {
   buildActionTimerWidgetSettings,
-  buildActionTimerFormSettings
+  buildActionTimerFieldsSettings
 } from '@/layouts/Widgets/CountDown/defaults'
+import {
+  buildFABMenuWidgetSettings,
+  buildFABMenuFieldsSettings,
+  buildFABMenuDisplaySettings,
+  buildFABMenuIntegrationSettings
+} from '@/layouts/Widgets/FABMenu/defaults'
 import { resolveWidgetDefinition } from './resolveWidgetDefinition'
+
+type SettingsSurfaceMode = 'standard' | 'custom'
+type WidgetSettingsSurfaces = Partial<Record<SettingsSurface, SettingsSurfaceMode>>
+type LooseFieldsSettings = Extendable<Record<string, unknown>>
+
+const DEFAULT_SURFACE_MODES: Record<SettingsSurface, SettingsSurfaceMode> = {
+  fields: 'standard',
+  display: 'standard',
+  integration: 'standard'
+}
 
 export type WidgetDefinitionBase = {
   type: WidgetTypeEnum
   buildWidgetSettings: () => WidgetSpecificSettings
-  buildFormSettings: () => FormSettings
+  buildFieldsSettings?: () => FieldsSettings | LooseFieldsSettings
+  buildDisplaySettings?: () => DisplaySettings
+  buildIntegrationSettings?: () => IntegrationSettings
+  settingsSurfaces?: WidgetSettingsSurfaces
 }
 
 /**
@@ -27,70 +54,10 @@ const buildStubWidgetSettings = (widgetType: WidgetTypeEnum): StubWidgetSettings
 })
 
 /**
- * Создаёт FormSettings для нереализованных виджетов.
+ * Создаёт FieldsSettings для нереализованных виджетов.
  * Используется только как заглушка до полноценной реализации.
  */
-const buildStubFormSettings = (): FormSettings => ({
-  companyLogo: { enabled: true, fileName: '', url: '' },
-  template: {
-    enabled: false,
-    key: '',
-    templateSettings: {
-      image: { enabled: false, fileName: '', url: '' },
-      windowFormat: 'modalWindow',
-      contentPosition: 'left',
-      colorScheme: 'primary',
-      customColor: '#46b530'
-    }
-  },
-  formTexts: {
-    title: { text: 'Виджет в разработке', color: '#FFFFFF' },
-    description: {
-      text: 'Этот виджет ещё не реализован. Пожалуйста, используйте другой тип виджета.',
-      color: '#FFFFFF'
-    },
-    button: {
-      text: 'В разработке',
-      color: '#FFFFFF',
-      backgroundColor: '#999999',
-      icon: 'rocket'
-    }
-  },
-  countdown: { enabled: true },
-  contacts: {
-    phone: { enabled: true, required: true },
-    email: { enabled: true, required: true },
-    name: { enabled: true, required: false }
-  },
-  agreement: {
-    enabled: true,
-    text: 'Я даю Согласие на обработку персональных данных в соотвествии с Политикой конфиденциальности',
-    agreementUrl: 'lemnity.ru/agreement',
-    policyUrl: 'lemnity.ru/political',
-    color: '#FFFFFF'
-  },
-  adsInfo: {
-    enabled: true,
-    text: 'Нажимая на кнопку, вы даёте своё согласие на получение рекламно-информационной рассылки.',
-    policyUrl: 'lemnity.ru/ads',
-    color: '#FFFFFF'
-  },
-  link: '',
-  border: { enabled: true, color: '#FFFFFF' },
-  messages: {
-    onWin: {
-      enabled: true,
-      text: 'Вы выиграли!',
-      textSize: 0,
-      description: 'Не забудьте использовать промокод во время оформления заказа!',
-      descriptionSize: 0,
-      colorScheme: { enabled: true, scheme: 'primary' }
-    },
-    limitShows: { enabled: false, text: '' },
-    limitWins: { enabled: false, text: '' },
-    allPrizesGiven: { enabled: false, text: '' }
-  }
-})
+export const buildStubFieldsSettings = (): LooseFieldsSettings => ({})
 
 /**
  * Реализованные виджеты: используют свои build* из папок конкретных виджетов.
@@ -99,12 +66,24 @@ const implementedWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinit
   [WidgetTypeEnum.WHEEL_OF_FORTUNE]: {
     type: WidgetTypeEnum.WHEEL_OF_FORTUNE,
     buildWidgetSettings: buildWheelWidgetSettings,
-    buildFormSettings: buildWheelFormSettings
+    buildFieldsSettings: buildWheelFieldsSettings
   },
   [WidgetTypeEnum.ACTION_TIMER]: {
     type: WidgetTypeEnum.ACTION_TIMER,
     buildWidgetSettings: buildActionTimerWidgetSettings,
-    buildFormSettings: buildActionTimerFormSettings
+    buildFieldsSettings: buildActionTimerFieldsSettings
+  },
+  [WidgetTypeEnum.FAB_MENU]: {
+    type: WidgetTypeEnum.FAB_MENU,
+    buildWidgetSettings: buildFABMenuWidgetSettings,
+    buildFieldsSettings: buildFABMenuFieldsSettings,
+    buildDisplaySettings: buildFABMenuDisplaySettings,
+    buildIntegrationSettings: buildFABMenuIntegrationSettings,
+    settingsSurfaces: {
+      fields: 'custom',
+      display: 'custom',
+      integration: 'custom'
+    }
   }
 }
 
@@ -126,7 +105,7 @@ const stubWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinitionBase
       {
         type: widgetType,
         buildWidgetSettings: () => buildStubWidgetSettings(widgetType),
-        buildFormSettings: buildStubFormSettings
+        buildFieldsSettings: buildStubFieldsSettings
       } as WidgetDefinitionBase
     ])
   )
@@ -138,6 +117,21 @@ const definitions = {
 
 export const WIDGET_DEFINITIONS_BASE = definitions
 
+const resolveSurfaceModes = (definition: WidgetDefinitionBase) => ({
+  ...DEFAULT_SURFACE_MODES,
+  ...(definition.settingsSurfaces ?? {})
+})
+
+export const getWidgetSurfaceModes = (
+  widgetType: WidgetTypeEnum
+): Record<SettingsSurface, SettingsSurfaceMode> =>
+  resolveSurfaceModes(WIDGET_DEFINITIONS_BASE[widgetType])
+
+export const usesStandardSurface = (
+  widgetType: WidgetTypeEnum,
+  surface: SettingsSurface
+): boolean => getWidgetSurfaceModes(widgetType)[surface] === 'standard'
+
 const resolveWidgetDefinitionBase = resolveWidgetDefinition<
   typeof definitions,
   WidgetDefinitionBase
@@ -145,3 +139,6 @@ const resolveWidgetDefinitionBase = resolveWidgetDefinition<
 
 export const getWidgetDefinitionBase = (widgetType: WidgetTypeEnum): WidgetDefinitionBase =>
   resolveWidgetDefinitionBase(widgetType)
+
+export type { SettingsSurface } from '@lemnity/widget-config'
+export type { SettingsSurfaceMode }

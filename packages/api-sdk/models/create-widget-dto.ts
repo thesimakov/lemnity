@@ -59,7 +59,8 @@ export const CreateWidgetDtoTypeEnum = {
     POSTCARD: 'POSTCARD',
     CHEST_WITH_ACTION: 'CHEST_WITH_ACTION',
     ADVENT_CALENDAR: 'ADVENT_CALENDAR',
-    TEASER: 'TEASER'
+    TEASER: 'TEASER',
+    FAB_MENU: 'FAB_MENU'
 } as const;
 
 export type CreateWidgetDtoTypeEnum = typeof CreateWidgetDtoTypeEnum[keyof typeof CreateWidgetDtoTypeEnum];

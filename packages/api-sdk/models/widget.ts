@@ -57,6 +57,12 @@ export interface Widget {
      */
     'config'?: object | null;
     /**
+     * Version of the widget configuration
+     * @type {object}
+     * @memberof Widget
+     */
+    'configVersion'?: object | null;
+    /**
      * Creation timestamp
      * @type {string}
      * @memberof Widget
@@ -77,7 +83,8 @@ export const WidgetTypeEnum = {
     POSTCARD: 'POSTCARD',
     CHEST_WITH_ACTION: 'CHEST_WITH_ACTION',
     ADVENT_CALENDAR: 'ADVENT_CALENDAR',
-    TEASER: 'TEASER'
+    TEASER: 'TEASER',
+    FAB_MENU: 'FAB_MENU'
 } as const;
 
 export type WidgetTypeEnum = typeof WidgetTypeEnum[keyof typeof WidgetTypeEnum];

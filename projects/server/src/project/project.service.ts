@@ -3,7 +3,7 @@ import { CreateProjectDto } from './dto/create-project.dto'
 import { UpdateProjectDto } from './dto/update-project.dto'
 import { PrismaService } from '../prisma.service'
 import { Prisma } from '@prisma/client'
-import { migrateToCurrent, CURRENT_VERSION } from '@lemnity/widget-config'
+import { migrateToCurrent, CURRENT_VERSION } from '@lemnity/widget-config/migrations'
 
 @Injectable()
 export class ProjectService {

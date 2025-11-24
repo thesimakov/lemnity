@@ -3,20 +3,24 @@ import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
 import { useParams } from 'react-router-dom'
 import { Breadcrumbs, BreadcrumbItem } from '@heroui/breadcrumbs'
 import { Button } from '@heroui/button'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useProjectsStore } from '@/stores/projectsStore'
 import SvgIcon from '@/components/SvgIcon'
 import iconEye from '@/assets/icons/eye.svg'
-import FormSettingsTab from '@/layouts/WidgetSettings/FormSettingsTab/FormSettingsTab'
+import FieldsSettingsTab from '@/layouts/WidgetSettings/FieldsSettingsTab/FieldsSettingsTab'
 import './EditWidgetPage.css'
 import DisplaySettingsTab from '@/layouts/WidgetSettings/DisplaySettingsTab/DisplaySettingsTab'
 import IntegrationTab from '@/layouts/WidgetSettings/IntegrationTab/IntegrationTab'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { fromCanonical } from '@/stores/widgetSettings/normalize'
 import { buildDefaults } from '@/stores/widgetSettings/defaults'
 import WidgetPreview from '@/layouts/WidgetPreview/WidgetPreview'
 import PreviewModal from '@/layouts/Widgets/Common/PreviewModal'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
+import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
+import { getWidgetDefinition } from '@/layouts/Widgets/registry'
+
+type TabKey = 'fields' | 'display' | 'integration'
+type TabDescriptor = { key: TabKey; label: string; visible: boolean }
 // use store action to keep state in sync after update
 
 const EditWidgetPage = () => {
@@ -30,13 +34,14 @@ const EditWidgetPage = () => {
   const project = useProjectsStore(s => s.projects.find(p => p.id === projectId))
   const projectName = project?.name || ''
   const widget = project?.widgets.find(w => w.id === widgetId)
-  const [tab, setTab] = useState<'fields' | 'appearance' | 'integration'>('fields')
+  const [tab, setTab] = useState<TabKey>('fields')
   const [saving, setSaving] = useState(false)
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false)
   // legacy local spin state removed; use preview store instead
   const initialized = useWidgetSettingsStore(s => s.initialized)
   const widgetType = widget?.type
   const widgetConfig = widget?.config
+  const widgetDefinition = widgetType ? getWidgetDefinition(widgetType) : null
 
   // Initialize widget settings store once per widgetId
   useEffect(() => {
@@ -46,7 +51,9 @@ const EditWidgetPage = () => {
       !store.settings || store.settings.id !== widgetId || store.settings.widgetType !== widgetType
     if (shouldReinit) {
       const base = store.settings ?? buildDefaults(widgetId, widgetType)
-      const initialSettings = widgetConfig ? fromCanonical(widgetConfig, base) : undefined
+      const initialSettings = widgetConfig
+        ? ({ ...base, ...widgetConfig } as typeof base)
+        : undefined
       store.init(widgetId, widgetType, initialSettings)
     }
 
@@ -121,9 +128,9 @@ const EditWidgetPage = () => {
       const updated = await useProjectsStore
         .getState()
         .saveWidgetConfig(projectId, widgetId, res.data)
-      // Re-init settings with canonical server config (convert to UI shape)
+      // Re-init settings with server config
       const base = useWidgetSettingsStore.getState().settings ?? buildDefaults(widgetId, widgetType)
-      const next = updated.config ? fromCanonical(updated.config, base) : undefined
+      const next = updated.config ? ({ ...base, ...updated.config } as typeof base) : undefined
       useWidgetSettingsStore.getState().init(widgetId, widgetType, next)
       alert('Сохранено')
       useWidgetSettingsStore.getState().setValidationVisible(false)
@@ -141,7 +148,6 @@ const EditWidgetPage = () => {
       setPreviewScreen('prize')
     }, 5000)
   }, [setPreviewScreen])
-  if (!initialized) return null
 
   const breadcrumbs = (
     <Breadcrumbs size="lg" itemClasses={{ item: 'text-[#5951E5]', separator: 'text-[#5951E5]' }}>
@@ -163,33 +169,49 @@ const EditWidgetPage = () => {
     </svg>
   )
 
+  const showDisplayTab =
+    !widgetType ||
+    usesStandardSurface(widgetType, 'display') ||
+    Boolean(widgetDefinition?.settings.surfaces?.display)
+  const showIntegrationTab =
+    !widgetType ||
+    usesStandardSurface(widgetType, 'integration') ||
+    Boolean(widgetDefinition?.settings.surfaces?.integration)
+
+  const visibleTabs = useMemo<TabDescriptor[]>(() => {
+    const tabs: TabDescriptor[] = [
+      { key: 'fields', label: 'Настройки полей', visible: true },
+      { key: 'display', label: 'Отображение', visible: showDisplayTab },
+      { key: 'integration', label: 'Интеграция', visible: showIntegrationTab }
+    ]
+    return tabs.filter(tab => tab.visible)
+  }, [showDisplayTab, showIntegrationTab])
+
+  useEffect(() => {
+    if (!visibleTabs.length) return
+    if (!visibleTabs.some(t => t.key === tab)) {
+      setTab(visibleTabs[0].key)
+    }
+  }, [tab, visibleTabs])
+
+  if (!initialized) return null
+
   const tabsBar = (
     <div className="w-full bg-[#F5F6F8] border border-[#E6E6E6] rounded-xl px-3 py-2 gap-2 flex flex-wrap items-center justify-between">
       <div className="flex items-center gap-2">
-        <Button
-          size="md"
-          variant="flat"
-          className={`h-[30px] rounded-md text-black ${tab === 'fields' ? 'bg-[#DBE1FF]' : 'bg-white border border-[#E4E4E4]'}`}
-          onPress={() => setTab('fields')}
-        >
-          Настройки полей
-        </Button>
-        <Button
-          size="md"
-          variant="flat"
-          className={`h-[30px] rounded-md text-black ${tab === 'appearance' ? 'bg-[#DBE1FF]' : 'bg-white border border-[#E4E4E4]'}`}
-          onPress={() => setTab('appearance')}
-        >
-          Отображение
-        </Button>
-        <Button
-          size="md"
-          variant="flat"
-          className={`h-[30px] rounded-md text-black ${tab === 'integration' ? 'bg-[#DBE1FF]' : 'bg-white border border-[#E4E4E4]'}`}
-          onPress={() => setTab('integration')}
-        >
-          Интеграция
-        </Button>
+        {visibleTabs.map(item => (
+          <Button
+            key={item.key}
+            size="md"
+            variant="flat"
+            className={`h-[30px] rounded-md text-black ${
+              tab === item.key ? 'bg-[#DBE1FF]' : 'bg-white border border-[#E4E4E4]'
+            }`}
+            onPress={() => setTab(item.key)}
+          >
+            {item.label}
+          </Button>
+        ))}
       </div>
       <div className="flex items-center gap-2">
         <Button
@@ -224,9 +246,9 @@ const EditWidgetPage = () => {
               className="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1 scrollShadow rounded-md overflow-hidden"
             >
               <div ref={topRef} aria-hidden="true" className="sentinelTop"></div>
-              {tab === 'fields' && <FormSettingsTab />}
-              {tab === 'appearance' && <DisplaySettingsTab />}
-              {tab === 'integration' && <IntegrationTab />}
+              {tab === 'fields' && <FieldsSettingsTab />}
+              {tab === 'display' && showDisplayTab && <DisplaySettingsTab />}
+              {tab === 'integration' && showIntegrationTab && <IntegrationTab />}
               <div ref={bottomRef} aria-hidden="true" className="sentinelBot"></div>
             </div>
           </div>

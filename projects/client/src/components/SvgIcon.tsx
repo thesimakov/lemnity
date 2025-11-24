@@ -5,9 +5,16 @@ interface SvgIconProps {
   className?: string
   size?: number | string
   alt?: string
+  preserveOriginalColors?: boolean
 }
 
-const SvgIcon: React.FC<SvgIconProps> = ({ src, className = '', size = '100%', alt = 'icon' }) => {
+const SvgIcon: React.FC<SvgIconProps> = ({
+  src,
+  className = '',
+  size = '100%',
+  alt = 'icon',
+  preserveOriginalColors = false
+}) => {
   const containerRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
@@ -31,31 +38,33 @@ const SvgIcon: React.FC<SvgIconProps> = ({ src, className = '', size = '100%', a
             // Удаляем event handlers
             const attributes = [...el.attributes]
             attributes.forEach(attr => {
-              if (
-                attr.name.startsWith('on') ||
-                attr.name === 'href' ||
-                attr.name === 'xlink:href'
-              ) {
+              const attrValue = attr.value ?? ''
+              const isHrefAttr = attr.name === 'href' || attr.name === 'xlink:href'
+              const isInternalRef = isHrefAttr && attrValue.startsWith('#')
+              const isDataUri = isHrefAttr && attrValue.startsWith('data:')
+              const keepsDataUri = isDataUri && preserveOriginalColors
+
+              const shouldStripHref = isHrefAttr && !isInternalRef && !keepsDataUri
+
+              if (attr.name.startsWith('on') || shouldStripHref) {
                 el.removeAttribute(attr.name)
               }
             })
 
-            // Заменяем fill на currentColor
-            if (el.hasAttribute('fill')) {
+            if (!preserveOriginalColors && el.hasAttribute('fill')) {
               el.setAttribute('fill', 'currentColor')
             }
-
-            // Устанавливаем размеры SVG
-            svgElement.setAttribute('width', size.toString())
-            svgElement.setAttribute('height', size.toString())
           })
+
+          svgElement.setAttribute('width', size.toString())
+          svgElement.setAttribute('height', size.toString())
 
           // Очищаем контейнер и добавляем SVG
           containerRef.current!.innerHTML = ''
           containerRef.current!.appendChild(svgElement)
         }
       })
-  }, [src, size])
+  }, [src, size, preserveOriginalColors])
 
   return (
     <div

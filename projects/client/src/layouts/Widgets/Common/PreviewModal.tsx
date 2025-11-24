@@ -22,7 +22,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   containerClassName
 }) => {
   const imageUrl = useWidgetSettingsStore(
-    s => s?.settings?.form?.template?.templateSettings?.image?.url
+    s => s?.settings?.fields?.template?.templateSettings?.image?.url
   )
 
   return (

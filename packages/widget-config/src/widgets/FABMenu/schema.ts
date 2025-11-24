@@ -1,0 +1,67 @@
+import { z } from 'zod'
+import {
+  LooseSurfaceSchema,
+  type WidgetTypeId,
+  buildWidgetSettingsSchema
+} from '../base.js'
+
+const FABMenuIconEnum = z.enum([
+  'email',
+  'phone',
+  'website',
+  'calendar',
+  'vk',
+  'vk-message',
+  'telegram-message',
+  'telegram-channel',
+  'max-message',
+  'whatsapp-message',
+  'instagram',
+  'youtube',
+  'ok',
+  'custom'
+])
+
+const FABMenuPayloadTypeEnum = z.enum([
+  'email',
+  'phone',
+  'link',
+  'nickname',
+  'script',
+  'anchor'
+])
+
+const FABMenuSectorSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  icon: FABMenuIconEnum,
+  payload: z.object({
+    type: FABMenuPayloadTypeEnum,
+    value: z.string(),
+    helper: z.string().optional()
+  }),
+  color: z.string(),
+  description: z.string().optional()
+})
+
+const WidgetType: WidgetTypeId = 'FAB_MENU'
+
+const FABMenuWidgetSchema = z.object({
+  type: z.literal(WidgetType),
+  sectors: z.object({
+    items: z.array(FABMenuSectorSchema)
+  })
+})
+
+const customSurfaces = {
+  fields: LooseSurfaceSchema,
+  display: LooseSurfaceSchema,
+  integration: LooseSurfaceSchema
+} as const
+
+export const fabMenuSchema = buildWidgetSettingsSchema(
+  WidgetType,
+  FABMenuWidgetSchema,
+  customSurfaces
+)
+
