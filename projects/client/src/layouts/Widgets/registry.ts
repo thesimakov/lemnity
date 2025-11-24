@@ -2,6 +2,7 @@ import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type { ComponentType } from 'react'
 import { wheelWidgetMetadata } from './WheelOfFortune/metadata'
 import { actionTimerWidgetMetadata } from './CountDown/metadata'
+import { fabMenuWidgetMetadata } from './FABMenu/metadata'
 import {
   StubWidgetPanelPreview,
   StubDesktopScreen,
@@ -13,6 +14,7 @@ import {
 } from '@/stores/widgetSettings/widgetDefinitions'
 import type { PreviewMode } from '@/stores/widgetPreviewStore'
 import { resolveWidgetDefinition } from '@/stores/widgetSettings/resolveWidgetDefinition'
+import type { SettingsSurface } from '@lemnity/widget-config'
 
 export type WidgetPreviewScreen = 'main' | 'prize' | 'panel'
 
@@ -34,19 +36,36 @@ export type DesktopScreenProps = {
   onSubmit: () => void
 }
 
+export type WidgetModalPreviewProps = {
+  screen: WidgetPreviewScreen
+  onSubmit: () => void
+}
+
+export type WidgetInlinePreviewProps = {
+  onClose: () => void
+}
+
+export type WidgetPreviewLauncher = 'modal' | 'inline'
+
 export type WidgetSettingsSection = {
   id: string
   Component: ComponentType
 }
+
+export type WidgetSettingsSurfaceRegistry = Partial<Record<SettingsSurface, ComponentType>>
 
 export type WidgetDefinition = WidgetDefinitionBase & {
   preview: {
     panel: ComponentType<WidgetPanelPreviewProps>
     desktopScreens: Partial<Record<WidgetPreviewScreen, ComponentType<DesktopScreenProps>>>
     mobile: ComponentType<MobilePreviewProps> | null
+    modal?: ComponentType<WidgetModalPreviewProps>
+    inline?: ComponentType<WidgetInlinePreviewProps>
+    launcher?: WidgetPreviewLauncher
   }
   settings: {
     sections: WidgetSettingsSection[]
+    surfaces?: WidgetSettingsSurfaceRegistry
   }
 }
 
@@ -67,7 +86,8 @@ const baseMetadata = () => ({
       prize: StubDesktopScreen,
       panel: StubDesktopScreen
     },
-    mobile: StubMobilePreview
+    mobile: StubMobilePreview,
+    launcher: 'modal' as WidgetPreviewLauncher
   },
   settings: {
     sections: stubSettingsSections
@@ -78,7 +98,8 @@ const widgetMetadata: Partial<
   Record<WidgetTypeEnum, Pick<WidgetDefinition, 'preview' | 'settings'>>
 > = {
   [WidgetTypeEnum.WHEEL_OF_FORTUNE]: wheelWidgetMetadata,
-  [WidgetTypeEnum.ACTION_TIMER]: actionTimerWidgetMetadata
+  [WidgetTypeEnum.ACTION_TIMER]: actionTimerWidgetMetadata,
+  [WidgetTypeEnum.FAB_MENU]: fabMenuWidgetMetadata
 }
 
 const definitions: Record<WidgetTypeEnum, WidgetDefinition> = Object.fromEntries(

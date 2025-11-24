@@ -9,6 +9,8 @@ import type {
 import type { WheelOfFortuneWidgetSettings } from '@/stores/widgetSettings/types'
 import { createWheelActions } from '@/layouts/Widgets/WheelOfFortune/actions'
 import { createActionTimerActions } from '@/layouts/Widgets/CountDown/actions'
+import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
+import { createFABMenuActions } from '@/layouts/Widgets/FABMenu/actions'
 
 export const createWidgetSlice = (updateWidget: WidgetUpdater): WidgetSlice => {
   const createTypedUpdater =
@@ -27,9 +29,14 @@ export const createWidgetSlice = (updateWidget: WidgetUpdater): WidgetSlice => {
     (widget): widget is ActionTimerWidgetSettings => widget.type === WidgetTypeEnum.ACTION_TIMER
   )
 
+  const fabMenuUpdater: TypedWidgetUpdater<FABMenuWidgetSettings> = createTypedUpdater(
+    (widget): widget is FABMenuWidgetSettings => widget.type === WidgetTypeEnum.FAB_MENU
+  )
+
   const specificActions = {
     ...createWheelActions(wheelUpdater),
-    ...createActionTimerActions(actionTimerUpdater)
+    ...createActionTimerActions(actionTimerUpdater),
+    ...createFABMenuActions(fabMenuUpdater)
   } as Omit<WidgetActions, 'setWidgetType'>
 
   return {

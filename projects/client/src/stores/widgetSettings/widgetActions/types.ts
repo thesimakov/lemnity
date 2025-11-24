@@ -3,6 +3,7 @@ import type {
   ActionTimerWidgetSettings,
   ActionTimerImagePosition,
   ColorScheme,
+  FABMenuSectorItem,
   MessageKey,
   SectorItem,
   WidgetSpecificSettings
@@ -18,6 +19,10 @@ export type TypedWidgetUpdater<T extends WidgetSpecificSettings> = (
 
 export type WidgetActions = {
   setWidgetType: (widgetType: WidgetTypeEnum, nextSettings: WidgetSpecificSettings) => void
+  setFABMenuSectors: (items: FABMenuSectorItem[]) => void
+  updateFABMenuSector: (index: number, updates: Partial<FABMenuSectorItem>) => void
+  addFABMenuSector: (item: FABMenuSectorItem) => void
+  deleteFABMenuSector: (id: string) => void
   setWheelRandomize: (randomize: boolean) => void
   setWheelSectors: (items: SectorItem[]) => void
   updateWheelSector: (index: number, updates: Partial<SectorItem>) => void

@@ -4,14 +4,11 @@ import { devtools, persist } from 'zustand/middleware'
 import type { PersistStorage, StorageValue } from 'zustand/middleware'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import { buildDefaults, getStaticDefaults } from './widgetSettings/defaults'
-import { normalize, trimInactiveBranches, canonicalize } from './widgetSettings/normalize'
-import {
-  validateWidgetSettingsCanonical,
-  validateWidgetSettingsCurrent
-} from './widgetSettings/schema'
-import type { Issue } from './widgetSettings/schema'
-import type { FormSlice } from './widgetSettings/formSlice'
-import { createFormSlice } from './widgetSettings/formSlice'
+import { normalize, trimInactiveBranches } from './widgetSettings/normalize'
+import { validateCanonical as validateWidgetSettings } from '@lemnity/widget-config'
+import type { Issue } from '@lemnity/widget-config'
+import type { FieldsSlice } from './widgetSettings/fieldsSlice'
+import { createFieldsSlice } from './widgetSettings/fieldsSlice'
 import type { DisplaySlice } from './widgetSettings/displaySlice'
 import { createDisplaySlice } from './widgetSettings/displaySlice'
 import type { IntegrationSlice } from './widgetSettings/integrationSlice'
@@ -21,7 +18,7 @@ import { createWidgetSlice } from './widgetSettings/widgetSlice'
 import type {
   WidgetSettings,
   WidgetSettingsState,
-  FormUpdater,
+  FieldsUpdater,
   DisplayUpdater,
   IntegrationUpdater
 } from './widgetSettings/types'
@@ -37,7 +34,7 @@ export type {
   FrequencyUnit,
   ContactField,
   SectorItem,
-  FormSettings,
+  FieldsSettings,
   DisplaySettings,
   IntegrationSettings
 } from './widgetSettings/types'
@@ -59,68 +56,18 @@ type ValidationState = {
 export type WidgetSettingsStore = WidgetSettingsState &
   CoreActions &
   ValidationState &
-  FormSlice &
+  FieldsSlice &
   DisplaySlice &
   IntegrationSlice &
   WidgetSlice
 
-type PathRewrite = {
-  from: string
-  to: string
-  match: 'prefix' | 'exact'
-}
-
-const PATH_REWRITES: PathRewrite[] = [
-  { from: 'display.trigger.timer.', to: 'display.timer.', match: 'prefix' },
-  { from: 'display.trigger.timer', to: 'display.timer', match: 'exact' },
-  { from: 'display.trigger.', to: 'display.', match: 'prefix' },
-  { from: 'display.trigger', to: 'display', match: 'exact' },
-  { from: 'display.conditions.showRules.', to: 'display.showRules.', match: 'prefix' },
-  { from: 'display.conditions.showRules', to: 'display.showRules', match: 'exact' },
-  { from: 'display.conditions.frequency.', to: 'display.frequency.', match: 'prefix' },
-  { from: 'display.conditions.frequency', to: 'display.frequency', match: 'exact' },
-  { from: 'display.conditions.dontShow.', to: 'display.dontShow.', match: 'prefix' },
-  { from: 'display.conditions.dontShow', to: 'display.dontShow', match: 'exact' },
-  { from: 'display.conditions.limits.', to: 'display.limits.', match: 'prefix' },
-  { from: 'display.conditions.limits', to: 'display.limits', match: 'exact' },
-  { from: 'display.conditions.', to: 'display.', match: 'prefix' },
-  { from: 'display.conditions', to: 'display', match: 'exact' }
-]
-
-const mapCanonicalPath = (path: string): string => {
-  for (const rewrite of PATH_REWRITES) {
-    if (rewrite.match === 'prefix' && path.startsWith(rewrite.from)) {
-      return `${rewrite.to}${path.slice(rewrite.from.length)}`
-    }
-    if (rewrite.match === 'exact' && path === rewrite.from) {
-      return rewrite.to
-    }
-  }
-  return path
-}
-
-const dedupeIssues = (issues: Issue[]): Issue[] => {
-  const seen = new Set<string>()
-  return issues.filter(issue => {
-    const key = `${issue.path}|${issue.message}`
-    if (seen.has(key)) return false
-    seen.add(key)
-    return true
-  })
-}
-
 const computeIssues = (settings: WidgetSettings | null | undefined): Issue[] => {
   if (!settings) return []
-  const current = validateWidgetSettingsCurrent(settings).issues
   const defaults = getStaticDefaults(settings.widgetType)
   const normalized = normalize(settings, defaults)
   const trimmed = trimInactiveBranches(normalized)
-  const canonical = canonicalize(trimmed)
-  const canonicalIssues = validateWidgetSettingsCanonical(canonical).issues.map(issue => ({
-    path: mapCanonicalPath(issue.path),
-    message: issue.message
-  }))
-  return dedupeIssues([...current, ...canonicalIssues])
+  const validation = validateWidgetSettings(trimmed)
+  return validation.issues
 }
 
 // Persist by widget id: store a map { [widgetId]: { state, version } } under one key
@@ -168,11 +115,11 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
   devtools(
     persist(
       (set, get) => {
-        const patchForm: FormUpdater = mutator =>
+        const patchFields: FieldsUpdater = mutator =>
           set(state => ({
             ...state,
             settings: state.settings
-              ? { ...state.settings, form: mutator(state.settings.form) }
+              ? { ...state.settings, fields: mutator(state.settings.fields) }
               : state.settings
           }))
 
@@ -278,12 +225,11 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                 ok: false as const,
                 issues: [{ path: 'settings', message: 'Не инициализировано' }]
               }
-            const canonical = canonicalize(n)
-            const v = validateWidgetSettingsCanonical(canonical)
+            const v = validateWidgetSettings(n)
             if (!v.ok) return { ok: false as const, issues: v.issues }
-            return { ok: true as const, data: canonical as unknown as typeof n }
+            return { ok: true as const, data: n }
           },
-          ...createFormSlice(patchForm),
+          ...createFieldsSlice(patchFields),
           ...createDisplaySlice(patchDisplay),
           ...createIntegrationSlice(patchIntegration),
           ...createWidgetSlice(mutator => {

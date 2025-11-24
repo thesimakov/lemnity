@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import SwitchableField from '@/components/SwitchableField'
 import { Input } from '@heroui/input'
-import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
 import { formatDateForInput } from '@/layouts/Widgets/CountDown/utils'
 import ColorAccessory from '@/components/ColorAccessory'
 
 const CountdownField = () => {
-  const { settings, setCountdownEnabled } = useFormSettings()
+  const { settings, setCountdownEnabled } = useFieldsSettings()
   const {
     settings: widgetSettings,
     updateActionTimer,

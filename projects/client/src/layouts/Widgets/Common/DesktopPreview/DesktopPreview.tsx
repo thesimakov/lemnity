@@ -14,13 +14,13 @@ const ModalChrome = forwardRef(
     },
     ref: Ref<HTMLDivElement> | undefined
   ) => {
-    const template = useWidgetSettingsStore(s => s?.settings?.form?.template)
+    const template = useWidgetSettingsStore(s => s?.settings?.fields?.template)
     const { colorScheme, customColor } = template?.templateSettings || {}
     const imageUrl = useWidgetSettingsStore(
-      s => s?.settings?.form?.template?.templateSettings?.image?.url
+      s => s?.settings?.fields?.template?.templateSettings?.image?.url
     )
     const imageEnabled = useWidgetSettingsStore(
-      s => s?.settings?.form?.template?.templateSettings?.image?.enabled
+      s => s?.settings?.fields?.template?.templateSettings?.image?.enabled
     )
 
     return (
@@ -51,13 +51,13 @@ const SidePanelChrome = ({
   children: ReactElement | ReactElement[]
   hideCloseButton?: boolean
 }) => {
-  const template = useWidgetSettingsStore(s => s?.settings?.form?.template)
+  const template = useWidgetSettingsStore(s => s?.settings?.fields?.template)
   const { colorScheme, customColor } = template?.templateSettings || {}
   const imageUrl = useWidgetSettingsStore(
-    s => s?.settings?.form?.template?.templateSettings?.image?.url
+    s => s?.settings?.fields?.template?.templateSettings?.image?.url
   )
   const imageEnabled = useWidgetSettingsStore(
-    s => s?.settings?.form?.template?.templateSettings?.image?.enabled
+    s => s?.settings?.fields?.template?.templateSettings?.image?.enabled
   )
 
   return (

@@ -337,6 +337,11 @@ docker system df
 # Server: "name": "your-project-server"
 ```
 
+## 📚 Инструкции
+
+- [Добавление нового типа виджета](docs/instructions/adding-widget.md)
+- [Добавление нового поля](docs/instructions/add-field-tutorial.md)
+
 ## 📊 Доступные скрипты
 
 | Скрипт           | Описание                              |

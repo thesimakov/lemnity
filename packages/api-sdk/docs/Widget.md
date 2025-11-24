@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **type** | **string** | The type of the widget | [default to undefined]
 **enabled** | **boolean** | Whether the widget is enabled | [default to undefined]
 **config** | **object** | JSON configuration for the widget | [optional] [default to undefined]
+**configVersion** | **object** | Version of the widget configuration | [optional] [default to undefined]
 **createdAt** | **string** | Creation timestamp | [default to undefined]
 **updatedAt** | **string** | Last update timestamp | [default to undefined]
 
@@ -26,6 +27,7 @@ const instance: Widget = {
     type,
     enabled,
     config,
+    configVersion,
     createdAt,
     updatedAt,
 };

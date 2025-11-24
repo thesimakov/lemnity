@@ -26,4 +26,5 @@ enum WidgetType {
   CHEST_WITH_ACTION
   ADVENT_CALENDAR
   TEASER
+  FAB_MENU
 }

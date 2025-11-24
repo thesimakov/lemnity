@@ -3,7 +3,7 @@ import WheelOfFortune from './WheelOfFortune'
 import RewardContent from '../Common/RewardContent/RewardContent'
 import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { useWheelOfFortuneSettings } from '@/layouts/Widgets/WheelOfFortune/hooks'
-import { useFormSettings } from '@/stores/widgetSettings/formHooks'
+import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import type { WidgetPreviewScreen } from '../registry'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
 
@@ -15,13 +15,15 @@ type WheelDesktopScreenProps = {
 const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   const spinTrigger = usePreviewRuntimeStore(s => s.counters['wheel.spin'] ?? 0)
   const staticDefaults = useWidgetStaticDefaults()
-  const companyLogo = useWidgetSettingsStore(s => s?.settings?.form.companyLogo)
-  const templateDefaults = staticDefaults?.form.template.templateSettings
-  const templateSettings = useWidgetSettingsStore(s => s?.settings?.form.template?.templateSettings)
+  const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
+  const templateDefaults = staticDefaults?.fields.template.templateSettings
+  const templateSettings = useWidgetSettingsStore(
+    s => s?.settings?.fields?.template?.templateSettings
+  )
   const contentPosition = templateSettings?.contentPosition ?? templateDefaults?.contentPosition
 
   const { settings } = useWheelOfFortuneSettings()
-  const { settings: formSettings } = useFormSettings()
+  const { settings: fieldsSettings } = useFieldsSettings()
   if (!settings) return null
 
   const sectors = settings.sectors
@@ -33,7 +35,7 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   const content = renderForm ? (
     <DynamicFieldsForm onSubmit={onSubmit} />
   ) : (
-    <RewardContent companyLogo={companyLogo} onWin={formSettings.messages?.onWin} />
+    <RewardContent companyLogo={companyLogo} onWin={fieldsSettings.messages?.onWin} />
   )
 
   const renderWheel = (side: 'left' | 'right') => {
