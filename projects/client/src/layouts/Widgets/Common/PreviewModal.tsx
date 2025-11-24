@@ -5,6 +5,7 @@ import iconCross from '@/assets/icons/cross.svg'
 import Modal from '@/components/Modal/Modal'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import DesktopPreview from './DesktopPreview/DesktopPreview'
+import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 
 interface PreviewModalProps {
   isOpen: boolean
@@ -24,6 +25,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
   const imageUrl = useWidgetSettingsStore(
     s => s?.settings?.fields?.template?.templateSettings?.image?.url
   )
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
+  const definition = widgetType ? getWidgetDefinition(widgetType) : null
+  const CustomModalComponent = definition?.preview?.modal
+  const containerStyle =
+    !CustomModalComponent && imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined
 
   return (
     <Modal
@@ -34,7 +40,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
       closeOnEsc
       containerClassName={`max-w-[928px] ${containerClassName}`}
     >
-      <div className="relative" style={{ backgroundImage: `url(${imageUrl})` }}>
+      <div className="relative" style={containerStyle}>
         <Button
           isIconOnly
           variant="light"
@@ -44,7 +50,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         >
           <SvgIcon src={iconCross} className="text-gray-700" size="18px" />
         </Button>
-        <DesktopPreview screen={screen} hideCloseButton onSubmit={onSubmit} />
+        {CustomModalComponent ? (
+          <CustomModalComponent screen={screen} onSubmit={onSubmit} />
+        ) : (
+          <DesktopPreview screen={screen} hideCloseButton onSubmit={onSubmit} />
+        )}
       </div>
     </Modal>
   )

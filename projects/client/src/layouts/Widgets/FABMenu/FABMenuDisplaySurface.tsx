@@ -29,21 +29,16 @@ const FABMenuDisplaySurface = () => {
   return (
     <section className="flex flex-col gap-4 rounded-xl border border-[#E6E6E6] p-4 bg-white">
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-medium text-gray-900">Отображение FAB-меню</h2>
-        <p className="text-sm text-gray-500">
-          Управляйте расположением плавающей кнопки. Настройка сразу отражается в предпросмотре и в
-          рабочем виджете.
-        </p>
+        <h2 className="text-lg font-medium text-gray-900">Форма</h2>
       </div>
       <ButtonPositionChooser
-        title="Угол крепления"
+        noBorder
+        noPadding
+        title="Положение кнопки"
         value={currentPosition}
         options={ALLOWED_POSITIONS}
         onChange={next => setButtonPosition(normalizePosition(next))}
       />
-      <p className="text-xs text-gray-500">
-        FAB-кнопка фиксируется в нижней части экрана и не перекрывает заголовок страницы.
-      </p>
     </section>
   )
 }

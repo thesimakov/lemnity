@@ -36,6 +36,17 @@ export type DesktopScreenProps = {
   onSubmit: () => void
 }
 
+export type WidgetModalPreviewProps = {
+  screen: WidgetPreviewScreen
+  onSubmit: () => void
+}
+
+export type WidgetInlinePreviewProps = {
+  onClose: () => void
+}
+
+export type WidgetPreviewLauncher = 'modal' | 'inline'
+
 export type WidgetSettingsSection = {
   id: string
   Component: ComponentType
@@ -48,6 +59,9 @@ export type WidgetDefinition = WidgetDefinitionBase & {
     panel: ComponentType<WidgetPanelPreviewProps>
     desktopScreens: Partial<Record<WidgetPreviewScreen, ComponentType<DesktopScreenProps>>>
     mobile: ComponentType<MobilePreviewProps> | null
+    modal?: ComponentType<WidgetModalPreviewProps>
+    inline?: ComponentType<WidgetInlinePreviewProps>
+    launcher?: WidgetPreviewLauncher
   }
   settings: {
     sections: WidgetSettingsSection[]
@@ -72,7 +86,8 @@ const baseMetadata = () => ({
       prize: StubDesktopScreen,
       panel: StubDesktopScreen
     },
-    mobile: StubMobilePreview
+    mobile: StubMobilePreview,
+    launcher: 'modal' as WidgetPreviewLauncher
   },
   settings: {
     sections: stubSettingsSections

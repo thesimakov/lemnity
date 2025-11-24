@@ -6,6 +6,8 @@ type ButtonPositionChooserProps = {
   value: ButtonPosition
   onChange: (value: ButtonPosition) => void
   options?: ButtonPosition[]
+  noBorder?: boolean
+  noPadding?: boolean
 }
 
 const Dot = ({ className = '' }: { className?: string }) => (
@@ -45,13 +47,17 @@ const ButtonPositionChooser = ({
   title = 'Положение кнопки открытия',
   value,
   onChange,
-  options
+  options,
+  noBorder = false,
+  noPadding = false
 }: ButtonPositionChooserProps) => {
   const availableOptions = options?.length ? options : DEFAULT_POSITIONS
   const normalizedValue = availableOptions.includes(value) ? value : availableOptions[0]
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border border-[#E8E8E8] p-3">
+    <div
+      className={`flex flex-col gap-3 rounded-md ${noBorder ? '' : 'border border-[#E8E8E8]'} ${noPadding ? '' : 'p-3'}`}
+    >
       <span className="text-black">{title}</span>
       <div className="rounded-md border border-[#E8E8E8] p-2">
         <div className="flex gap-2">
