@@ -19,6 +19,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        phone: true,
         role: true,
         createdAt: true,
         updatedAt: true
@@ -34,7 +35,8 @@ export class UserService {
     const user: Prisma.UserCreateInput = {
       name: dto.name,
       email: dto.email,
-      password: await hash(dto.password)
+      password: await hash(dto.password),
+      phone: dto.phone
     }
 
     return this.prisma.user.create({

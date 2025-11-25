@@ -24,6 +24,7 @@ export class AuthService {
   ) {}
 
   async login(dto: AuthDto) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...user } = await this.validateUser(dto)
     const tokens = this.issueTokenPair(user.id)
 
@@ -50,7 +51,7 @@ export class AuthService {
   }
 
   async getNewTokens(refreshToken: string) {
-    const result = await this.jwt.verifyAsync(refreshToken)
+    const result = await this.jwt.verifyAsync<{ id: string }>(refreshToken)
     if (!result) {
       throw new UnauthorizedException('Invalid refresh token')
     }

@@ -4,6 +4,7 @@ import type {
   ColorScheme,
   ContentPosition,
   WindowFormat,
+  TemplateImageMode,
   MessageKey
 } from './types'
 import { mergeDeep, splitPath } from './utils'
@@ -15,6 +16,7 @@ export type FieldsActions = {
   setTemplateKey: (key: string) => void
   setTemplateImageEnabled: (enabled: boolean) => void
   setTemplateImageFile: (fileName: string, url?: string) => void
+  setTemplateImageMode: (mode: TemplateImageMode) => void
   setWindowFormat: (format: WindowFormat) => void
   setContentPosition: (position: ContentPosition) => void
   setColorScheme: (scheme: ColorScheme) => void
@@ -69,6 +71,7 @@ export const createFieldsSlice = (updateFields: FieldsUpdater): FieldsSlice => {
       updateByPath('template.templateSettings.image', { enabled }),
     setTemplateImageFile: (fileName, url) =>
       updateByPath('template.templateSettings.image', { fileName, url }),
+    setTemplateImageMode: mode => updateByPath('template.templateSettings', { imageMode: mode }),
     setWindowFormat: format => updateByPath('template.templateSettings', { windowFormat: format }),
     setContentPosition: position =>
       updateByPath('template.templateSettings', { contentPosition: position }),

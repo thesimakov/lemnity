@@ -14,6 +14,7 @@ export type MessageKey = 'onWin' | 'limitShows' | 'limitWins' | 'allPrizesGiven'
 export type ColorScheme = 'primary' | 'custom'
 export type ContentPosition = 'left' | 'right'
 export type WindowFormat = 'sidePanel' | 'modalWindow'
+export type TemplateImageMode = 'side' | 'background'
 export type SectorItemMode = 'text' | 'icon'
 
 export type MessageColorScheme = {
@@ -135,6 +136,7 @@ export type FieldsSettings = Extendable<{
     key?: string
     templateSettings?: {
       image: { enabled: boolean; fileName?: string; url?: string }
+      imageMode?: TemplateImageMode
       windowFormat: WindowFormat
       contentPosition: ContentPosition
       colorScheme: ColorScheme

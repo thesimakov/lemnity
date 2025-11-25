@@ -142,7 +142,7 @@ const DynamicFieldsForm = ({
         </>
       ) : null}
       <div
-        className={`flex flex-col gap-3 p-3 rounded-xl ${borderEnabled ? 'border' : ''}`}
+        className={`flex flex-col gap-3  rounded-xl ${borderEnabled ? 'border p-3' : 'p-0'}`}
         style={borderEnabled ? { borderColor } : undefined}
       >
         {description?.text && (
