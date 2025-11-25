@@ -10,6 +10,7 @@ interface IAuthPayload {
 
 interface IRegisterPayload extends IAuthPayload {
   name: string
+  phone: string
 }
 
 export async function login(payload: IAuthPayload): Promise<LoginResponse> {

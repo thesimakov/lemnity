@@ -15,6 +15,7 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
   const setTemplateKey = useWidgetSettingsStore(s => s.setTemplateKey)
   const setTemplateImageEnabled = useWidgetSettingsStore(s => s.setTemplateImageEnabled)
   const setTemplateImageFile = useWidgetSettingsStore(s => s.setTemplateImageFile)
+  const setTemplateImageMode = useWidgetSettingsStore(s => s.setTemplateImageMode)
   const setWindowFormat = useWidgetSettingsStore(s => s.setWindowFormat)
   const setContentPosition = useWidgetSettingsStore(s => s.setContentPosition)
   const setColorScheme = useWidgetSettingsStore(s => s.setColorScheme)
@@ -50,6 +51,7 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
       setTemplateKey,
       setTemplateImageEnabled,
       setTemplateImageFile,
+      setTemplateImageMode,
       setWindowFormat,
       setContentPosition,
       setColorScheme,
@@ -84,6 +86,7 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
       setTemplateKey,
       setTemplateImageEnabled,
       setTemplateImageFile,
+      setTemplateImageMode,
       setWindowFormat,
       setContentPosition,
       setColorScheme,

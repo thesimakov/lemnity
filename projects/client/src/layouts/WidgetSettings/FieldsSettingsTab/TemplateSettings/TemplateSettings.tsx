@@ -10,6 +10,7 @@ import type { ColorScheme, ContentPosition, WindowFormat } from '@/stores/widget
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { uploadImage } from '@/api/upload'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 const TemplateSettings = () => {
   const {
@@ -41,6 +42,7 @@ const TemplateSettings = () => {
   const imageErrors = useVisibleErrors(showValidation, 'fields.template.templateSettings.image')
   const imageUrlError = imageErrors.find(e => e.path.endsWith('url'))
   const imageFileNameError = imageErrors.find(e => e.path.endsWith('fileName'))
+  const widgetType = useWidgetSettingsStore(s => s?.settings?.widgetType)
 
   const colorOptions: OptionItem[] = [
     { key: 'primary', label: 'Основная' },
@@ -69,51 +71,6 @@ const TemplateSettings = () => {
       transition={{ duration: 0.3 }}
       className="overflow-hidden flex flex-col gap-3"
     >
-      <ImageUploader
-        checked={enabled}
-        setChecked={setTemplateImageEnabled}
-        title="Картинка"
-        recommendedResolution="500x500"
-        fileSize="менее 2 Mb"
-        filename={fileName}
-        url={url}
-        onFileSelect={file => {
-          if (!file) return
-          uploadImage(file).then(({ url }: { url: string }) => {
-            setTemplateImageFile(file.name, url)
-          })
-        }}
-        isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
-        errorMessage={imageUrlError?.message || imageFileNameError?.message}
-      />
-      <OptionsChooser
-        title="Формат окна"
-        options={windowFormatOptions}
-        value={settings?.windowFormat}
-        onChange={k => {
-          if (k === 'sidePanel') {
-            setContentPosition('right')
-          }
-          setWindowFormat(k as WindowFormat)
-        }}
-      />
-      <AnimatePresence>
-        {settings?.windowFormat === 'modalWindow' ? (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <OptionsChooser
-              title="Положение контента"
-              options={contentPositionOptions}
-              value={settings.contentPosition}
-              onChange={k => setContentPosition(k as ContentPosition)}
-            />
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
       <OptionsChooser
         title="Цветовая гамма"
         options={colorOptions}
@@ -123,6 +80,55 @@ const TemplateSettings = () => {
           setCustomColor(settings.customColor)
         }}
       />
+      {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : (
+        <ImageUploader
+          checked={enabled}
+          setChecked={setTemplateImageEnabled}
+          title="Картинка"
+          recommendedResolution="500x500"
+          fileSize="менее 2 Mb"
+          filename={fileName}
+          url={url}
+          onFileSelect={file => {
+            if (!file) return
+            uploadImage(file).then(({ url }: { url: string }) => {
+              setTemplateImageFile(file.name, url)
+            })
+          }}
+          isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
+          errorMessage={imageUrlError?.message || imageFileNameError?.message}
+        />
+      )}
+      {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : (
+        <OptionsChooser
+          title="Формат окна"
+          options={windowFormatOptions}
+          value={settings?.windowFormat}
+          onChange={k => {
+            if (k === 'sidePanel') {
+              setContentPosition('right')
+            }
+            setWindowFormat(k as WindowFormat)
+          }}
+        />
+      )}
+      <AnimatePresence>
+        {settings?.windowFormat === 'modalWindow' ? (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <OptionsChooser
+              title="Расположение контента"
+              options={contentPositionOptions}
+              value={settings.contentPosition}
+              onChange={k => setContentPosition(k as ContentPosition)}
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
       {showValidation && customColorError ? (
         <span className="text-sm text-red-500">{customColorError.message}</span>
       ) : null}

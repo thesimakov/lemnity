@@ -7,7 +7,7 @@ import imageUpload from '@/assets/icons/image-upload.svg'
 type ImageUploaderProps = {
   checked?: boolean
   setChecked?: (checked: boolean) => void
-  title: string
+  title?: string
   recommendedResolution: string
   fileSize: string
   formats?: string[]
@@ -93,8 +93,8 @@ const ImageUploader = ({
       className={`flex flex-col gap-2 rounded-lg ${noPadding ? '' : 'p-3'} ${noBorder ? '' : 'border border-gray-200'} ${classNames.container}`}
     >
       <div className="flex flex-row gap-2">
-        <span className="text-black">{title}</span>
-        {!hideSwitch && (
+        {title ? <span className="text-black">{title}</span> : null}
+        {hideSwitch ? null : (
           <CustomSwitch
             isSelected={checked}
             onValueChange={setChecked}

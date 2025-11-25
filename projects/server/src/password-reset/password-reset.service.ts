@@ -25,6 +25,7 @@ export class PasswordResetService {
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex')
     const expiresAt = new Date(Date.now() + this.ttlMinutes * 60 * 1000)
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, created] = await this.prisma.$transaction([
       this.prisma.passwordResetToken.deleteMany({ where: { userId: user.id } }),
       this.prisma.passwordResetToken.create({ data: { userId: user.id, tokenHash, expiresAt } })
@@ -35,6 +36,7 @@ export class PasswordResetService {
         name: user.name || undefined,
         ttlMinutes: this.ttlMinutes
       })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       await this.prisma.passwordResetToken.delete({ where: { id: created.id } }).catch(() => {})
       throw new ServiceUnavailableException('Failed to send password reset email')
