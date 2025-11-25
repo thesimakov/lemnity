@@ -4,11 +4,18 @@ import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import { useFABMenuSettings } from './hooks'
-import type { FABMenuSectorItem, FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
+import type {
+  FABMenuIconKey,
+  FABMenuSectorItem,
+  FABMenuWidgetSettings
+} from '@/layouts/Widgets/FABMenu/types'
 import FABSectorItem from './FABSectorItem'
 import FABMenuButtonPicker from './FABMenuButtonPicker'
 import { createPlaceholderFABMenuSector } from './defaults'
-import type { FABMenuButtonDefinition } from './buttonLibrary'
+import {
+  FAB_MENU_BUTTON_PRESETS,
+  type FABMenuButtonDefinition
+} from './buttonLibrary'
 
 const FABMenuField = () => {
   const defaults = useWidgetStaticDefaults()
@@ -58,8 +65,21 @@ const FABMenuField = () => {
   }
 
   const handleLabelChange = (index: number, label: string) => updateFABMenuSector(index, { label })
-  const handleIconChange = (index: number, icon: FABMenuSectorItem['icon']) =>
-    updateFABMenuSector(index, { icon })
+  const handleIconChange = (index: number, icon: FABMenuIconKey) => {
+    const preset = FAB_MENU_BUTTON_PRESETS.find(entry => entry.icon === icon)
+    if (!preset) {
+      updateFABMenuSector(index, { icon })
+      return
+    }
+
+    updateFABMenuSector(index, {
+      icon: preset.icon,
+      label: preset.label,
+      payload: preset.payload,
+      color: preset.color,
+      description: preset.description
+    })
+  }
   const handlePayloadTypeChange = (index: number, type: FABMenuSectorItem['payload']['type']) =>
     updateFABMenuSector(index, {
       payload: {
