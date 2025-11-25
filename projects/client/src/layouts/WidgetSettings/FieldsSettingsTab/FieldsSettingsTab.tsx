@@ -22,7 +22,7 @@ import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import SurfaceNotice from '@/layouts/WidgetSettings/Common/SurfaceNotice'
 
 const templateOptions = [
-  { key: 'template1', label: 'Новый Год' },
+  { key: 'template1', label: 'Новогодний' },
   { key: 'template2', label: 'Рождество' },
   { key: 'template3', label: '14 Февраля' },
   { key: 'template4', label: '23 Февраля' },
@@ -85,10 +85,34 @@ const FieldsSettingsTab = () => {
 
   return (
     <>
-      <span className="text-xl font-rubik">Настройка формы</span>
+      <span className="text-xl font-rubik">Настройка окна</span>
       <div className="flex flex-col gap-3">
         {isStandardSurface && (
           <>
+            <TemplateChooser
+              enabled={template?.enabled ?? true}
+              onToggle={enabled => {
+                setTemplateEnabled(enabled)
+                if (!enabled) {
+                  const d = staticDefaults?.fields?.template?.templateSettings ?? {
+                    image: { enabled: false, fileName: '', url: '' },
+                    imageMode: 'side',
+                    contentPosition: 'left',
+                    colorScheme: 'primary',
+                    customColor: '#725DFF'
+                  }
+                  setTemplateImageEnabled(d.image.enabled ?? false)
+                  setContentPosition(d.contentPosition)
+                  setColorScheme(d.colorScheme)
+                  if (d.colorScheme === 'custom' && d.customColor) setCustomColor(d.customColor)
+                }
+              }}
+              options={templateOptions}
+              selectedKey={template.key}
+              onChange={key => setTemplateKey(key ?? '')}
+              isInvalid={templateErrors.some(e => e.path.endsWith('key'))}
+              errorMessage={templateErrors.find(e => e.path.endsWith('key'))?.message}
+            />
             <ImageUploader
               checked={enabled ?? true}
               setChecked={setCompanyLogoEnabled}
@@ -108,29 +132,7 @@ const FieldsSettingsTab = () => {
                 logoErrors.find(e => e.path.endsWith('url'))?.message
               }
             />
-            <TemplateChooser
-              enabled={template?.enabled ?? true}
-              onToggle={enabled => {
-                setTemplateEnabled(enabled)
-                if (!enabled) {
-                  const d = staticDefaults?.fields?.template?.templateSettings ?? {
-                    image: { enabled: false, fileName: '', url: '' },
-                    contentPosition: 'left',
-                    colorScheme: 'primary',
-                    customColor: '#725DFF'
-                  }
-                  setTemplateImageEnabled(d.image.enabled ?? false)
-                  setContentPosition(d.contentPosition)
-                  setColorScheme(d.colorScheme)
-                  if (d.colorScheme === 'custom' && d.customColor) setCustomColor(d.customColor)
-                }
-              }}
-              options={templateOptions}
-              selectedKey={template.key}
-              onChange={key => setTemplateKey(key ?? '')}
-              isInvalid={templateErrors.some(e => e.path.endsWith('key'))}
-              errorMessage={templateErrors.find(e => e.path.endsWith('key'))?.message}
-            />
+
             <AnimatePresence>
               {!(template?.enabled ?? true) ? <TemplateSettings /> : null}
             </AnimatePresence>
@@ -147,7 +149,7 @@ const FieldsSettingsTab = () => {
             <ContactsField />
             <AgreementPoliciesField />
             <AdsInfoField />
-            <MessagesSettings />
+            {/* <MessagesSettings /> */}
           </>
         )}
 

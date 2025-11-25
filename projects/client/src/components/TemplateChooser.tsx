@@ -30,7 +30,7 @@ const TemplateChooser = ({
   return (
     <div className="flex flex-col gap-3 p-3 rounded-lg border border-gray-200">
       <div className="flex flex-row items-center gap-2">
-        <span className="text-black text-xl font-semibold">{title}</span>
+        <span className="text-black text-[18px] font-Rubik font-semibold">{title}</span>
         <CustomSwitch
           isSelected={enabled}
           onValueChange={onToggle}

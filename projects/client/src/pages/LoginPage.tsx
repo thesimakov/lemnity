@@ -24,9 +24,18 @@ const signupSchema = z
   .object({
     name: z.string().min(1, 'Имя обязательно'),
     email: z.email('Некорректный email'),
+    phone: z
+      .string()
+      .trim()
+      .min(10, 'Не корректный номер телефона')
+      .optional()
+      .refine(value => value === undefined || value === '' || /^\d+$/.test(value), {
+        message: 'Можно вводить только цифры'
+      }),
     password: z.string().min(8, 'Минимум 8 символов'),
     passwordConfirmation: z.string().min(8, 'Минимум 8 символов'),
-    acceptTerms: z.boolean().refine(v => v === true, 'Чтобы продолжить, примите условия')
+    acceptTerms: z.boolean().refine(v => v === true, 'Чтобы продолжить, примите условия'),
+    newsletter: z.boolean()
   })
   .refine(data => data.password === data.passwordConfirmation, {
     path: ['passwordConfirmation'],
@@ -79,9 +88,11 @@ const LoginPage = (): ReactElement => {
     defaultValues: {
       name: '',
       email: '',
+      phone: '',
       password: '',
       passwordConfirmation: '',
-      acceptTerms: false
+      acceptTerms: false,
+      newsletter: false
     }
   })
 
@@ -145,15 +156,15 @@ const LoginPage = (): ReactElement => {
   }
 
   return (
-    <div className="grid h-full grid-cols-1 md:grid-cols-2">
-      <div className="flex h-full w-full items-center justify-center bg-white px-6 sm:px-10 md:px-12">
+    <div className="grid h-full grid-cols-1 md:grid-cols-2 bg-white">
+      <div className="mx-auto flex h-full max-w-[462px] items-center justify-center bg-white px-6 sm:px-10 md:px-12 ">
         <div className="">
           <div className="mb-4.5 text-center">
             <div className="w-3/5 mx-auto">
-              <SvgIcon src={lemnityLogo} />
+              <SvgIcon src={lemnityLogo} preserveOriginalColors={true} />
             </div>
             {mode === 'signup' ? (
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-black font-Roboto text-[22px] ">
                 Попробуйте Lemnity
                 <br />
                 14 дней бесплатно!
@@ -162,13 +173,13 @@ const LoginPage = (): ReactElement => {
           </div>
 
           {mode !== 'forgot' ? (
-            <div className="mb-2 w-full flex justify-center">
+            <div className="mb-2 w-full  flex justify-center">
               <div className="flex w-full h-11 rounded-lg bg-gray-100 p-1 gap-1">
                 <Button
                   variant="light"
                   size="sm"
                   radius="sm"
-                  className={`${tabClass('login')} flex-1 h-full font-normal`}
+                  className={`${tabClass('login')} flex-1 h-full font-normal text-[17px] `}
                   onPress={switchToLogin}
                 >
                   Войти
@@ -177,7 +188,7 @@ const LoginPage = (): ReactElement => {
                   variant="light"
                   size="sm"
                   radius="sm"
-                  className={`${tabClass('signup')} flex-1 h-full font-normal`}
+                  className={`${tabClass('signup')} flex-1 h-full font-normal text-[17px]`}
                   onPress={switchToSignup}
                 >
                   Регистрация
@@ -187,7 +198,7 @@ const LoginPage = (): ReactElement => {
           ) : null}
 
           {mode === 'login' ? (
-            <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-2">
+            <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-2 w-[366px]">
               {authError ? <p className="text-danger text-sm">{authError}</p> : null}
               <Input
                 placeholder="Ваш email"
@@ -233,7 +244,7 @@ const LoginPage = (): ReactElement => {
                 Войти
               </Button>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Забыли пароль?</span>
+                <span className="text-black">Забыли пароль?</span>
                 <Button
                   variant="light"
                   disableAnimation
@@ -248,7 +259,7 @@ const LoginPage = (): ReactElement => {
             <form onSubmit={handleSubmitSignup(onSignupSubmit)} className="space-y-2">
               {signupError ? <p className="text-danger text-sm">{signupError}</p> : null}
               <Input
-                placeholder="Имя"
+                placeholder="Имя и Фамилия"
                 variant="bordered"
                 radius="sm"
                 classNames={{
@@ -270,6 +281,20 @@ const LoginPage = (): ReactElement => {
                 {...registerSignup('email')}
                 isInvalid={!!signupErrors.email}
                 errorMessage={signupErrors.email?.message}
+              />
+              <Input
+                type="tel"
+                inputMode="numeric"
+                placeholder="Номер телефона"
+                variant="bordered"
+                radius="sm"
+                classNames={{
+                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
+                  input: 'text-gray-900 placeholder:text-gray-400'
+                }}
+                {...registerSignup('phone')}
+                isInvalid={!!signupErrors.phone}
+                errorMessage={signupErrors.phone?.message}
               />
               <Input
                 type={showSignupPassword ? 'text' : 'password'}
@@ -324,32 +349,47 @@ const LoginPage = (): ReactElement => {
                 control={controlSignup}
                 name="acceptTerms"
                 render={({ field }) => (
-                  <div>
+                  <div className="flex flex-col gap-2 text-Roboto text-[13px] text-black">
+                    <div>
+                     Я даю согласие ООО «Лемнити»:                    
+                     </div>
                     <Checkbox
                       radius="sm"
                       isSelected={field.value}
                       onValueChange={field.onChange}
                       classNames={{
-                        label: 'text-xs text-gray-600',
+                        label: 'text-xs text-black',
                         wrapper: 'after:!bg-black before:!rounded-[6px] after:!rounded-[6px]'
                       }}
                     >
-                      Нажимая на кнопку “Начать”, вы даете согласие
-                      <br />
-                      на обработку
-                      <a className="ml-1 text-primary hover:underline" href="#">
-                        персональных данных
-                      </a>
+                      На обработку персональных данных
                     </Checkbox>
                     {signupErrors.acceptTerms ? (
-                      <p className="mt-1 text-xs text-danger">{signupErrors.acceptTerms.message}</p>
+                      <p className="mt-1 text-xs text-danger ">{signupErrors.acceptTerms.message}</p>
                     ) : null}
                   </div>
                 )}
               />
+              <Controller
+                control={controlSignup}
+                name="newsletter"
+                render={({ field }) => (
+                  <Checkbox
+                    radius="sm"
+                    isSelected={field.value}
+                    onValueChange={field.onChange}
+                    classNames={{
+                      label: 'text-xs text-gray-600 text-black ',
+                      wrapper: 'after:!bg-black before:!rounded-[6px] after:!rounded-[6px]'
+                    }}
+                  >
+                    На получение сообщений и информационны-рекламной рассылки
+                  </Checkbox>
+                )}
+              />
 
               <Button
-                className="h-12 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
+                className="h-12 mt-3 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
                 type="submit"
                 isLoading={isSignupSubmitting}
                 isDisabled={!isSignupValid || isSignupSubmitting}
@@ -404,13 +444,13 @@ const LoginPage = (): ReactElement => {
             </form>
           )}
 
-          <div className="mt-10 flex items-center justify-between text-xs text-gray-400">
-            <a href="https://lemnity.ru/political" target="_blank" className="hover:underline">
-              Политика конфиденциальности
+          <div className="mt-2 flex items-center justify-between text-[11px] text-gray-400">
+            <a href="https://lemnity.ru/doc" target="_blank" className="hover:underline">
+              Пользовательское соглашение
             </a>
             <span className="mx-2">|</span>
-            <a href="https://lemnity.ru/about" target="_blank" className="hover:underline">
-              Разработка Lemnity
+            <a href="https://lemnity.ru/doc" target="_blank" className="hover:underline">
+              Политика конфидециальности
             </a>
           </div>
         </div>

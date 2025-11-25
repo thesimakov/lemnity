@@ -1,3 +1,4 @@
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import ColorAccessory from '@/components/ColorAccessory'
 import OptionsChooser, { type OptionItem } from '@/components/OptionsChooser'
 import ImageUploader from '@/components/ImageUploader'
@@ -6,7 +7,12 @@ import useWidgetSettingsStore, {
   useWidgetStaticDefaults
 } from '@/stores/widgetSettingsStore'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { ColorScheme, ContentPosition, WindowFormat } from '@/stores/widgetSettings/types'
+import type {
+  ColorScheme,
+  ContentPosition,
+  WindowFormat,
+  TemplateImageMode
+} from '@/stores/widgetSettings/types'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { uploadImage } from '@/api/upload'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
@@ -15,6 +21,7 @@ const TemplateSettings = () => {
   const {
     setTemplateImageEnabled,
     setTemplateImageFile,
+    setTemplateImageMode,
     setWindowFormat,
     setContentPosition,
     setColorScheme,
@@ -23,6 +30,7 @@ const TemplateSettings = () => {
   const staticDefaults = useWidgetStaticDefaults()
   const defaultTemplateSettings = staticDefaults?.fields?.template?.templateSettings ?? {
     image: { enabled: false, fileName: '', url: '' },
+    imageMode: 'side',
     windowFormat: 'sidePanel',
     contentPosition: 'left',
     colorScheme: 'primary',
@@ -35,6 +43,7 @@ const TemplateSettings = () => {
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const errors = showValidation ? getErrors('fields.template.templateSettings') : []
   const customColorError = errors.find(e => e.path.endsWith('customColor'))
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
 
   const { image } = settings ?? {}
   const { enabled, fileName, url } = image ?? {}
@@ -61,6 +70,11 @@ const TemplateSettings = () => {
     { key: 'modalWindow', label: 'Модальное окно' }
   ]
 
+  const imageModeOptions: OptionItem[] = [
+    { key: 'side', label: 'Картинка с боку' },
+    { key: 'background', label: 'Фон всего окна' }
+  ]
+
   return (
     <motion.div
       initial={{ opacity: 1, height: 0 }}
@@ -69,10 +83,19 @@ const TemplateSettings = () => {
       transition={{ duration: 0.3 }}
       className="overflow-hidden flex flex-col gap-3"
     >
+      <OptionsChooser
+        title="Цветовая гамма"
+        options={colorOptions}
+        value={settings.colorScheme}
+        onChange={k => {
+          setColorScheme(k as ColorScheme)
+          setCustomColor(settings.customColor)
+        }}
+      />
       <ImageUploader
         checked={enabled}
         setChecked={setTemplateImageEnabled}
-        title="Картинка"
+        title="Изображение"
         recommendedResolution="500x500"
         fileSize="менее 2 Mb"
         filename={fileName}
@@ -86,17 +109,37 @@ const TemplateSettings = () => {
         isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
         errorMessage={imageUrlError?.message || imageFileNameError?.message}
       />
-      <OptionsChooser
-        title="Формат окна"
-        options={windowFormatOptions}
-        value={settings?.windowFormat}
-        onChange={k => {
-          if (k === 'sidePanel') {
-            setContentPosition('right')
-          }
-          setWindowFormat(k as WindowFormat)
-        }}
-      />
+      {/* <AnimatePresence>
+        {settings.image.enabled ? (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <OptionsChooser
+              title="Режим изображения"
+              options={imageModeOptions}
+              value={settings.imageMode ?? 'side'}
+              onChange={k => setTemplateImageMode(k as TemplateImageMode)}
+            />
+          </motion.div>
+        ) : null}
+      </AnimatePresence> */}
+      {widgetType !== WidgetTypeEnum.ACTION_TIMER ? (
+        <OptionsChooser
+          title="Формат окна"
+          options={windowFormatOptions}
+          value={settings?.windowFormat}
+          onChange={k => {
+            if (k === 'sidePanel') {
+              setContentPosition('right')
+            }
+            setWindowFormat(k as WindowFormat)
+          }}
+        />
+      ) : null}
+
       <AnimatePresence>
         {settings?.windowFormat === 'modalWindow' ? (
           <motion.div
@@ -106,7 +149,7 @@ const TemplateSettings = () => {
             transition={{ duration: 0.3 }}
           >
             <OptionsChooser
-              title="Положение контента"
+              title="Расположение контента"
               options={contentPositionOptions}
               value={settings.contentPosition}
               onChange={k => setContentPosition(k as ContentPosition)}
@@ -114,15 +157,7 @@ const TemplateSettings = () => {
           </motion.div>
         ) : null}
       </AnimatePresence>
-      <OptionsChooser
-        title="Цветовая гамма"
-        options={colorOptions}
-        value={settings.colorScheme}
-        onChange={k => {
-          setColorScheme(k as ColorScheme)
-          setCustomColor(settings.customColor)
-        }}
-      />
+
       {showValidation && customColorError ? (
         <span className="text-sm text-red-500">{customColorError.message}</span>
       ) : null}
