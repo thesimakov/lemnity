@@ -46,7 +46,7 @@ const OptionsChooser = ({
     <div
       className={`flex flex-col rounded-lg ${noPadding ? '' : 'p-3'} overflow-hidden ${noBorder ? '' : 'border border-gray-200'} ${classNames}`}
     >
-      <div className="flex flex-col gap-2 pb-2">
+      <div className="flex flex-col gap-2">
         <div className="flex flex-row items-center justify-between">
           {title ? (
             <span className="text-black text-lg font-Rubik font-medium">{title}</span>

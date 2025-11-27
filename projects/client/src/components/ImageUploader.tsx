@@ -7,7 +7,7 @@ import imageUpload from '@/assets/icons/image-upload.svg'
 type ImageUploaderProps = {
   checked?: boolean
   setChecked?: (checked: boolean) => void
-  title: string
+  title?: string
   recommendedResolution: string
   fileSize: string
   formats?: string[]
@@ -93,8 +93,8 @@ const ImageUploader = ({
       className={`flex flex-col gap-2 rounded-lg ${noPadding ? '' : 'p-3'} ${noBorder ? '' : 'border border-gray-200'} ${classNames.container}`}
     >
       <div className="flex flex-row gap-2">
-        <span className="text-black">{title}</span>
-        {!hideSwitch && (
+        {title ? <span className="text-black">{title}</span> : null}
+        {hideSwitch ? null : (
           <CustomSwitch
             isSelected={checked}
             onValueChange={setChecked}
@@ -105,11 +105,11 @@ const ImageUploader = ({
         )}
       </div>
       <div className="flex flex-row gap-3 w-full min-w-0">
-        {/* <img
+        <img
           src={previewUrl || imageUpload}
           alt="image"
           className="w-14 h-14 object-cover rounded-md"
-        /> */}
+        />
         <label
           htmlFor={inputId}
           className={`flex-1 min-w-0 h-14 flex items-center gap-3 px-3 py-2 bg-[#F4F4F5] hover:bg-[#E4E4E7] border-2 border-[#E4E4E7] rounded-md cursor-pointer transition-colors overflow-hidden ${classNames.label}`}

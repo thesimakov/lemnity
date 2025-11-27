@@ -5,6 +5,7 @@ import type { DesktopScreenProps } from '../registry'
 import Badge from './Badge'
 import RewardContent from '../Common/RewardContent/RewardContent'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
+import { useActionTimerSettings } from './hooks'
 
 const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
@@ -15,6 +16,16 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const contentPosition =
     useWidgetSettingsStore(s => s.settings?.fields?.template?.templateSettings?.contentPosition) ??
     'left'
+  const { settings: actionTimerSettings } = useActionTimerSettings()
+
+  const backgroundImage =
+    imageMode == 'background'
+      ? {
+          backgroundImage: `url(${actionTimerSettings?.countdown.imageUrl})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }
+      : {}
 
   const layoutClasses = `grid grid-cols-2 items-stretch w-full ${contentPosition === 'left' ? 'pl-6' : 'pr-6'}`
   const isPrize = screen === 'prize'
@@ -58,7 +69,7 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   }
 
   return (
-    <div className={layoutClasses}>
+    <div className={layoutClasses} style={backgroundImage}>
       {contentPosition === 'left' ? (
         <>
           <div className="h-full py-6">{content}</div>

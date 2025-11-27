@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import templateImage from '../../assets/images/template.svg'
 import SvgIcon from '@/components/SvgIcon'
 import addIcon from '../../assets/icons/add.svg'
 

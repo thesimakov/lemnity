@@ -1,4 +1,3 @@
-import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import ColorAccessory from '@/components/ColorAccessory'
 import OptionsChooser, { type OptionItem } from '@/components/OptionsChooser'
 import ImageUploader from '@/components/ImageUploader'
@@ -7,22 +6,16 @@ import useWidgetSettingsStore, {
   useWidgetStaticDefaults
 } from '@/stores/widgetSettingsStore'
 import { AnimatePresence, motion } from 'framer-motion'
-import type {
-  ColorScheme,
-  ContentPosition,
-  WindowFormat,
-  TemplateImageMode
-} from '@/stores/widgetSettings/types'
+import type { ColorScheme, ContentPosition, WindowFormat } from '@/stores/widgetSettings/types'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { uploadImage } from '@/api/upload'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
-import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 const TemplateSettings = () => {
   const {
     setTemplateImageEnabled,
     setTemplateImageFile,
-    setTemplateImageMode,
     setWindowFormat,
     setContentPosition,
     setColorScheme,
@@ -31,7 +24,6 @@ const TemplateSettings = () => {
   const staticDefaults = useWidgetStaticDefaults()
   const defaultTemplateSettings = staticDefaults?.fields?.template?.templateSettings ?? {
     image: { enabled: false, fileName: '', url: '' },
-    imageMode: 'side',
     windowFormat: 'sidePanel',
     contentPosition: 'left',
     colorScheme: 'primary',
@@ -44,13 +36,13 @@ const TemplateSettings = () => {
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
   const errors = showValidation ? getErrors('fields.template.templateSettings') : []
   const customColorError = errors.find(e => e.path.endsWith('customColor'))
-  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
 
   const { image } = settings ?? {}
   const { enabled, fileName, url } = image ?? {}
   const imageErrors = useVisibleErrors(showValidation, 'fields.template.templateSettings.image')
   const imageUrlError = imageErrors.find(e => e.path.endsWith('url'))
   const imageFileNameError = imageErrors.find(e => e.path.endsWith('fileName'))
+  const widgetType = useWidgetSettingsStore(s => s?.settings?.widgetType)
 
   const colorOptions: OptionItem[] = [
     { key: 'primary', label: 'Основная' },
@@ -88,42 +80,38 @@ const TemplateSettings = () => {
           setCustomColor(settings.customColor)
         }}
       />
-      <BorderedContainer className="flex flex-col">
-        {widgetType == WidgetTypeEnum.ACTION_TIMER ? null : (
-          <ImageUploader
-            checked={enabled}
-            setChecked={setTemplateImageEnabled}
-            title="Изображение"
-            recommendedResolution="500x500"
-            fileSize="менее 2 Mb"
-            filename={fileName}
-            url={url}
-            onFileSelect={file => {
-              if (!file) return
-              uploadImage(file).then(({ url }: { url: string }) => {
-                setTemplateImageFile(file.name, url)
-              })
-            }}
-            isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
-            errorMessage={imageUrlError?.message || imageFileNameError?.message}
-          />
-        )}
-
-        {widgetType !== WidgetTypeEnum.ACTION_TIMER ? (
-          <OptionsChooser
-            title="Формат окна"
-            options={windowFormatOptions}
-            value={settings?.windowFormat}
-            onChange={k => {
-              if (k === 'sidePanel') {
-                setContentPosition('right')
-              }
-              setWindowFormat(k as WindowFormat)
-            }}
-          />
-        ) : null}
-      </BorderedContainer>
-
+      {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : (
+        <ImageUploader
+          checked={enabled}
+          setChecked={setTemplateImageEnabled}
+          title="Картинка"
+          recommendedResolution="500x500"
+          fileSize="менее 2 Mb"
+          filename={fileName}
+          url={url}
+          onFileSelect={file => {
+            if (!file) return
+            uploadImage(file).then(({ url }: { url: string }) => {
+              setTemplateImageFile(file.name, url)
+            })
+          }}
+          isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
+          errorMessage={imageUrlError?.message || imageFileNameError?.message}
+        />
+      )}
+      {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : (
+        <OptionsChooser
+          title="Формат окна"
+          options={windowFormatOptions}
+          value={settings?.windowFormat}
+          onChange={k => {
+            if (k === 'sidePanel') {
+              setContentPosition('right')
+            }
+            setWindowFormat(k as WindowFormat)
+          }}
+        />
+      )}
       <AnimatePresence>
         {settings?.windowFormat === 'modalWindow' ? (
           <motion.div
@@ -141,7 +129,6 @@ const TemplateSettings = () => {
           </motion.div>
         ) : null}
       </AnimatePresence>
-
       {showValidation && customColorError ? (
         <span className="text-sm text-red-500">{customColorError.message}</span>
       ) : null}

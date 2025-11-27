@@ -25,8 +25,7 @@ const imageModeOptions: OptionItem[] = [
 ]
 
 const ActionTimerSettings = () => {
-  const { setTemplateImageEnabled, setTemplateImageMode, setTemplateImageFile } =
-    useFieldsSettings()
+  const { setTemplateImageMode } = useFieldsSettings()
   const { settings, setActionTimerImage, setImagePosition } = useActionTimerSettings()
   const countdownDefaults = buildActionTimerWidgetSettings().countdown
   const countdownSettings = settings?.countdown ?? countdownDefaults
@@ -45,11 +44,9 @@ const ActionTimerSettings = () => {
     withDefaultsPath(s.settings?.fields, 'template.templateSettings', defaultTemplateSettings)
   )
   const showValidation = useWidgetSettingsStore(s => s.validationVisible)
-  const imageErrors = useVisibleErrors(showValidation, 'fields.template.templateSettings.image')
-  const imageUrlError = imageErrors.find(e => e.path.endsWith('url'))
-  const imageFileNameError = imageErrors.find(e => e.path.endsWith('fileName'))
-  const { image } = settingsNew ?? {}
-  const { enabled, fileName, url } = image ?? {}
+  const imageErrors = useVisibleErrors(showValidation, 'widget.countdown.imageUrl')
+  const imageUrlError = imageErrors.find(e => e.path.endsWith('imageUrl'))
+
   const handleImageUpload = useCallback(
     (file: File | null) => {
       if (file) {
@@ -73,43 +70,21 @@ const ActionTimerSettings = () => {
         value={settingsNew?.imageMode}
         onChange={k => {
           setTemplateImageMode(k as TemplateImageMode)
-          setTemplateImageEnabled(k == 'background')
         }}
       />
-      {settingsNew?.imageMode == 'side' ? (
-        <ImageUploader
-          classNames={{ container: 'w-full' }}
-          hideSwitch
-          noBorder
-          noPadding
-          title="Изображение"
-          recommendedResolution="600x600"
-          fileSize="До 25 Mb"
-          formats={['png', 'jpeg', 'jpg', 'webp']}
-          url={imageUrl}
-          onFileSelect={handleImageUpload}
-        />
-      ) : (
-        <ImageUploader
-          noBorder
-          noPadding
-          hideSwitch
-          title="Изображение"
-          recommendedResolution="500x500"
-          fileSize="менее 2 Mb"
-          filename={fileName}
-          url={url}
-          onFileSelect={file => {
-            if (!file) return
-            uploadImage(file).then(({ url }: { url: string }) => {
-              setTemplateImageFile(file.name, url)
-            })
-          }}
-          isInvalid={Boolean(settingsNew.image.enabled && (imageUrlError || imageFileNameError))}
-          errorMessage={imageUrlError?.message || imageFileNameError?.message}
-        />
-      )}
-
+      <ImageUploader
+        classNames={{ container: 'w-full' }}
+        hideSwitch
+        noBorder
+        noPadding
+        recommendedResolution="600x600"
+        fileSize="До 25 Mb"
+        formats={['png', 'jpeg', 'jpg', 'webp']}
+        url={imageUrl}
+        onFileSelect={handleImageUpload}
+        isInvalid={!!imageUrlError}
+        errorMessage={imageUrlError?.message}
+      />
       {settingsNew?.imageMode == 'side' ? (
         <OptionsChooser
           title="Выравнивание"

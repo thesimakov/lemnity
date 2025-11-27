@@ -28,8 +28,7 @@ const signupSchema = z
       .string()
       .trim()
       .min(10, 'Некорректный номер телефона')
-      .optional()
-      .refine(value => value === undefined || value === '' || /^\d+$/.test(value), {
+      .refine(value => /^\d+$/.test(value), {
         message: 'Можно вводить только цифры'
       }),
     password: z.string().min(8, 'Минимум 8 символов'),
@@ -121,7 +120,7 @@ const LoginPage = (): ReactElement => {
   const onSignupSubmit: SubmitHandler<SignupForm> = async data => {
     setSignupError(null)
     try {
-      await registerUser(data.email, data.password, data.name)
+      await registerUser(data.email, data.password, data.name, data.phone)
       navigate('/')
     } catch {
       setSignupError('Не удалось зарегистрироваться. Попробуйте ещё раз')
