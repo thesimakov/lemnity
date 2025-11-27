@@ -27,7 +27,7 @@ const signupSchema = z
     phone: z
       .string()
       .trim()
-      .min(10, 'Не корректный номер телефона')
+      .min(10, 'Некорректный номер телефона')
       .optional()
       .refine(value => value === undefined || value === '' || /^\d+$/.test(value), {
         message: 'Можно вводить только цифры'
@@ -198,7 +198,7 @@ const LoginPage = (): ReactElement => {
           ) : null}
 
           {mode === 'login' ? (
-            <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-2 w-[366px]">
+            <form onSubmit={handleSubmitLogin(onLoginSubmit)} className="space-y-2">
               {authError ? <p className="text-danger text-sm">{authError}</p> : null}
               <Input
                 placeholder="Ваш email"
@@ -259,7 +259,7 @@ const LoginPage = (): ReactElement => {
             <form onSubmit={handleSubmitSignup(onSignupSubmit)} className="space-y-2">
               {signupError ? <p className="text-danger text-sm">{signupError}</p> : null}
               <Input
-                placeholder="Имя и Фамилия"
+                placeholder="Имя"
                 variant="bordered"
                 radius="sm"
                 classNames={{
@@ -350,9 +350,7 @@ const LoginPage = (): ReactElement => {
                 name="acceptTerms"
                 render={({ field }) => (
                   <div className="flex flex-col gap-2 text-Roboto text-[13px] text-black">
-                    <div>
-                     Я даю согласие ООО «Лемнити»:                    
-                     </div>
+                    <div>Я даю согласие ООО «Лемнити»:</div>
                     <Checkbox
                       radius="sm"
                       isSelected={field.value}
@@ -365,7 +363,9 @@ const LoginPage = (): ReactElement => {
                       На обработку персональных данных
                     </Checkbox>
                     {signupErrors.acceptTerms ? (
-                      <p className="mt-1 text-xs text-danger ">{signupErrors.acceptTerms.message}</p>
+                      <p className="mt-1 text-xs text-danger ">
+                        {signupErrors.acceptTerms.message}
+                      </p>
                     ) : null}
                   </div>
                 )}
@@ -383,7 +383,7 @@ const LoginPage = (): ReactElement => {
                       wrapper: 'after:!bg-black before:!rounded-[6px] after:!rounded-[6px]'
                     }}
                   >
-                    На получение сообщений и информационны-рекламной рассылки
+                    На получение сообщений и информационно-рекламной рассылки
                   </Checkbox>
                 )}
               />

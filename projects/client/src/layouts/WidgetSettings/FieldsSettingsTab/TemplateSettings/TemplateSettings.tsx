@@ -16,6 +16,7 @@ import type {
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { uploadImage } from '@/api/upload'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
+import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 
 const TemplateSettings = () => {
   const {
@@ -70,11 +71,6 @@ const TemplateSettings = () => {
     { key: 'modalWindow', label: 'Модальное окно' }
   ]
 
-  const imageModeOptions: OptionItem[] = [
-    { key: 'side', label: 'Картинка с боку' },
-    { key: 'background', label: 'Фон всего окна' }
-  ]
-
   return (
     <motion.div
       initial={{ opacity: 1, height: 0 }}
@@ -92,53 +88,41 @@ const TemplateSettings = () => {
           setCustomColor(settings.customColor)
         }}
       />
-      <ImageUploader
-        checked={enabled}
-        setChecked={setTemplateImageEnabled}
-        title="Изображение"
-        recommendedResolution="500x500"
-        fileSize="менее 2 Mb"
-        filename={fileName}
-        url={url}
-        onFileSelect={file => {
-          if (!file) return
-          uploadImage(file).then(({ url }: { url: string }) => {
-            setTemplateImageFile(file.name, url)
-          })
-        }}
-        isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
-        errorMessage={imageUrlError?.message || imageFileNameError?.message}
-      />
-      {/* <AnimatePresence>
-        {settings.image.enabled ? (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <OptionsChooser
-              title="Режим изображения"
-              options={imageModeOptions}
-              value={settings.imageMode ?? 'side'}
-              onChange={k => setTemplateImageMode(k as TemplateImageMode)}
-            />
-          </motion.div>
+      <BorderedContainer className="flex flex-col">
+        {widgetType == WidgetTypeEnum.ACTION_TIMER ? null : (
+          <ImageUploader
+            checked={enabled}
+            setChecked={setTemplateImageEnabled}
+            title="Изображение"
+            recommendedResolution="500x500"
+            fileSize="менее 2 Mb"
+            filename={fileName}
+            url={url}
+            onFileSelect={file => {
+              if (!file) return
+              uploadImage(file).then(({ url }: { url: string }) => {
+                setTemplateImageFile(file.name, url)
+              })
+            }}
+            isInvalid={Boolean(settings.image.enabled && (imageUrlError || imageFileNameError))}
+            errorMessage={imageUrlError?.message || imageFileNameError?.message}
+          />
+        )}
+
+        {widgetType !== WidgetTypeEnum.ACTION_TIMER ? (
+          <OptionsChooser
+            title="Формат окна"
+            options={windowFormatOptions}
+            value={settings?.windowFormat}
+            onChange={k => {
+              if (k === 'sidePanel') {
+                setContentPosition('right')
+              }
+              setWindowFormat(k as WindowFormat)
+            }}
+          />
         ) : null}
-      </AnimatePresence> */}
-      {widgetType !== WidgetTypeEnum.ACTION_TIMER ? (
-        <OptionsChooser
-          title="Формат окна"
-          options={windowFormatOptions}
-          value={settings?.windowFormat}
-          onChange={k => {
-            if (k === 'sidePanel') {
-              setContentPosition('right')
-            }
-            setWindowFormat(k as WindowFormat)
-          }}
-        />
-      ) : null}
+      </BorderedContainer>
 
       <AnimatePresence>
         {settings?.windowFormat === 'modalWindow' ? (

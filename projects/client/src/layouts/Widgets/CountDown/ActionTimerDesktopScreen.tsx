@@ -8,6 +8,7 @@ import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 
 const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
+  const imageMode = useWidgetSettingsStore(s => s?.settings?.fields?.template?.templateSettings?.imageMode)
   const { settings } = useFieldsSettings()
   const contentPosition =
     useWidgetSettingsStore(s => s.settings?.fields?.template?.templateSettings?.contentPosition) ??
@@ -27,8 +28,8 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
     <RewardContent companyLogo={companyLogo} onWin={settings?.messages?.onWin} />
   )
 
-  const content = <CountDown />
-
+  
+  const content = imageMode == 'background'? null : <CountDown />
   if (screen === 'panel') {
     return (
       <div className="grid grid-cols-1 gap-4 w-full h-full p-5">

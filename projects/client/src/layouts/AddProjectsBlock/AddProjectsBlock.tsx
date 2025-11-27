@@ -9,9 +9,7 @@ const AddProjectsBlock: React.FC<{ onCreateClick?: () => void }> = ({ onCreateCl
   const promoBlock = () => {
     return (
       <div className="w-full flex flex-row gap-2.5 min-h-[210px] py-2.5">
-        <div className="flex">
-          {/* <img src={templateImage} alt="Lead Magnets Template" className="h-auto object-contain" /> */}
-        </div>
+        <div className="flex"></div>
 
         <div className="flex flex-col text-left flex-1 gap-5.5 p-2.5 justify-center items-center  ">
           <h1 className="text-[40px] font-medium leading-[1.24] text-center tracking-[-0.25px] max-w-[850px]">

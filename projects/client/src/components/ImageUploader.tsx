@@ -93,7 +93,7 @@ const ImageUploader = ({
       className={`flex flex-col gap-2 rounded-lg ${noPadding ? '' : 'p-3'} ${noBorder ? '' : 'border border-gray-200'} ${classNames.container}`}
     >
       <div className="flex flex-row gap-2">
-        <span className="text-black text-[18px] font-Rubik font-medium">{title}</span>
+        <span className="text-black">{title}</span>
         {!hideSwitch && (
           <CustomSwitch
             isSelected={checked}
