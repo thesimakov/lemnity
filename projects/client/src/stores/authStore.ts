@@ -12,7 +12,7 @@ interface AuthState {
   setSession: (token: string) => void
   clearSession: () => void
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, name: string) => Promise<void>
+  register: (email: string, password: string, name: string, phone: string) => Promise<void>
   refreshToken: () => Promise<string | null>
   logout: () => Promise<void>
   bootstrap: () => Promise<void>
@@ -38,8 +38,8 @@ const useAuthStore = create<AuthState>()(
           get().setSession(accessToken)
           useUserStore.getState().setUser(user)
         },
-        register: async (email: string, password: string, name: string) => {
-          const data = await authService.register({ email, password, name })
+        register: async (email: string, password: string, name: string, phone: string) => {
+          const data = await authService.register({ email, password, name, phone })
           const { user, accessToken } = data
 
           get().setSession(accessToken)

@@ -55,7 +55,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('logout')
   @ApiResponse({ status: 200, type: Boolean })
-  async logout(@Res({ passthrough: true }) res: Response): Promise<boolean> {
+  logout(@Res({ passthrough: true }) res: Response): boolean {
     this.authService.removeRefreshTokenFromResponse(res)
 
     return true
@@ -68,7 +68,8 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ): Promise<LoginResponse> {
-    const refreshTokenFromCookies = req.cookies[this.authService.REFRESH_TOKEN_NAME]
+    const cookies = req.cookies as Record<string, string | undefined>
+    const refreshTokenFromCookies = cookies[this.authService.REFRESH_TOKEN_NAME]
 
     if (!refreshTokenFromCookies) {
       this.authService.removeRefreshTokenFromResponse(res)

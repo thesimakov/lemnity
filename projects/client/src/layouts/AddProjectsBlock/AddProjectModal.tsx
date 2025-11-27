@@ -93,14 +93,16 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
 
   const getHeader = () => {
     return (
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between ">
+        <div className="flex flex-col gap-2 ">
           <h2 className="font-roboto font-semibold text-4xl tracking-[0.01em]">
             Добавление проекта
           </h2>
           <span className="text-base text-gray-600">
-            Создайте всплывающее окно в стиле вашего бренда. Показывайте его нужной аудитории в
-            подходящий момент, используя триггеры и правила таргетинга
+            Создайте всплывающее окно в стиле вашего бренда.
+            <br />
+            Показывайте его нужной аудитории в подходящий момент, используя триггеры и правила
+            таргетинга
           </span>
         </div>
         <button
@@ -127,7 +129,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, onAd
       role="dialog"
       closeOnBackdrop={!submitting}
       closeOnEsc={!submitting}
-      containerClassName="max-w-5xl"
+      containerClassName="w-full max-w-[590px]"
     >
       <div className="flex h-full">
         <div className="flex-1 flex flex-col p-5 gap-4.5">

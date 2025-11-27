@@ -34,6 +34,7 @@ export const buildFieldsSettings = ({
     key: '',
     templateSettings: {
       image: { enabled: false, fileName: '', url: '' },
+      imageMode: 'side',
       windowFormat: 'modalWindow',
       contentPosition: 'left',
       colorScheme: 'primary',

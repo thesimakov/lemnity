@@ -52,7 +52,11 @@ const SvgIcon: React.FC<SvgIconProps> = ({
             })
 
             if (!preserveOriginalColors && el.hasAttribute('fill')) {
-              el.setAttribute('fill', 'currentColor')
+              const fillValue = el.getAttribute('fill')
+              // Сохраняем градиенты (url(...))
+              if (!fillValue || !fillValue.startsWith('url(')) {
+                el.setAttribute('fill', 'currentColor')
+              }
             }
           })
 

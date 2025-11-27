@@ -31,7 +31,7 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
   },
   {
     type: WidgetTypes.ACTION_TIMER,
-    title: 'Таймер акции',
+    title: 'Лид-форма',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'
