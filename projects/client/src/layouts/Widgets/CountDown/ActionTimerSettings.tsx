@@ -73,7 +73,7 @@ const ActionTimerSettings = () => {
         value={settingsNew?.imageMode}
         onChange={k => {
           setTemplateImageMode(k as TemplateImageMode)
-          setTemplateImageEnabled(k=='background')
+          setTemplateImageEnabled(k == 'background')
         }}
       />
       {settingsNew?.imageMode == 'side' ? (
@@ -88,7 +88,6 @@ const ActionTimerSettings = () => {
           formats={['png', 'jpeg', 'jpg', 'webp']}
           url={imageUrl}
           onFileSelect={handleImageUpload}
-
         />
       ) : (
         <ImageUploader
