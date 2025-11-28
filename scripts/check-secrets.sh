@@ -7,7 +7,7 @@ if [ -n "${ALL_SECRETS_JSON:-}" ]; then
     echo "❌ jq could not be found. Please install it."
     exit 1
   fi
-  eval "$(echo "$ALL_SECRETS_JSON" | jq -r 'to_entries|map("export \(.key)=\(.value|tostring)")|.[]')"
+  eval "$(echo "$ALL_SECRETS_JSON" | jq -r 'to_entries|map("export \(.key)=\(.value|@sh)")|.[]')"
 fi
 
 REQUIRED_VARS=(
