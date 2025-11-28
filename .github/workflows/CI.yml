@@ -29,8 +29,11 @@ jobs:
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
 
-    - name: Lint & Format
-      run: pnpm --parallel lint format
+    - name: Lint
+      run: pnpm --parallel lint
+
+    - name: Format
+      run: pnpm --parallel format
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
