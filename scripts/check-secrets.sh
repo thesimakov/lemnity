@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Если передан JSON, распарсим и экспортируем ключи
+if [ -n "${ALL_SECRETS_JSON:-}" ]; then
+  if ! command -v jq &> /dev/null; then
+    echo "❌ jq could not be found. Please install it."
+    exit 1
+  fi
+  eval "$(echo "$ALL_SECRETS_JSON" | jq -r 'to_entries|map("export \(.key)=\(.value|tostring)")|.[]')"
+fi
+
 REQUIRED_VARS=(
   COMPOSE_PROJECT_NAME
   NODE_ENV
@@ -30,7 +39,7 @@ REQUIRED_VARS=(
 
 for var in "${REQUIRED_VARS[@]}"; do
   if [ -z "${!var:-}" ]; then
-    echo "❌ Missing $var"
+    echo "❌ Missing or empty $var"
     exit 1
   fi
 done
