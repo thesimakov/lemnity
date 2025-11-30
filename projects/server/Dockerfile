@@ -14,7 +14,7 @@ COPY packages ./packages
 COPY projects/server/package*.json projects/server/
 
 # Устанавливаем зависимости из workspace
-RUN pnpm install --filter server --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Копируем исходный код сервера
 COPY projects/server ./projects/server
