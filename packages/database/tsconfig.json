@@ -1,0 +1,19 @@
+// {
+//   // Visit https://aka.ms/tsconfig to read more about this file
+//   "compilerOptions": {
+//     "module": "ESNext",
+//     "moduleResolution": "node",
+//     "target": "ES2023",
+//     "strict": true,
+//     "esModuleInterop": true
+//   }
+// }
+{
+"compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2021",
+    "preserveSymlinks": true,
+    "skipLibCheck": true
+  }
+}

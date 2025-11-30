@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Загружаем переменные из .env файла, если он существует
+if [ -f ".env" ]; then
+  set -a  # автоматически экспортировать все переменные
+  source ".env"
+  set +a  # отключить автоматический экспорт
+fi
+
 # Если передан JSON, распарсим и экспортируем ключи
 if [ -n "${ALL_SECRETS_JSON:-}" ]; then
   if ! command -v jq &> /dev/null; then

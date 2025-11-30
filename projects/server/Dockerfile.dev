@@ -11,4 +11,4 @@ RUN npm install -g pnpm@10.21.0
 EXPOSE 3000
 
 # Запускаем в режиме разработки
-CMD ["sh", "-c", "pnpm install --filter ...server --frozen-lockfile && pnpm --filter ...server run start:dev"]
+CMD ["sh", "-c", "pnpm install --frozen-lockfile && pnpm --filter server run start:dev"]

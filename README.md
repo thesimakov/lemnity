@@ -12,6 +12,9 @@
 Содержимое `.env`:
 
 ```env
+# Docker Configuration
+COMPOSE_PROJECT_NAME=app
+
 # Database Configuration
 POSTGRES_USER=user
 POSTGRES_PASSWORD=password
@@ -24,10 +27,8 @@ JWT_SECRET="super-mega-secret-key"
 PORT=3000
 
 # Client Configuration
-VITE_API_URL=http://localhost:3000/api
+API_URL=http://localhost:3000/api
 
-# Docker Configuration
-COMPOSE_PROJECT_NAME=app
 ```
 
 Содержимое `projects/server/.env`:
@@ -157,6 +158,23 @@ pnpm --filter server exec npx prisma migrate deploy
 
 # Сбросить БД и применить все миграции заново
 pnpm --filter server exec npx prisma migrate reset
+или
+docker exec server pnpm --filter @lemnity/database exec prisma migrate reset
+```
+
+**Выполнение команд Prisma в Docker:**
+
+Если проект запущен в Docker, команды Prisma нужно выполнять внутри контейнера:
+
+```bash
+# Сбросить БД и применить все миграции заново (в Docker)
+docker exec server pnpm --filter server exec npx prisma migrate reset
+
+# Другие команды Prisma в Docker (примеры):
+docker exec server pnpm --filter server exec npx prisma migrate dev --name migration_name
+docker exec server pnpm --filter server exec npx prisma db push
+docker exec server pnpm --filter server exec npx prisma generate
+docker exec server pnpm --filter server exec npx prisma studio
 ```
 
 ## 🛠️ Технологии
@@ -222,7 +240,7 @@ NODE_ENV=production
 PORT=3000
 
 # API URL для клиента
-VITE_API_URL=http://localhost:3000
+API_URL=http://localhost:3000
 ```
 
 #### Для ручного запуска
