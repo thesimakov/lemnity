@@ -10,8 +10,13 @@ import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 const DontShowField = () => {
   const { setDontShow } = useDisplaySettings()
   const staticDefaults = useWidgetStaticDefaults()
+  const defaultDontShow = { afterWin: false, afterShows: null as number | null }
   const dontShow = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.display, 'dontShow', staticDefaults.display.dontShow)
+    withDefaultsPath(
+      s.settings?.display,
+      'dontShow',
+      staticDefaults?.display.dontShow ?? defaultDontShow
+    )
   )
   const { afterWin, afterShows } = dontShow
 

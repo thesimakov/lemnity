@@ -7,12 +7,17 @@ import { useShallow } from 'zustand/react/shallow'
 
 const DisplaySettingsField = () => {
   const staticDefaults = useWidgetStaticDefaults()
+  const defaultShowRules = {
+    onExit: false,
+    scrollBelow: { enabled: false, percent: null as number | null },
+    afterOpen: { enabled: false, seconds: null as number | null }
+  }
   const showRules = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof staticDefaults.display.showRules>(
+      withDefaultsPath<typeof defaultShowRules>(
         s.settings?.display,
         'showRules',
-        staticDefaults.display.showRules
+        staticDefaults?.display.showRules ?? defaultShowRules
       )
     )
   )

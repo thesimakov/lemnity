@@ -21,21 +21,23 @@ const timeOptions = [
 const ShowingScheduleField = () => {
   const { setScheduleDate, setScheduleTime } = useDisplaySettings()
   const staticDefaults = useWidgetStaticDefaults()
+  const defaultDate = { enabled: false, value: '' }
+  const defaultTime = { enabled: false, value: '' }
   const date = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof staticDefaults.display.schedule.date>(
+      withDefaultsPath<typeof defaultDate>(
         s.settings?.display,
         'schedule.date',
-        staticDefaults.display.schedule.date
+        staticDefaults?.display.schedule.date ?? defaultDate
       )
     )
   )
   const time = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof staticDefaults.display.schedule.time>(
+      withDefaultsPath<typeof defaultTime>(
         s.settings?.display,
         'schedule.time',
-        staticDefaults.display.schedule.time
+        staticDefaults?.display.schedule.time ?? defaultTime
       )
     )
   )
