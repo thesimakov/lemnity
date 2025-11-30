@@ -21,23 +21,17 @@ jobs:
     - name: Node setup
       uses: actions/setup-node@v6
       with:
-        node-version: latest
+        node-version: 20
 
-    - name: Install pnpm
+    - name: Install pnpm and dependencies
       uses: pnpm/action-setup@v4
-
-    - name: Install dependencies
       env:
         NODE_ENV: ${{ secrets.NODE_ENV }}
         API_URL: ${{ secrets.API_URL }}
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      run: pnpm install --frozen-lockfile
-
-    - name: Build workspace packages
-      env:
-        NODE_ENV: ${{ secrets.NODE_ENV }}
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      run: pnpm build:packages
+      with:
+        run_install: true
+        args: --frozen-lockfile 
 
     - name: Lint
       run: pnpm --filter client --filter server lint
