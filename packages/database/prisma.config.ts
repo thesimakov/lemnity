@@ -1,8 +1,8 @@
-import 'dotenv/config'
-import { defineConfig, env } from "prisma/config";
-import { config } from 'dotenv'
+import { defineConfig } from "prisma/config";
 
-config({ path: "../../.env" })
+const databaseUrl =
+  process.env.DATABASE_URL ??
+  "postgresql://user:password@localhost:5432/db";
 
 export default defineConfig({
   schema: "prisma/schema/",
@@ -10,6 +10,6 @@ export default defineConfig({
     path: "prisma/schema/migrations",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    url: databaseUrl,
   },
 });
