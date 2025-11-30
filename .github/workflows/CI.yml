@@ -8,6 +8,9 @@ jobs:
   build:
     environment: prod
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     
     steps:
     - name: Checkout to \'main\' branch
@@ -66,7 +69,7 @@ jobs:
         S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
       run: |
         docker build \
-          -t ghcr.io/${{ github.repository }}/server:${{ github.sha }} \
+          -t ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }} \
           -f projects/server/Dockerfile .
     
     - name: Build client image
@@ -76,7 +79,7 @@ jobs:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: |
         docker build \
-          -t ghcr.io/${{ github.repository }}/client:${{ github.sha }} \
+          -t ghcr.io/${{ github.repository_owner }}/client:${{ github.sha }} \
           -f projects/client/Dockerfile .
 
     - name: Push images
