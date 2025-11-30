@@ -81,8 +81,8 @@ jobs:
 
     - name: Push images
       run: |
-        docker push ghcr.io/${{ github.repository }}/server:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository }}/client:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository_owner }}/client:${{ github.sha }}
 
     - name: Save tag for CD
       id: save_tag
