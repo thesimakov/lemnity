@@ -100,7 +100,9 @@ services:
       dockerfile: projects/client/Dockerfile
     container_name: react
     environment:
+      NODE_ENV: ${NODE_ENV}
       API_URL: ${API_URL}
+      DATABASE_URL: ${DATABASE_URL}
     volumes:
       - client_static:/usr/share/nginx/html
     depends_on:
