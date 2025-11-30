@@ -33,6 +33,9 @@ jobs:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: pnpm install --frozen-lockfile
 
+    - name: Build workspace packages
+      run: pnpm build:packages
+
     - name: Lint
       run: pnpm --filter client --filter server lint
 
