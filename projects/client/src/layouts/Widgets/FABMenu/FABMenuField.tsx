@@ -12,10 +12,7 @@ import type {
 import FABSectorItem from './FABSectorItem'
 import FABMenuButtonPicker from './FABMenuButtonPicker'
 import { createPlaceholderFABMenuSector } from './defaults'
-import {
-  FAB_MENU_BUTTON_PRESETS,
-  type FABMenuButtonDefinition
-} from './buttonLibrary'
+import { FAB_MENU_BUTTON_PRESETS, type FABMenuButtonDefinition } from './buttonLibrary'
 
 const FABMenuField = () => {
   const defaults = useWidgetStaticDefaults()
