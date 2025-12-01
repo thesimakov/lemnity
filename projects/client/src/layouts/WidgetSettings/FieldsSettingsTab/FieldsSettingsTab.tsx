@@ -20,7 +20,6 @@ import MessagesSettings from './MessagesSettings/MessagesSettings'
 import type { FieldsSettings as FieldsSettingsType } from '@/stores/widgetSettings/types'
 import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import SurfaceNotice from '@/layouts/WidgetSettings/Common/SurfaceNotice'
-import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 const templateOptions = [
   { key: 'template1', label: 'Новогодний' },
@@ -150,7 +149,7 @@ const FieldsSettingsTab = () => {
             <ContactsField />
             <AgreementPoliciesField />
             <AdsInfoField />
-            {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : <MessagesSettings />}
+            <MessagesSettings />
           </>
         )}
 
