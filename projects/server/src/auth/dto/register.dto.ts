@@ -17,11 +17,14 @@ export class RegisterDto {
   password: string
 
   @ApiProperty({
-    description: 'Phone number containing only digits (10-15 characters)'
+    description:
+      'Phone number starting with + followed by digits (12-16 characters: + and 11-15 digits)'
   })
   @IsString()
-  @Matches(/^\d+$/, { message: 'Phone number must contain only digits' })
-  @MinLength(10, { message: 'Phone number must contain at least 10 digits' })
-  @MaxLength(15, { message: 'Phone number must contain at most 15 digits' })
+  @Matches(/^\+\d{11,}$/, {
+    message: 'Phone number must start with + followed by at least 11 digits'
+  })
+  @MinLength(12, { message: 'Phone number must contain at least 12 characters (+ and 11 digits)' })
+  @MaxLength(16, { message: 'Phone number must contain at most 16 characters (+ and 15 digits)' })
   phone: string
 }
