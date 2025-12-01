@@ -7,6 +7,7 @@ import { HeroUIProvider } from '@heroui/system'
 import useAuthStore from '@stores/authStore.ts'
 import { useEffect } from 'react'
 import { useProjectsStore } from '@/stores/projectsStore'
+import YandexMetrika from './common/utils/yandexMetrika.ts'
 
 export const Root = () => {
   const bootstrap = useAuthStore(s => s.bootstrap)
@@ -28,6 +29,7 @@ export const Root = () => {
     <StrictMode>
       <HeroUIProvider>
         <BrowserRouter>
+          <YandexMetrika />
           <App />
         </BrowserRouter>
       </HeroUIProvider>
