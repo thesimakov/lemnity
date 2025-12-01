@@ -16,7 +16,7 @@
     "build:server": "pnpm --filter server build",
     "format": "prettier --check . --ignore-path .gitignore",
     "format:fix": "prettier --write . --ignore-path .gitignore",
-    "docker:up": "pnpm check-secrets && docker compose --env-file .env.dev up -d --wait && docker compose --profile setup run --rm minio_setup",
+    "docker:up": "pnpm check-secrets && docker compose up -d --wait && docker compose --profile setup run --rm minio_setup",
     "docker:down": "docker compose down",
     "docker:db": "docker compose up -d postgres",
     "docker:up:prod": "docker compose -f docker-compose.prod.yml up -d",
