@@ -27,7 +27,7 @@ JWT_SECRET="super-mega-secret-key"
 PORT=3000
 
 # Client Configuration
-API_URL=http://localhost:3000/api
+VITE_API_URL=http://localhost:3000/api
 
 ```
 
@@ -240,7 +240,7 @@ NODE_ENV=production
 PORT=3000
 
 # API URL для клиента
-API_URL=http://localhost:3000
+VITE_API_URL=http://localhost:3000
 ```
 
 #### Для ручного запуска

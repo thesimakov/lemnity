@@ -30,7 +30,7 @@ jobs:
       uses: pnpm/action-setup@v4
       env:
         NODE_ENV: ${{ secrets.NODE_ENV }}
-        API_URL: ${{ secrets.API_URL }}
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
       with:
         run_install: true
@@ -74,8 +74,8 @@ jobs:
     
     - name: Build client image
       env:
-        API_URL: ${{ secrets.API_URL }}
-        NODE_ENV: ${{ secrets.API_URL }}
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        NODE_ENV: ${{ secrets.NODE_ENV }}
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: |
         docker build \
