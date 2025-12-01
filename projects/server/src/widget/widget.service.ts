@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { CreateWidgetDto } from './dto/create-widget.dto'
 import { UpdateWidgetDto } from './dto/update-widget.dto'
 import { PrismaService } from '../prisma.service'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@lemnity/database'
 import { ConfigService } from '../config/config.service'
 import { migrateToCurrent, CURRENT_VERSION } from '@lemnity/widget-config'
 

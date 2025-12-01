@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { CreateProjectDto } from './dto/create-project.dto'
 import { UpdateProjectDto } from './dto/update-project.dto'
 import { PrismaService } from '../prisma.service'
-import { Prisma } from '@prisma/client'
+import { JsonValue, ProjectCreateInput } from '@lemnity/database'
 import { migrateToCurrent, CURRENT_VERSION } from '@lemnity/widget-config/migrations'
 
 @Injectable()
@@ -10,7 +10,7 @@ export class ProjectService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createProjectDto: CreateProjectDto, userId: string) {
-    const project: Prisma.ProjectCreateInput = {
+    const project: ProjectCreateInput = {
       title: createProjectDto.title,
       websiteUrl: createProjectDto.websiteUrl,
       enabled: createProjectDto.enabled,
@@ -63,7 +63,7 @@ export class ProjectService {
     const widgets = project.widgets.map(w => {
       if (!w.config) return w
       const { data, version } = migrateToCurrent(w.config as unknown, w.configVersion ?? undefined)
-      return { ...w, config: data as Prisma.JsonValue, configVersion: version ?? CURRENT_VERSION }
+      return { ...w, config: data as JsonValue, configVersion: version ?? CURRENT_VERSION }
     }) as T['widgets']
     return { ...(project as any), widgets } as T
   }

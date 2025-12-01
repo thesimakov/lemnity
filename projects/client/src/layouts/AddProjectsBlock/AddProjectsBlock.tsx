@@ -29,7 +29,7 @@ const AddProjectsBlock: React.FC<{ onCreateClick?: () => void }> = ({ onCreateCl
       <div className="flex flex-col justify-center items-center self-stretch p-0 gap-[30px] ">
         <div className="font-normal text-[25px] text-center text-[#777777]">
           <p className="flex leading-[30px] tracking-[0.005em]">
-            У вас нет собранных проектов с Леджитами.
+            У вас нет собранных проектов с виджетами.
           </p>
           <p>Для этого добавьте свой первый проект</p>
         </div>

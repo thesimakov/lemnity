@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import type { Request } from 'express'
-import type { User } from '@prisma/client'
+import type { User } from '@lemnity/database'
 
 type RequestWithUser = Request & { user?: User }
 

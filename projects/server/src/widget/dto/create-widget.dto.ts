@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsEnum, IsBoolean, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { WidgetType, Prisma } from '@prisma/client'
+import { WidgetType, Prisma } from '@lemnity/database'
 
 export class CreateWidgetDto {
   @ApiProperty({

@@ -1,11 +1,7 @@
 {
-  "dependencies": {
-    "@nestjs/mapped-types": "^2.1.0",
-    "zod": "^4.1.12"
-  },
-  "name": "monorepo-template",
-  "version": "1.0.0",
-  "description": "Full-stack monorepo template with React frontend and NestJS backend using pnpm workspaces",
+  "name": "lemnity",
+  "version": "0.2.2",
+  "description": "Full-stack monorepo app with React frontend and NestJS backend using pnpm workspaces",
   "scripts": {
     "dev": "pnpm --parallel --recursive run start:dev",
     "dev:client": "pnpm --filter client start:dev",
@@ -20,7 +16,7 @@
     "build:server": "pnpm --filter server build",
     "format": "prettier --check . --ignore-path .gitignore",
     "format:fix": "prettier --write . --ignore-path .gitignore",
-    "docker:up": "docker compose up -d --wait && docker compose --profile setup run --rm minio_setup",
+    "docker:up": "pnpm check-secrets && docker compose --env-file .env.dev up -d --wait && docker compose --profile setup run --rm minio_setup",
     "docker:down": "docker compose down",
     "docker:db": "docker compose up -d postgres",
     "docker:up:prod": "docker compose -f docker-compose.prod.yml up -d",
@@ -29,12 +25,18 @@
     "dev:docker": "pnpm docker:db && pnpm dev",
     "generate:api": "bash scripts/generate-api.sh",
     "build:packages": "pnpm --filter './packages/**' --if-present build",
-    "postinstall": "pnpm build:packages"
+    "postinstall": "pnpm build:packages",
+    "check-secrets": "./scripts/check-secrets.sh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.21.0",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "@nestjs/mapped-types": "^2.1.0",
+    "zod": "^4.1.12"
+  },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.25.0",
     "prettier": "^3.6.2",

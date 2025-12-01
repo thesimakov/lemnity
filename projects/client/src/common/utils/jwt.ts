@@ -7,8 +7,10 @@ function decodeBase64Url(b64url: string): string {
     .replace(/-/g, '+')
     .replace(/_/g, '/')
     .padEnd(Math.ceil(b64url.length / 4) * 4, '=')
-  const binary =
-    typeof atob === 'function' ? atob(b64) : Buffer.from(b64, 'base64').toString('binary')
+  if (typeof atob !== 'function') {
+    throw new Error('Base64 decoding is not supported in this environment')
+  }
+  const binary = atob(b64)
   const bytes = Uint8Array.from(binary, c => c.charCodeAt(0))
   return new TextDecoder().decode(bytes)
 }

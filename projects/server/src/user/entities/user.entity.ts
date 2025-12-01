@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@lemnity/database'
 
 export type UserPublicType = Prisma.UserGetPayload<{
   select: {

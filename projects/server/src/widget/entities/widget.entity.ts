@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { WidgetType, Prisma } from '@prisma/client'
+import { WidgetType, Prisma } from '@lemnity/database'
 
 export class Widget {
   @ApiProperty({

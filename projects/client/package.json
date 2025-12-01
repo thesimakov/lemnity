@@ -8,9 +8,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "format:fix": "prettier --write . --ignore-path .prettierignore",
-    "format:check": "prettier --check . --ignore-path .prettierignore",
+    "format": "prettier --check . --ignore-path .prettierignore",
     "lint:fix": "eslint --fix .",
-    "lint:check": "eslint ."
+    "lint": "eslint ."
   },
   "dependencies": {
     "@heroui/breadcrumbs": "^2.2.21",

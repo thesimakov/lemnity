@@ -1,9 +1,12 @@
 import useWidgetPreviewStore from '@/stores/widgetPreviewStore'
 import { Button } from '@heroui/button'
 import type { PreviewMode } from '@/stores/widgetPreviewStore'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 const WidgetPreviewLayout = ({ children }: { children: React.ReactNode }) => {
   const mode = useWidgetPreviewStore(s => s.mode)
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
   const setMode = useWidgetPreviewStore(s => s.setMode)
 
   const tabClass = (id: PreviewMode): string =>
@@ -39,7 +42,7 @@ const WidgetPreviewLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col gap-2 h-full">
       <span className="text-xl font-normal text-gray-900">Предпросмотр</span>
-      {tabs()}
+      {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : tabs()}
       {children}
     </div>
   )

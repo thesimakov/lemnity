@@ -20,6 +20,3 @@ eslint.config.js
 package-lock.json
 package.json
 pnpm-lock.yaml
-
-# Ignore all HTML files:
-**/*.html

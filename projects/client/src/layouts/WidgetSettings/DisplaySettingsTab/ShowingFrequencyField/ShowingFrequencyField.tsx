@@ -14,12 +14,21 @@ import { useShallow } from 'zustand/react/shallow'
 const ShowingFrequencyField = () => {
   const { setFrequency } = useDisplaySettings()
   const staticDefaults = useWidgetStaticDefaults()
+  const defaultFrequency: {
+    mode: FrequencyMode
+    value?: number
+    unit?: FrequencyUnit
+  } = {
+    mode: 'everyPage',
+    value: undefined,
+    unit: 'sec'
+  }
   const frequency = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof staticDefaults.display.frequency>(
+      withDefaultsPath<typeof defaultFrequency>(
         s.settings?.display,
         'frequency',
-        staticDefaults.display.frequency
+        staticDefaults?.display.frequency ?? defaultFrequency
       )
     )
   )

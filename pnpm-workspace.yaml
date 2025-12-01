@@ -2,6 +2,13 @@ packages:
   - projects/*
   - packages/**/*
 
+catalogs:
+  prisma:
+    prisma: 7.0.1
+    "@prisma/client": "7.0.1"
+    "@prisma/adapter-pg": "7.0.1"
+    "@prisma/client-runtime-utils": "7.0.1"
+
 onlyBuiltDependencies:
   - '@heroui/shared-utils'
   - '@nestjs/core'

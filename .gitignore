@@ -15,6 +15,10 @@ projects/*/build/
 .env.development.local
 .env.test.local
 .env.production.local
+dev.env
+prod.env
+.env.dev
+.env.prod
 
 # Logs
 npm-debug.log*

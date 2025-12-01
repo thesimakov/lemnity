@@ -1,4 +1,7 @@
-import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
+import type {
+  FABMenuWidgetSettings,
+  FABMenuSectorItem as FABMenuSectorItemBase
+} from '@/layouts/Widgets/FABMenu/types'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type { StateCreator } from 'zustand'
 
@@ -126,6 +129,8 @@ export type WidgetSpecificSettings =
   | ActionTimerWidgetSettings
   | FABMenuWidgetSettings
   | StubWidgetSettings
+
+export type FABMenuSectorItem = FABMenuSectorItemBase
 
 export type Extendable<T extends Record<string, unknown>> = T & Record<string, unknown>
 

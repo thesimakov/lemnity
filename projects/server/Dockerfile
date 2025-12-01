@@ -5,20 +5,22 @@ FROM node:20.19.0-alpine
 WORKDIR /server
 
 # Устанавливаем pnpm глобально
-RUN npm install -g pnpm@10.15.1
+RUN npm install -g pnpm@10.21.0
 
-# Копируем только файлы зависимостей
-COPY projects/server/package*.json ./
-COPY pnpm-lock.yaml ./
+# Копируем конфигурацию workspace и lockfile
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY packages ./packages
+# Копируем package.json самого сервера, чтобы pnpm знала о зависимостях
+COPY projects/server/package*.json projects/server/
 
-# Устанавливаем зависимости
-RUN pnpm install --filter server
+# Устанавливаем зависимости из workspace
+RUN pnpm install --frozen-lockfile
 
-# Копируем исходный код
-COPY projects/server/ ./
+# Копируем исходный код сервера
+COPY projects/server ./projects/server
 
 # Собираем приложение
-RUN pnpm run build
+RUN pnpm --filter server run build
 
 # Открываем порт
 EXPOSE 3000

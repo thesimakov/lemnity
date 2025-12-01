@@ -6,27 +6,47 @@ on:
 
 jobs:
   build:
+    environment: prod
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     
     steps:
     - name: Checkout to \'main\' branch
       uses: actions/checkout@v5
 
     - name: Check secrets presence
+      env:
+        ALL_SECRETS_JSON: ${{ toJSON(secrets) }}
       run: ./scripts/check-secrets.sh
 
     - name: Node setup
       uses: actions/setup-node@v6
       with:
-        node-version: latest
+        node-version: 20
 
-    - name: Install pnpm
-    - uses: pnpm/action-setup@v4
+    - name: Install pnpm and dependencies
+      uses: pnpm/action-setup@v4
+      env:
+        NODE_ENV: ${{ secrets.NODE_ENV }}
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       with:
-        version: 10
+        run_install: true
+        args: --frozen-lockfile 
 
-    - name: Lint & Format
-      run: pnpm --parallel lint format
+    - name: Generate Prisma Client
+      env:
+        NODE_ENV: ${{ secrets.NODE_ENV }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      run: pnpm --filter @lemnity/database exec prisma generate
+  
+    - name: Lint
+      run: pnpm --filter client --filter server lint
+
+    - name: Format
+      run: pnpm --filter client --filter server format
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
@@ -36,21 +56,36 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build server image
+      env:
+        NODE_ENV: ${{ secrets.NODE_ENV }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        PORT: ${{ secrets.PORT }}
+        S3_PUBLIC_BASE_URL: ${{ secrets.S3_PUBLIC_BASE_URL }}
+        S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+        S3_REGION: ${{ secrets.S3_REGION }}
+        S3_BUCKET_UPLOADS: ${{ secrets.S3_BUCKET_UPLOADS }}
+        S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+        S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
       run: |
         docker build \
-          -t ghcr.io/${{ github.repository }}/server:${{ github.sha }} \
+          -t ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }} \
           -f projects/server/Dockerfile .
     
     - name: Build client image
+      env:
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        NODE_ENV: ${{ secrets.NODE_ENV }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: |
         docker build \
-          -t ghcr.io/${{ github.repository }}/client:${{ github.sha }} \
+          -t ghcr.io/${{ github.repository_owner }}/client:${{ github.sha }} \
           -f projects/client/Dockerfile .
 
     - name: Push images
       run: |
-        docker push ghcr.io/${{ github.repository }}/server:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository }}/client:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository_owner }}/client:${{ github.sha }}
 
     - name: Save tag for CD
       id: save_tag

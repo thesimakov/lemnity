@@ -11,12 +11,13 @@ import { useShallow } from 'zustand/react/shallow'
 const ShowingLimitsField = () => {
   const { setLimits } = useDisplaySettings()
   const staticDefaults = useWidgetStaticDefaults()
+  const defaultLimits = { afterWin: false, afterShows: null as number | null }
   const limits = useWidgetSettingsStore(
     useShallow(s =>
-      withDefaultsPath<typeof staticDefaults.display.limits>(
+      withDefaultsPath<typeof defaultLimits>(
         s.settings?.display,
         'limits',
-        staticDefaults.display.limits
+        staticDefaults?.display.limits ?? defaultLimits
       )
     )
   )

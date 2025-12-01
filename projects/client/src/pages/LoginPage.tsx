@@ -27,9 +27,9 @@ const signupSchema = z
     phone: z
       .string()
       .trim()
-      .min(10, 'Некорректный номер телефона')
-      .refine(value => /^\d+$/.test(value), {
-        message: 'Можно вводить только цифры'
+      .min(12, "Некорректный номер телефона (минимум 12 символов: '+' и 11 цифр)")
+      .refine(value => /^\+\d{11,}$/.test(value), {
+        message: 'Формат телефона должен быть +79999999999'
       }),
     password: z.string().min(8, 'Минимум 8 символов'),
     passwordConfirmation: z.string().min(8, 'Минимум 8 символов'),
@@ -152,6 +152,22 @@ const LoginPage = (): ReactElement => {
   const switchToForgot = (): void => {
     resetForgot(getForgotValues())
     setMode('forgot')
+  }
+
+  const formatPhoneNumber = (value: string): string => {
+    // Удаляем все символы кроме цифр и плюса
+    const cleaned = value.replace(/[^\d+]/g, '')
+
+    // Если строка пустая, возвращаем пустую строку
+    if (!cleaned) return ''
+
+    // Если первый символ не плюс, добавляем его
+    if (!cleaned.startsWith('+')) {
+      return '+' + cleaned.replace(/\D/g, '')
+    }
+
+    // Если есть плюс, оставляем только плюс и цифры
+    return '+' + cleaned.slice(1).replace(/\D/g, '')
   }
 
   return (
@@ -281,19 +297,30 @@ const LoginPage = (): ReactElement => {
                 isInvalid={!!signupErrors.email}
                 errorMessage={signupErrors.email?.message}
               />
-              <Input
-                type="tel"
-                inputMode="numeric"
-                placeholder="Номер телефона"
-                variant="bordered"
-                radius="sm"
-                classNames={{
-                  inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
-                  input: 'text-gray-900 placeholder:text-gray-400'
-                }}
-                {...registerSignup('phone')}
-                isInvalid={!!signupErrors.phone}
-                errorMessage={signupErrors.phone?.message}
+              <Controller
+                control={controlSignup}
+                name="phone"
+                render={({ field }) => (
+                  <Input
+                    type="tel"
+                    inputMode="numeric"
+                    placeholder="+79999999999"
+                    variant="bordered"
+                    radius="sm"
+                    classNames={{
+                      inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
+                      input: 'text-gray-900 placeholder:text-gray-400'
+                    }}
+                    value={field.value}
+                    onValueChange={value => {
+                      const formatted = formatPhoneNumber(value)
+                      field.onChange(formatted)
+                    }}
+                    onBlur={field.onBlur}
+                    isInvalid={!!signupErrors.phone}
+                    errorMessage={signupErrors.phone?.message}
+                  />
+                )}
               />
               <Input
                 type={showSignupPassword ? 'text' : 'password'}

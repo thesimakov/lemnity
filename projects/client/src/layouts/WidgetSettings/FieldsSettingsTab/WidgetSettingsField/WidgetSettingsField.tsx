@@ -24,19 +24,21 @@ const WidgetSettingsField = () => {
   // UI state only - не сохраняется в конфигурации
   const [openedIndex, setOpenedIndex] = useState<number | null>(null)
 
-  const sectors: EditableListItem<SectorData>[] = (settings?.sectors?.items ?? []).map(item => ({
-    id: item.id,
-    mode: item.mode,
-    text: item.text,
-    icon: item.icon,
-    color: item.color,
-    promo: item.promo,
-    chance: item.chance,
-    isWin: item.isWin,
-    textSize: item.textSize,
-    iconSize: item.iconSize,
-    textColor: item.textColor
-  }))
+  const sectors: EditableListItem<SectorData>[] = (settings?.sectors?.items ?? []).map(
+    (item: SectorData) => ({
+      id: item.id,
+      mode: item.mode,
+      text: item.text,
+      icon: item.icon,
+      color: item.color,
+      promo: item.promo,
+      chance: item.chance,
+      isWin: item.isWin,
+      textSize: item.textSize,
+      iconSize: item.iconSize,
+      textColor: item.textColor
+    })
+  )
 
   const handleAdd = () => {
     const newSector: StoreSectorItem = {
@@ -216,7 +218,9 @@ const WidgetSettingsField = () => {
         {getRandomOrderCheckbox()}
         <EditableList
           items={sectors}
-          onItemsChange={items => setSectors(items as StoreSectorItem[])}
+          onItemsChange={(items: EditableListItem<SectorData>[]) =>
+            setSectors(items as StoreSectorItem[])
+          }
           minItems={4}
           maxItems={8}
           classNames={{
@@ -225,11 +229,10 @@ const WidgetSettingsField = () => {
             delete:
               'flex items-center justify-center min-w-[40px] rounded-md border h-full border-[#E8E8E8]'
           }}
-          renderItem={(sector, index) => (
+          renderItem={(sector: EditableListItem<SectorData>, index: number) => (
             <SectorItem
               key={sector.id}
               sector={sector}
-              onTextSizeChange={textSize => handleUpdateSector(index, { textSize })}
               onModeChange={mode => handleUpdateSector(index, { mode })}
               onTextChange={text => handleUpdateSector(index, { text })}
               onIconChange={icon => handleUpdateSector(index, { icon })}

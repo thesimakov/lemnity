@@ -16,6 +16,7 @@ import { createIntegrationSlice } from './widgetSettings/integrationSlice'
 import type { WidgetSlice } from './widgetSettings/widgetActions/types'
 import { createWidgetSlice } from './widgetSettings/widgetSlice'
 import type {
+  WheelOfFortuneWidgetSettings,
   WidgetSettings,
   WidgetSettingsState,
   FieldsUpdater,
@@ -322,4 +323,27 @@ export const useIntegrationSettings = () => {
 export const useWidgetStaticDefaults = () => {
   const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
   return useMemo(() => (widgetType ? getStaticDefaults(widgetType) : undefined), [widgetType])
+}
+
+// Slice hook for Wheel of Fortune widget-specific settings
+export const useFieldsSettings = () => {
+  const settings = useWidgetSettingsStore(s =>
+    s.settings?.widget.type === WidgetTypeEnum.WHEEL_OF_FORTUNE
+      ? (s.settings.widget as WheelOfFortuneWidgetSettings)
+      : null
+  )
+  const setRandomize = useWidgetSettingsStore(s => s.setWheelRandomize)
+  const setSectors = useWidgetSettingsStore(s => s.setWheelSectors)
+  const updateSector = useWidgetSettingsStore(s => s.updateWheelSector)
+  const addSector = useWidgetSettingsStore(s => s.addWheelSector)
+  const deleteSector = useWidgetSettingsStore(s => s.deleteWheelSector)
+
+  return {
+    settings,
+    setRandomize,
+    setSectors,
+    updateSector,
+    addSector,
+    deleteSector
+  }
 }
