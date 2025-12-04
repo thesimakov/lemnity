@@ -16,7 +16,7 @@ services:
       - app_network
     restart: unless-stopped
 
-  # Мини-скрипт для настройки бакетов и пользователей MinIO
+  # Мини-скрипт для настройки бакетов и пользователей MinIO (однократный профиль)
   minio_setup:
     image: minio/mc:latest
     container_name: minio_setup
@@ -40,7 +40,7 @@ services:
   # PostgreSQL - стабильная версия 16.5
   postgres:
     image: postgres:16.5
-    container_name: postgres_db
+    container_name: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -59,12 +59,10 @@ services:
       start_period: 90s
     restart: unless-stopped
 
-  # NestJS сервер - production сборка
+  # NestJS сервер - production сборка (образ из GHCR)
   server:
-    build:
-      context: .
-      dockerfile: projects/server/Dockerfile
-    container_name: nestjs
+    image: ghcr.io/${REPOSITORY_OWNER}/server:${IMAGE_TAG}
+    container_name: server
     environment:
       NODE_ENV: ${NODE_ENV}
       DATABASE_URL: ${DATABASE_URL}
@@ -79,43 +77,16 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_BACKUP_ACCESS_KEY: ${S3_BACKUP_ACCESS_KEY}
       S3_BACKUP_SECRET_KEY: ${S3_BACKUP_SECRET_KEY}
-    ports:
-      - '3000:3000'
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - app_network
-    healthcheck:
-      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3000/api/ >/dev/null 2>&1 || exit 1']
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
     restart: unless-stopped
 
-  # React клиент - production сборка
-  client:
-    build:
-      context: .
-      dockerfile: projects/client/Dockerfile
-    container_name: react
-    environment:
-      NODE_ENV: ${NODE_ENV}
-      VITE_API_URL: ${VITE_API_URL}
-      DATABASE_URL: ${DATABASE_URL}
-    volumes:
-      - client_static:/usr/share/nginx/html
-    depends_on:
-      server:
-        condition: service_healthy
-    networks:
-      - app_network
-    restart: unless-stopped
-
-  # Nginx - прокси для клиента и API
+  # Nginx - единая точка входа (статический фронт + API proxy)
   nginx:
-    image: nginx:1.25.4
+    image: nginx:1.27
     container_name: nginx
     ports:
       - '80:80'
@@ -123,10 +94,9 @@ services:
     volumes:
       - ./projects/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./projects/nginx/ssl:/etc/nginx/ssl:ro
-      - client_static:/usr/share/nginx/html:ro
+      # В эту директорию CD выкладывает собранный фронт из client-образа
+      - ./dist:/usr/share/nginx/html:ro
     depends_on:
-      client:
-        condition: service_started
       server:
         condition: service_healthy
     networks:
@@ -136,7 +106,6 @@ services:
 volumes:
   minio_data:
   postgres_data:
-  client_static:
 
 networks:
   app_network:

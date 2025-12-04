@@ -48,6 +48,20 @@ jobs:
     - name: Format
       run: pnpm --filter client --filter server format
 
+    # Собираем production-билд клиента как статику (dist)
+    - name: Build client dist
+      env:
+        NODE_ENV: ${{ secrets.NODE_ENV }}
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      run: pnpm --filter client run build
+
+    # Публикуем dist как артефакт, чтобы CD мог забрать и отправить на сервер через scp
+    - name: Upload client dist artifact
+      uses: actions/upload-artifact@v5
+      with:
+        name: client-dist
+        path: projects/client/dist
+
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
@@ -71,21 +85,10 @@ jobs:
         docker build \
           -t ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }} \
           -f projects/server/Dockerfile .
-    
-    - name: Build client image
-      env:
-        VITE_API_URL: ${{ secrets.VITE_API_URL }}
-        NODE_ENV: ${{ secrets.NODE_ENV }}
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      run: |
-        docker build \
-          -t ghcr.io/${{ github.repository_owner }}/client:${{ github.sha }} \
-          -f projects/client/Dockerfile .
 
-    - name: Push images
+    - name: Push server image
       run: |
         docker push ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository_owner }}/client:${{ github.sha }}
 
     - name: Save tag for CD
       id: save_tag

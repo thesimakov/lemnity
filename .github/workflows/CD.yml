@@ -1,0 +1,71 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Checkout repo (для доступа к конфигам, если нужно)
+        uses: actions/checkout@v6
+
+      # Забираем dist клиента, собранный в CI и загруженный как артефакт client-dist
+      - name: Download client dist artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: client-dist
+          path: ./client-dist
+
+      - name: Показать тег образа, который будет деплоиться
+        run: echo "Deploying IMAGE_TAG=${{ github.event.workflow_run.head_sha }}"
+
+      # Заливаем собранный dist на сервер в папку dist рядом с docker-compose.prod.yml
+      - name: Upload client dist to server
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          source: "client-dist/projects/client/dist/*"
+          target: "${{ secrets.PROD_APP_DIR }}/dist"
+
+      - name: Connect and deploy to server
+        uses: appleboy/ssh-action@v1.2.4
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            set -e
+
+            cd ${{ secrets.PROD_APP_DIR }}
+
+            echo "==> Update repo on server (git pull)"
+            if [ -d .git ]; then
+              git fetch origin
+              # считаем, что деплоим ветку development; при смене ветки обнови здесь
+              git checkout development
+              git pull origin development
+            else
+              echo "WARNING: .git not found in PROD_APP_DIR, skip git pull"
+            fi
+
+            IMAGE_TAG="${{ github.event.workflow_run.head_sha }}"
+            REPOSITORY_OWNER="${{ github.repository_owner }}"
+
+            echo "Using IMAGE_TAG=${IMAGE_TAG}"
+            echo "Repository owner: ${REPOSITORY_OWNER}"
+
+            echo "==> Login to GHCR"
+            docker login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
+
+            echo "==> Run deploy script (pull images, run migrations, up stack)"
+            ./deploy.sh "${IMAGE_TAG}" "${REPOSITORY_OWNER}"
+
+
