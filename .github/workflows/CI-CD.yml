@@ -114,8 +114,9 @@ jobs:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
-          source: 'client-dist/**'
+          source: 'client-dist/*'
           target: '${{ secrets.PROD_APP_DIR }}/dist'
+          rm: true
 
       - name: Connect and deploy to server
         uses: appleboy/ssh-action@v1.2.4
