@@ -1,0 +1,150 @@
+name: CI/CD
+
+on:
+  push:
+    branches: ['development']
+
+jobs:
+  build:
+    environment: prod
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check secrets presence
+        env:
+          ALL_SECRETS_JSON: ${{ toJSON(secrets) }}
+        run: ./scripts/check-secrets.sh
+
+      - name: Node setup
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install dependencies
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm --filter @lemnity/database exec prisma generate
+
+      - name: Lint
+        run: pnpm --filter client --filter server lint
+
+      - name: Format
+        run: pnpm --filter client --filter server format
+
+      # Собираем production-билд клиента как статику (dist)
+      - name: Build client dist
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        run: pnpm --filter client run build
+
+      # Публикуем dist как артефакт, чтобы CD мог забрать и отправить на сервер через scp
+      - name: Upload client dist artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: client-dist
+          path: projects/client/dist
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build server image
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
+          S3_PUBLIC_BASE_URL: ${{ secrets.S3_PUBLIC_BASE_URL }}
+          S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+          S3_REGION: ${{ secrets.S3_REGION }}
+          S3_BUCKET_UPLOADS: ${{ secrets.S3_BUCKET_UPLOADS }}
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+        run: |
+          docker build \
+            -t ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }} \
+            -f projects/server/Dockerfile .
+
+      - name: Push server image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      # Забираем dist клиента, собранный в CI и загруженный как артефакт client-dist
+      - name: Download client dist artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: client-dist
+          path: ./client-dist
+
+      - name: Показать тег образа, который будет деплоиться
+        run: echo "Deploying IMAGE_TAG=${{ github.sha }}"
+
+      # Заливаем собранный dist на сервер в папку dist рядом с docker-compose.prod.yml
+      - name: Upload client dist to server
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          source: 'client-dist/projects/client/dist/*'
+          target: '${{ secrets.PROD_APP_DIR }}/dist'
+
+      - name: Connect and deploy to server
+        uses: appleboy/ssh-action@v1.2.4
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            set -e
+
+            cd ${{ secrets.PROD_APP_DIR }}
+
+            echo "==> Update repo on server (git pull)"
+            if [ -d .git ]; then
+              git fetch origin
+              git checkout development
+              git pull origin development
+            else
+              echo "WARNING: .git not found in PROD_APP_DIR, skip git pull"
+            fi
+
+            IMAGE_TAG="${{ github.sha }}"
+            REPOSITORY_OWNER="${{ github.repository_owner }}"
+
+            echo "Using IMAGE_TAG=${IMAGE_TAG}"
+            echo "Repository owner: ${REPOSITORY_OWNER}"
+
+            echo "==> Login to GHCR"
+            docker login ghcr.io -u "${{ github.actor }}" -p "${{ secrets.GITHUB_TOKEN }}"
+
+            echo "==> Run deploy script (pull images, run migrations, up stack)"
+            ./deploy.sh "${IMAGE_TAG}" "${REPOSITORY_OWNER}"
