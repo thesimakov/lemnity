@@ -60,7 +60,7 @@ jobs:
       - name: Upload client dist artifact
         uses: actions/upload-artifact@v5
         with:
-          name: client-dist
+          name: client-artifact
           path: projects/client/dist
 
       - name: Login to GitHub Container Registry
@@ -101,8 +101,8 @@ jobs:
       - name: Download client dist artifact
         uses: actions/download-artifact@v5
         with:
-          name: client-dist
-          path: ./client-dist
+          name: client-artifact
+          path: artifacts
 
       - name: Показать тег образа, который будет деплоиться
         run: echo "Deploying IMAGE_TAG=${{ github.sha }}"
@@ -114,7 +114,7 @@ jobs:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.PROD_USER }}
           key: ${{ secrets.PROD_SSH_KEY }}
-          source: 'client-dist/**'
+          source: artifacts/*'
           target: '${{ secrets.PROD_APP_DIR }}/dist'
           rm: true
 
