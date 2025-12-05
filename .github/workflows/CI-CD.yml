@@ -102,7 +102,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: client-artifact
-          path: artifacts
+          path: /artifacts
 
       - name: Показать тег образа, который будет деплоиться
         run: echo "Deploying IMAGE_TAG=${{ github.sha }}"
@@ -117,6 +117,7 @@ jobs:
           source: 'artifacts/*'
           target: '${{ secrets.PROD_APP_DIR }}/dist'
           rm: true
+          strip_components: 1
 
       - name: Connect and deploy to server
         uses: appleboy/ssh-action@v1.2.4
