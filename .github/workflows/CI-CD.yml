@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: ['development']
+    branches: ['main']
 
 jobs:
   build:
@@ -133,8 +133,8 @@ jobs:
             echo "==> Update repo on server (git pull)"
             if [ -d .git ]; then
               git fetch origin
-              git checkout development
-              git pull origin development
+              git checkout main
+              git pull origin main
             else
               echo "WARNING: .git not found in PROD_APP_DIR, skip git pull"
             fi
