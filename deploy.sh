@@ -22,8 +22,8 @@ echo "==> Apply Prisma migrations (if any)"
 docker compose -f docker-compose.prod.yml run --rm server \
   pnpm --filter @lemnity/database exec prisma migrate deploy
 
-echo "==> Start / update full stack (server + nginx + infra)"
-docker compose -f docker-compose.prod.yml up -d --remove-orphans
+echo "==> Start / update full stack (server + nginx + infra) with recreate"
+docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
 
 echo "==> Cleanup unused images"
 docker image prune -f
