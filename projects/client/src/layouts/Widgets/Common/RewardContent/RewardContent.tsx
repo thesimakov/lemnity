@@ -1,9 +1,11 @@
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 
-const Headline = ({ text, size }: { text: string; size?: number }) => (
+const Headline = ({ text, size, color }: { text: string; size?: number ; color?: string }) => (
   <h2
     className="whitespace-pre-wrap font-bold leading-tight mb-2 text-center"
-    style={{ fontSize: size ? `${size}px` : undefined }}
+    style={{ fontSize: size ? `${size}px` : undefined,
+      color: color ?? '#000000'
+  }}
   >
     {text}
   </h2>
@@ -50,7 +52,7 @@ const RewardContent = ({ companyLogo, onWin, className }: RewardContentProps) =>
       {companyLogo?.enabled && companyLogo.url && (
         <img src={companyLogo.url} alt="Company Logo" className="w-25 h-12.5 object-contain" />
       )}
-      <Headline text={defaultOnWin.text ?? ''} size={defaultOnWin.textSize} />
+      <Headline text={defaultOnWin.text ?? ''} size={defaultOnWin.textSize} color={defaultOnWin.textColor ?? '#000000'} />
       <div
         className="h-10 w-full rounded-full font-medium flex items-center justify-center"
         style={{ backgroundColor: discountBgColor, color: discountTextColor }}
@@ -60,7 +62,8 @@ const RewardContent = ({ companyLogo, onWin, className }: RewardContentProps) =>
       <div
         className="text-center opacity-90"
         style={{
-          fontSize: defaultOnWin.descriptionSize ? `${defaultOnWin.descriptionSize}px` : undefined
+          fontSize: defaultOnWin.descriptionSize ? `${defaultOnWin.descriptionSize}px` : undefined,
+          color: defaultOnWin.descriptionColor ?? '#000000'
         }}
       >
         {defaultOnWin.description}

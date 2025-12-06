@@ -30,8 +30,10 @@ export type MessageColorScheme = {
 export type FormOnWinMessage = {
   enabled: boolean
   text: string
+  textColor?: string
   textSize: number
   description: string
+  descriptionColor?: string
   descriptionSize: number
   colorScheme: MessageColorScheme
 }

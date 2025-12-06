@@ -29,8 +29,10 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
   const setAdsInfo = useWidgetSettingsStore(s => s.setAdsInfo)
   const setOnWinEnabled = useWidgetSettingsStore(s => s.setOnWinEnabled)
   const setOnWinText = useWidgetSettingsStore(s => s.setOnWinText)
+  const setOnWinTextWithColor = useWidgetSettingsStore(s => s.setOnWinTextWithColor)
   const setOnWinTextSize = useWidgetSettingsStore(s => s.setOnWinTextSize)
   const setOnWinDescription = useWidgetSettingsStore(s => s.setOnWinDescription)
+  const setOnWinDescriptionWithColor = useWidgetSettingsStore(s => s.setOnWinDescriptionWithColor)
   const setOnWinDescriptionSize = useWidgetSettingsStore(s => s.setOnWinDescriptionSize)
   const setOnWinColorSchemeEnabled = useWidgetSettingsStore(s => s.setOnWinColorSchemeEnabled)
   const setOnWinColorScheme = useWidgetSettingsStore(s => s.setOnWinColorScheme)
@@ -65,8 +67,10 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
       setAdsInfo,
       setOnWinEnabled,
       setOnWinText,
+      setOnWinTextWithColor,
       setOnWinTextSize,
       setOnWinDescription,
+      setOnWinDescriptionWithColor,
       setOnWinDescriptionSize,
       setOnWinDiscountColors,
       setOnWinPromoColors,
@@ -100,8 +104,10 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
       setAdsInfo,
       setOnWinEnabled,
       setOnWinText,
+      setOnWinTextWithColor,
       setOnWinTextSize,
       setOnWinDescription,
+      setOnWinDescriptionWithColor,
       setOnWinDescriptionSize,
       setOnWinDiscountColors,
       setOnWinPromoColors,
