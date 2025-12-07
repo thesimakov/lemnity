@@ -1,5 +1,8 @@
 name: CI/CD
 
+env:
+  IMAGE_TAG: ${{ github.sha }}-${{ github.run_id }}
+
 on:
   push:
     branches: ['main']
@@ -84,12 +87,12 @@ jobs:
           S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
         run: |
           docker build \
-            -t ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }} \
+            -t ghcr.io/${{ github.repository_owner }}/server:${{ env.IMAGE_TAG }} \
             -f projects/server/Dockerfile .
 
       - name: Push server image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/server:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/server:${{ env.IMAGE_TAG }}
 
   deploy:
     needs: build
@@ -105,7 +108,7 @@ jobs:
           path: artifacts
 
       - name: Показать тег образа, который будет деплоиться
-        run: echo "Deploying IMAGE_TAG=${{ github.sha }}"
+        run: echo "Deploying IMAGE_TAG=${{ env.IMAGE_TAG }}"
 
       # Заливаем собранный dist на сервер в папку dist рядом с docker-compose.prod.yml
       - name: Upload client dist to server
@@ -139,7 +142,7 @@ jobs:
               echo "WARNING: .git not found in PROD_APP_DIR, skip git pull"
             fi
 
-            IMAGE_TAG="${{ github.sha }}"
+            IMAGE_TAG="${{ env.IMAGE_TAG }}"
             REPOSITORY_OWNER="${{ github.repository_owner }}"
 
             echo "Using IMAGE_TAG=${IMAGE_TAG}"
