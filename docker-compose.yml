@@ -18,7 +18,7 @@ services:
   minio_setup:
     image: minio/mc:latest
     container_name: minio_setup
-    profiles: ["setup"]
+    profiles: ['setup']
     depends_on:
       minio:
         condition: service_started
@@ -27,8 +27,8 @@ services:
     volumes:
       - ./projects/ops/minio-setup/init.sh:/init.sh:ro
       - ./projects/ops/minio-setup/setup-uploads.sh:/setup-uploads.sh:ro
-     # - ./projects/ops/minio-setup/setup-backups.sh:/setup-backups.sh:ro
-    entrypoint: ['/bin/sh','-c','sh /init.sh']
+      # - ./projects/ops/minio-setup/setup-backups.sh:/setup-backups.sh:ro
+    entrypoint: ['/bin/sh', '-c', 'sh /init.sh']
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
@@ -49,7 +49,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     networks:
       - app_network
     healthcheck:
@@ -58,6 +58,54 @@ services:
       timeout: 5s
       retries: 5
       start_period: 90s
+    restart: unless-stopped
+
+  # RabbitMQ (with management UI)
+  rabbitmq:
+    image: rabbitmq:4.2.1-management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app_network
+    healthcheck:
+      test: ['CMD-SHELL', 'rabbitmq-diagnostics -q check_running']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ClickHouse
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.9
+    container_name: clickhouse
+    environment:
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+    ports:
+      - '8123:8123' # HTTP
+      - '9002:9000' # Native (moved off 9000 to avoid MinIO)
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - app_network
+    healthcheck:
+      test: ['CMD-SHELL', "wget -qO- http://localhost:8123/ping | grep -q 'Ok'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     restart: unless-stopped
 
   # NestJS сервер
@@ -82,6 +130,10 @@ services:
       - '3000:3000'
     depends_on:
       postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      clickhouse:
         condition: service_healthy
     networks:
       - app_network
@@ -132,6 +184,39 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # Collector microservice for widget events
+  collector:
+    build:
+      context: .
+      dockerfile: projects/collector/Dockerfile.dev
+    container_name: collector
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      COLLECTOR_PORT: ${COLLECTOR_PORT}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      CLICKHOUSE_URL: ${CLICKHOUSE_URL}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      CLICKHOUSE_EVENTS_TABLE: ${CLICKHOUSE_EVENTS_TABLE}
+    ports:
+      - '${COLLECTOR_PORT}:${COLLECTOR_PORT}'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - app_network
+    volumes:
+      - ./projects/collector:/collector/projects/collector
+      - ./packages:/collector/packages
+      - ./package.json:/collector/package.json:ro
+      - ./pnpm-lock.yaml:/collector/pnpm-lock.yaml
+      - ./pnpm-workspace.yaml:/collector/pnpm-workspace.yaml
+      - ./projects/collector/node_modules:/collector/projects/collector/node_modules
+    restart: unless-stopped
+
   # Nginx
   nginx:
     image: nginx:1.25.4
@@ -149,6 +234,8 @@ services:
 volumes:
   minio_data:
   postgres_data:
+  rabbitmq_data:
+  clickhouse_data:
 networks:
   app_network:
     driver: bridge
