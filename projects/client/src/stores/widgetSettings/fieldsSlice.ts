@@ -93,10 +93,12 @@ export const createFieldsSlice = (updateFields: FieldsUpdater): FieldsSlice => {
       updateByPath('adsInfo', { enabled, text, policyUrl, color }),
     setOnWinEnabled: enabled => updateByPath('messages.onWin', { enabled }),
     setOnWinText: text => updateByPath('messages.onWin', { text }),
-    setOnWinTextWithColor: (text, color) => updateByPath('messages.onWin', { text, textColor: color }),
+    setOnWinTextWithColor: (text, color) =>
+      updateByPath('messages.onWin', { text, textColor: color }),
     setOnWinTextSize: size => updateByPath('messages.onWin', { textSize: size }),
     setOnWinDescription: description => updateByPath('messages.onWin', { description }),
-    setOnWinDescriptionWithColor: (description, color) => updateByPath('messages.onWin', { description, descriptionColor: color }),
+    setOnWinDescriptionWithColor: (description, color) =>
+      updateByPath('messages.onWin', { description, descriptionColor: color }),
     setOnWinDescriptionSize: size => updateByPath('messages.onWin', { descriptionSize: size }),
     setOnWinColorSchemeEnabled: enabled => updateByPath('messages.onWin.colorScheme', { enabled }),
     setOnWinColorScheme: scheme => updateByPath('messages.onWin.colorScheme', { scheme }),
