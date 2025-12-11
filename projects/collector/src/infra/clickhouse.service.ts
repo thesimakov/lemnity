@@ -16,7 +16,8 @@ export class ClickhouseService implements OnModuleInit {
       url: this.configService.get<string>('clickhouse.url'),
       username: this.configService.get<string>('clickhouse.user'),
       password: this.configService.get<string>('clickhouse.password'),
-      settings: {
+      // Настройки сервера передаются через clickhouse_settings
+      clickhouse_settings: {
         // Нужен для типов JSON в ClickHouse
         allow_experimental_json_type: 1,
       },
