@@ -29,9 +29,15 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
   const setAdsInfo = useWidgetSettingsStore(s => s.setAdsInfo)
   const setOnWinEnabled = useWidgetSettingsStore(s => s.setOnWinEnabled)
   const setOnWinText = useWidgetSettingsStore(s => s.setOnWinText)
+  const setOnWinTextWithColor = useWidgetSettingsStore(s => s.setOnWinTextWithColor)
   const setOnWinTextSize = useWidgetSettingsStore(s => s.setOnWinTextSize)
   const setOnWinDescription = useWidgetSettingsStore(s => s.setOnWinDescription)
+  const setOnWinDescriptionWithColor = useWidgetSettingsStore(s => s.setOnWinDescriptionWithColor)
   const setOnWinDescriptionSize = useWidgetSettingsStore(s => s.setOnWinDescriptionSize)
+  const setOnWinDiscountWithColor = useWidgetSettingsStore(s => s.setOnWinDiscountWithColor)
+  const setOnWinDiscountSize = useWidgetSettingsStore(s => s.setOnWinDiscountSize)
+  const setOnWinPromoWithColor = useWidgetSettingsStore(s => s.setOnWinPromoWithColor)
+  const setOnWinPromoSize = useWidgetSettingsStore(s => s.setOnWinPromoSize)
   const setOnWinColorSchemeEnabled = useWidgetSettingsStore(s => s.setOnWinColorSchemeEnabled)
   const setOnWinColorScheme = useWidgetSettingsStore(s => s.setOnWinColorScheme)
   const setOnWinDiscountColors = useWidgetSettingsStore(s => s.setOnWinDiscountColors)
@@ -65,9 +71,15 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
       setAdsInfo,
       setOnWinEnabled,
       setOnWinText,
+      setOnWinTextWithColor,
       setOnWinTextSize,
       setOnWinDescription,
+      setOnWinDescriptionWithColor,
       setOnWinDescriptionSize,
+      setOnWinDiscountWithColor,
+      setOnWinDiscountSize,
+      setOnWinPromoWithColor,
+      setOnWinPromoSize,
       setOnWinDiscountColors,
       setOnWinPromoColors,
       setOnWinColorSchemeEnabled,
@@ -100,9 +112,15 @@ export const useFieldsSettings = (): UseFieldsSettingsReturn => {
       setAdsInfo,
       setOnWinEnabled,
       setOnWinText,
+      setOnWinTextWithColor,
       setOnWinTextSize,
       setOnWinDescription,
+      setOnWinDescriptionWithColor,
       setOnWinDescriptionSize,
+      setOnWinDiscountWithColor,
+      setOnWinDiscountSize,
+      setOnWinPromoWithColor,
+      setOnWinPromoSize,
       setOnWinDiscountColors,
       setOnWinPromoColors,
       setOnWinColorSchemeEnabled,

@@ -9,9 +9,17 @@ const defaultMessages: FormMessages = {
   onWin: {
     enabled: true,
     text: 'Ура!\nВы выиграли',
+    textColor: '#FFFFFF',
     textSize: 36,
     description: 'Не забудьте использовать промокод во время\nоформления заказа!',
+    descriptionColor: '#FFFFFF',
     descriptionSize: 16,
+    discount: '',
+    discountColor: '#FFFFFF',
+    discountSize: 16,
+    promo: '',
+    promoColor: '#FFFFFF',
+    promoSize: 16,
     colorScheme: {
       enabled: true,
       scheme: 'primary',

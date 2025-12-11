@@ -7,6 +7,8 @@ import { AppService } from './app.service'
 import { ProjectModule } from './project/project.module'
 import { WidgetModule } from './widget/widget.module'
 import { FilesModule } from './files/files.module'
+import { CollectorModule } from './collector/collector.module'
+import { StatsModule } from './stats/stats.module'
 
 @Module({
   imports: [
@@ -15,7 +17,9 @@ import { FilesModule } from './files/files.module'
     UserModule,
     ProjectModule,
     WidgetModule,
-    FilesModule
+    FilesModule,
+    CollectorModule,
+    StatsModule
   ],
   controllers: [AppController],
   providers: [AppService]

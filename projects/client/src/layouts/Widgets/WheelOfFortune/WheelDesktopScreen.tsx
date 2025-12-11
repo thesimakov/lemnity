@@ -27,9 +27,7 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   if (!settings) return null
 
   const sectors = settings.sectors
-  const items = sectors.randomize
-    ? [...sectors.items].sort(() => Math.random() - 0.5)
-    : sectors.items
+  const pointerPositionDeg = 135
 
   const renderForm = screen === 'main' || screen === 'panel'
   const content = renderForm ? (
@@ -49,8 +47,10 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
     return (
       <WheelOfFortune
         className={className}
-        pointerPositionDeg={0}
-        sectors={items}
+        pointerPositionDeg={pointerPositionDeg}
+        winningSectorId={undefined}
+        sectorsRandomize={sectors.randomize}
+        sectors={sectors.items}
         spinTrigger={spinTrigger}
         borderColor={settings?.borderColor}
         borderThickness={settings?.borderThickness}
