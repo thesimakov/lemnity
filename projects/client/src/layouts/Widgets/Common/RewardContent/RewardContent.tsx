@@ -24,6 +24,12 @@ export type RewardContentProps = {
     textSize?: number
     description?: string
     descriptionSize?: number
+    discount?: string
+    discountColor?: string
+    discountSize?: number
+    promo?: string
+    promoColor?: string
+    promoSize?: number
     colorScheme?: ColorScheme
   }
   className?: string
@@ -33,14 +39,16 @@ const RewardContent = ({ companyLogo, onWin, className }: RewardContentProps) =>
   const { settings } = useFieldsSettings()
   const defaultOnWin = settings.messages?.onWin ?? onWin
   if (!defaultOnWin?.enabled) return null
-  const discountText = 'Скидка 10%'
-  const promoLabel = 'промокод'
-  const promoCode = 'PROMO-10P'
+  const discountText = defaultOnWin.discount ?? 'Скидка 10%'
+  const promoText = defaultOnWin.promo ?? 'PROMO-10P'
   const scheme = defaultOnWin.colorScheme ?? {}
   const hasCustomScheme = Boolean(scheme.enabled && scheme.scheme === 'custom')
-  const discountTextColor = hasCustomScheme ? (scheme.discount?.color ?? '#000000') : '#000000'
+  const discountTextColor =
+    defaultOnWin.discountColor ??
+    (hasCustomScheme ? (scheme.discount?.color ?? '#000000') : '#000000')
   const discountBgColor = hasCustomScheme ? (scheme.discount?.bgColor ?? '#FFF57F') : '#FFF57F'
-  const promoTextColor = hasCustomScheme ? (scheme.promo?.color ?? '#FFFFFF') : '#FFFFFF'
+  const promoTextColor =
+    defaultOnWin.promoColor ?? (hasCustomScheme ? (scheme.promo?.color ?? '#FFFFFF') : '#FFFFFF')
   const promoBgColor = hasCustomScheme ? (scheme.promo?.bgColor ?? '#0069FF') : '#0069FF'
 
   return (
@@ -55,12 +63,18 @@ const RewardContent = ({ companyLogo, onWin, className }: RewardContentProps) =>
         size={defaultOnWin.textSize}
         color={defaultOnWin.textColor ?? '#000000'}
       />
-      <div
-        className="h-10 w-full rounded-full font-medium flex items-center justify-center"
-        style={{ backgroundColor: discountBgColor, color: discountTextColor }}
-      >
-        {discountText}
-      </div>
+      {discountText ? (
+        <div
+          className="h-10 w-full rounded-full font-medium flex items-center justify-center"
+          style={{
+            backgroundColor: discountBgColor,
+            color: discountTextColor,
+            fontSize: defaultOnWin.discountSize ? `${defaultOnWin.discountSize}px` : undefined
+          }}
+        >
+          {discountText}
+        </div>
+      ) : null}
       <div
         className="text-center opacity-90"
         style={{
@@ -70,13 +84,18 @@ const RewardContent = ({ companyLogo, onWin, className }: RewardContentProps) =>
       >
         {defaultOnWin.description}
       </div>
-      <div
-        className="flex flex-col gap-1 p-2 border border-dashed w-full rounded-[10px] tracking-wider items-center justify-center"
-        style={{ color: promoTextColor, backgroundColor: promoBgColor }}
-      >
-        <span className="text-xs font-normal">{promoLabel}</span>
-        <span className="font-bold">{promoCode}</span>
-      </div>
+      {promoText ? (
+        <div
+          className="flex flex-col gap-1 p-2 border border-dashed w-full rounded-[10px] tracking-wider items-center justify-center"
+          style={{
+            color: promoTextColor,
+            backgroundColor: promoBgColor,
+            fontSize: defaultOnWin.promoSize ? `${defaultOnWin.promoSize}px` : undefined
+          }}
+        >
+          <span className="font-bold whitespace-pre-wrap">{promoText}</span>
+        </div>
+      ) : null}
     </div>
   )
 }

@@ -14,6 +14,12 @@ const defaultMessages: FormMessages = {
     description: 'Не забудьте использовать промокод во время\nоформления заказа!',
     descriptionColor: '#FFFFFF',
     descriptionSize: 16,
+    discount: '',
+    discountColor: '#FFFFFF',
+    discountSize: 16,
+    promo: '',
+    promoColor: '#FFFFFF',
+    promoSize: 16,
     colorScheme: {
       enabled: true,
       scheme: 'primary',

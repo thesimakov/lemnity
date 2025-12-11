@@ -35,6 +35,12 @@ export type FormOnWinMessage = {
   description: string
   descriptionColor?: string
   descriptionSize: number
+  discount: string
+  discountColor?: string
+  discountSize: number
+  promo: string
+  promoColor?: string
+  promoSize: number
   colorScheme: MessageColorScheme
 }
 
@@ -71,6 +77,10 @@ export type WheelOfFortuneMessages = {
     textSize: number
     description: string
     descriptionSize: number
+    discount: string
+    discountSize: number
+    promo: string
+    promoSize: number
     colorScheme: {
       enabled: boolean
       scheme: ColorScheme

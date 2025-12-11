@@ -153,6 +153,10 @@ export const FieldsSchema = z
         textSize: z.number().nonnegative(),
         description: z.string(),
         descriptionSize: z.number().nonnegative(),
+        discount: z.string().optional(),
+        discountSize: z.number().nonnegative().optional(),
+        promo: z.string().optional(),
+        promoSize: z.number().nonnegative().optional(),
         colorScheme: z.object({
           enabled: z.boolean(),
           scheme: ColorScheme,
