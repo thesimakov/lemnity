@@ -41,6 +41,10 @@ export type FieldsActions = {
   setOnWinDescription: (description: string) => void
   setOnWinDescriptionWithColor: (description: string, color: string) => void
   setOnWinDescriptionSize: (size: number) => void
+  setOnWinDiscountWithColor: (discount: string, color: string) => void
+  setOnWinDiscountSize: (size: number) => void
+  setOnWinPromoWithColor: (promo: string, color: string) => void
+  setOnWinPromoSize: (size: number) => void
   setOnWinColorSchemeEnabled: (enabled: boolean) => void
   setOnWinColorScheme: (scheme: 'primary' | 'custom') => void
   setOnWinDiscountColors: (color: string, bgColor: string) => void
@@ -100,6 +104,12 @@ export const createFieldsSlice = (updateFields: FieldsUpdater): FieldsSlice => {
     setOnWinDescriptionWithColor: (description, color) =>
       updateByPath('messages.onWin', { description, descriptionColor: color }),
     setOnWinDescriptionSize: size => updateByPath('messages.onWin', { descriptionSize: size }),
+    setOnWinDiscountWithColor: (discount, color) =>
+      updateByPath('messages.onWin', { discount, discountColor: color }),
+    setOnWinDiscountSize: size => updateByPath('messages.onWin', { discountSize: size }),
+    setOnWinPromoWithColor: (promo, color) =>
+      updateByPath('messages.onWin', { promo, promoColor: color }),
+    setOnWinPromoSize: size => updateByPath('messages.onWin', { promoSize: size }),
     setOnWinColorSchemeEnabled: enabled => updateByPath('messages.onWin.colorScheme', { enabled }),
     setOnWinColorScheme: scheme => updateByPath('messages.onWin.colorScheme', { scheme }),
     setOnWinDiscountColors: (color, bgColor) =>

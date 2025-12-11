@@ -15,6 +15,10 @@ const OnWinMessageSection = () => {
     setOnWinTextSize,
     setOnWinDescriptionWithColor,
     setOnWinDescriptionSize,
+    setOnWinDiscountWithColor,
+    setOnWinDiscountSize,
+    setOnWinPromoWithColor,
+    setOnWinPromoSize,
     setOnWinColorSchemeEnabled,
     setOnWinColorScheme,
     setOnWinDiscountColors,
@@ -38,12 +42,23 @@ const OnWinMessageSection = () => {
     textSize,
     description,
     descriptionColor,
-    colorScheme,
-    descriptionSize
+    descriptionSize,
+    discount: discountText = '',
+    discountColor,
+    discountSize = 16,
+    promo: promoText = '',
+    promoColor,
+    promoSize = 16,
+    colorScheme
   } = onWin
   const defaultScheme = defaults?.fields.messages.onWin.colorScheme
   const safeColorScheme = colorScheme ?? defaultScheme
-  const { enabled: schemeEnabled, scheme, discount, promo } = safeColorScheme
+  const {
+    enabled: schemeEnabled,
+    scheme,
+    discount: discountColors,
+    promo: promoColors
+  } = safeColorScheme
   const isCustomSchemeActive = schemeEnabled && scheme === 'custom'
   const defaultDiscount = defaults?.fields.messages.onWin.colorScheme.discount ?? {
     color: '#000000',
@@ -53,8 +68,8 @@ const OnWinMessageSection = () => {
     color: '#FFFFFF',
     bgColor: '#0069FF'
   }
-  const safeDiscount = discount ?? defaultDiscount
-  const safePromo = promo ?? defaultPromo
+  const safeDiscount = discountColors ?? defaultDiscount
+  const safePromo = promoColors ?? defaultPromo
 
   const colorPickers = (
     <div
@@ -62,16 +77,10 @@ const OnWinMessageSection = () => {
         isCustomSchemeActive ? '' : 'opacity-60 pointer-events-none'
       }`}
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-row gap-3">
         <div className="flex flex-col gap-2 flex-1">
           <span className="text-sm font-medium text-gray-700">Скидка</span>
           <div className="flex flex-row flex-nowrap items-center gap-2">
-            <ColorAccessory
-              classNames={{ label: 'w-full' }}
-              label="Цвет шрифта"
-              color={safeDiscount.color}
-              onChange={c => setOnWinDiscountColors(c, safeDiscount.bgColor)}
-            />
             <ColorAccessory
               classNames={{ label: 'w-full' }}
               label="Цвет фона"
@@ -89,12 +98,6 @@ const OnWinMessageSection = () => {
         <div className="flex flex-col gap-2 flex-1">
           <span className="text-sm font-medium text-gray-700">Промокод</span>
           <div className="flex flex-row flex-nowrap items-center gap-2">
-            <ColorAccessory
-              classNames={{ label: 'w-full' }}
-              label="Цвет шрифта"
-              color={safePromo.color}
-              onChange={c => setOnWinPromoColors(c, safePromo.bgColor)}
-            />
             <ColorAccessory
               classNames={{ label: 'w-full' }}
               label="Цвет фона"
@@ -188,6 +191,76 @@ const OnWinMessageSection = () => {
           <ColorAccessory
             color={descriptionColor ?? '#000000'}
             onChange={color => setOnWinDescriptionWithColor(description, color)}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium text-gray-700">Скидка</span>
+        <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-3">
+          <div className="flex-1">
+            <Textarea
+              radius="sm"
+              minRows={2}
+              placeholder="Ваша скидка 10%"
+              classNames={{ input: 'placeholder:text-[#AFAFAF]' }}
+              value={discountText}
+              isInvalid={enabled && Boolean(err('discount'))}
+              errorMessage={err('discount')}
+              onValueChange={value => setOnWinDiscountWithColor(value, discountColor ?? '#000000')}
+            />
+          </div>
+          <div className="flex flex-col gap-1 md:w-auto">
+            <NumberField
+              label="Размер текста"
+              max={100}
+              min={0}
+              value={discountSize}
+              onChange={setOnWinDiscountSize}
+              classNames={{ container: '!h-14 !px-3 !py-0' }}
+            />
+            {enabled && err('discountSize') ? (
+              <span className="text-xs text-red-500">{err('discountSize')}</span>
+            ) : null}
+          </div>
+          <ColorAccessory
+            color={discountColor ?? '#000000'}
+            onChange={color => setOnWinDiscountWithColor(discountText, color)}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium text-gray-700">Промокод</span>
+        <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-3">
+          <div className="flex-1">
+            <Textarea
+              radius="sm"
+              minRows={2}
+              placeholder="TNF2026"
+              classNames={{ input: 'placeholder:text-[#AFAFAF]' }}
+              value={promoText}
+              isInvalid={enabled && Boolean(err('promo'))}
+              errorMessage={err('promo')}
+              onValueChange={value => setOnWinPromoWithColor(value, promoColor ?? '#000000')}
+            />
+          </div>
+          <div className="flex flex-col gap-1 md:w-auto">
+            <NumberField
+              label="Размер текста"
+              max={100}
+              min={0}
+              value={promoSize}
+              onChange={setOnWinPromoSize}
+              classNames={{ container: '!h-14 !px-3 !py-0' }}
+            />
+            {enabled && err('promoSize') ? (
+              <span className="text-xs text-red-500">{err('promoSize')}</span>
+            ) : null}
+          </div>
+          <ColorAccessory
+            color={promoColor ?? '#000000'}
+            onChange={color => setOnWinPromoWithColor(promoText, color)}
           />
         </div>
       </div>
