@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Req } from '@nestjs/common';
-import { Request } from 'express';
-import { CreateEventDto } from '@lemnity/nest-common';
+import type { Request } from 'express';
+import type { CreateEventDto } from '@lemnity/nest-common';
 import { EventsService } from './events.service';
 
 @Controller()
