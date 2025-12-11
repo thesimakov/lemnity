@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { connect } from 'amqplib';
+import * as amqp from 'amqplib';
 
 @Injectable()
 export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
@@ -13,28 +14,49 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleInit() {
-    await this.connect();
+    await this.connectWithRetry();
   }
 
   async onModuleDestroy() {
     await this.channel?.close().catch(() => undefined);
-    await (this.connection as unknown as { close?: () => Promise<void> })?.close?.().catch(() => undefined);
+    const conn = this.connection as unknown as { close?: () => Promise<void> } | null;
+    await conn?.close?.().catch(() => undefined);
   }
 
-  private async connect() {
+  private async connectWithRetry() {
     const url = this.configService.get<string>('rabbitmq.url');
     if (!url) {
       throw new Error('RABBITMQ_URL is not set');
     }
-    const connection = await connect(url);
-    this.connection = connection;
-    this.channel = await connection.createChannel();
-    await this.channel.assertQueue(this.queue, { durable: true });
+
+    const maxAttempts = 10;
+    const baseDelayMs = 2000;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const connection = await amqp.connect(url);
+        this.connection = connection;
+        this.channel = await connection.createChannel();
+        await this.channel.assertQueue(this.queue, { durable: true });
+        return;
+      } catch (err) {
+        const isLast = attempt === maxAttempts;
+        if (isLast) {
+          throw err;
+        }
+        // Простой backoff: растём до 10s
+        const delay = Math.min(baseDelayMs * attempt, 10000);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
   }
 
-  private async ensureChannel() {
+  private async ensureChannel(): Promise<amqp.Channel> {
     if (!this.channel) {
-      await this.connect();
+      await this.connectWithRetry();
+    }
+    if (!this.channel) {
+      throw new Error('Failed to establish RabbitMQ channel');
     }
     return this.channel;
   }
