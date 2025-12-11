@@ -10,6 +10,8 @@ type WheelOfFortuneProps = {
   className?: string
   pointerPositionDeg?: number // позиция указателя в градусах
   spinTrigger?: number // изменение этого значения запускает анимацию
+  winningSectorId?: string | null // id сектора-победителя из настроек (до рандома)
+  sectorsRandomize?: boolean // перемешивать сектора
   borderColor?: string
   borderThickness?: number
 }
@@ -82,12 +84,19 @@ function normalizeSectors(input?: number | SectorItem[]): SectorItem[] {
 const WheelOfFortune = ({
   sectors,
   className,
-  pointerPositionDeg,
+  pointerPositionDeg = 0,
   spinTrigger,
+  winningSectorId,
+  sectorsRandomize,
   borderColor,
   borderThickness
 }: WheelOfFortuneProps) => {
-  const items = normalizeSectors(sectors)
+  const normalizedItems = normalizeSectors(sectors)
+  const itemsWithIndex = normalizedItems.map((item, index) => ({ item, index }))
+  const shuffledItems = sectorsRandomize
+    ? [...itemsWithIndex].sort(() => Math.random() - 0.5)
+    : itemsWithIndex
+  const items = shuffledItems.map(entry => entry.item)
   const count = items.length
   const controls = useAnimation()
   const prevSpinTriggerRef = useRef(spinTrigger)
@@ -96,22 +105,34 @@ const WheelOfFortune = ({
   const cx = size / 2
   const cy = size / 2
   const totalR = size / 2
-  const outerRingW = 8
-  const innerRingW = 6
-  const ringGap = 2
-  const rDisk = totalR - outerRingW - ringGap - innerRingW - ringGap
   const borderStrokeWidth = Math.max(0, Math.min(20, borderThickness ?? 12))
+  const rDisk = totalR - borderStrokeWidth
   const rBorder = rDisk + borderStrokeWidth / 2
   const strokeColor = borderColor ?? '#0F52E6'
   const step = 360 / count
+  // pointerPositionDeg задаётся в тригонометрической системе: 0° — справа, положительные углы CCW
+  const normalizedPointerDeg = pointerPositionDeg ?? 0
+  const pointerWidth = 36
+  const pointerHeight = 25
+  const pointerRadius = rBorder
+  const pointerBaseX = cx + pointerRadius - pointerWidth / 2
+  const pointerBaseY = cy - pointerHeight / 2
+
+  const winningIndex = (() => {
+    if (!winningSectorId) return Math.floor(Math.random() * count)
+    const idx = shuffledItems.findIndex(({ item }) => item.id === winningSectorId)
+    return idx >= 0 ? idx : Math.floor(Math.random() * count)
+  })()
+
+  const sectorMidAngle = winningIndex * step - 90 + step / 2 // -90 чтобы 0° было справа
 
   useEffect(() => {
     if (spinTrigger !== undefined && spinTrigger !== prevSpinTriggerRef.current) {
       prevSpinTriggerRef.current = spinTrigger
-      // Запускаем анимацию: несколько полных оборотов + случайный угол
-      const fullRotations = 5 // количество полных оборотов
-      const randomAngle = Math.random() * 360 // случайный финальный угол
-      const totalRotation = fullRotations * 360 + randomAngle
+      const fullRotations = 5 // количество полных оборотов (clockwise)
+      // Для SVG/CSS положительный rotate — по часовой; pointerDeg задан CCW.
+      // Чтобы центр сектора встал под указатель: sectorAngle - rotation = pointerAngle => rotation = sectorAngle - pointerAngle
+      const totalRotation = fullRotations * 360 + (sectorMidAngle - normalizedPointerDeg)
 
       controls.start({
         rotate: totalRotation,
@@ -121,7 +142,7 @@ const WheelOfFortune = ({
         }
       })
     }
-  }, [spinTrigger, controls])
+  }, [spinTrigger, controls, normalizedPointerDeg, sectorMidAngle])
 
   return (
     <div className={`aspect-square w-full ${className}`}>
@@ -208,10 +229,11 @@ const WheelOfFortune = ({
         {/* Указатель вне анимированной группы, чтобы не вращался */}
         <image
           href={wheelPointer}
-          x={cx - rBorder + 47}
-          y={cy - rBorder + 47}
-          transform={`rotate(${pointerPositionDeg ?? 0}, ${cx}, ${cy})`}
-          className="scale-70"
+          x={pointerBaseX}
+          y={pointerBaseY}
+          width={pointerWidth}
+          height={pointerHeight}
+          transform={`rotate(${-normalizedPointerDeg}, ${cx}, ${cy})`}
         />
       </svg>
     </div>

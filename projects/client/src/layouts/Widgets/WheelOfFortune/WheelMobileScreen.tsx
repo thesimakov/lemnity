@@ -15,25 +15,32 @@ const WheelMobileScreen = () => {
   if (!settings) return null
 
   const sectors = settings.sectors
-  const items = sectors.randomize
-    ? [...sectors.items].sort(() => Math.random() - 0.5)
-    : sectors.items
+  const pointerPositionDeg = 225
 
   return (
     <div className="w-full rounded-2xl bg-[#F5F6F8] border border-[#E6E6E6] p-4 overflow-y-auto">
       <div
         style={{ backgroundColor: colorScheme === 'primary' ? '#725DFF' : customColor }}
-        className="mx-auto w-[360px] rounded-2xl text-white p-4 relative"
+        className="mx-auto w-[360px] rounded-2xl text-white pb-4 pt-0 relative overflow-hidden"
       >
         <CloseButton position="right" />
         <div className="flex flex-col gap-4 items-center">
-          <WheelOfFortune
-            sectors={items}
-            spinTrigger={spinTrigger}
-            borderColor={settings?.borderColor}
-            borderThickness={settings?.borderThickness}
-          />
-          <DynamicFieldsForm isMobile centered onSubmit={() => {}} />
+          <div className="relative w-full overflow-hidden pt-[50%]">
+            <div className="absolute top-[-100%] left-1/2 -translate-x-1/2 w-full max-w-none aspect-square">
+              <WheelOfFortune
+                sectors={sectors.items}
+                sectorsRandomize={sectors.randomize}
+                winningSectorId={undefined}
+                pointerPositionDeg={pointerPositionDeg}
+                spinTrigger={spinTrigger}
+                borderColor={settings?.borderColor}
+                borderThickness={settings?.borderThickness}
+              />
+            </div>
+          </div>
+          <div className="w-full px-4">
+            <DynamicFieldsForm isMobile centered onSubmit={() => {}} />
+          </div>
         </div>
       </div>
     </div>

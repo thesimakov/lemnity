@@ -31,7 +31,16 @@ const OnWinMessageSection = () => {
 
   if (!onWin) return null
 
-  const { enabled, text, textColor, textSize, description, descriptionColor, colorScheme, descriptionSize } = onWin
+  const {
+    enabled,
+    text,
+    textColor,
+    textSize,
+    description,
+    descriptionColor,
+    colorScheme,
+    descriptionSize
+  } = onWin
   const defaultScheme = defaults?.fields.messages.onWin.colorScheme
   const safeColorScheme = colorScheme ?? defaultScheme
   const { enabled: schemeEnabled, scheme, discount, promo } = safeColorScheme
@@ -139,7 +148,10 @@ const OnWinMessageSection = () => {
               <span className="text-xs text-red-500">{err('textSize')}</span>
             ) : null}
           </div>
-        <ColorAccessory color={textColor ?? '#000000'} onChange={color => setOnWinTextWithColor(text, color)} />
+          <ColorAccessory
+            color={textColor ?? '#000000'}
+            onChange={color => setOnWinTextWithColor(text, color)}
+          />
         </div>
       </div>
 
@@ -155,7 +167,9 @@ const OnWinMessageSection = () => {
               value={description}
               isInvalid={enabled && Boolean(err('description'))}
               errorMessage={err('description')}
-              onValueChange={value => setOnWinDescriptionWithColor(value, descriptionColor ?? '#000000')}
+              onValueChange={value =>
+                setOnWinDescriptionWithColor(value, descriptionColor ?? '#000000')
+              }
             />
           </div>
           <div className="flex flex-col gap-1 md:w-auto">
@@ -171,7 +185,10 @@ const OnWinMessageSection = () => {
               <span className="text-xs text-red-500">{err('descriptionSize')}</span>
             ) : null}
           </div>
-          <ColorAccessory color={descriptionColor ?? '#000000'} onChange={color => setOnWinDescriptionWithColor(description, color)} />
+          <ColorAccessory
+            color={descriptionColor ?? '#000000'}
+            onChange={color => setOnWinDescriptionWithColor(description, color)}
+          />
         </div>
       </div>
 
