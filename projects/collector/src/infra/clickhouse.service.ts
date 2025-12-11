@@ -12,9 +12,14 @@ export class ClickhouseService implements OnModuleInit {
 
   async onModuleInit() {
     this.client = createClient({
-      host: this.configService.get<string>('clickhouse.url'),
+      // ClickHouse JS client теперь ожидает url (host депрекейтят)
+      url: this.configService.get<string>('clickhouse.url'),
       username: this.configService.get<string>('clickhouse.user'),
       password: this.configService.get<string>('clickhouse.password'),
+      settings: {
+        // Нужен для типов JSON в ClickHouse
+        allow_experimental_json_type: 1,
+      },
     });
 
     const database = this.configService.get<string>('clickhouse.database');
