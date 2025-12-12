@@ -17,7 +17,11 @@ export class S3Service {
     const region = process.env.S3_REGION
     const accessKeyId = process.env.S3_ACCESS_KEY
     const secretAccessKey = process.env.S3_SECRET_KEY
-    const publicBaseUrl = process.env.S3_PUBLIC_BASE_URL || 'http://localhost:9000/uploads'
+    const publicBaseUrl = process.env.S3_PUBLIC_BASE_URL
+
+    if (!publicBaseUrl) {
+      throw new Error('S3_PUBLIC_BASE_URL is not configured')
+    }
 
     if (!accessKeyId || !secretAccessKey) {
       throw new Error('S3 credentials are not configured')
