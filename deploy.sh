@@ -25,6 +25,9 @@ docker compose -f docker-compose.prod.yml run --rm server \
 echo "==> Start / update full stack (server + nginx + infra) with recreate"
 docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
 
+echo "==> Run MinIO setup profile (creates buckets/users)"
+docker compose -f docker-compose.prod.yml --profile setup run --rm minio_setup
+
 echo "==> Cleanup unused images"
 docker image prune -f
 
