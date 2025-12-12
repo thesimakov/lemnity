@@ -73,6 +73,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build collector image
+        env:
+          COLLECTOR_PORT: ${{ secrets.COLLECTOR_PORT }}
+          RABBITMQ_URL: ${{ secrets.RABBITMQ_URL }}
+          CLICKHOUSE_URL: ${{ secrets.CLICKHOUSE_URL }}
+          CLICKHOUSE_USER: ${{ secrets.CLICKHOUSE_USER }}
+          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_PASSWORD }}
+          CLICKHOUSE_DB: ${{ secrets.CLICKHOUSE_DB }}
+          CLICKHOUSE_EVENTS_TABLE: ${{ secrets.CLICKHOUSE_EVENTS_TABLE }}
+          COLLECT_ENDPOINT: ${{ secrets.COLLECT_ENDPOINT }}
+          COLLECTOR_API_TOKEN: ${{ secrets.COLLECTOR_API_TOKEN }}
+        run: |
+          docker build \
+            -t ghcr.io/${{ github.repository_owner }}/collector:${{ env.IMAGE_TAG }} \
+            -f projects/collector/Dockerfile .
+
       - name: Build server image
         env:
           NODE_ENV: ${{ secrets.NODE_ENV }}
@@ -93,6 +109,10 @@ jobs:
       - name: Push server image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/server:${{ env.IMAGE_TAG }}
+
+      - name: Push collector image
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/collector:${{ env.IMAGE_TAG }}
 
   deploy:
     needs: build

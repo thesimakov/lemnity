@@ -12,9 +12,15 @@ export class ClickhouseService implements OnModuleInit {
 
   async onModuleInit() {
     this.client = createClient({
-      host: this.configService.get<string>('clickhouse.url'),
+      // ClickHouse JS client теперь ожидает url (host депрекейтят)
+      url: this.configService.get<string>('clickhouse.url'),
       username: this.configService.get<string>('clickhouse.user'),
       password: this.configService.get<string>('clickhouse.password'),
+      // Настройки сервера передаются через clickhouse_settings
+      clickhouse_settings: {
+        // Нужен для типов JSON в ClickHouse
+        allow_experimental_json_type: 1,
+      },
     });
 
     const database = this.configService.get<string>('clickhouse.database');
@@ -84,7 +90,7 @@ export class ClickhouseService implements OnModuleInit {
         WHERE ${query}
       `,
       format: 'JSONEachRow',
-      params,
+      query_params: params,
     });
     const rows = await summary.json<{ events: number }[]>();
     return rows[0] ?? { events: 0 };
@@ -105,7 +111,7 @@ export class ClickhouseService implements OnModuleInit {
         ORDER BY bucket
       `,
       format: 'JSONEachRow',
-      params,
+      query_params: params,
     });
     return data.json<{ bucket: string; events: number }[]>();
   }
@@ -126,7 +132,7 @@ export class ClickhouseService implements OnModuleInit {
         LIMIT ${limit} OFFSET ${offset}
       `,
       format: 'JSONEachRow',
-      params,
+      query_params: params,
     });
     return result.json<CollectedEvent[]>();
   }
