@@ -10,6 +10,7 @@ import { memo, useCallback, useMemo } from 'react'
 import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import SurfaceNotice from '@/layouts/WidgetSettings/Common/SurfaceNotice'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
+import { uploadImage } from '@/api/upload'
 
 const startShowingOptions: OptionItem[] = [
   { key: 'onClick', label: 'При нажатии на кнопку' },
@@ -61,8 +62,20 @@ const IconTypeControl = memo(() => {
   )
   const handleChange = useCallback((v: string) => setIconType(v as IconType), [setIconType])
   const handleFile = useCallback(
-    (file: File | null) =>
-      setIconImage(file ? { fileName: file.name, url: URL.createObjectURL(file) } : null),
+    (file: File | null) => {
+      if (!file) {
+        setIconImage(null)
+        return
+      }
+
+      uploadImage(file)
+        .then(({ url }) => setIconImage({ fileName: file.name, url }))
+        .catch(err => {
+          console.error('Icon upload failed', err)
+          setIconImage(null)
+          alert('Не удалось загрузить изображение иконки')
+        })
+    },
     [setIconImage]
   )
   const iconTypeOptionsMemo = useMemo<OptionItem[]>(

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import DesktopPreview from '../Common/DesktopPreview/DesktopPreview'
+import ActionTimerDesktopScreen from './ActionTimerDesktopScreen'
 import MobilePreview from '../Common/MobilePreview/MobilePreview'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type { PreviewMode } from '@/stores/widgetPreviewStore'
@@ -36,7 +37,16 @@ const CountDownPreview = ({ mode }: CountDownPreviewProps) => {
       <div ref={ref} className="flex flex-col gap-5">
         <div>
           <p className="font-rubik text-[25px] py-[15px]">Главный экран</p>
-          <DesktopPreview ref={modalWindowRef} screen="main" onSubmit={() => {}} />
+          <DesktopPreview
+            ref={modalWindowRef}
+            screen="main"
+            onSubmit={() => {}}
+            screens={{
+              main: ActionTimerDesktopScreen,
+              prize: ActionTimerDesktopScreen,
+              panel: ActionTimerDesktopScreen
+            }}
+          />
         </div>
         <hr
           className="scale-100 h-px border-0 bg-default-300 self-start"
@@ -44,13 +54,32 @@ const CountDownPreview = ({ mode }: CountDownPreviewProps) => {
         ></hr>
         <div>
           <p className="font-rubik text-[25px] mb-5">Дополнительный экран</p>
-          <DesktopPreview screen="prize" onSubmit={() => {}} ref={modalWindowRef} />
+          <DesktopPreview
+            screen="prize"
+            onSubmit={() => {}}
+            ref={modalWindowRef}
+            screens={{
+              main: ActionTimerDesktopScreen,
+              prize: ActionTimerDesktopScreen,
+              panel: ActionTimerDesktopScreen
+            }}
+          />
         </div>
       </div>
     )
   }
 
-  return <DesktopPreview screen="panel" onSubmit={() => {}} />
+  return (
+    <DesktopPreview
+      screen="panel"
+      onSubmit={() => {}}
+      screens={{
+        main: ActionTimerDesktopScreen,
+        prize: ActionTimerDesktopScreen,
+        panel: ActionTimerDesktopScreen
+      }}
+    />
+  )
 }
 
 export default CountDownPreview

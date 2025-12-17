@@ -23,6 +23,8 @@ import type {
   DisplayUpdater,
   IntegrationUpdater
 } from './widgetSettings/types'
+import type { WidgetAction } from '@/layouts/Widgets/actions'
+import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 
 // Re-export public types for existing import paths
 export type {
@@ -69,6 +71,14 @@ const computeIssues = (settings: WidgetSettings | null | undefined): Issue[] => 
   const trimmed = trimInactiveBranches(normalized)
   const validation = validateWidgetSettings(trimmed)
   return validation.issues
+}
+
+const resolveActions = (
+  actions: WidgetAction[] | undefined,
+  widgetType: WidgetTypeEnum | undefined
+): WidgetAction[] => {
+  const defaultActions = widgetType ? (getWidgetDefinition(widgetType).actions ?? []) : []
+  return actions && actions.length > 0 ? actions : defaultActions
 }
 
 // Persist by widget id: store a map { [widgetId]: { state, version } } under one key
@@ -158,6 +168,7 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
             }),
           init: (id, widgetType, initial) => {
             activeWidgetId = id
+            const baseDefaults = buildDefaults(id, widgetType)
             // if server provided config is null/undefined, try rehydrate draft
             if (!initial) {
               try {
@@ -175,7 +186,10 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                       id,
                       widgetType,
                       widget:
-                        restored.widget?.type === widgetType ? restored.widget : baseDefaults.widget
+                        restored.widget?.type === widgetType
+                          ? restored.widget
+                          : baseDefaults.widget,
+                      actions: resolveActions(restored.actions, widgetType)
                     }
                     set({ settings: corrected, initialized: true })
                     return
@@ -185,7 +199,10 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                 // ignore
               }
             }
-            const baseDefaults = buildDefaults(id, widgetType)
+            const resolvedActions = resolveActions(
+              initial?.actions ?? baseDefaults.actions,
+              widgetType
+            )
             set({
               settings: initial
                 ? {
@@ -193,9 +210,10 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                     ...initial,
                     widgetType,
                     widget:
-                      initial.widget?.type === widgetType ? initial.widget : baseDefaults.widget
+                      initial.widget?.type === widgetType ? initial.widget : baseDefaults.widget,
+                    actions: resolvedActions
                   }
-                : baseDefaults,
+                : { ...baseDefaults, actions: resolvedActions },
               initialized: true
             })
           },

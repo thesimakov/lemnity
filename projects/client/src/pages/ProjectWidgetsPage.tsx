@@ -2,7 +2,7 @@ import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
 import Header from '@/layouts/Header/Header'
 import { useProjectsStore } from '@/stores/projectsStore'
 import { Breadcrumbs, BreadcrumbItem } from '@heroui/breadcrumbs'
-import { useMemo, type ReactElement } from 'react'
+import { useEffect, useMemo, type ReactElement } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Tooltip } from '@heroui/tooltip'
 import { Button } from '@heroui/button'
@@ -16,9 +16,15 @@ import type { CreateWidgetDtoTypeEnum } from '@lemnity/api-sdk'
 const ProjectWidgetsPage = (): ReactElement => {
   const { projectId } = useParams()
   const navigate = useNavigate()
+  const ensureLoaded = useProjectsStore(s => s.ensureLoaded)
   const project = useProjectsStore(s => s.projects.find(p => p.id === projectId))
   const createWidget = useProjectsStore(s => s.createWidget)
   const toggleWidgetEnabled = useProjectsStore(s => s.toggleWidgetEnabled)
+
+  useEffect(() => {
+    // fetch projects (and their widgets) when landing directly on the page
+    ensureLoaded().catch(console.error)
+  }, [ensureLoaded])
 
   const projectName = project?.name || ''
   const widgets = useMemo(() => project?.widgets || [], [project?.widgets])

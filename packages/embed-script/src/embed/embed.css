@@ -1,0 +1,22 @@
+/* Минимальные стили для встраиваемого виджета */
+:host {
+  all: initial;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+.lemnity-embed-root {
+  /* не перекрываем весь экран, но убираем артефакты от shadow-root */
+  display: contents;
+  pointer-events: none;
+}
+
+.lemnity-embed-root > * {
+  /* события доступны только на реальных узлах виджета */
+  pointer-events: auto;
+}
+

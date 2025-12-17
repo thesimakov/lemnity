@@ -1,4 +1,5 @@
 import DesktopPreview from '../Common/DesktopPreview/DesktopPreview'
+import WheelDesktopScreen from './WheelDesktopScreen'
 import MobilePreview from '../Common/MobilePreview/MobilePreview'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { useEffect, useRef, useState } from 'react'
@@ -34,7 +35,16 @@ const WheelOfFortunePreview = ({ mode }: WheelOfFortunePreviewProps) => {
       <div ref={ref} className="flex flex-col gap-5">
         <div>
           <p className="font-rubik text-[25px] py-[15px]">Главный экран</p>
-          <DesktopPreview ref={modalWindowRef} screen="main" onSubmit={() => {}} />
+          <DesktopPreview
+            ref={modalWindowRef}
+            screen="main"
+            onSubmit={() => {}}
+            screens={{
+              main: WheelDesktopScreen,
+              prize: WheelDesktopScreen,
+              panel: WheelDesktopScreen
+            }}
+          />
         </div>
         <hr
           className="scale-100 h-px border-0 bg-default-300 self-start "
@@ -42,13 +52,28 @@ const WheelOfFortunePreview = ({ mode }: WheelOfFortunePreviewProps) => {
         ></hr>
         <div>
           <p className="font-rubik text-[25px] mb-5">Призовой экран</p>
-          <DesktopPreview screen="prize" onSubmit={() => {}} ref={modalWindowRef} />
+          <DesktopPreview
+            screen="prize"
+            onSubmit={() => {}}
+            ref={modalWindowRef}
+            screens={{
+              main: WheelDesktopScreen,
+              prize: WheelDesktopScreen,
+              panel: WheelDesktopScreen
+            }}
+          />
         </div>
       </div>
     )
   }
 
-  return <DesktopPreview screen="panel" onSubmit={() => {}} />
+  return (
+    <DesktopPreview
+      screen="panel"
+      onSubmit={() => {}}
+      screens={{ main: WheelDesktopScreen, prize: WheelDesktopScreen, panel: WheelDesktopScreen }}
+    />
+  )
 }
 
 export default WheelOfFortunePreview

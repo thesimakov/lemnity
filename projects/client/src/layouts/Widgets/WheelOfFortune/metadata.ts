@@ -1,12 +1,12 @@
+import { lazy } from 'react'
 import type { WidgetDefinition } from '@/layouts/Widgets/registry'
-import WheelOfFortunePreview from './WheelOfFortunePreview'
 import WheelDesktopScreen from './WheelDesktopScreen'
 import WheelMobileScreen from './WheelMobileScreen'
 import WheelSectorsField from '@/layouts/WidgetSettings/FieldsSettingsTab/WheelSectorsField/WheelSectorsField'
 
-export const wheelWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings'> = {
+export const wheelWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings' | 'actions'> = {
   preview: {
-    panel: WheelOfFortunePreview,
+    panel: lazy(() => import('./WheelOfFortunePreview')),
     desktopScreens: {
       main: WheelDesktopScreen,
       prize: WheelDesktopScreen,
@@ -16,5 +16,17 @@ export const wheelWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings'>
   },
   settings: {
     sections: [{ id: 'wheel.sectors', Component: WheelSectorsField }]
-  }
+  },
+  actions: [
+    {
+      id: 'wheel.spin',
+      name: 'spin',
+      handlerId: 'wheel.spin'
+    },
+    {
+      id: 'wheel.close',
+      name: 'close',
+      handlerId: 'wheel.close'
+    }
+  ]
 }

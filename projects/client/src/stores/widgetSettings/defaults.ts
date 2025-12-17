@@ -26,6 +26,7 @@ const buildLooseIntegrationSettings = (): IntegrationSettings => ({}) as Integra
 export const buildDefaults = (id: string, widgetType: WidgetTypeEnum): WidgetSettings => {
   const definition = getWidgetDefinitionBase(widgetType)
   const surfaces = getWidgetSurfaceModes(widgetType)
+  const actions: WidgetSettings['actions'] = [] // actions pulled lazily elsewhere to avoid circular deps
 
   const fieldsBuilder: () => FieldsSettings | LooseFieldsSettings =
     surfaces.fields === 'standard'
@@ -46,7 +47,8 @@ export const buildDefaults = (id: string, widgetType: WidgetTypeEnum): WidgetSet
     fields: (fieldsBuilder() ?? {}) as FieldsSettings,
     widget: definition.buildWidgetSettings(),
     display: displayBuilder(),
-    integration: integrationBuilder()
+    integration: integrationBuilder(),
+    actions
   }
 }
 

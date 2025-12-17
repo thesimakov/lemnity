@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "rootDirs": ["src/embed", "../../projects/client/src"],
+    "paths": {
+      "@/*": ["../../projects/client/src/*"],
+      "@pages/*": ["../../projects/client/src/pages/*"],
+      "@stores/*": ["../../projects/client/src/stores/*"],
+      "@common/*": ["../../projects/client/src/common/*"],
+      "@services/*": ["../../projects/client/src/services/*"],
+      "@hooks/*": ["../../projects/client/src/common/hooks/*"],
+      "@layouts/*": ["../../projects/client/src/layouts/*"],
+      "@widgets/*": ["../../projects/client/src/layouts/Widgets/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src/embed", "../../projects/client/src"],
+  "exclude": ["../../projects/client/src/hero.ts"]
+}

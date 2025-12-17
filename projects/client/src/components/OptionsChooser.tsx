@@ -2,7 +2,7 @@ import { RadioGroup, Radio } from '@heroui/radio'
 import { AnimatePresence, motion } from 'framer-motion'
 import SimpleTooltip from './SimpleTooltip'
 import CustomSwitch from './CustomSwitch'
-import { memo } from 'react'
+import React, { memo } from 'react'
 
 export type OptionItem = {
   key: string
@@ -71,8 +71,8 @@ const OptionsChooser = ({
           }}
         >
           {options.map(opt => (
-            <>
-              <div key={opt.key} className="flex items-center gap-2 flex-1">
+            <React.Fragment key={opt.key}>
+              <div className="flex items-center gap-2 flex-1">
                 <Radio
                   value={opt.key}
                   classNames={{
@@ -95,7 +95,7 @@ const OptionsChooser = ({
                   {opt.accessory}
                 </div>
               ) : null}
-            </>
+            </React.Fragment>
           ))}
         </RadioGroup>
       </div>

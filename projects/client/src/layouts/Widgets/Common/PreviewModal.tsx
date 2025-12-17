@@ -53,7 +53,12 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
         {CustomModalComponent ? (
           <CustomModalComponent screen={screen} onSubmit={onSubmit} />
         ) : (
-          <DesktopPreview screen={screen} hideCloseButton onSubmit={onSubmit} />
+          <DesktopPreview
+            screen={screen}
+            hideCloseButton
+            onSubmit={onSubmit}
+            screens={definition?.preview?.desktopScreens}
+          />
         )}
       </div>
     </Modal>

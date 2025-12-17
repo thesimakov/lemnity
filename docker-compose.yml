@@ -140,6 +140,7 @@ services:
       - app_network
     volumes:
       - ./projects/server:/server/projects/server
+      - ./projects/client:/server/projects/client
       - ./packages:/server/packages
       - ./package.json:/server/package.json:ro
       - ./pnpm-lock.yaml:/server/pnpm-lock.yaml
@@ -177,12 +178,17 @@ services:
         condition: service_healthy
     networks:
       - app_network
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
     healthcheck:
       test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:5173/ >/dev/null 2>&1 || exit 1']
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 240s
     restart: unless-stopped
 
   # Collector microservice for widget events

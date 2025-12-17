@@ -3,6 +3,7 @@ import type {
   FABMenuSectorItem as FABMenuSectorItemBase
 } from '@/layouts/Widgets/FABMenu/types'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import type { WidgetAction } from '@/layouts/Widgets/actions'
 import type { StateCreator } from 'zustand'
 
 export type ButtonPosition = 'bottom-left' | 'top-right' | 'bottom-right'
@@ -224,6 +225,7 @@ export type WidgetSettings = {
   widget: WidgetSpecificSettings
   display: DisplaySettings
   integration: IntegrationSettings
+  actions?: WidgetAction[]
 }
 
 // Utility types for slice creators

@@ -6,6 +6,8 @@ import Badge from './Badge'
 import RewardContent from '../Common/RewardContent/RewardContent'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import { useActionTimerSettings } from './hooks'
+import { useWidgetActions } from '../useWidgetActions'
+import { actionTimerHandlers } from './actionHandlers'
 
 const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
@@ -17,6 +19,7 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
     useWidgetSettingsStore(s => s.settings?.fields?.template?.templateSettings?.contentPosition) ??
     'left'
   const { settings: actionTimerSettings } = useActionTimerSettings()
+  const { run } = useWidgetActions()
 
   const backgroundImage =
     imageMode == 'background'
@@ -30,10 +33,15 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const layoutClasses = `grid grid-cols-2 items-stretch w-full ${contentPosition === 'left' ? 'pl-6' : 'pr-6'}`
   const isPrize = screen === 'prize'
 
+  const handleAction = () => {
+    run('submit', { helpers: {} }, undefined, handlerId => actionTimerHandlers[handlerId ?? ''])
+    onSubmit()
+  }
+
   const form = (
     <div className="flex flex-col items-center justify-between h-full">
       <Badge className="mx-auto mb-3" />
-      <DynamicFieldsForm onSubmit={onSubmit} noPadding centered />
+      <DynamicFieldsForm onSubmit={handleAction} noPadding centered />
       <div></div>
     </div>
   )
@@ -49,13 +57,13 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
           <>
             {content}
             <div className="bg-white p-5 shadow-sm">
-              <DynamicFieldsForm onSubmit={onSubmit} centered />
+              <DynamicFieldsForm onSubmit={handleAction} centered />
             </div>
           </>
         ) : (
           <>
             <div className="bg-white p-5 shadow-sm">
-              <DynamicFieldsForm onSubmit={onSubmit} centered />
+              <DynamicFieldsForm onSubmit={handleAction} centered />
             </div>
             {content}
           </>
@@ -69,7 +77,7 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   }
 
   return (
-    <div className={layoutClasses} style={backgroundImage}>
+    <div className={`${layoutClasses} min-h-[500px] h-full`} style={backgroundImage}>
       {contentPosition === 'left' ? (
         <>
           <div className="h-full py-6">{content}</div>

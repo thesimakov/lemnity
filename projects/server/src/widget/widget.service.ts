@@ -4,7 +4,7 @@ import { UpdateWidgetDto } from './dto/update-widget.dto'
 import { PrismaService } from '../prisma.service'
 import { Prisma } from '@lemnity/database'
 import { ConfigService } from '../config/config.service'
-import { migrateToCurrent, CURRENT_VERSION } from '@lemnity/widget-config'
+import { CURRENT_VERSION, migrateToCurrent } from '@lemnity/widget-config'
 
 @Injectable()
 export class WidgetService {
@@ -93,6 +93,38 @@ export class WidgetService {
       }
     }
     return widget
+  }
+
+  async findPublic(id: string) {
+    const widget = await this.prisma.widget.findUnique({
+      where: { id }
+    })
+
+    if (!widget || !widget.enabled) {
+      throw new NotFoundException('Widget not found')
+    }
+
+    if (widget.config) {
+      const { data } = migrateToCurrent(
+        widget.config as unknown,
+        widget.configVersion ?? undefined
+      )
+      return {
+        id: widget.id,
+        projectId: widget.projectId,
+        type: widget.type,
+        enabled: widget.enabled,
+        config: data as Prisma.JsonValue
+      }
+    }
+
+    return {
+      id: widget.id,
+      projectId: widget.projectId,
+      type: widget.type,
+      enabled: widget.enabled,
+      config: widget.config ?? null
+    }
   }
 
   async update(id: string, updateWidgetDto: UpdateWidgetDto, userId: string) {

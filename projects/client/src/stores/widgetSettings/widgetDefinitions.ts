@@ -81,8 +81,7 @@ const implementedWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinit
     buildIntegrationSettings: buildFABMenuIntegrationSettings,
     settingsSurfaces: {
       fields: 'custom',
-      display: 'custom',
-      integration: 'custom'
+      display: 'custom'
     }
   }
 }

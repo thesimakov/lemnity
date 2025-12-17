@@ -1,7 +1,8 @@
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { forwardRef, type ReactElement, type Ref } from 'react'
+import type { ComponentType, ReactElement, Ref } from 'react'
+import { forwardRef } from 'react'
 import CloseButton from '../CloseButton/CloseButton'
-import { getWidgetDefinition, type WidgetPreviewScreen } from '../../registry'
+import type { DesktopScreenProps, WidgetPreviewScreen } from '../../registry'
 
 const ModalChrome = forwardRef(
   (
@@ -79,19 +80,20 @@ const SidePanelChrome = ({
   )
 }
 
+type ScreenMap = Partial<Record<WidgetPreviewScreen, ComponentType<DesktopScreenProps>>>
+
 interface DesktopPreviewProps {
   screen: WidgetPreviewScreen
   hideCloseButton?: boolean
   onSubmit: () => void
+  screens?: ScreenMap
 }
 
 const DesktopPreview = (
-  { screen, hideCloseButton = false, onSubmit }: DesktopPreviewProps,
+  { screen, hideCloseButton = false, onSubmit, screens }: DesktopPreviewProps,
   ref: Ref<HTMLDivElement> | undefined
 ) => {
-  const widgetType = useWidgetSettingsStore(s => s?.settings?.widgetType)
-  const definition = widgetType && getWidgetDefinition(widgetType)
-  const ScreenComponent = definition?.preview?.desktopScreens?.[screen]
+  const ScreenComponent = screens?.[screen]
   if (!ScreenComponent) return null
   const body = <ScreenComponent screen={screen} onSubmit={onSubmit} />
 

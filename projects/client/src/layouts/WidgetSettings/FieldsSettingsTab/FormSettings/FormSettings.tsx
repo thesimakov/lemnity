@@ -70,7 +70,11 @@ const FormSettings = () => {
         }}
         renderValue={items => {
           return items.map(item => (
-            <SvgIcon src={icons.find(opt => opt.key === item.textValue)!.label} size={'20px'} />
+            <SvgIcon
+              key={item.textValue}
+              src={icons.find(opt => opt.key === item.textValue)!.label}
+              size={'20px'}
+            />
           ))
         }}
       >

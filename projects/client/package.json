@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start:dev": "vite",
+    "prebuild": "pnpm --filter @lemnity/embed-script run build",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "format:fix": "prettier --write . --ignore-path .prettierignore",
@@ -15,7 +16,9 @@
   "dependencies": {
     "@heroui/breadcrumbs": "^2.2.21",
     "@heroui/button": "^2.2.25",
+    "@heroui/card": "^2.2.25",
     "@heroui/checkbox": "^2.3.26",
+    "@heroui/divider": "^2.2.20",
     "@heroui/dropdown": "^2.3.26",
     "@heroui/input": "^2.4.27",
     "@heroui/listbox": "^2.3.25",
@@ -28,6 +31,7 @@
     "@heroui/tooltip": "^2.2.23",
     "@hookform/resolvers": "^5.2.2",
     "@lemnity/api-sdk": "workspace:*",
+    "@lemnity/nest-common": "workspace:*",
     "@lemnity/widget-config": "workspace:*",
     "@tailwindcss/vite": "^4.1.12",
     "axios": "^1.11.0",

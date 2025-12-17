@@ -130,9 +130,10 @@ const WheelOfFortune = ({
     if (spinTrigger !== undefined && spinTrigger !== prevSpinTriggerRef.current) {
       prevSpinTriggerRef.current = spinTrigger
       const fullRotations = 5 // количество полных оборотов (clockwise)
-      // Для SVG/CSS положительный rotate — по часовой; pointerDeg задан CCW.
-      // Чтобы центр сектора встал под указатель: sectorAngle - rotation = pointerAngle => rotation = sectorAngle - pointerAngle
-      const totalRotation = fullRotations * 360 + (sectorMidAngle - normalizedPointerDeg)
+      // Для SVG/CSS положительный rotate — по часовой, а pointerDeg задан как CCW.
+      // Переводим угол указателя в часовую систему и совмещаем центр сектора с указателем:
+      // rotation = pointerCW - sectorCW, где pointerCW = -pointerCCW
+      const totalRotation = fullRotations * 360 + (-normalizedPointerDeg - sectorMidAngle)
 
       controls.start({
         rotate: totalRotation,
