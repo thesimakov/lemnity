@@ -20,7 +20,7 @@ const buildPublicWidgetUrl = (widgetId: string) => {
 const fetchPublicWidget = async (widgetId: string): Promise<PublicWidgetResponse> => {
   const res = await fetch(buildPublicWidgetUrl(widgetId), {
     method: 'GET',
-    credentials: 'include'
+    credentials: 'omit'
   })
   if (!res.ok) {
     throw new Error(`Failed to load widget ${widgetId}: ${res.status}`)
