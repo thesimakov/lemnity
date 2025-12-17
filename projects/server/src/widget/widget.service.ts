@@ -105,10 +105,7 @@ export class WidgetService {
     }
 
     if (widget.config) {
-      const { data } = migrateToCurrent(
-        widget.config as unknown,
-        widget.configVersion ?? undefined
-      )
+      const { data } = migrateToCurrent(widget.config as unknown, widget.configVersion ?? undefined)
       return {
         id: widget.id,
         projectId: widget.projectId,
