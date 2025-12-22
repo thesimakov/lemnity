@@ -98,9 +98,18 @@ importers:
 
   packages/embed-script:
     dependencies:
+      '@heroui/system':
+        specifier: ^2.4.21
+        version: 2.4.23(@heroui/theme@2.4.23(tailwindcss@4.1.17))(framer-motion@12.23.26(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@heroui/theme':
+        specifier: ^2.4.21
+        version: 2.4.23(tailwindcss@4.1.17)
       '@lemnity/api-sdk':
         specifier: workspace:*
         version: link:../api-sdk
+      framer-motion:
+        specifier: ^12.23.12
+        version: 12.23.26(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       react:
         specifier: ^19.2.0
         version: 19.2.1
