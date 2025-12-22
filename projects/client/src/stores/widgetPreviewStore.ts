@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { createJSONStorage, devtools, persist } from 'zustand/middleware'
+import { devtools } from 'zustand/middleware'
 import type { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 export type PreviewMode = 'desktop' | 'mobile'
@@ -16,18 +16,10 @@ const initialState: Pick<PreviewState, 'mode'> = {
 
 const useWidgetPreviewStore = create<PreviewState>()(
   devtools(
-    persist(
-      set => ({
-        ...initialState,
-        setMode: (mode: PreviewMode) => set({ mode })
-      }),
-      {
-        name: 'widget-preview',
-        version: 1,
-        storage: createJSONStorage(() => localStorage),
-        partialize: state => ({ mode: state.mode })
-      }
-    ),
+    (set) => ({
+      ...initialState,
+      setMode: (mode: PreviewMode) => set({ mode })
+    }),
     { name: 'widgetPreviewStore' }
   )
 )
