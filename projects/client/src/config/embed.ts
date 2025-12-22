@@ -6,8 +6,6 @@ const getWindowOrigin = () => {
 }
 
 export const getEmbedScriptUrl = (): string => {
-  const fromEnv = import.meta.env.VITE_WIDGET_EMBED_URL as string | undefined
-  if (fromEnv && fromEnv.trim()) return fromEnv.trim()
   const origin = getWindowOrigin()
   return origin ? `${origin}${FALLBACK_PATH}` : FALLBACK_PATH
 }

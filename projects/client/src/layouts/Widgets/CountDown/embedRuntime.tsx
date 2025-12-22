@@ -3,15 +3,61 @@ import ActionTimerDesktopScreen from './ActionTimerDesktopScreen'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import Modal from '@/components/Modal/Modal'
 import DesktopPreview from '../Common/DesktopPreview/DesktopPreview'
-import { Button } from '@heroui/button'
-import SvgIcon from '@/components/SvgIcon'
-import iconCross from '@/assets/icons/cross.svg'
 import { useWidgetActions } from '../useWidgetActions'
 import { actionTimerHandlers } from './actionHandlers'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import type { DisplaySettings } from '@/stores/widgetSettings/types'
 import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { useShallow } from 'zustand/react/shallow'
+
+type ActionTimerModalContentProps = {
+  screen: 'main' | 'panel' | 'prize'
+  setScreen: (next: 'main' | 'panel' | 'prize') => void
+  onRequestClose: () => void
+  onCloseAction?: () => void
+  onSubmit?: () => void
+}
+
+export const ActionTimerModalContent = ({
+  screen,
+  setScreen,
+  onSubmit
+}: ActionTimerModalContentProps) => {
+  const { run } = useWidgetActions()
+
+  const handleSubmit = () => {
+    const handled = run(
+      'submit',
+      {
+        payload: { screen },
+        helpers: {
+          setScreen: (s: string) =>
+            setScreen(s === 'prize' ? 'prize' : s === 'panel' ? 'panel' : 'main')
+        }
+      },
+      undefined,
+      handlerId => actionTimerHandlers[handlerId ?? '']
+    )
+
+    if (!handled) setScreen('prize')
+    onSubmit?.()
+  }
+
+  return (
+    <div className="relative">
+      <DesktopPreview
+        screen={screen}
+        onSubmit={handleSubmit}
+        hideCloseButton
+        screens={{
+          main: ActionTimerDesktopScreen,
+          prize: ActionTimerDesktopScreen,
+          panel: ActionTimerDesktopScreen
+        }}
+      />
+    </div>
+  )
+}
 
 export const ActionTimerEmbedRuntime = () => {
   const staticDefaults = useWidgetStaticDefaults()
@@ -33,7 +79,6 @@ export const ActionTimerEmbedRuntime = () => {
   )
   const [open, setOpen] = useState(false)
   const [screen, setScreen] = useState<'main' | 'panel' | 'prize'>('main')
-  const { run } = useWidgetActions()
 
   const iconType = iconConfig.type ?? defaultIcon.type
   const buttonConfig = iconConfig.button ??
@@ -73,38 +118,13 @@ export const ActionTimerEmbedRuntime = () => {
     setScreen('main')
   }
 
-  const handleSubmit = () => {
-    const handled = run(
-      'submit',
-      {
-        payload: { screen },
-        helpers: {
-          setScreen: (s: string) =>
-            setScreen(s === 'prize' ? 'prize' : s === 'panel' ? 'panel' : 'main')
-        }
-      },
-      undefined,
-      handlerId => actionTimerHandlers[handlerId ?? '']
-    )
-
-    if (!handled) setScreen('prize')
+  const resetState = () => {
+    setOpen(false)
+    setScreen('main')
   }
 
   const handleClose = () => {
-    run(
-      'close',
-      {
-        helpers: {
-          setScreen: (s: string) =>
-            setScreen(s === 'prize' ? 'prize' : s === 'panel' ? 'panel' : 'main'),
-          close: () => setOpen(false)
-        }
-      },
-      undefined,
-      handlerId => actionTimerHandlers[handlerId ?? '']
-    )
-    setOpen(false)
-    setScreen('main')
+    resetState()
   }
 
   const Trigger =
@@ -131,27 +151,12 @@ export const ActionTimerEmbedRuntime = () => {
     <>
       <div style={anchorStyle}>{Trigger}</div>
       <Modal isOpen={open} onClose={handleClose} containerClassName="max-w-[928px]">
-        <div className="relative">
-          <Button
-            isIconOnly
-            variant="light"
-            size="sm"
-            className="absolute z-10 p-0 m-0 border border-gray-300 rounded-[10px] right-4 top-4 min-w-8 w-8 h-8 bg-white text-gray-700 hover:bg-gray-50"
-            onPress={handleClose}
-          >
-            <SvgIcon src={iconCross} className="text-gray-700" size="18px" />
-          </Button>
-          <DesktopPreview
-            screen={screen}
-            hideCloseButton
-            onSubmit={handleSubmit}
-            screens={{
-              main: ActionTimerDesktopScreen,
-              prize: ActionTimerDesktopScreen,
-              panel: ActionTimerDesktopScreen
-            }}
-          />
-        </div>
+        <ActionTimerModalContent
+          screen={screen}
+          setScreen={setScreen}
+          onRequestClose={resetState}
+          onSubmit={() => setScreen('prize')}
+        />
       </Modal>
     </>
   )

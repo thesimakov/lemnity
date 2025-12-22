@@ -23,7 +23,10 @@ async function bootstrap() {
     origin: process.env.FRONTEND_URL,
     credentials: true,
     exposedHeaders: ['Set-Cookie'],
-    preflightContinue: true
+    // Let Nest/Express handle OPTIONS automatically with 204 instead of
+    // forwarding to route handlers (which can return 404 for preflights).
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
   app.use('/api/public', (req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Origin', '*')

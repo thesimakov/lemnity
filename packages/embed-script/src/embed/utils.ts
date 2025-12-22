@@ -1,44 +1,52 @@
+import type { PublicWidgetResponse } from './types'
+
 export const getWindowOrigin = () => {
   if (typeof window === 'undefined') return ''
   return window.location.origin
 }
 
-let apiBaseOverride: string | null = null
-
-export const setApiBaseOverride = (value?: string | null) => {
-  apiBaseOverride = value && value.trim() ? value.trim() : null
+export const getApiBase = () => {
+  return getWindowOrigin().includes('localhost') ? 'http://localhost:3000/api' : 'https://app.lemnity.ru/api'
 }
 
-const getScriptOrigin = () => {
+export const findEmbedScript = () => {
   if (typeof document === 'undefined') return null
-  const candidates: (HTMLScriptElement | null | undefined)[] = [
+  const scripts = [
     document.currentScript as HTMLScriptElement | null | undefined,
     ...Array.from(document.querySelectorAll<HTMLScriptElement>('script'))
   ]
-
-  for (const script of candidates) {
-    const src = script?.src
-    if (!src) continue
-    try {
-      const url = new URL(src)
-      if (url.pathname.includes('/embed.js') || url.pathname.includes('/src/embed/index')) {
-        return url.origin
-      }
-    } catch {
-      // ignore malformed src
+  const isProd = !getWindowOrigin().includes('localhost')
+  for (const script of scripts) {
+    if (script?.src?.includes(isProd ? 'app.lemnity.ru/embed.js' : '/embed.js')) {
+      console.log(script)
+      return script
     }
   }
   return null
 }
 
-export const getApiBase = () => {
-  if (apiBaseOverride) return apiBaseOverride
-  const fromEnv = import.meta.env.VITE_API_URL as string | undefined
-  if (fromEnv && fromEnv.trim()) return fromEnv.trim()
-  const fromScript = getScriptOrigin()
-  if (fromScript) return `${fromScript}/api`
-  // Safe production fallback if script origin is unavailable (non-browser contexts)
-  return 'https://app.lemnity.ru/api'
+const buildPublicWidgetUrl = (widgetId: string) => {
+  const base = getApiBase()
+  return `${base}/public/widgets/${encodeURIComponent(widgetId)}`
 }
 
-export const API_BASE = getApiBase()
+export const fetchPublicWidget = async (widgetId: string): Promise<PublicWidgetResponse> => {
+  const res = await fetch(buildPublicWidgetUrl(widgetId), {
+    method: 'GET',
+    credentials: 'omit'
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to load widget ${widgetId}: ${res.status}`)
+  }
+  return (await res.json()) as PublicWidgetResponse
+}
+
+export const ensureContainer = (widgetId: string) => {
+  const el = document.createElement('div')
+  el.id = `lemnity-widget-${widgetId}`
+  el.style.zIndex = '2147483000'
+  el.style.display = 'block'
+  el.style.position = 'fixed'
+  document.body.appendChild(el)
+  return el
+}

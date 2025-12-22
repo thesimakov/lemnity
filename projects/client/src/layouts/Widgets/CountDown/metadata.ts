@@ -25,13 +25,11 @@ export const actionTimerWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'sett
     actions: [
       {
         id: 'actionTimer.submit',
-        name: 'submit',
-        handlerId: 'actionTimer.submit'
+        name: 'submit'
       },
       {
         id: 'actionTimer.close',
-        name: 'close',
-        handlerId: 'actionTimer.close'
+        name: 'close'
       }
     ]
   }

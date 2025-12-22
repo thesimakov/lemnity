@@ -1,4 +1,3 @@
-// React import not needed with automatic JSX runtime
 import FabMenuWidget from './FabMenuWidget'
 
 export const FABMenuEmbedRuntime = () => (

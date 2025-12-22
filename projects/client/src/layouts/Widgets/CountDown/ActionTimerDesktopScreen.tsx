@@ -39,10 +39,11 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   }
 
   const form = (
-    <div className="flex flex-col items-center justify-between h-full">
-      <Badge className="mx-auto mb-3" />
-      <DynamicFieldsForm onSubmit={handleAction} noPadding centered />
-      <div></div>
+    <div className="flex flex-col items-center h-full">
+      <div className="flex flex-col items-center justify-between my-auto">
+        <Badge className="mx-auto mb-3" />
+        <DynamicFieldsForm onSubmit={handleAction} noPadding centered />
+      </div>
     </div>
   )
   const rewardContent = (

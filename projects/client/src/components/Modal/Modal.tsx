@@ -1,17 +1,29 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import CloseButton from '@/layouts/Widgets/Common/CloseButton/CloseButton'
 
 type ModalProps = {
   isOpen: boolean
   onClose: () => void
   children: React.ReactNode
   role?: 'dialog' | 'alertdialog'
+  ariaLabel?: string
   ariaLabelledBy?: string
   ariaDescribedBy?: string
   closeOnBackdrop?: boolean
   closeOnEsc?: boolean
+  /**
+   * Hide the default close (X) button rendered inside the dialog.
+   * Useful when the modal content renders its own close control.
+   */
+  hideCloseButton?: boolean
   backdropClassName?: string
   containerClassName?: string
+  /**
+   * Optional override for where to portal the modal.
+   * Falls back to context, then to document.body root.
+   */
+  portalRoot?: HTMLElement | null
 }
 
 const MODAL_ROOT_ID = 'lemnity-modal-root'
@@ -25,6 +37,9 @@ function ensureModalRoot(): HTMLElement {
   }
   return root
 }
+
+const ModalPortalContext = React.createContext<HTMLElement | null>(null)
+export const ModalPortalProvider = ModalPortalContext.Provider
 
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
   const selectors = [
@@ -45,18 +60,39 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   children,
   role = 'dialog',
+  ariaLabel,
   ariaLabelledBy,
   ariaDescribedBy,
   closeOnBackdrop = true,
   closeOnEsc = true,
+  hideCloseButton = false,
   backdropClassName = 'bg-black/50',
-  containerClassName = ''
+  containerClassName = '',
+  portalRoot
 }) => {
-  const portalRoot = useMemo(() => ensureModalRoot(), [])
+  const inheritedPortalRoot = useContext(ModalPortalContext)
+  const [resolvedPortalRoot, setResolvedPortalRoot] = useState<HTMLElement | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const dialogRef = useRef<HTMLDivElement | null>(null)
   const lastFocused = useRef<Element | null>(null)
-  const hiddenSiblings = useRef<HTMLElement[]>([])
+  const hiddenSiblings = useRef<
+    { el: HTMLElement; prevAriaHidden: string | null; prevInert: boolean }[]
+  >([])
+
+  // Resolve portal root only in the browser to avoid SSR crashes
+  useEffect(() => {
+    if (portalRoot) {
+      setResolvedPortalRoot(portalRoot)
+      return
+    }
+    if (inheritedPortalRoot) {
+      setResolvedPortalRoot(inheritedPortalRoot)
+      return
+    }
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      setResolvedPortalRoot(ensureModalRoot())
+    }
+  }, [portalRoot, inheritedPortalRoot])
 
   // Body scroll lock when modal is open
   useEffect(() => {
@@ -81,28 +117,45 @@ const Modal: React.FC<ModalProps> = ({
   // When the modal is open, this code temporarily "hides" the rest of the page content
   // for accessibility helpers and makes it unclickable
   useEffect(() => {
-    if (!isOpen) return
-    const root = portalRoot
-    const siblings = Array.from(document.body.children) as HTMLElement[]
-    hiddenSiblings.current = []
-    for (const el of siblings) {
-      if (el === root) continue
-      if (!el.hasAttribute('aria-hidden')) hiddenSiblings.current.push(el)
-      el.setAttribute('aria-hidden', 'true')
-      ;(el as HTMLElement).inert = true
-    }
-    return () => {
-      for (const el of hiddenSiblings.current) {
-        el.removeAttribute('aria-hidden')
-        try {
-          ;(el as HTMLElement).inert = false
-        } catch {
-          console.error('Error setting inert attribute', el)
+    if (!isOpen || !resolvedPortalRoot) return
+    const isShadowTarget = resolvedPortalRoot.getRootNode() instanceof ShadowRoot
+    if (!isShadowTarget) {
+      const root = resolvedPortalRoot
+      const siblings = Array.from(document.body.children) as HTMLElement[]
+      hiddenSiblings.current = []
+      for (const el of siblings) {
+        if (el === root) continue
+        hiddenSiblings.current.push({
+          el,
+          prevAriaHidden: el.getAttribute('aria-hidden'),
+          prevInert: (el as HTMLElement).inert ?? false
+        })
+        el.setAttribute('aria-hidden', 'true')
+        if ('inert' in HTMLElement.prototype) {
+          ;(el as HTMLElement).inert = true
         }
       }
-      hiddenSiblings.current = []
     }
-  }, [isOpen, portalRoot])
+    return () => {
+      if (!isShadowTarget) {
+        for (const { el, prevAriaHidden, prevInert } of hiddenSiblings.current) {
+          if (prevAriaHidden === null) {
+            el.removeAttribute('aria-hidden')
+          } else {
+            el.setAttribute('aria-hidden', prevAriaHidden)
+          }
+          if ('inert' in HTMLElement.prototype) {
+            try {
+              ;(el as HTMLElement).inert = prevInert
+            } catch {
+              console.error('Error setting inert attribute', el)
+            }
+          }
+        }
+        hiddenSiblings.current = []
+      }
+    }
+  }, [isOpen, resolvedPortalRoot])
 
   // Focus management / trap
   useEffect(() => {
@@ -114,29 +167,32 @@ const Modal: React.FC<ModalProps> = ({
     ;(focusables[0] || dialog).focus()
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return
-      const nodes = getFocusableElements(dialog)
+      const currentDialog = dialogRef.current
+      if (!currentDialog) return
+      const nodes = getFocusableElements(currentDialog)
       if (nodes.length === 0) {
         e.preventDefault()
+        currentDialog.focus()
         return
       }
       const first = nodes[0]
       const last = nodes[nodes.length - 1]
       const active = document.activeElement as HTMLElement
       if (e.shiftKey) {
-        if (active === first || !dialog.contains(active)) {
+        if (!currentDialog.contains(active) || active === first) {
           e.preventDefault()
           last.focus()
         }
       } else {
-        if (active === last) {
+        if (active === last || !currentDialog.contains(active)) {
           e.preventDefault()
           first.focus()
         }
       }
     }
-    dialog.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown)
     return () => {
-      dialog.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('keydown', handleKeyDown)
       const toRestore = lastFocused.current as HTMLElement | null
       if (toRestore && typeof toRestore.focus === 'function') toRestore.focus()
     }
@@ -154,13 +210,12 @@ const Modal: React.FC<ModalProps> = ({
     [isOpen, closeOnBackdrop, onClose]
   )
 
+  if (!isOpen || !resolvedPortalRoot) return null
+
   const content = (
     <div
       ref={wrapperRef}
-      aria-hidden={!isOpen}
-      className={`fixed inset-0 z-[1000] flex items-center justify-center p-4 transition-opacity duration-150 ${
-        isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-      }`}
+      className={`fixed inset-0 z-[2147483646] flex items-center justify-center p-4 transition-opacity duration-150 ${'opacity-100 pointer-events-auto'}`}
       onClick={handleBackdropClick}
     >
       <div className={`absolute inset-0 ${backdropClassName}`} />
@@ -168,17 +223,19 @@ const Modal: React.FC<ModalProps> = ({
         ref={dialogRef}
         role={role}
         aria-modal="true"
+        aria-label={ariaLabel ?? (ariaLabelledBy ? undefined : 'Modal dialog')}
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
         tabIndex={-1}
         className={`relative bg-white rounded-2xl overflow-hidden shadow-xl max-h-[90vh] w-full ${containerClassName}`}
       >
+        {!hideCloseButton && <CloseButton position="right" onClose={onClose} />}
         {children}
       </div>
     </div>
   )
 
-  return createPortal(content, portalRoot)
+  return createPortal(content, resolvedPortalRoot)
 }
 
 export default Modal

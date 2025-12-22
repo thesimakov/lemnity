@@ -8,51 +8,11 @@ import { FABMenuEmbedRuntime } from '@/layouts/Widgets/FABMenu/embedRuntime'
 import { WheelEmbedRuntime } from '@/layouts/Widgets/WheelOfFortune/embedRuntime'
 import { ActionTimerEmbedRuntime } from '@/layouts/Widgets/CountDown/embedRuntime'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import type { PreviewMode } from '@/stores/widgetPreviewStore'
-import { getApiBase } from './utils'
-import type { InitOptions, PublicWidgetResponse } from './types'
+import type { InitOptions } from './types'
+import { ensureContainer, fetchPublicWidget } from './utils'
+import { HeroUIProvider } from '@heroui/system'
 
-const buildPublicWidgetUrl = (widgetId: string) => {
-  const base = getApiBase().replace(/\/$/, '')
-  return `${base}/public/widgets/${encodeURIComponent(widgetId)}`
-}
-
-const fetchPublicWidget = async (widgetId: string): Promise<PublicWidgetResponse> => {
-  const res = await fetch(buildPublicWidgetUrl(widgetId), {
-    method: 'GET',
-    credentials: 'omit'
-  })
-  if (!res.ok) {
-    throw new Error(`Failed to load widget ${widgetId}: ${res.status}`)
-  }
-  const contentType = res.headers.get('content-type')?.toLowerCase() ?? ''
-  if (!contentType.includes('application/json')) {
-    const body = await res.text().catch(() => '')
-    throw new Error(
-      `Failed to load widget ${widgetId}: expected JSON, got ${contentType || 'unknown'}${
-        body ? ` - ${body.slice(0, 120)}` : ''
-      }`
-    )
-  }
-  return (await res.json()) as PublicWidgetResponse
-}
-
-const ensureContainer = (target: string | HTMLElement | undefined, widgetId: string) => {
-  if (target instanceof HTMLElement) return target
-  if (typeof target === 'string') {
-    const existing = document.querySelector<HTMLElement>(target)
-    if (existing) return existing
-  }
-  const el = document.createElement('div')
-  el.id = `lemnity-widget-${widgetId}`
-  el.style.zIndex = '2147483000'
-  el.style.display = 'block'
-  el.style.position = 'fixed'
-  document.body.appendChild(el)
-  return el
-}
-
-const EmbedRuntime = ({ widgetType, mode }: { widgetType: WidgetTypeEnum; mode: PreviewMode }) => {
+const EmbedRuntime = ({ widgetType }: { widgetType: WidgetTypeEnum }) => {
   switch (widgetType) {
     case WidgetTypeEnum.FAB_MENU:
       return <FABMenuEmbedRuntime />
@@ -61,21 +21,19 @@ const EmbedRuntime = ({ widgetType, mode }: { widgetType: WidgetTypeEnum; mode: 
     case WidgetTypeEnum.ACTION_TIMER:
       return <ActionTimerEmbedRuntime />
     default:
-      return <EmbeddedWidget widgetType={widgetType} mode={mode} />
+      return <EmbeddedWidget widgetType={widgetType} />
   }
 }
 
 export const EmbeddedWidget = ({
-  widgetType,
-  mode
+  widgetType
 }: {
   widgetType: WidgetTypeEnum
-  mode: PreviewMode
 }) => {
   const definition = getWidgetDefinition(widgetType)
   const PanelComponent = definition?.preview?.panel
   if (!PanelComponent) return null
-  return <PanelComponent mode={mode} />
+  return <PanelComponent mode="desktop"/>
 }
 
 class EmbedManager {
@@ -85,7 +43,7 @@ class EmbedManager {
 
   async init(options: InitOptions) {
     try{
-    const { widgetId, mode = 'desktop', container } = options
+    const { widgetId } = options
     await this.destroy()
 
     const payload = await fetchPublicWidget(widgetId)
@@ -97,8 +55,8 @@ class EmbedManager {
     const store = useWidgetSettingsStore.getState()
     store.init(widgetId, widgetType, payload.config)
 
-    const host = ensureContainer(container, widgetId)
-    const shadow = host.shadowRoot ?? host.attachShadow({ mode: 'open' })
+    const container = ensureContainer(widgetId)
+    const shadow = container.shadowRoot ?? container.attachShadow({ mode: 'open' })
 
     // Inject styles into shadow
     if (!shadow.querySelector('style[data-lemnity-embed]')) {
@@ -120,12 +78,14 @@ class EmbedManager {
     const root = createRoot(mountNode)
     root.render(
       <React.StrictMode>
-        <EmbedRuntime widgetType={widgetType} mode={mode} />
+        <HeroUIProvider>
+          <EmbedRuntime widgetType={widgetType} />
+        </HeroUIProvider>
       </React.StrictMode>
     )
 
     this.root = root
-    this.container = host
+    this.container = container
     this.widgetId = widgetId
     } catch (error) {
       console.error('Error initializing embed manager', error)
