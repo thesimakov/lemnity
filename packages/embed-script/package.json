@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "@lemnity/api-sdk": "workspace:*",
+    "@heroui/system": "^2.4.21",
+    "@heroui/theme": "^2.4.21",
+    "framer-motion": "^12.23.12",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
