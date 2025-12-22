@@ -11,6 +11,7 @@ import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type { InitOptions } from './types'
 import { ensureContainer, fetchPublicWidget } from './utils'
 import { HeroUIProvider } from '@heroui/system'
+import { ModalPortalProvider } from '@/components/Modal/Modal'
 
 const EmbedRuntime = ({ widgetType }: { widgetType: WidgetTypeEnum }) => {
   switch (widgetType) {
@@ -75,12 +76,23 @@ class EmbedManager {
         return div
       })()
 
+    const modalPortalRoot =
+      shadow.querySelector<HTMLElement>('#lemnity-modal-root') ??
+      (() => {
+        const div = document.createElement('div')
+        div.id = 'lemnity-modal-root'
+        shadow.appendChild(div)
+        return div
+      })()
+
     const root = createRoot(mountNode)
     root.render(
       <React.StrictMode>
-        <HeroUIProvider>
-          <EmbedRuntime widgetType={widgetType} />
-        </HeroUIProvider>
+        <ModalPortalProvider value={modalPortalRoot}>
+          <HeroUIProvider>
+            <EmbedRuntime widgetType={widgetType} />
+          </HeroUIProvider>
+        </ModalPortalProvider>
       </React.StrictMode>
     )
 

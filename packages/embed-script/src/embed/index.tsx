@@ -1,7 +1,6 @@
 import type { InitOptions } from './types'
 import EmbedManager from './embedManager'
 import { findEmbedScript } from './utils'
-import './embed.css'
 
 const manager = new EmbedManager()
 const currentScript = findEmbedScript()

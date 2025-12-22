@@ -97,12 +97,14 @@ const Modal: React.FC<ModalProps> = ({
   // Body scroll lock when modal is open
   useEffect(() => {
     if (!isOpen) return
+    // If the modal is rendered into a ShadowRoot (embed), avoid mutating host page scroll.
+    if (resolvedPortalRoot && resolvedPortalRoot.getRootNode() instanceof ShadowRoot) return
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = prevOverflow
     }
-  }, [isOpen])
+  }, [isOpen, resolvedPortalRoot])
 
   // Escape to close
   useEffect(() => {
