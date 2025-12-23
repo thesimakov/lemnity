@@ -9,7 +9,6 @@ export type WidgetAction = {
   id: string
   name?: string
   label?: string
-  handlerId?: string
   meta?: Record<string, unknown>
   payload?: Record<string, unknown>
 }

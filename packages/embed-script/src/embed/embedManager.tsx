@@ -2,57 +2,18 @@ import React from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import styles from './embed.css?inline'
-import baseStyles from '@/index.css?inline'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 import { FABMenuEmbedRuntime } from '@/layouts/Widgets/FABMenu/embedRuntime'
 import { WheelEmbedRuntime } from '@/layouts/Widgets/WheelOfFortune/embedRuntime'
 import { ActionTimerEmbedRuntime } from '@/layouts/Widgets/CountDown/embedRuntime'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import type { PreviewMode } from '@/stores/widgetPreviewStore'
-import { getApiBase } from './utils'
-import type { InitOptions, PublicWidgetResponse } from './types'
+import type { InitOptions } from './types'
+import { ensureAttr, ensureContainer, ensureElement, fetchPublicWidget } from './utils'
+import { HeroUIProvider } from '@heroui/system'
+import { ModalPortalProvider } from '@/components/Modal/Modal'
+import { UNSAFE_PortalProvider } from '@react-aria/overlays'
 
-const buildPublicWidgetUrl = (widgetId: string) => {
-  const base = getApiBase().replace(/\/$/, '')
-  return `${base}/public/widgets/${encodeURIComponent(widgetId)}`
-}
-
-const fetchPublicWidget = async (widgetId: string): Promise<PublicWidgetResponse> => {
-  const res = await fetch(buildPublicWidgetUrl(widgetId), {
-    method: 'GET',
-    credentials: 'include'
-  })
-  if (!res.ok) {
-    throw new Error(`Failed to load widget ${widgetId}: ${res.status}`)
-  }
-  const contentType = res.headers.get('content-type')?.toLowerCase() ?? ''
-  if (!contentType.includes('application/json')) {
-    const body = await res.text().catch(() => '')
-    throw new Error(
-      `Failed to load widget ${widgetId}: expected JSON, got ${contentType || 'unknown'}${
-        body ? ` - ${body.slice(0, 120)}` : ''
-      }`
-    )
-  }
-  return (await res.json()) as PublicWidgetResponse
-}
-
-const ensureContainer = (target: string | HTMLElement | undefined, widgetId: string) => {
-  if (target instanceof HTMLElement) return target
-  if (typeof target === 'string') {
-    const existing = document.querySelector<HTMLElement>(target)
-    if (existing) return existing
-  }
-  const el = document.createElement('div')
-  el.id = `lemnity-widget-${widgetId}`
-  el.style.zIndex = '2147483000'
-  el.style.display = 'block'
-  el.style.position = 'fixed'
-  document.body.appendChild(el)
-  return el
-}
-
-const EmbedRuntime = ({ widgetType, mode }: { widgetType: WidgetTypeEnum; mode: PreviewMode }) => {
+const EmbedRuntime = ({ widgetType }: { widgetType: WidgetTypeEnum }) => {
   switch (widgetType) {
     case WidgetTypeEnum.FAB_MENU:
       return <FABMenuEmbedRuntime />
@@ -61,21 +22,19 @@ const EmbedRuntime = ({ widgetType, mode }: { widgetType: WidgetTypeEnum; mode: 
     case WidgetTypeEnum.ACTION_TIMER:
       return <ActionTimerEmbedRuntime />
     default:
-      return <EmbeddedWidget widgetType={widgetType} mode={mode} />
+      return <EmbeddedWidget widgetType={widgetType} />
   }
 }
 
 export const EmbeddedWidget = ({
-  widgetType,
-  mode
+  widgetType
 }: {
   widgetType: WidgetTypeEnum
-  mode: PreviewMode
 }) => {
   const definition = getWidgetDefinition(widgetType)
   const PanelComponent = definition?.preview?.panel
   if (!PanelComponent) return null
-  return <PanelComponent mode={mode} />
+  return <PanelComponent mode="desktop"/>
 }
 
 class EmbedManager {
@@ -84,49 +43,74 @@ class EmbedManager {
   private widgetId: string | null = null
 
   async init(options: InitOptions) {
-    try{
-    const { widgetId, mode = 'desktop', container } = options
-    await this.destroy()
+    try {
+      const { widgetId } = options
+      await this.destroy()
 
-    const payload = await fetchPublicWidget(widgetId)
-    if (!payload.enabled) throw new Error('Widget is disabled')
-    if (!payload.config) throw new Error('Widget config is empty')
-    const widgetType = (payload.config.widgetType as WidgetTypeEnum | undefined) ?? payload.type
-    if (!widgetType) throw new Error('Widget type is missing')
+      const payload = await fetchPublicWidget(widgetId)
+      if (!payload.enabled) throw new Error('Widget is disabled')
+      if (!payload.config) throw new Error('Widget config is empty')
+      const widgetType = (payload.config.widgetType as WidgetTypeEnum | undefined) ?? payload.type
+      if (!widgetType) throw new Error('Widget type is missing')
 
-    const store = useWidgetSettingsStore.getState()
-    store.init(widgetId, widgetType, payload.config)
+      useWidgetSettingsStore.getState().init(widgetId, widgetType, payload.config)
 
-    const host = ensureContainer(container, widgetId)
-    const shadow = host.shadowRoot ?? host.attachShadow({ mode: 'open' })
+      const container = ensureContainer(widgetId)
+      const shadow = container.shadowRoot ?? container.attachShadow({ mode: 'open' })
 
-    // Inject styles into shadow
-    if (!shadow.querySelector('style[data-lemnity-embed]')) {
-      const styleTag = document.createElement('style')
-      styleTag.setAttribute('data-lemnity-embed', 'true')
-      styleTag.textContent = `${styles}\n${baseStyles}`
-      shadow.appendChild(styleTag)
-    }
+      // 1) Styles inside Shadow DOM
+      ensureElement(shadow, 'style[data-lemnity-embed]', () => {
+        const styleTag = document.createElement('style')
+        styleTag.setAttribute('data-lemnity-embed', 'true')
+        styleTag.textContent = styles
+        shadow.appendChild(styleTag)
+        return styleTag
+      })
 
-    const mountNode =
-      shadow.querySelector<HTMLElement>('.lemnity-embed-root') ??
-      (() => {
+      // 2) Theme root (HeroUI tokens are scoped to `:root` + `[data-theme]`)
+      const themeRoot = ensureElement(shadow, '#lemnity-theme-root', () => {
         const div = document.createElement('div')
-        div.className = 'lemnity-embed-root'
+        div.id = 'lemnity-theme-root'
         shadow.appendChild(div)
         return div
-      })()
+      })
+      ensureAttr(themeRoot, 'data-theme', 'light')
 
-    const root = createRoot(mountNode)
-    root.render(
-      <React.StrictMode>
-        <EmbedRuntime widgetType={widgetType} mode={mode} />
-      </React.StrictMode>
-    )
+      // 3) React mount point
+      const mountNode = ensureElement(themeRoot, '.lemnity-embed-root', () => {
+        const div = document.createElement('div')
+        div.className = 'lemnity-embed-root'
+        themeRoot.appendChild(div)
+        return div
+      })
+      // Back-compat if any selectors rely on `[data-theme]` on the mount node
+      ensureAttr(mountNode, 'data-theme', themeRoot.getAttribute('data-theme') ?? 'light')
 
-    this.root = root
-    this.container = host
-    this.widgetId = widgetId
+      // 4) Portal root for our Modal + React Aria overlays
+      const modalPortalRoot = ensureElement(themeRoot, '#lemnity-modal-root', () => {
+        const div = document.createElement('div')
+        div.id = 'lemnity-modal-root'
+        themeRoot.appendChild(div)
+        return div
+      })
+      ensureAttr(modalPortalRoot, 'data-theme', themeRoot.getAttribute('data-theme') ?? 'light')
+
+      const root = createRoot(mountNode)
+      root.render(
+        <React.StrictMode>
+          <UNSAFE_PortalProvider getContainer={() => modalPortalRoot}>
+            <ModalPortalProvider value={modalPortalRoot}>
+              <HeroUIProvider>
+                <EmbedRuntime widgetType={widgetType} />
+              </HeroUIProvider>
+            </ModalPortalProvider>
+          </UNSAFE_PortalProvider>
+        </React.StrictMode>
+      )
+
+      this.root = root
+      this.container = container
+      this.widgetId = widgetId
     } catch (error) {
       console.error('Error initializing embed manager', error)
     }
@@ -137,8 +121,22 @@ class EmbedManager {
     if (this.root) {
       this.root.unmount()
     }
-    if (this.container && this.container.parentElement) {
-      this.container.parentElement.removeChild(this.container)
+    if (this.container) {
+      const shadow = this.container.shadowRoot
+      // If we can't remove the host container (e.g. it existed before embed init),
+      // ensure we still clean up our Shadow DOM artifacts.
+      if (shadow) {
+        shadow.querySelector('style[data-lemnity-embed]')?.remove()
+        shadow.querySelector('#lemnity-theme-root')?.remove()
+      }
+
+      // Only remove the host container if we created it.
+      if (
+        this.container.parentElement &&
+        this.container.getAttribute('data-lemnity-embed-container') === 'true'
+      ) {
+        this.container.parentElement.removeChild(this.container)
+      }
     }
     useWidgetSettingsStore.getState().reset()
     this.root = null

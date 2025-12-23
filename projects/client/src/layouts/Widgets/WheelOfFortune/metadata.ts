@@ -20,13 +20,11 @@ export const wheelWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings' 
   actions: [
     {
       id: 'wheel.spin',
-      name: 'spin',
-      handlerId: 'wheel.spin'
+      name: 'spin'
     },
     {
       id: 'wheel.close',
-      name: 'close',
-      handlerId: 'wheel.close'
+      name: 'close'
     }
   ]
 }

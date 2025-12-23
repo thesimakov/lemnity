@@ -1,17 +1,57 @@
-import { Button } from '@heroui/button'
+import React from 'react'
 import SvgIcon from '@/components/SvgIcon'
 import iconCross from '@/assets/icons/cross.svg'
 
-const CloseButton = ({ position }: { position: 'left' | 'right' }) => {
+type CloseButtonProps = {
+  position: 'left' | 'right'
+  onClose?: () => void
+  className?: string
+  ariaLabel?: string
+}
+
+const baseStyle: React.CSSProperties = {
+  position: 'absolute',
+  zIndex: 1,
+  padding: 0,
+  margin: 0,
+  border: '1px solid #000',
+  borderRadius: '10px',
+  top: '16px',
+  minWidth: '32px',
+  width: '32px',
+  height: '32px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: '#fff',
+  color: '#000',
+  transition: 'background-color 0.2s ease-in-out',
+  cursor: 'pointer'
+}
+
+const positionStyles: Record<'left' | 'right', React.CSSProperties> = {
+  left: { left: '16px' },
+  right: { right: '16px' }
+}
+
+const CloseButton = ({ position, onClose, className, ariaLabel = 'Закрыть' }: CloseButtonProps) => {
+  const [hovered, setHovered] = React.useState(false)
   return (
-    <Button
-      isIconOnly
-      variant="light"
-      size="sm"
-      className={`z-1 absolute p-0 m-0 border border-black rounded-[10px] ${position === 'left' ? 'left-4' : 'right-4'} top-4 min-w-8 w-8 h-8 bg-white text-white hover:bg-white/50`}
+    <button
+      type="button"
+      style={{
+        ...baseStyle,
+        ...positionStyles[position],
+        opacity: hovered ? 0.5 : 1
+      }}
+      className={className}
+      onClick={onClose}
+      aria-label={ariaLabel}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <SvgIcon src={iconCross} className="text-black" size="18px" />
-    </Button>
+    </button>
   )
 }
 

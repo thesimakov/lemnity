@@ -12,14 +12,5 @@ export const actionTimerHandlers: Record<string, ActionHandler> = {
     } else {
       setScreen?.('prize')
     }
-  },
-  'actionTimer.close': ctx => {
-    const helpers = ctx.helpers ?? {}
-    const clearTimer = helpers.clearTimer as (() => void) | undefined
-    const setScreen = helpers.setScreen as ((screen: string) => void) | undefined
-    const close = helpers.close as (() => void) | undefined
-    clearTimer?.()
-    setScreen?.('panel')
-    close?.()
   }
 }

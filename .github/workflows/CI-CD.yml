@@ -54,6 +54,8 @@ jobs:
 
       # Собираем embed.js заранее, чтобы он попал в public/dist
       - name: Build embed script
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: pnpm --filter @lemnity/embed-script run build
 
       # Собираем production-билд клиента как статику (dist)

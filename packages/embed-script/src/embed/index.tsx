@@ -1,43 +1,26 @@
-import type { PreviewMode } from '@/stores/widgetPreviewStore'
 import type { InitOptions } from './types'
 import EmbedManager from './embedManager'
-import { API_BASE, setApiBaseOverride } from './utils'
+import { findEmbedScript } from './utils'
 
 const manager = new EmbedManager()
+const currentScript = findEmbedScript()
 
 const api = {
-  init: (options: InitOptions) => {
-    if (options.apiBase) setApiBaseOverride(options.apiBase)
-    return manager.init(options)
-  },
+  init: (options: InitOptions) => manager.init(options),
   destroy: (widgetId?: string) => manager.destroy(widgetId)
 }
 
 const autoInitFromQuery = () => {
   // Debug traces to see why init may not fire
-  console.debug('[LemnityWidgets] autoInitFromQuery start')
-  const isEmbedScriptSrc = (src: string) =>
-    src.includes('/embed.js') || src.includes('/src/embed/index')
-
-  const current =
-    (document.currentScript as HTMLScriptElement | null) ??
-    Array.from(document.querySelectorAll<HTMLScriptElement>('script')).find(el => isEmbedScriptSrc(el.src))
-  if (!current) return
+  console.debug('[LemnityWidgets] autoInitFromQuery start', currentScript)
+  if (!currentScript) return
   try {
-    const url = new URL(current.src)
+    const url = new URL(currentScript.src)
     const widgetId = url.searchParams.get('widgetId')
     if (!widgetId) return
-    const mode = (url.searchParams.get('mode') as PreviewMode | null) ?? 'desktop'
-    const container = url.searchParams.get('container') ?? undefined
-    const apiBase = url.searchParams.get('apiBase') ?? undefined
-    if (apiBase) setApiBaseOverride(apiBase)
-    console.debug('[LemnityWidgets] init from query', {
-      widgetId,
-      mode,
-      container,
-      apiBase: apiBase ?? API_BASE
-    })
-    api.init({ widgetId, mode, container, apiBase }).catch(err => console.error('[LemnityWidgets]', err))
+
+    console.debug('[LemnityWidgets] init from query', { widgetId })
+    api.init({ widgetId }).catch(err => console.error('[LemnityWidgets]', err))
   } catch {
     // ignore parse errors
   }

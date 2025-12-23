@@ -1,3 +1,23 @@
+@import 'tailwindcss';
+@plugin './hero.ts';
+@source './**/*.{js,ts,jsx,tsx}';
+@source '../../../../projects/client/src/**/*.{js,ts,jsx,tsx}';
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@source '../../node_modules/@heroui/system/dist/**/*.{js,ts,jsx,tsx}';
+
+/* Tailwind v4 gradient variables are normally initialized behind feature-detect @supports blocks.
+ * Some environments/bundlers can end up skipping that block, which leaves stop-position vars unset
+ * and makes `--tw-gradient-stops` invalid -> `background-image: none`.
+ * Ensure the position vars exist in the embed Shadow DOM.
+ */
+@layer base {
+  *, ::before, ::after, ::backdrop {
+    --tw-gradient-from-position: 0%;
+    --tw-gradient-via-position: 50%;
+    --tw-gradient-to-position: 100%;
+  }
+}
+
 /* Минимальные стили для встраиваемого виджета */
 :host {
   all: initial;
