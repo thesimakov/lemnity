@@ -6,7 +6,8 @@ import { Button } from '@heroui/button'
 import { Checkbox } from '@heroui/checkbox'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import loginBackground from '../assets/backgrounds/login-background.webp'
+import { PatternFormat } from 'react-number-format'
+import loginBackground from '../assets/backgrounds/login-background-laptop.png'
 import lemnityLogo from '@/assets/logos/lemnity-logo.svg'
 import SvgIcon from '@/components/SvgIcon'
 import iconEye from '@/assets/icons/eye.svg'
@@ -171,7 +172,8 @@ const LoginPage = (): ReactElement => {
   }
 
   return (
-    <div className="grid h-full grid-cols-1 md:grid-cols-2 bg-white">
+    // <div className="grid h-full grid-cols-1 md:grid-cols-2 bg-white">
+    <div className="grid h-full grid-cols-1 min-[900px]:grid-cols-[42%_1fr] bg-white">
       <div className="mx-auto flex h-full max-w-[462px] items-center justify-center bg-white px-6 sm:px-10 md:px-12 ">
         <div className="">
           <div className="mb-4.5 text-center">
@@ -254,7 +256,7 @@ const LoginPage = (): ReactElement => {
                 className="h-12 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
                 type="submit"
                 isLoading={isLoginSubmitting}
-                isDisabled={!isLoginValid || isLoginSubmitting}
+                // isDisabled={!isLoginValid || isLoginSubmitting}
               >
                 Войти
               </Button>
@@ -300,25 +302,30 @@ const LoginPage = (): ReactElement => {
               <Controller
                 control={controlSignup}
                 name="phone"
-                render={({ field }) => (
-                  <Input
+                render={({ field: { ref, value, onChange, onBlur } }) => (
+                  <PatternFormat
+                    customInput={Input}
+                    getInputRef={ref}
+                    format="+7 (###) ###-##-##"
+                    mask="_"
+                    value={value?.startsWith('+7') ? value.substring(2) : value}
+                    onValueChange={(values) => {
+                      const cleanValue = values.value ? `+7${values.value}` : ''
+                      onChange(cleanValue)
+                    }}
+                    onBlur={onBlur}
+                    // Hero UI Input props
                     type="tel"
                     inputMode="numeric"
-                    placeholder="+79999999999"
+                    placeholder="+7 (000) 000-00-00"
                     variant="bordered"
                     radius="sm"
+                    isInvalid={!!signupErrors.phone}
+                    errorMessage={signupErrors.phone?.message}
                     classNames={{
                       inputWrapper: 'md:h-13 rounded-[6px] border border-gray-300 bg-white',
                       input: 'text-gray-900 placeholder:text-gray-400'
                     }}
-                    value={field.value}
-                    onValueChange={value => {
-                      const formatted = formatPhoneNumber(value)
-                      field.onChange(formatted)
-                    }}
-                    onBlur={field.onBlur}
-                    isInvalid={!!signupErrors.phone}
-                    errorMessage={signupErrors.phone?.message}
                   />
                 )}
               />
@@ -482,9 +489,9 @@ const LoginPage = (): ReactElement => {
         </div>
       </div>
 
-      <div className="hidden h-full w-full md:block">
+      <div className="hidden h-full w-full min-[900px]:block py-10 pr-10">
         <div
-          className="h-full w-full bg-cover bg-center"
+          className="h-full w-full bg-cover bg-center rounded-[20px]"
           style={{ backgroundImage: `url(${loginBackground})` }}
         />
       </div>
