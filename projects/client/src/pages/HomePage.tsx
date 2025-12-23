@@ -1,7 +1,7 @@
 import Header from '@/layouts/Header/Header'
 import DashboardLayout from '@/layouts/DashboardLayout/DashboardLayout'
 import Stats from '@/layouts/Stats/Stats'
-import bannerNewYearTemplate from '@/assets/banners/new-year-template.png'
+import HomePageBanner from '@/layouts/HomePageBanner/HomePageBanner'
 import AddProjectsBlock from '@/layouts/AddProjectsBlock/AddProjectsBlock'
 import ProjectList from '@/layouts/ProjectList/ProjectList'
 import AddProjectModal from '@/layouts/AddProjectsBlock/AddProjectModal'
@@ -50,12 +50,12 @@ const HomePage = () => {
           {/* <span className="text-sm text-gray-500">Маркетолок компании "Вкусняшки"</span> */}
         </div>
         <hr className="border-[#C0C0C0]" />
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row">
           <div className="mr-2.5">
             <Stats />
           </div>
-          <div className=" h-full">
-            <img src={bannerNewYearTemplate} alt="New Year Template" className="w-full h-auto" />
+          <div className="h-full grow">
+            <HomePageBanner />
           </div>
         </div>
         <hr className="border-[#C0C0C0]" />
