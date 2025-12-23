@@ -1,6 +1,7 @@
 import { FAB_MENU_ICON_OPTIONS } from './buttonLibrary'
 import { FabMenuAddIcon, FabMenuBalloonIcon } from './fabMenuPreviewVisuals'
 import { useFabMenuPreviewModel } from './useFabMenuPreviewModel'
+import { cn } from '@heroui/theme'
 
 type FabMenuWidgetProps = {
   anchorBaseClassName?: string
@@ -79,7 +80,13 @@ const FabMenuWidget = ({
       <button
         type="button"
         onClick={() => setExpanded(prev => !prev)}
-        className={`flex items-center justify-center rounded-full bg-gradient-to-br from-[#6C5CFF] to-[#8F5CFF] text-white shadow-[0_12px_24px_rgba(108,92,255,0.45)] transition-transform hover:scale-105 ${triggerClassName}`}
+        className={cn(
+          'flex items-center justify-center rounded-full',
+          'bg-gradient-to-br from-[#6C5CFF] to-[#8F5CFF]',
+          'text-white shadow-lg ring-1 ring-white/20',
+          'transition-transform hover:scale-105',
+          triggerClassName
+        )}
         aria-label={expanded ? 'Скрыть кнопки' : 'Показать кнопки'}
       >
         {expanded ? <FabMenuAddIcon /> : <FabMenuBalloonIcon alignClassName={alignClassName} />}

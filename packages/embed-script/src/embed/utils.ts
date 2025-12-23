@@ -42,11 +42,32 @@ export const fetchPublicWidget = async (widgetId: string): Promise<PublicWidgetR
 }
 
 export const ensureContainer = (widgetId: string) => {
+  const id = `lemnity-widget-${widgetId}`
+  const existing = document.getElementById(id)
+  if (existing) return existing
+
   const el = document.createElement('div')
-  el.id = `lemnity-widget-${widgetId}`
+  el.id = id
+  // Mark as owned by the embed script so we don't accidentally delete user-provided nodes.
+  el.setAttribute('data-lemnity-embed-container', 'true')
+  // Keep the host on top of the page stacking context.
   el.style.zIndex = '2147483000'
   el.style.display = 'block'
   el.style.position = 'fixed'
   document.body.appendChild(el)
   return el
+}
+
+export const ensureElement = <T extends HTMLElement>(
+  parent: ParentNode,
+  selector: string,
+  create: () => T
+): T => {
+  const existing = parent.querySelector<T>(selector)
+  if (existing) return existing
+  return create()
+}
+
+export const ensureAttr = (el: HTMLElement, name: string, value: string) => {
+  if (!el.hasAttribute(name)) el.setAttribute(name, value)
 }

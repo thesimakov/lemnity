@@ -1,2 +1,3 @@
 import { heroui } from '@heroui/theme'
-export default heroui()
+const plugin = heroui() as unknown
+export default plugin

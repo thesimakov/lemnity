@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>test-platform</title>
+    <script>
+      // Test-platform embed loader:
+      // - widgetId comes from ?widgetId=... (URL) or localStorage
+      // - to change widget fast, use the UI panel in the page (it updates URL + reloads)
+      (() => {
+        const params = new URLSearchParams(window.location.search)
+        const fromUrl = params.get('widgetId')
+        const fromStorage = window.localStorage.getItem('lemnity:test-platform:widgetId')
+        const widgetId = (fromUrl || fromStorage || '').trim()
+
+        if (widgetId) {
+          window.localStorage.setItem('lemnity:test-platform:widgetId', widgetId)
+          const s = document.createElement('script')
+          s.type = 'module'
+          s.defer = true
+          s.id = 'lemnity-embed-script'
+          s.src = `http://localhost:5173/embed.js?widgetId=${encodeURIComponent(widgetId)}`
+          document.head.appendChild(s)
+        } else {
+          // Keep the page usable if widgetId isn't set yet.
+          console.warn('[test-platform] No widgetId provided. Set ?widgetId=... in the URL.')
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

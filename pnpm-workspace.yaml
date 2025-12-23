@@ -14,6 +14,9 @@ catalogs:
     "@nestjs/platform-express": "11.0.1"
     "@nestjs/config": "4.0.2"
     "@nestjs/jwt": "11.0.0"
+  tailwind:
+    tailwindcss: "4.1.18"
+    "@tailwindcss/vite": "4.1.18"
 
 onlyBuiltDependencies:
   - '@heroui/shared-utils'
