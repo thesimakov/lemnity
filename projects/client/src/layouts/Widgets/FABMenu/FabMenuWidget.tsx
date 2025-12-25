@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { FAB_MENU_ICON_OPTIONS } from './buttonLibrary'
 import { FabMenuAddIcon, FabMenuBalloonIcon } from './fabMenuPreviewVisuals'
 import { useFabMenuPreviewModel } from './useFabMenuPreviewModel'
@@ -36,47 +37,52 @@ const FabMenuWidget = ({
       ? (anchorOffsetClassName?.left ?? 'left-6')
       : (anchorOffsetClassName?.right ?? 'right-6')
 
-  const visibleClasses = expanded
-    ? 'translate-y-0 opacity-100'
-    : 'translate-y-3 opacity-0 pointer-events-none'
-
   return (
     <div
-      className={`pointer-events-auto flex flex-col gap-3 ${alignClassName} ${horizontalOffset} ${anchorBaseClassName}`}
+      className={`flex flex-col gap-3 ${alignClassName} ${horizontalOffset} ${anchorBaseClassName}`}
     >
-      <div
-        className={`flex flex-col gap-2 transition-all duration-300 ${visibleClasses} ${alignClassName} ${listClassName}`}
-      >
-        {menuItems.map(item => {
-          const iconEntry = FAB_MENU_ICON_OPTIONS[item.icon]
-          const style = renderBackground(item)
-          const showIcon = iconEntry?.showIcon ?? true
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => handleItemAction(item)}
-              className="flex items-center gap-2 rounded-full px-4 py-2 text-sm shadow-sm transition hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
-              style={style}
-              title={item.description || item.label}
+      <AnimatePresence>
+        {expanded ? (
+          <motion.div
+            layout
+            initial={{ opacity: 0, translateY: '12px' }}
+            animate={{ opacity: 1, translateY: '0' }}
+            exit={{ opacity: 0, translateY: '12px' }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className={`flex flex-col gap-2 ${alignClassName} ${listClassName}`}
+          >
+            {menuItems.map(item => {
+              const iconEntry = FAB_MENU_ICON_OPTIONS[item.icon]
+              const style = renderBackground(item)
+              const showIcon = iconEntry?.showIcon ?? true
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleItemAction(item)}
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm shadow-sm transition hover:scale-[1.05] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  style={style}
+                  title={item.description || item.label}
+                >
+                  {showIcon && iconEntry ? (
+                    <img
+                      src={iconEntry.icon}
+                      alt={iconEntry.label}
+                      className="h-5 w-5 object-contain"
+                    />
+                  ) : null}
+                  <span className="flex-1">{item.label}</span>
+                </button>
+              )
+            })}
+            <span
+              className={`mt-1 rounded-full bg-gray-200 px-4 py-1 text-xs font-medium text-gray-600 ${signatureClassName}`}
             >
-              {showIcon && iconEntry ? (
-                <img
-                  src={iconEntry.icon}
-                  alt={iconEntry.label}
-                  className="h-5 w-5 object-contain"
-                />
-              ) : null}
-              <span className="flex-1">{item.label}</span>
-            </button>
-          )
-        })}
-        <span
-          className={`mt-1 rounded-full bg-gray-200 px-4 py-1 text-xs font-medium text-gray-600 ${signatureClassName}`}
-        >
-          Сделано на lemnity
-        </span>
-      </div>
+              Сделано на lemnity
+            </span>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
       <button
         type="button"
         onClick={() => setExpanded(prev => !prev)}

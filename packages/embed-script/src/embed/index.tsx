@@ -7,11 +7,11 @@ const currentScript = findEmbedScript()
 
 const api = {
   init: (options: InitOptions) => manager.init(options),
-  destroy: (widgetId?: string) => manager.destroy(widgetId)
+  destroy: (widgetId?: string) => manager.destroy(widgetId),
+  postMessage: (message: unknown) => manager.postMessage(message)
 }
 
 const autoInitFromQuery = () => {
-  // Debug traces to see why init may not fire
   console.debug('[LemnityWidgets] autoInitFromQuery start', currentScript)
   if (!currentScript) return
   try {
@@ -31,6 +31,7 @@ const bootstrap = () => {
     LemnityWidgets?: {
       init?: (options: InitOptions) => Promise<void>
       destroy?: (widgetId?: string) => Promise<void>
+      postMessage?: (message: unknown) => void
       queue?: { type: 'init'; payload: InitOptions }[]
     }
   }
@@ -41,7 +42,7 @@ const bootstrap = () => {
     if (job?.type === 'init' && job.payload) {
       api.init(job.payload).catch((err: unknown) => console.error('[LemnityWidgets]', err))
     }
-  })
+  })  
   autoInitFromQuery()
 }
 
