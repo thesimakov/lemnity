@@ -10,7 +10,7 @@
     "format:fix": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" --ignore-path ../../.gitignore",
     "format": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" --ignore-path ../../.gitignore",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "nest start --watch --env-file ../../.env",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",

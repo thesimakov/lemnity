@@ -27,14 +27,17 @@ const FABMenuDisplaySurface = () => {
   }, [rawPosition, currentPosition, setButtonPosition])
 
   return (
-    <section className="flex flex-col gap-4 rounded-xl border border-[#E6E6E6] p-4 bg-white">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-medium text-gray-900">Форма</h2>
+    <section className="flex flex-col gap-2.5 rounded-[14px] border border-[#E6E6E6] p-4.5 bg-white">
+      <div className='h-[37px]'>
+        <h2 className="text-lg font-medium text-gray-900 leading-[21px]">
+          Форма
+        </h2>
       </div>
+      <h2 className='leading-[19px]'>Кнопка</h2>
       <ButtonPositionChooser
         noBorder
         noPadding
-        title="Положение кнопки"
+        // title="Положение кнопки"
         value={currentPosition}
         options={ALLOWED_POSITIONS}
         onChange={next => setButtonPosition(normalizePosition(next))}

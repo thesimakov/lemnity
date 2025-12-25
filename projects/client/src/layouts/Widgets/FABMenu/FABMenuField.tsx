@@ -114,7 +114,7 @@ const FABMenuField = () => {
           canReorder
           classNames={{
             index: 'min-w-[40px]',
-            delete: 'min-w-[40px]'
+            // delete: 'min-w-[40px]'
           }}
           renderItem={(sector, index) => (
             <FABSectorItem

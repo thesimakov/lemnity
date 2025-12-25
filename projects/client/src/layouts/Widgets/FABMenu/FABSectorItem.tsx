@@ -110,7 +110,7 @@ const FABSectorItem = ({
         aria-label="Тип иконки"
         classNames={{
           trigger:
-            'shadow-none border border-[#D9D9E0] rounded-md min-w-[160px] h-10 flex items-center !bg-transparent'
+            'shadow-none border border-[#D9D9E0] rounded-md min-w-[160px] h-10 flex items-center bg-white'
         }}
         renderValue={renderValue}
       >
@@ -137,7 +137,7 @@ const FABSectorItem = ({
         value={sector.label}
         onValueChange={onLabelChange}
         classNames={{
-          inputWrapper: 'rounded-md border bg-white border-[#E4E4E7] h-10 min-h-10'
+          inputWrapper: 'rounded-md border bg-white border-[#E8E8E8] h-10 min-h-10'
         }}
         size="lg"
       />
@@ -156,7 +156,7 @@ const FABSectorItem = ({
         aria-label="Тип действия"
         classNames={{
           trigger:
-            'shadow-none border border-[#D9D9E0] rounded-md min-w-[160px] h-10 flex items-center !bg-transparent'
+            'shadow-none border border-[#E8E8E8] rounded-md min-w-[160px] h-10 flex items-center bg-white'
         }}
         renderValue={items =>
           items.map(item => {

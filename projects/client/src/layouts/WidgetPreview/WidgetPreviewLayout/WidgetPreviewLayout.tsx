@@ -11,17 +11,17 @@ const WidgetPreviewLayout = ({ children }: { children: React.ReactNode }) => {
 
   const tabClass = (id: PreviewMode): string =>
     `px-4 py-2 text-sm font-medium rounded-md transition ${
-      mode === id ? 'bg-white text-gray-900 shadow' : 'text-gray-500 hover:text-gray-900'
+      mode === id ? 'bg-white text-gray-900 shadow' : 'text-black'
     }`
 
   const tabs = () => (
     <div className="w-full flex justify-center">
-      <div className="flex w-full h-11 rounded-lg bg-gray-100 p-1 gap-1">
+      <div className="flex w-full h-11.5 rounded-[7px] border border-[#DEE4F2] bg-gray-100 p-0.5 gap-1">
         <Button
           variant="light"
           size="sm"
-          radius="sm"
-          className={`${tabClass('desktop')} flex-1 h-full font-normal`}
+          radius="md"
+          className={`${tabClass('desktop')} flex-1 h-full font-normal text-[18px] `}
           onPress={() => setMode('desktop')}
         >
           Компьютер
@@ -30,7 +30,7 @@ const WidgetPreviewLayout = ({ children }: { children: React.ReactNode }) => {
           variant="light"
           size="sm"
           radius="sm"
-          className={`${tabClass('mobile')} flex-1 h-full font-normal`}
+          className={`${tabClass('mobile')} flex-1 h-full font-normal text-[18px]`}
           onPress={() => setMode('mobile')}
         >
           Телефон
@@ -40,8 +40,8 @@ const WidgetPreviewLayout = ({ children }: { children: React.ReactNode }) => {
   )
 
   return (
-    <div className="flex flex-col gap-2 h-full">
-      <span className="text-xl font-normal text-gray-900">Предпросмотр</span>
+    <div className="flex flex-col gap-3.75 h-full">
+      <span className="text-[22px] leading-6.5 font-normal text-[#060606]">Предпросмотр</span>
       {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : tabs()}
       {children}
     </div>
