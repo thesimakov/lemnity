@@ -16,7 +16,7 @@ const initialState: Pick<PreviewState, 'mode'> = {
 
 const useWidgetPreviewStore = create<PreviewState>()(
   devtools(
-    (set) => ({
+    set => ({
       ...initialState,
       setMode: (mode: PreviewMode) => set({ mode })
     }),

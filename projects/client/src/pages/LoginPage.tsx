@@ -66,7 +66,7 @@ const LoginPage = (): ReactElement => {
   const {
     register: registerLogin,
     handleSubmit: handleSubmitLogin,
-    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting, isValid: isLoginValid },
+    formState: { errors: loginErrors, isSubmitting: isLoginSubmitting },
     reset: resetLogin,
     getValues: getLoginValues
   } = useForm<LoginForm>({
@@ -291,7 +291,7 @@ const LoginPage = (): ReactElement => {
                     format="+7 (###) ###-##-##"
                     mask="_"
                     value={value?.startsWith('+7') ? value.substring(2) : value}
-                    onValueChange={(values) => {
+                    onValueChange={values => {
                       const cleanValue = values.value ? `+7${values.value}` : ''
                       onChange(cleanValue)
                     }}
