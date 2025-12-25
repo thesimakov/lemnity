@@ -121,7 +121,8 @@ const Modal: React.FC<ModalProps> = ({
   useEffect(() => {
     if (!isOpen || !resolvedPortalRoot) return
     const isShadowTarget = resolvedPortalRoot.getRootNode() instanceof ShadowRoot
-    if (!isShadowTarget) {
+    const shouldHideSiblings = !isShadowTarget && resolvedPortalRoot.parentElement === document.body
+    if (shouldHideSiblings) {
       const root = resolvedPortalRoot
       const siblings = Array.from(document.body.children) as HTMLElement[]
       hiddenSiblings.current = []
@@ -139,7 +140,7 @@ const Modal: React.FC<ModalProps> = ({
       }
     }
     return () => {
-      if (!isShadowTarget) {
+      if (shouldHideSiblings) {
         for (const { el, prevAriaHidden, prevInert } of hiddenSiblings.current) {
           if (prevAriaHidden === null) {
             el.removeAttribute('aria-hidden')

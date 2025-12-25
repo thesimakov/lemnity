@@ -13,19 +13,13 @@ import Modal from '@/components/Modal/Modal'
 import DesktopPreview from '@/layouts/Widgets/Common/DesktopPreview/DesktopPreview'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
-import CloseButton from '../Common/CloseButton/CloseButton'
 
 type WheelModalContentProps = {
   initialScreen?: 'main' | 'prize'
   onSubmit?: () => void
-  onClose: () => void
 }
 
-export const WheelModalContent = ({
-  initialScreen = 'main',
-  onSubmit,
-  onClose
-}: WheelModalContentProps) => {
+export const WheelModalContent = ({ initialScreen = 'main', onSubmit }: WheelModalContentProps) => {
   const [screen, setScreen] = React.useState<'main' | 'prize'>(initialScreen)
   const { run } = useWidgetActions()
   const spinTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -54,21 +48,14 @@ export const WheelModalContent = ({
           emit,
           setScreen: (s: string) => setScreen(s === 'prize' ? 'prize' : 'main'),
           setTimer,
-          clearTimer: clearSpinTimer,
-          close: onClose
+          clearTimer: clearSpinTimer
         }
       },
       undefined,
       handlerId => wheelActionHandlers[handlerId ?? '']
     )
     onSubmit?.()
-  }, [clearSpinTimer, onClose, onSubmit, run, screen])
-
-  const handleClose = React.useCallback(() => {
-    clearSpinTimer()
-    setScreen('main')
-    onClose()
-  }, [clearSpinTimer, onClose])
+  }, [clearSpinTimer, onSubmit, run, screen])
 
   React.useEffect(() => () => clearSpinTimer(), [clearSpinTimer])
 
@@ -76,7 +63,6 @@ export const WheelModalContent = ({
 
   return (
     <div className="relative">
-      <CloseButton position="right" onClose={handleClose} />
       <DesktopPreview
         screen={screen}
         hideCloseButton
@@ -167,7 +153,7 @@ export const WheelEmbedRuntime = () => {
         }}
         containerClassName="max-w-[928px]"
       >
-        <WheelModalContent onClose={() => setOpen(false)} />
+        <WheelModalContent />
       </Modal>
     </>
   )

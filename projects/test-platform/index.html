@@ -21,7 +21,8 @@
           s.type = 'module'
           s.defer = true
           s.id = 'lemnity-embed-script'
-          s.src = `http://localhost:5173/embed.js?widgetId=${encodeURIComponent(widgetId)}`
+          // Cache-bust in dev so changes to public/embed.js are always picked up.
+          s.src = `http://localhost:5175/embed.js?widgetId=${encodeURIComponent(widgetId)}&v=${Date.now()}`
           document.head.appendChild(s)
         } else {
           // Keep the page usable if widgetId isn't set yet.

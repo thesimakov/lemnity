@@ -18,7 +18,6 @@ export const findEmbedScript = () => {
   const isProd = !getWindowOrigin().includes('localhost')
   for (const script of scripts) {
     if (script?.src?.includes(isProd ? 'app.lemnity.ru/embed.js' : '/embed.js')) {
-      console.log(script)
       return script
     }
   }
@@ -41,33 +40,46 @@ export const fetchPublicWidget = async (widgetId: string): Promise<PublicWidgetR
   return (await res.json()) as PublicWidgetResponse
 }
 
+/**
+ * Создает контейнер-хост на сайте партнера.
+ * Этот элемент остается в основном DOM, в него мы вставим <iframe>.
+ */
 export const ensureContainer = (widgetId: string) => {
   const id = `lemnity-widget-${widgetId}`
   const existing = document.getElementById(id)
   if (existing) return existing
 
   const el = document.createElement('div')
-  el.id = id
-  // Mark as owned by the embed script so we don't accidentally delete user-provided nodes.
   el.setAttribute('data-lemnity-embed-container', 'true')
-  // Keep the host on top of the page stacking context.
+  el.id = id
   el.style.zIndex = '2147483000'
   el.style.display = 'block'
   el.style.position = 'fixed'
+  el.style.pointerEvents = 'none'
+  el.style.top = '0'
+  el.style.left = '0'
+  el.style.width = '100vw'
+  el.style.height = '100vh'
   document.body.appendChild(el)
+
   return el
 }
 
+/**
+ * Важно: используем parent.ownerDocument, чтобы создавать элементы 
+ * именно в том документе, где находится parent (внутри iframe).
+ */
 export const ensureElement = <T extends HTMLElement>(
   parent: ParentNode,
   selector: string,
-  create: () => T
+  create: (doc: Document) => T
 ): T => {
-  const existing = parent.querySelector<T>(selector)
+  const existing = (parent as HTMLElement).querySelector<T>(selector)
   if (existing) return existing
-  return create()
-}
 
-export const ensureAttr = (el: HTMLElement, name: string, value: string) => {
-  if (!el.hasAttribute(name)) el.setAttribute(name, value)
+  const doc = parent.ownerDocument || (parent as Document)
+  const el = create(doc)
+  parent.appendChild(el)
+
+  return el
 }
