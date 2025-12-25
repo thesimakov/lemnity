@@ -7,7 +7,7 @@ import { Checkbox } from '@heroui/checkbox'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PatternFormat } from 'react-number-format'
-import loginBackground from '../assets/backgrounds/login-background-laptop.png'
+import loginBackground from '../assets/backgrounds/login-background-laptop.webp'
 import lemnityLogo from '@/assets/logos/lemnity-logo.svg'
 import SvgIcon from '@/components/SvgIcon'
 import iconEye from '@/assets/icons/eye.svg'
@@ -155,24 +155,7 @@ const LoginPage = (): ReactElement => {
     setMode('forgot')
   }
 
-  const formatPhoneNumber = (value: string): string => {
-    // Удаляем все символы кроме цифр и плюса
-    const cleaned = value.replace(/[^\d+]/g, '')
-
-    // Если строка пустая, возвращаем пустую строку
-    if (!cleaned) return ''
-
-    // Если первый символ не плюс, добавляем его
-    if (!cleaned.startsWith('+')) {
-      return '+' + cleaned.replace(/\D/g, '')
-    }
-
-    // Если есть плюс, оставляем только плюс и цифры
-    return '+' + cleaned.slice(1).replace(/\D/g, '')
-  }
-
   return (
-    // <div className="grid h-full grid-cols-1 md:grid-cols-2 bg-white">
     <div className="grid h-full grid-cols-1 min-[900px]:grid-cols-[42%_1fr] bg-white">
       <div className="mx-auto flex h-full max-w-[462px] items-center justify-center bg-white px-6 sm:px-10 md:px-12 ">
         <div className="">
@@ -256,7 +239,6 @@ const LoginPage = (): ReactElement => {
                 className="h-12 w-full font-normal bg-[#5951E5] rounded-[6px] text-white"
                 type="submit"
                 isLoading={isLoginSubmitting}
-                // isDisabled={!isLoginValid || isLoginSubmitting}
               >
                 Войти
               </Button>
