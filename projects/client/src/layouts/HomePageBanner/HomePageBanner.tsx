@@ -4,14 +4,14 @@ import homePageBanner from '@/assets/banners/new-year-banner.png'
 const HomePageBanner = () => {
   return (
     <div className="border-1 rounded-[10px] border-[#E5E5E5] p-4 h-full w-full flex flex-row gap-4">
-      <div className='min-w-[212px] max-w-[212px] flex flex-col gap-[13px]'>
-        <div className='rounded-full bg-[#725DFF]/15 w-[125px] h-[25px] flex items-center justify-center text-[13px] text-[#4400FF] font-roboto'>
+      <div className='w-[212px] shrink-0 flex flex-col gap-[13px]'>
+        <span className='rounded-full bg-[#725DFF]/15 w-[125px] h-[25px] flex items-center justify-center text-[13px] text-[#4400FF] font-roboto'>
           Новый виджет
-        </div>
+        </span>
 
-        <div className='grow font-roboto font-bold text-[20px] leading-[23px]'>
+        <span className='grow font-roboto font-bold text-xl leading-[23px]'>
           Новогодний шаблон! Укрась свой сайт к НГ-2026
-        </div>
+        </span>
 
         <Button
           className='w-[150px] h-[30px] rounded-[5px] border-1 border-[#E8E8E8] bg-[#FF6B00]/15 text-[#FF5A2A] text-[16px]'
