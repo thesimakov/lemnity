@@ -17,9 +17,6 @@ const Header = () => {
   return (
     <header className="h-[70px] min-h-[70px] flex items-center justify-between mx-5">
       <div className="flex items-center gap-3">
-        <a href="/" className="flex items-center">
-          <img src={logo} alt="Lemnity" className="h-8 w-auto" />
-        </a>
         <Button
           isIconOnly
           radius="full"
@@ -34,6 +31,9 @@ const Header = () => {
             size="24px"
           />
         </Button>
+        <a href="/" className="flex items-center">
+          <img src={logo} alt="Lemnity" className="h-8 w-auto" />
+        </a>
       </div>
 
       <div className="flex items-center space-x-4">
