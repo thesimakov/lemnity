@@ -1,7 +1,7 @@
 .widget-card {
   flex: 1 1 305px;
-  min-width: 305px;
-  max-width: 305px;
+  min-width: 320px;
+  max-width: 320px;
   /* max-width: 370px; */
   height: 156px;
   padding: 16px;
