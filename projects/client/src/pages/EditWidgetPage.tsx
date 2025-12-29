@@ -183,7 +183,7 @@ const EditWidgetPage = () => {
   )
 
   const rightPanel = (
-    <div className="w-full h-full flex flex-col p-3">
+    <div className="w-full h-full flex flex-col px-4.75 py-4.5">
       <WidgetPreview />
     </div>
   )

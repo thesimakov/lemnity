@@ -86,7 +86,7 @@ const FieldsSettingsTab = () => {
   return (
     <>
       <span className="text-[22px] leading-6.5 font-rubik">Настройка виджета</span>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5">
         {isStandardSurface && (
           <>
             <TemplateChooser
