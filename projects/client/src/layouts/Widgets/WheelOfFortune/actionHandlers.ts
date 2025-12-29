@@ -1,4 +1,6 @@
 import type { ActionHandler } from '../actions'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { sendEvent } from '@/common/api/httpWrapper'
 
 export const wheelActionHandlers: Record<string, ActionHandler> = {
   'wheel.spin': ctx => {
@@ -7,6 +9,13 @@ export const wheelActionHandlers: Record<string, ActionHandler> = {
     const setTimer = helpers.setTimer as ((ms: number, cb: () => void) => void) | undefined
     const clearTimer = helpers.clearTimer as (() => void) | undefined
     const setScreen = helpers.setScreen as ((screen: string) => void) | undefined
+    const widgetId = useWidgetSettingsStore.getState().settings?.id
+    if (widgetId) {
+      void sendEvent({
+        event_name: 'wheel.spin',
+        widget_id: widgetId
+      })
+    }
     emit?.('wheel.spin')
     if (setTimer && setScreen) {
       clearTimer?.()
@@ -20,6 +29,13 @@ export const wheelActionHandlers: Record<string, ActionHandler> = {
     const clearTimer = helpers.clearTimer as (() => void) | undefined
     const close = helpers.close as (() => void) | undefined
     const setScreen = helpers.setScreen as ((screen: string) => void) | undefined
+    const widgetId = useWidgetSettingsStore.getState().settings?.id
+    if (widgetId) {
+      void sendEvent({
+        event_name: 'wheel.close',
+        widget_id: widgetId
+      })
+    }
     clearTimer?.()
     close?.()
     setScreen?.('main')

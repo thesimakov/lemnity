@@ -61,13 +61,14 @@ services:
       start_period: 90s
     restart: unless-stopped
 
-  # RabbitMQ (with management UI)
+  # RabbitMQ
   rabbitmq:
-    image: rabbitmq:4.2.1-management
+    image: rabbitmq:4.2.2-management
     container_name: rabbitmq
     environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: /
     ports:
       - '5672:5672'
       - '15672:15672'
@@ -76,10 +77,42 @@ services:
     networks:
       - app_network
     healthcheck:
-      test: ['CMD-SHELL', 'rabbitmq-diagnostics -q check_running']
+      test: rabbitmq-diagnostics -q ping
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+
+  rabbitmq_gateway:
+    build:
+      context: .
+      dockerfile: projects/rabbitmq-gateway/Dockerfile.dev
+    container_name: rabbitmq_gateway
+    environment:
+      PORT: 4010
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@${RABBITMQ_HOST:-rabbitmq}:${RABBITMQ_PORT:-5672}}
+      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE:-default_queue}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE:-}
+      RABBITMQ_ROUTING_KEY: ${RABBITMQ_ROUTING_KEY:-default}
+    ports:
+      - '4010:4010'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app_network
+    volumes:
+      - ./projects/rabbitmq-gateway:/gateway/projects/rabbitmq-gateway
+      - ./package.json:/gateway/package.json:ro
+      - ./pnpm-lock.yaml:/gateway/pnpm-lock.yaml
+      - ./pnpm-workspace.yaml:/gateway/pnpm-workspace.yaml
+      - ./projects/rabbitmq-gateway/node_modules:/gateway/projects/rabbitmq-gateway/node_modules
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:4010/healthz >/dev/null 2>&1 || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
     restart: unless-stopped
 
   # ClickHouse
@@ -130,14 +163,12 @@ services:
       S3_BUCKET_UPLOADS: ${S3_BUCKET_UPLOADS}
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
+      COLLECTOR_API_URL: ${COLLECTOR_API_URL}
+      COLLECTOR_API_TOKEN: ${COLLECTOR_API_TOKEN}
     ports:
       - '3000:3000'
     depends_on:
       postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      clickhouse:
         condition: service_healthy
     networks:
       - app_network
@@ -203,18 +234,27 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       COLLECTOR_PORT: ${COLLECTOR_PORT}
-      RABBITMQ_URL: ${RABBITMQ_URL}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+      RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_QUEUE: ${RABBITMQ_QUEUE:-widget_events}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@${RABBITMQ_HOST:-rabbitmq}:${RABBITMQ_PORT:-5672}}
+      RABBITMQ_GATEWAY_URL: ${RABBITMQ_GATEWAY_URL:-http://rabbitmq_gateway:4010}
+      COLLECTOR_INTERNAL_EVENTS_URL: ${COLLECTOR_INTERNAL_EVENTS_URL:-http://collector:${COLLECTOR_PORT}/internal/events/collect}
       CLICKHOUSE_URL: ${CLICKHOUSE_URL}
       CLICKHOUSE_USER: ${CLICKHOUSE_USER}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
       CLICKHOUSE_DB: ${CLICKHOUSE_DB}
       CLICKHOUSE_EVENTS_TABLE: ${CLICKHOUSE_EVENTS_TABLE}
+      COLLECT_ENDPOINT: ${COLLECT_ENDPOINT}
+      COLLECTOR_API_TOKEN: ${COLLECTOR_API_TOKEN}
     ports:
       - '${COLLECTOR_PORT}:${COLLECTOR_PORT}'
     depends_on:
-      rabbitmq:
-        condition: service_healthy
       clickhouse:
+        condition: service_healthy
+      rabbitmq_gateway:
         condition: service_healthy
     networks:
       - app_network
@@ -225,11 +265,21 @@ services:
       - ./pnpm-lock.yaml:/collector/pnpm-lock.yaml
       - ./pnpm-workspace.yaml:/collector/pnpm-workspace.yaml
       - ./projects/collector/node_modules:/collector/projects/collector/node_modules
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget -qO- "http://127.0.0.1:${COLLECTOR_PORT}/healthz" >/dev/null 2>&1 || exit 1'
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     restart: unless-stopped
 
   # Nginx
   nginx:
-    image: nginx:1.25.4
+    image: nginx:1.28.1
     container_name: nginx
     ports:
       - '80:80'

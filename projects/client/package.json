@@ -4,8 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "build:workspace-deps": "pnpm -C ../.. --filter @lemnity/api-sdk --filter @lemnity/nest-common --filter @lemnity/widget-config --filter @lemnity/embed-script --if-present run build",
+    "sync:embed-script": "pnpm -C ../.. --filter @lemnity/embed-script --if-present run sync:public",
+    "postinstall": "pnpm run build:workspace-deps && pnpm run sync:embed-script",
     "start:dev": "vite",
-    "prebuild": "pnpm --filter @lemnity/embed-script run build",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "format:fix": "prettier --write . --ignore-path .prettierignore",

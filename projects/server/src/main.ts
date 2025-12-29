@@ -19,8 +19,32 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api')
   app.use(cookieParser())
+
+  const isProd = process.env.NODE_ENV === 'production'
+  const explicitFrontendOrigins = (process.env.FRONTEND_URL ?? '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+
+  const isAllowedDevOrigin = (origin: string) => {
+    try {
+      const url = new URL(origin)
+      return url.hostname === 'localhost' || url.hostname === '127.0.0.1'
+    } catch {
+      return false
+    }
+  }
+
   app.enableCors({
-    origin: process.env.FRONTEND_URL,
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void
+    ) => {
+      if (!origin) return callback(null, true)
+      if (explicitFrontendOrigins.includes(origin)) return callback(null, true)
+      if (!isProd && isAllowedDevOrigin(origin)) return callback(null, true)
+      return callback(null, false)
+    },
     credentials: true,
     exposedHeaders: ['Set-Cookie'],
     // Let Nest/Express handle OPTIONS automatically with 204 instead of
@@ -30,7 +54,7 @@ async function bootstrap() {
   })
   app.use('/api/public', (req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
     res.header(
       'Access-Control-Allow-Headers',
       'Origin, X-Requested-With, Content-Type, Accept, Authorization'

@@ -4,6 +4,7 @@ import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { useFABMenuSettings } from './hooks'
 import type { FABMenuSectorItem } from './types'
 import { FAB_MENU_BUTTON_PRESETS } from './buttonLibrary'
+import { sendEvent } from '@/common/api/httpWrapper'
 
 const FALLBACK_SECTORS: FABMenuSectorItem[] = FAB_MENU_BUTTON_PRESETS.slice(0, 9).map(
   (preset, index) => ({
@@ -82,6 +83,7 @@ export const useFabMenuPreviewModel = () => {
   const buttonPosition = useWidgetSettingsStore(
     s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
   )
+  const widgetId = useWidgetSettingsStore(s => s.settings?.id)
   const [expanded, setExpanded] = useState(false)
 
   const safePosition = normalizePosition(buttonPosition)
@@ -115,35 +117,63 @@ export const useFabMenuPreviewModel = () => {
     return style
   }, [])
 
-  const handleItemAction = useCallback((item: FABMenuSectorItem) => {
-    const href = buildActionHref(item)
-    if (href && typeof window !== 'undefined') {
-      if (href.startsWith('#')) {
-        window.location.hash = href
-      } else {
-        window.open(href, '_blank', 'noopener,noreferrer')
+  const toggleExpanded = useCallback(() => {
+    setExpanded(prev => {
+      const next = !prev
+      if (widgetId) {
+        void sendEvent({
+          event_name: next ? 'fab_menu.open' : 'fab_menu.close',
+          widget_id: widgetId
+        })
       }
-      return
-    }
+      return next
+    })
+  }, [widgetId])
 
-    const { type, value } = item.payload
-    if (type === 'script' && value && typeof navigator !== 'undefined') {
-      navigator.clipboard?.writeText(value)
-      alert('Скрипт скопирован в буфер обмена')
-      return
-    }
-    if (value && typeof navigator !== 'undefined') {
-      navigator.clipboard?.writeText(value)
-      alert('Данные скопированы в буфер обмена')
-    }
-  }, [])
+  const handleItemAction = useCallback(
+    (item: FABMenuSectorItem) => {
+      if (widgetId) {
+        void sendEvent({
+          event_name: 'fab_menu.item_click',
+          widget_id: widgetId,
+          payload: {
+            item_id: item.id,
+            label: item.label,
+            action_type: item.payload.type
+          }
+        })
+      }
+
+      const href = buildActionHref(item)
+      if (href && typeof window !== 'undefined') {
+        if (href.startsWith('#')) {
+          window.location.hash = href
+        } else {
+          window.open(href, '_blank', 'noopener,noreferrer')
+        }
+        return
+      }
+
+      const { type, value } = item.payload
+      if (type === 'script' && value && typeof navigator !== 'undefined') {
+        navigator.clipboard?.writeText(value)
+        alert('Скрипт скопирован в буфер обмена')
+        return
+      }
+      if (value && typeof navigator !== 'undefined') {
+        navigator.clipboard?.writeText(value)
+        alert('Данные скопированы в буфер обмена')
+      }
+    },
+    [widgetId]
+  )
 
   return {
     menuItems,
     alignClassName,
     safePosition,
     expanded,
-    setExpanded,
+    toggleExpanded,
     renderBackground,
     handleItemAction
   }

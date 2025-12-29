@@ -6,6 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "build:workspace-deps": "pnpm -C ../../ --filter @lemnity/nest-common --filter @lemnity/widget-config --filter @lemnity/database --if-present run build",
+    "postinstall": "pnpm run build:workspace-deps",
     "build": "nest build",
     "format:fix": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" --ignore-path ../../.gitignore",
     "format": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" --ignore-path ../../.gitignore",

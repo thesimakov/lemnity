@@ -6,4 +6,4 @@ RUN npm install -g pnpm@10.21.0
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "pnpm install --frozen-lockfile && pnpm --filter collector run start:dev"]
+CMD ["sh", "-c", "pnpm --filter collector... install --frozen-lockfile && pnpm --filter collector run start:dev"]

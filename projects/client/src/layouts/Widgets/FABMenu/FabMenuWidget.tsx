@@ -27,7 +27,7 @@ const FabMenuWidget = ({
     alignClassName,
     safePosition,
     expanded,
-    setExpanded,
+    toggleExpanded,
     renderBackground,
     handleItemAction
   } = useFabMenuPreviewModel()
@@ -85,7 +85,7 @@ const FabMenuWidget = ({
       </AnimatePresence>
       <button
         type="button"
-        onClick={() => setExpanded(prev => !prev)}
+        onClick={toggleExpanded}
         className={cn(
           'flex items-center justify-center rounded-full',
           'bg-gradient-to-br from-[#6C5CFF] to-[#8F5CFF]',
