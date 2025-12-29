@@ -9,6 +9,7 @@ import iconAdd from '@/assets/icons/add.svg'
 import './WidgetCard.css'
 import { WidgetTypes } from '../Widgets/constants'
 import iconPencil from '@/assets/icons/pencil.svg'
+import { cn } from '@heroui/theme'
 export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
 export type WidgetBadge = 'new' | 'popular' | 'soon' | null
 import type { WidgetTypeEnum } from '@lemnity/api-sdk'
@@ -93,7 +94,10 @@ const Widget = ({
         <Button
           size="sm"
           variant="solid"
-          className="bg-[#5951E5] text-white px-6"
+          className={cn(
+            'bg-[#5951E5] text-white px-6 [&>svg]:max-w-40',
+            isCreated && 'w-32 shrink-0'
+          )}
           isDisabled={!isAvailable || (isCreated && !widgetId)}
           onPress={isCreated && widgetId ? () => onEdit?.(widgetId) : onCreate}
           startContent={
@@ -104,7 +108,7 @@ const Widget = ({
             )
           }
         >
-          {isCreated ? 'Создан' : 'Создать'}
+          {isCreated ? 'Редактировать' : 'Создать'}
         </Button>
         <Button
           size="sm"
