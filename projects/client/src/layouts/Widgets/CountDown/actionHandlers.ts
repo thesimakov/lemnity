@@ -9,10 +9,12 @@ export const actionTimerHandlers: Record<string, ActionHandler> = {
     const clearTimer = helpers.clearTimer as (() => void) | undefined
     const setScreen = helpers.setScreen as ((screen: string) => void) | undefined
     const widgetId = useWidgetSettingsStore.getState().settings?.id
+    const projectId = useWidgetSettingsStore.getState().projectId ?? undefined
     if (widgetId) {
       void sendEvent({
         event_name: 'countdown.submit',
-        widget_id: widgetId
+        widget_id: widgetId,
+        project_id: projectId
       })
     }
     if (setTimer && setScreen) {

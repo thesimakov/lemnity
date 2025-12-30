@@ -43,7 +43,12 @@ export type {
 } from './widgetSettings/types'
 
 type CoreActions = {
-  init: (id: string, widgetType: WidgetTypeEnum, initial?: Partial<WidgetSettings>) => void
+  init: (
+    id: string,
+    widgetType: WidgetTypeEnum,
+    projectId?: string,
+    initial?: Partial<WidgetSettings>
+  ) => void
   snapshot: () => WidgetSettings | null
   snapshotNormalized: () => WidgetSettings | null
   validateNow: () => { ok: boolean; issues: Issue[] }
@@ -153,6 +158,7 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
         return {
           settings: null,
           initialized: false,
+          projectId: null,
           validationVisible: false,
           setValidationVisible: (visible: boolean) =>
             set(state => ({ ...state, validationVisible: visible })),
@@ -163,10 +169,11 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                 ...state,
                 settings: null,
                 initialized: false,
+                projectId: null,
                 validationVisible: false
               }
             }),
-          init: (id, widgetType, initial) => {
+          init: (id, widgetType, projectId, initial) => {
             activeWidgetId = id
             const baseDefaults = buildDefaults(id, widgetType)
             // if server provided config is null/undefined, try rehydrate draft
@@ -179,6 +186,11 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                   const restored = (entry?.state as { settings?: unknown } | undefined)
                     ?.settings as WidgetSettings | undefined
                   if (restored) {
+                    const restoredProjectId = (entry?.state as { projectId?: unknown } | undefined)
+                      ?.projectId
+                    const nextProjectId =
+                      projectId ??
+                      (typeof restoredProjectId === 'string' ? restoredProjectId : null)
                     // Force type consistency with requested widgetType
                     const baseDefaults = buildDefaults(id, widgetType)
                     const corrected: WidgetSettings = {
@@ -191,7 +203,7 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
                           : baseDefaults.widget,
                       actions: resolveActions(restored.actions, widgetType)
                     }
-                    set({ settings: corrected, initialized: true })
+                    set({ settings: corrected, initialized: true, projectId: nextProjectId })
                     return
                   }
                 }
@@ -204,6 +216,7 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
               widgetType
             )
             set({
+              projectId: projectId ?? null,
               settings: initial
                 ? {
                     ...baseDefaults,

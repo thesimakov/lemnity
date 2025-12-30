@@ -84,6 +84,7 @@ export const useFabMenuPreviewModel = () => {
     s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
   )
   const widgetId = useWidgetSettingsStore(s => s.settings?.id)
+  const projectId = useWidgetSettingsStore(s => s.projectId)
   const [expanded, setExpanded] = useState(false)
 
   const safePosition = normalizePosition(buttonPosition)
@@ -123,12 +124,13 @@ export const useFabMenuPreviewModel = () => {
       if (widgetId) {
         void sendEvent({
           event_name: next ? 'fab_menu.open' : 'fab_menu.close',
-          widget_id: widgetId
+          widget_id: widgetId,
+          project_id: projectId ?? undefined
         })
       }
       return next
     })
-  }, [widgetId])
+  }, [projectId, widgetId])
 
   const handleItemAction = useCallback(
     (item: FABMenuSectorItem) => {
@@ -136,6 +138,7 @@ export const useFabMenuPreviewModel = () => {
         void sendEvent({
           event_name: 'fab_menu.item_click',
           widget_id: widgetId,
+          project_id: projectId ?? undefined,
           payload: {
             item_id: item.id,
             label: item.label,
@@ -165,7 +168,7 @@ export const useFabMenuPreviewModel = () => {
         alert('Данные скопированы в буфер обмена')
       }
     },
-    [widgetId]
+    [projectId, widgetId]
   )
 
   return {

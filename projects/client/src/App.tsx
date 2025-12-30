@@ -15,6 +15,7 @@ import WidgetPage from '@/pages/WidgetPage'
 import EditWidgetPage from '@/pages/EditWidgetPage'
 import WidgetPreviewPage from '@/pages/WidgetPreviewPage'
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
+import AnalyticsPage from './pages/AnalyticsPage'
 import { memo } from 'react'
 
 function App() {
@@ -56,6 +57,16 @@ function App() {
           <ProtectedRoute>
             <FullWidthLayout>
               <DashboardPage />
+            </FullWidthLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
+          <ProtectedRoute>
+            <FullWidthLayout>
+              <AnalyticsPage />
             </FullWidthLayout>
           </ProtectedRoute>
         }

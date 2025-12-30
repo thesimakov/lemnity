@@ -23,6 +23,11 @@ export const API = {
   FILES: {
     CREATE: '/files' as const,
     IMAGES: '/files/images' as const
+  },
+  STATS: {
+    SUMMARY: '/stats/summary' as const,
+    TIMESERIES: '/stats/timeseries' as const,
+    EVENTS: '/stats/events' as const
   }
 } as const
 

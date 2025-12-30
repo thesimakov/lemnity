@@ -79,6 +79,7 @@ export const ActionTimerEmbedRuntime = () => {
     useShallow(s => withDefaultsPath(s.settings?.display, 'icon', defaultIcon))
   )
   const widgetId = useWidgetSettingsStore(s => s.settings?.id)
+  const projectId = useWidgetSettingsStore(s => s.projectId)
   const [open, setOpen] = useState(false)
   const [screen, setScreen] = useState<'main' | 'panel' | 'prize'>('main')
 
@@ -119,7 +120,11 @@ export const ActionTimerEmbedRuntime = () => {
     setOpen(true)
     setScreen('main')
     if (widgetId) {
-      sendEvent({ event_name: 'countdown.open', widget_id: widgetId })
+      sendEvent({
+        event_name: 'countdown.open',
+        widget_id: widgetId,
+        project_id: projectId ?? undefined
+      })
     }
   }
 
@@ -131,7 +136,11 @@ export const ActionTimerEmbedRuntime = () => {
   const handleClose = () => {
     resetState()
     if (widgetId) {
-      sendEvent({ event_name: 'countdown.close', widget_id: widgetId })
+      sendEvent({
+        event_name: 'countdown.close',
+        widget_id: widgetId,
+        project_id: projectId ?? undefined
+      })
     }
   }
 

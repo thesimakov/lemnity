@@ -26,6 +26,7 @@ export class StatsService {
   private normalizeFilter(filter: StatsFilterDto): StatsFilterDto {
     return {
       ...filter,
+
       limit: filter.limit ? Number(filter.limit) : undefined,
       offset: filter.offset ? Number(filter.offset) : undefined
     }

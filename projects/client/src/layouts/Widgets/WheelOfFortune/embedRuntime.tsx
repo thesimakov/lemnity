@@ -78,6 +78,7 @@ export const WheelEmbedRuntime = () => {
   const [open, setOpen] = React.useState(false)
   const staticDefaults = useWidgetStaticDefaults()
   const widgetId = useWidgetSettingsStore(s => s.settings?.id)
+  const projectId = useWidgetSettingsStore(s => s.projectId)
   const staticIcon = staticDefaults?.display?.icon
   const defaultIcon: NonNullable<DisplaySettings['icon']> = {
     type: staticIcon?.type ?? 'button',
@@ -100,13 +101,23 @@ export const WheelEmbedRuntime = () => {
 
   const handleOpen = React.useCallback(() => {
     setOpen(true)
-    if (widgetId) void sendEvent({ event_name: 'wheel.open', widget_id: widgetId })
-  }, [widgetId])
+    if (widgetId)
+      void sendEvent({
+        event_name: 'wheel.open',
+        widget_id: widgetId,
+        project_id: projectId ?? undefined
+      })
+  }, [projectId, widgetId])
 
   const handleClose = React.useCallback(() => {
     setOpen(false)
-    if (widgetId) void sendEvent({ event_name: 'wheel.close', widget_id: widgetId })
-  }, [widgetId])
+    if (widgetId)
+      void sendEvent({
+        event_name: 'wheel.close',
+        widget_id: widgetId,
+        project_id: projectId ?? undefined
+      })
+  }, [projectId, widgetId])
 
   const anchorStyle: React.CSSProperties = {
     position: 'fixed',

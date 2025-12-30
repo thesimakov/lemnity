@@ -43,6 +43,7 @@
     "react-hook-form": "^7.62.0",
     "react-number-format": "^5.4.4",
     "react-router-dom": "^6.30.1",
+    "recharts": "^3.6.0",
     "tailwindcss": "catalog:tailwind",
     "zod": "^4.1.9",
     "zustand": "^5.0.7"

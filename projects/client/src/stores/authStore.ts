@@ -82,7 +82,16 @@ const useAuthStore = create<AuthState>()(
 
           try {
             if (!token) {
-              set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/bootstrap:no-token')
+              const refreshed = await authService.refreshToken()
+              if (refreshed) {
+                set(
+                  { accessToken: refreshed, sessionStatus: 'authenticated' },
+                  false,
+                  'auth/bootstrap:refresh-from-cookie'
+                )
+              } else {
+                set({ accessToken: null, sessionStatus: 'guest' }, false, 'auth/bootstrap:no-token')
+              }
               return
             }
 
@@ -108,7 +117,7 @@ const useAuthStore = create<AuthState>()(
       {
         name: 'auth',
         version: 1,
-        storage: createJSONStorage(() => localStorage),
+        storage: createJSONStorage(() => sessionStorage),
         partialize: s => ({ accessToken: s.accessToken })
       }
     ),

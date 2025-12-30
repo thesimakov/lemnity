@@ -5,6 +5,7 @@ import iconWallet from '@/assets/icons/wallet.svg'
 import iconPaperAirplane from '@/assets/icons/paper-airplane.svg'
 import iconEnvelope from '@/assets/icons/open-envelope.svg'
 import iconTelephone from '@/assets/icons/telephone-call.svg'
+import iconStatistics from '@/assets/icons/statistics-circle-chart.svg'
 import { Listbox, ListboxItem } from '@heroui/listbox'
 import { Tooltip } from '@heroui/tooltip'
 import SvgIcon from '@/components/SvgIcon'
@@ -30,6 +31,12 @@ const NavigationSidebar = () => {
       icon: <img src={iconProjects} alt="Проекты" className="w-5 h-5" />,
       label: 'Проекты',
       href: '/'
+    },
+    {
+      key: 'analytics',
+      icon: <img src={iconStatistics} alt="Аналитика" className="w-5 h-5" />,
+      label: 'Аналитика',
+      href: '/analytics'
     },
     {
       key: 'requests',
