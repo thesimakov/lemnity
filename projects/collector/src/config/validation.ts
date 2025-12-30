@@ -67,6 +67,14 @@ class EnvironmentVariables {
   RABBITMQ_ROUTING_KEY?: string;
 
   @IsString()
+  @IsOptional()
+  COLLECTOR_QUEUE?: string;
+
+  @IsString()
+  @IsOptional()
+  COLLECTOR_ROUTING_KEY?: string;
+
+  @IsString()
   @IsNotEmpty()
   CLICKHOUSE_URL!: string;
 

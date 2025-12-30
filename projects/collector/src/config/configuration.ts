@@ -32,9 +32,9 @@ export default () => {
       user: rabbitmqUser,
       password: rabbitmqPassword,
       url: rabbitmqUrl,
-      queue: env.RABBITMQ_QUEUE ?? 'widget_events',
+      queue: env.COLLECTOR_QUEUE ?? 'widget_events',
       exchange: env.RABBITMQ_EXCHANGE ?? '',
-      routingKey: env.RABBITMQ_ROUTING_KEY ?? 'collector.widget_events',
+      routingKey: env.COLLECTOR_ROUTING_KEY ?? 'collector.widget_events',
     },
     clickhouse: {
       url: env.CLICKHOUSE_URL ?? 'http://clickhouse:8123',
