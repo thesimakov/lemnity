@@ -18,9 +18,11 @@ type FormFields = {
   name?: string
 }
 
+export type DynamicFieldsFormValues = FormFields
+
 type DynamicFieldsFormProps = {
   centered?: boolean
-  onSubmit: () => void
+  onSubmit: (values: FormFields) => void
   isMobile?: boolean
   noPadding?: boolean
 }
@@ -110,7 +112,7 @@ const DynamicFieldsForm = ({
 
   return (
     <form
-      onSubmit={handleSubmit(() => onSubmit())}
+      onSubmit={handleSubmit(values => onSubmit(values))}
       className={`flex flex-col gap-3 ${isMobile ? '' : noPadding ? '' : 'px-10'} w-full ${centered ? 'items-center justify-center' : ''}`}
     >
       {logoEnabled && logoUrl ? (

@@ -92,3 +92,41 @@ export async function sendEvent(event: CollectorEvent): Promise<boolean> {
     return false
   }
 }
+
+export type PublicRequestPayload = {
+  widgetId: string
+  fullName?: string
+  phone?: string
+  email?: string
+  prizes?: string[]
+  device?: 'desktop' | 'mobile_ios' | 'mobile_android'
+  url?: string
+  referrer?: string
+  userAgent?: string
+}
+
+const getDefaultPublicRequestsEndpoint = () => {
+  if (typeof window === 'undefined') return 'https://app.lemnity.ru/api/public/requests'
+  return window.location.origin.includes('localhost')
+    ? 'http://localhost:3000/api/public/requests'
+    : 'https://app.lemnity.ru/api/public/requests'
+}
+
+export async function sendPublicRequest(payload: PublicRequestPayload): Promise<boolean> {
+  if (typeof window === 'undefined' || typeof fetch !== 'function') return false
+  const endpoint = (import.meta.env.VITE_PUBLIC_REQUESTS_URL ??
+    getDefaultPublicRequestsEndpoint()) as string
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true,
+      credentials: 'omit'
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}

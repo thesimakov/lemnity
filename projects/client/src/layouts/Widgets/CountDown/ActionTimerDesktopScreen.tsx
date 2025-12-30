@@ -30,9 +30,7 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const layoutClasses = `grid grid-cols-2 items-stretch w-full ${contentPosition === 'left' ? 'pl-6' : 'pr-6'}`
   const isPrize = screen === 'prize'
 
-  const handleAction = () => {
-    onSubmit()
-  }
+  const handleAction: DesktopScreenProps['onSubmit'] = values => onSubmit(values)
 
   const form = (
     <div className="flex flex-col items-center h-full">

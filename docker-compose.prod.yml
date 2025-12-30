@@ -116,6 +116,10 @@ services:
       - "9002:9000" # Native (moved off 9000 to avoid MinIO)
     volumes:
       - clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse-config/disable_logs.xml:/etc/clickhouse-server/config.d/disable_logs.xml:ro
+      - ./clickhouse-config/users-low-resources.xml:/etc/clickhouse-server/users.d/users-low-resources.xml:ro
+    mem_limit: 2g
+    cpus: 1.0
     ulimits:
       nofile:
         soft: 262144
@@ -126,7 +130,7 @@ services:
     networks:
       - app_network
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q 'Ok'"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q 'Ok.'"]
       interval: 10s
       timeout: 5s
       retries: 10

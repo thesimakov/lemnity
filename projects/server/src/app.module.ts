@@ -9,6 +9,7 @@ import { WidgetModule } from './widget/widget.module'
 import { FilesModule } from './files/files.module'
 import { CollectorModule } from './collector/collector.module'
 import { StatsModule } from './stats/stats.module'
+import { RequestModule } from './request/request.module'
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { StatsModule } from './stats/stats.module'
     WidgetModule,
     FilesModule,
     CollectorModule,
-    StatsModule
+    StatsModule,
+    RequestModule
   ],
   controllers: [AppController],
   providers: [AppService]

@@ -9,7 +9,8 @@ import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import type { DisplaySettings } from '@/stores/widgetSettings/types'
 import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { useShallow } from 'zustand/react/shallow'
-import { sendEvent } from '@/common/api/httpWrapper'
+import { sendEvent, sendPublicRequest } from '@/common/api/httpWrapper'
+import type { WidgetLeadFormValues } from '@/layouts/Widgets/registry'
 
 type ActionTimerModalContentProps = {
   screen: 'main' | 'panel' | 'prize'
@@ -26,7 +27,20 @@ export const ActionTimerModalContent = ({
 }: ActionTimerModalContentProps) => {
   const { run } = useWidgetActions()
 
-  const handleSubmit = () => {
+  const handleSubmit = (values: WidgetLeadFormValues) => {
+    const widgetId = useWidgetSettingsStore.getState().settings?.id
+    if (widgetId) {
+      void sendPublicRequest({
+        widgetId,
+        fullName: values.name,
+        phone: values.phone,
+        email: values.email,
+        url: window.location.href,
+        referrer: document.referrer || undefined,
+        userAgent: navigator.userAgent
+      })
+    }
+
     const handled = run(
       'submit',
       {

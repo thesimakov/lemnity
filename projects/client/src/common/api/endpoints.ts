@@ -28,6 +28,10 @@ export const API = {
     SUMMARY: '/stats/summary' as const,
     TIMESERIES: '/stats/timeseries' as const,
     EVENTS: '/stats/events' as const
+  },
+  REQUESTS: {
+    LIST: '/requests' as const,
+    REQUEST: (id: string) => `/requests/${id}` as const
   }
 } as const
 
