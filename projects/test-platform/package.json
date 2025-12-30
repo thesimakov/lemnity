@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "build:workspace-deps": "VITE_COLLECT_URL=http://localhost:3000/api/public/collect pnpm -C ../.. --filter @lemnity/embed-script --if-present run build",
+    "sync:embed-script": "pnpm -C ../.. --filter @lemnity/embed-script --if-present run sync:public",
+    "postinstall": "pnpm run build:workspace-deps && pnpm run sync:embed-script",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

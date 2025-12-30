@@ -6,6 +6,7 @@ import { ClickhouseModule } from './infra/clickhouse.module';
 import { RabbitmqModule } from './infra/rabbitmq.module';
 import { EventsModule } from './events/events.module';
 import { StatsModule } from './stats/stats.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { StatsModule } from './stats/stats.module';
     ClickhouseModule,
     EventsModule,
     StatsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

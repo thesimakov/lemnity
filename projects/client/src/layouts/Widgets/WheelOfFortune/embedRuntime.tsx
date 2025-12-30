@@ -13,6 +13,7 @@ import Modal from '@/components/Modal/Modal'
 import DesktopPreview from '@/layouts/Widgets/Common/DesktopPreview/DesktopPreview'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import { sendEvent } from '@/common/api/httpWrapper'
 
 type WheelModalContentProps = {
   initialScreen?: 'main' | 'prize'
@@ -76,6 +77,7 @@ export const WheelModalContent = ({ initialScreen = 'main', onSubmit }: WheelMod
 export const WheelEmbedRuntime = () => {
   const [open, setOpen] = React.useState(false)
   const staticDefaults = useWidgetStaticDefaults()
+  const widgetId = useWidgetSettingsStore(s => s.settings?.id)
   const staticIcon = staticDefaults?.display?.icon
   const defaultIcon: NonNullable<DisplaySettings['icon']> = {
     type: staticIcon?.type ?? 'button',
@@ -95,6 +97,16 @@ export const WheelEmbedRuntime = () => {
   const buttonConfig = iconConfig.button ?? defaultIcon.button
   const iconType = iconConfig.type ?? defaultIcon.type
   const imageUrl = iconConfig.image?.url
+
+  const handleOpen = React.useCallback(() => {
+    setOpen(true)
+    if (widgetId) void sendEvent({ event_name: 'wheel.open', widget_id: widgetId })
+  }, [widgetId])
+
+  const handleClose = React.useCallback(() => {
+    setOpen(false)
+    if (widgetId) void sendEvent({ event_name: 'wheel.close', widget_id: widgetId })
+  }, [widgetId])
 
   const anchorStyle: React.CSSProperties = {
     position: 'fixed',
@@ -120,7 +132,7 @@ export const WheelEmbedRuntime = () => {
     iconType === 'image' && imageUrl ? (
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         className="block rounded-full transform transition-transform duration-200 ease-out hover:scale-[1.05]"
       >
         <img
@@ -137,7 +149,7 @@ export const WheelEmbedRuntime = () => {
           backgroundColor: buttonConfig?.buttonColor,
           color: buttonConfig?.textColor
         }}
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
       >
         {buttonConfig?.text?.trim() || 'Испытай удачу'}
       </button>
@@ -146,13 +158,7 @@ export const WheelEmbedRuntime = () => {
   return (
     <>
       <div style={anchorStyle}>{Trigger}</div>
-      <Modal
-        isOpen={open}
-        onClose={() => {
-          setOpen(false)
-        }}
-        containerClassName="max-w-[928px]"
-      >
+      <Modal isOpen={open} onClose={handleClose} containerClassName="max-w-[928px]">
         <WheelModalContent />
       </Modal>
     </>

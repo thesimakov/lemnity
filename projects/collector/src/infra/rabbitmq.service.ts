@@ -1,85 +1,177 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as amqp from 'amqplib';
+import { setTimeout as delay } from 'node:timers/promises';
 
 @Injectable()
 export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
-  private connection: any = null;
-  private channel: any = null;
-  private queue: string;
+  private readonly logger = new Logger(RabbitmqService.name);
+  private readonly gatewayUrl: string;
+  private readonly queue: string;
+  private readonly exchange: string;
+  private readonly routingKey: string;
+  private readonly internalEventsUrl: string;
+  private readonly internalToken: string;
+  private readonly subscriptionBatchSize: number;
+  private readonly subscriptionFlushIntervalMs: number;
+  private stopped = false;
+  private lastError: string | null = null;
+  private lastStatus: { connected: boolean } | null = null;
 
   constructor(private readonly configService: ConfigService) {
     this.queue = this.configService.get<string>('rabbitmq.queue', 'widget_events');
+    this.exchange = (this.configService.get<string>('rabbitmq.exchange') ?? '').trim();
+    this.routingKey = this.configService.get<string>('rabbitmq.routingKey') ?? 'collector.widget_events';
+    this.internalEventsUrl =
+      (this.configService.get<string>('collector.internalEventsUrl') ?? '').trim() ||
+      'http://collector:4000/internal/events/collect';
+    this.internalToken = (this.configService.get<string>('collector.internalToken') ?? '').trim();
+    this.subscriptionBatchSize = Number(this.configService.get<number>('collector.gatewaySubscription.batchSize') ?? 100);
+    this.subscriptionFlushIntervalMs = Number(
+      this.configService.get<number>('collector.gatewaySubscription.flushIntervalMs') ?? 2000,
+    );
+    this.gatewayUrl =
+      (this.configService.get<string>('rabbitmqGateway.url') ?? '').trim() || 'http://rabbitmq_gateway:4010';
   }
 
   async onModuleInit() {
-    await this.connectWithRetry();
+    await this.refreshStatus();
+    void this.ensureGatewaySubscription();
   }
 
   async onModuleDestroy() {
-    await this.channel?.close().catch(() => undefined);
-    const conn = this.connection as unknown as { close?: () => Promise<void> } | null;
-    await conn?.close?.().catch(() => undefined);
+    this.stopped = true;
   }
 
-  private async connectWithRetry() {
-    const url = this.configService.get<string>('rabbitmq.url');
-    if (!url) {
-      throw new Error('RABBITMQ_URL is not set');
-    }
-
-    const maxAttempts = 10;
-    const baseDelayMs = 2000;
-
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        const connection = await amqp.connect(url);
-        this.connection = connection;
-        this.channel = await connection.createChannel();
-        await this.channel.assertQueue(this.queue, { durable: true });
-        return;
-      } catch (err) {
-        const isLast = attempt === maxAttempts;
-        if (isLast) {
-          throw err;
-        }
-        // Простой backoff: растём до 10s
-        const delay = Math.min(baseDelayMs * attempt, 10000);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
+  isConnected() {
+    return this.lastStatus?.connected ?? false;
   }
 
-  private async ensureChannel(): Promise<amqp.Channel> {
-    if (!this.channel) {
-      await this.connectWithRetry();
-    }
-    if (!this.channel) {
-      throw new Error('Failed to establish RabbitMQ channel');
-    }
-    return this.channel;
+  getStatus() {
+    return {
+      connected: this.isConnected(),
+      lastError: this.lastError,
+    };
   }
 
-  async publish(message: unknown) {
-    const channel = await this.ensureChannel();
-    const payload = Buffer.from(JSON.stringify(message));
-    return channel.sendToQueue(this.queue, payload, { persistent: true });
+  async publish(message: unknown, opts?: { bufferWhenUnavailable?: boolean }) {
+    try {
+      const res = await fetch(`${this.gatewayUrl}/publish`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          message,
+          queue: this.queue,
+          exchange: this.exchange,
+          routingKey: this.routingKey,
+          bufferWhenUnavailable: opts?.bufferWhenUnavailable ?? false,
+        }),
+      });
+
+      const ok = res.status >= 200 && res.status < 300;
+      if (!ok) this.lastError = `Gateway publish failed (${res.status})`;
+      await this.refreshStatus();
+      return ok;
+    } catch (err) {
+      this.handleCriticalError(err);
+      return false;
+    }
   }
 
   async consume(onMessage: (msg: Record<string, unknown>) => Promise<void>) {
-    const channel = await this.ensureChannel();
-    await channel.consume(this.queue, async (msg) => {
-      if (!msg) {
+    void onMessage;
+    this.lastError = 'consume is not supported via gateway client';
+  }
+
+  private async ensureGatewaySubscription() {
+    let attempt = 0;
+    while (!this.stopped) {
+      attempt += 1;
+      try {
+        const ok = await this.ensureGatewaySubscriptionOnce();
+        if (ok) {
+          attempt = 0;
+          await delay(5_000);
+          continue;
+        }
+      } catch (err) {
+        this.handleCriticalError(err);
+      }
+
+      const backoffMs = Math.min(10_000, 500 * 2 ** Math.min(attempt, 6));
+      await delay(backoffMs);
+    }
+  }
+
+  private async ensureGatewaySubscriptionOnce(): Promise<boolean> {
+    const listRes = await fetch(`${this.gatewayUrl}/subscriptions`);
+    if (!listRes.ok) {
+      throw new Error(`Gateway subscriptions list failed (${listRes.status})`);
+    }
+    const list = (await listRes.json()) as {
+      ok?: boolean;
+      subscriptions?: Array<{
+        id: string;
+        queue: string;
+        exchange: string | null;
+        routingKey: string;
+        webhookUrl: string;
+      }>;
+    };
+
+    const desiredExchange = this.exchange.trim() || null;
+    const exists = (list.subscriptions ?? []).some(
+      (s) =>
+        s.queue === this.queue &&
+        s.exchange === desiredExchange &&
+        s.routingKey === this.routingKey &&
+        s.webhookUrl === this.internalEventsUrl,
+    );
+    if (exists) return true;
+
+    const createRes = await fetch(`${this.gatewayUrl}/subscriptions`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        queue: this.queue,
+        exchange: desiredExchange ?? undefined,
+        routingKey: this.routingKey,
+        webhookUrl: this.internalEventsUrl,
+        headers: this.internalToken ? { 'x-collector-token': this.internalToken } : {},
+        batchSize: this.subscriptionBatchSize,
+        flushIntervalMs: this.subscriptionFlushIntervalMs,
+      }),
+    });
+
+    if (!createRes.ok) {
+      const text = await createRes.text().catch(() => '');
+      throw new Error(`Gateway subscription create failed (${createRes.status}): ${text || createRes.statusText}`);
+    }
+
+    this.lastError = null;
+    await this.refreshStatus();
+    return true;
+  }
+
+  private async refreshStatus() {
+    try {
+      const res = await fetch(`${this.gatewayUrl}/healthz`);
+      if (!res.ok) {
+        this.lastStatus = { connected: false };
+        this.lastError = `Gateway health failed (${res.status})`;
         return;
       }
-      try {
-        const data = JSON.parse(msg.content.toString());
-        await onMessage(data);
-        channel.ack(msg);
-      } catch {
-        channel.nack(msg, false, false);
-      }
-    });
+      const data = (await res.json()) as { rabbitmq?: { connected?: boolean }; lastError?: string };
+      this.lastStatus = { connected: Boolean(data?.rabbitmq?.connected) };
+      this.lastError = data?.lastError ?? null;
+    } catch (err) {
+      this.handleCriticalError(err);
+      this.lastStatus = { connected: false };
+    }
+  }
+
+  private handleCriticalError(err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    this.lastError = message;
+    this.logger.error(message);
   }
 }

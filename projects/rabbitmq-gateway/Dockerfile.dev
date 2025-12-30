@@ -1,0 +1,9 @@
+FROM node:20.19.0-alpine
+
+WORKDIR /gateway
+
+RUN npm install -g pnpm@10.21.0
+
+EXPOSE 4010
+
+CMD ["sh", "-c", "pnpm --filter rabbitmq-gateway... install --frozen-lockfile && pnpm --filter rabbitmq-gateway run start:dev"]

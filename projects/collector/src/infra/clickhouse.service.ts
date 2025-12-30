@@ -10,6 +10,12 @@ export class ClickhouseService implements OnModuleInit {
 
   constructor(private readonly configService: ConfigService) {}
 
+  private dateToUnixSeconds(value: Date) {
+    const ms = value.getTime();
+    if (Number.isNaN(ms)) return Math.floor(Date.now() / 1000);
+    return Math.floor(ms / 1000);
+  }
+
   async onModuleInit() {
     this.client = createClient({
       // ClickHouse JS client теперь ожидает url (host депрекейтят)
@@ -62,7 +68,7 @@ export class ClickhouseService implements OnModuleInit {
     await this.client.insert({
       table: `${database}.${table}`,
       values: events.map((event) => ({
-        event_time: event.event_time ?? new Date(),
+        event_time: this.dateToUnixSeconds(event.event_time ?? new Date()),
         widget_id: event.widget_id ?? '',
         project_id: event.project_id ?? '',
         session_id: event.session_id ?? '',

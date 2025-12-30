@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClickhouseModule } from '../infra/clickhouse.module';
-import { RabbitmqModule } from '../infra/rabbitmq.module';
-import { EventsConsumer } from './events.consumer';
+import { InternalTokenGuard } from '../auth/internal-token.guard';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
+import { InternalEventsController } from './internal-events.controller';
 
 @Module({
-  imports: [ConfigModule, RabbitmqModule, ClickhouseModule],
-  controllers: [EventsController],
-  providers: [EventsService, EventsConsumer],
+  imports: [ConfigModule, ClickhouseModule],
+  controllers: [EventsController, InternalEventsController],
+  providers: [EventsService, InternalTokenGuard],
 })
 export class EventsModule {}
