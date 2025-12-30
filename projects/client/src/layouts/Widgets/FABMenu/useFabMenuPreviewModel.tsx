@@ -82,7 +82,7 @@ export const useFabMenuPreviewModel = () => {
   const buttonPosition = useWidgetSettingsStore(
     s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
   )
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(false)
 
   const safePosition = normalizePosition(buttonPosition)
   const menuItems = useMenuItems(settings?.sectors.items ?? [])

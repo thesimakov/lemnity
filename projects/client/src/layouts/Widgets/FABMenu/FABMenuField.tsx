@@ -140,6 +140,9 @@ const FABMenuField = () => {
           addButtonLabel="Добавить кнопку"
           disabledReorderIds={pendingSectorId ? [pendingSectorId] : []}
         />
+        <span className='text-[#BABABA] text-[10px] leading-3'>
+          *Компания Meta Platforms Inc., владеющая социальными сетями Facebook и Instagram, по решению суда от 21.03.2022 признана экстремистской организацией, ее деятельность на территории России запрещена.
+        </span>
       </BorderedContainer>
     </div>
   )
