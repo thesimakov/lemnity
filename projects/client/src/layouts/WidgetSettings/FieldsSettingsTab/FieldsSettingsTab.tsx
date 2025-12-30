@@ -14,7 +14,7 @@ import { memo, useCallback } from 'react'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import { useShallow } from 'zustand/react/shallow'
 import { uploadImage } from '@/api/upload'
-import { getWidgetDefinition } from '@/layouts/Widgets/registry'
+import { getWidgetDefinition, type WidgetSettingsSection } from '@/layouts/Widgets/registry'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import MessagesSettings from './MessagesSettings/MessagesSettings'
 import type { FieldsSettings as FieldsSettingsType } from '@/stores/widgetSettings/types'
@@ -75,7 +75,7 @@ const FieldsSettingsTab = () => {
     [setCompanyLogoFile]
   )
 
-  const customSections = widgetDefinition?.settings.sections ?? []
+  const customSections: WidgetSettingsSection[] = widgetDefinition?.settings.sections ?? []
   const hasCustomSections = customSections.length > 0
   const CustomFieldsSurface = widgetDefinition?.settings.surfaces?.fields
 
