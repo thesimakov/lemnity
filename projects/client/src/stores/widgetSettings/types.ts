@@ -236,6 +236,7 @@ export type IntegrationUpdater = (mutator: (s: IntegrationSettings) => Integrati
 export type WidgetSettingsState = {
   settings: WidgetSettings | null
   initialized: boolean
+  projectId: string | null
 }
 
 export type StoreSlice<T> = StateCreator<T, [], [], T>

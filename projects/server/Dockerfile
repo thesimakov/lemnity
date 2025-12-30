@@ -12,11 +12,9 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages ./packages
 # Копируем package.json самого сервера, чтобы pnpm знала о зависимостях
 COPY projects/server/package*.json projects/server/
-# Копируем клиента, чтобы пакеты, зависящие от его исходников, могли собраться
-COPY projects/client ./projects/client
 
-# Устанавливаем зависимости из workspace
-RUN pnpm install --frozen-lockfile
+# Устанавливаем зависимости для server и его workspace-зависимостей
+RUN pnpm --filter server... install --frozen-lockfile
 
 # Копируем исходный код сервера
 COPY projects/server ./projects/server

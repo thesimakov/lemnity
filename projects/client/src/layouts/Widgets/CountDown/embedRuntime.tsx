@@ -9,6 +9,7 @@ import { withDefaultsPath } from '@/stores/widgetSettings/utils'
 import type { DisplaySettings } from '@/stores/widgetSettings/types'
 import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { useShallow } from 'zustand/react/shallow'
+import { sendEvent } from '@/common/api/httpWrapper'
 
 type ActionTimerModalContentProps = {
   screen: 'main' | 'panel' | 'prize'
@@ -77,6 +78,8 @@ export const ActionTimerEmbedRuntime = () => {
   const iconConfig = useWidgetSettingsStore(
     useShallow(s => withDefaultsPath(s.settings?.display, 'icon', defaultIcon))
   )
+  const widgetId = useWidgetSettingsStore(s => s.settings?.id)
+  const projectId = useWidgetSettingsStore(s => s.projectId)
   const [open, setOpen] = useState(false)
   const [screen, setScreen] = useState<'main' | 'panel' | 'prize'>('main')
 
@@ -116,6 +119,13 @@ export const ActionTimerEmbedRuntime = () => {
   const handleOpen = () => {
     setOpen(true)
     setScreen('main')
+    if (widgetId) {
+      sendEvent({
+        event_name: 'countdown.open',
+        widget_id: widgetId,
+        project_id: projectId ?? undefined
+      })
+    }
   }
 
   const resetState = () => {
@@ -125,6 +135,13 @@ export const ActionTimerEmbedRuntime = () => {
 
   const handleClose = () => {
     resetState()
+    if (widgetId) {
+      sendEvent({
+        event_name: 'countdown.close',
+        widget_id: widgetId,
+        project_id: projectId ?? undefined
+      })
+    }
   }
 
   const Trigger =

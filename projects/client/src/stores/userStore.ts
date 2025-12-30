@@ -19,7 +19,7 @@ const useUserStore = create<UserState>()(
       {
         name: 'user',
         version: 1,
-        storage: createJSONStorage(() => localStorage),
+        storage: createJSONStorage(() => sessionStorage),
         partialize: s => ({ user: s.user })
       }
     ),

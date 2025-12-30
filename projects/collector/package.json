@@ -4,6 +4,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "postinstall": "pnpm -C ../../ --filter @lemnity/nest-common --if-present run build",
     "start": "node dist/main.js",
     "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
     "build": "tsc -p tsconfig.build.json"
@@ -15,7 +16,6 @@
     "@nestjs/config": "catalog:nest",
     "@nestjs/core": "catalog:nest",
     "@nestjs/platform-express": "catalog:nest",
-    "amqplib": "^0.10.4",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dotenv": "^17.2.2",
@@ -23,7 +23,6 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.5",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.7",
     "ts-node-dev": "^2.0.0",

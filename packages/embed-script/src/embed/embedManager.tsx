@@ -136,7 +136,7 @@ class EmbedManager {
       const widgetType = (payload.config.widgetType as WidgetTypeEnum | undefined) ?? payload.type
       if (!widgetType) throw new Error('Widget type is missing')
 
-      useWidgetSettingsStore.getState().init(widgetId, widgetType, payload.config)
+      useWidgetSettingsStore.getState().init(widgetId, widgetType, payload.projectId, payload.config)
 
       const container = ensureContainer(widgetId)
       const iframe = document.createElement('iframe')

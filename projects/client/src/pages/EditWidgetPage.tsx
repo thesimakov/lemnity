@@ -56,14 +56,14 @@ const EditWidgetPage = () => {
       const initialSettings = widgetConfig
         ? ({ ...base, ...widgetConfig } as typeof base)
         : undefined
-      store.init(widgetId, widgetType, initialSettings)
+      store.init(widgetId, widgetType, projectId, initialSettings)
     }
 
     return () => {
       // cleanup draft state in memory when leaving page
       useWidgetSettingsStore.getState().reset()
     }
-  }, [widgetId, widgetType, widgetConfig])
+  }, [projectId, widgetId, widgetType, widgetConfig])
 
   useEffect(() => {
     const root = scrollRef.current
@@ -144,7 +144,7 @@ const EditWidgetPage = () => {
       // Re-init settings with server config
       const base = useWidgetSettingsStore.getState().settings ?? buildDefaults(widgetId, widgetType)
       const next = updated.config ? ({ ...base, ...updated.config } as typeof base) : undefined
-      useWidgetSettingsStore.getState().init(widgetId, widgetType, next)
+      useWidgetSettingsStore.getState().init(widgetId, widgetType, projectId, next)
       alert('Сохранено')
       useWidgetSettingsStore.getState().setValidationVisible(false)
     } catch (e) {

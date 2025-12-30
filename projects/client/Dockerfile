@@ -14,7 +14,7 @@ COPY packages ./packages
 COPY projects/client/package*.json projects/client/
 
 # Устанавливаем зависимости только для клиента с зафиксированным lockfile
-RUN pnpm install --frozen-lockfile
+RUN pnpm --filter client... --filter @lemnity/embed-script... install --frozen-lockfile
 
 # Копируем исходный код клиента
 COPY projects/client ./projects/client

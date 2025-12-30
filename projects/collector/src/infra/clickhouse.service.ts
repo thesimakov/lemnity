@@ -10,6 +10,12 @@ export class ClickhouseService implements OnModuleInit {
 
   constructor(private readonly configService: ConfigService) {}
 
+  private dateToUnixSeconds(value: Date) {
+    const ms = value.getTime();
+    if (Number.isNaN(ms)) return Math.floor(Date.now() / 1000);
+    return Math.floor(ms / 1000);
+  }
+
   async onModuleInit() {
     this.client = createClient({
       // ClickHouse JS client теперь ожидает url (host депрекейтят)
@@ -62,7 +68,7 @@ export class ClickhouseService implements OnModuleInit {
     await this.client.insert({
       table: `${database}.${table}`,
       values: events.map((event) => ({
-        event_time: event.event_time ?? new Date(),
+        event_time: this.dateToUnixSeconds(event.event_time ?? new Date()),
         widget_id: event.widget_id ?? '',
         project_id: event.project_id ?? '',
         session_id: event.session_id ?? '',
@@ -102,13 +108,17 @@ export class ClickhouseService implements OnModuleInit {
     const database = this.configService.get<string>('clickhouse.database');
     const table = this.configService.get<string>('clickhouse.eventsTable');
 
+    const bucketExpr =
+      granularity === 'hour' ? 'toStartOfHour(event_time)' : 'toStartOfDay(event_time)';
+
     const data = await this.client.query({
       query: `
-        SELECT date_trunc('${granularity}', event_time) AS bucket, count() AS events
+        WITH ${bucketExpr} AS bucket_dt
+        SELECT formatDateTime(toTimeZone(bucket_dt, 'UTC'), '%Y-%m-%dT%H:%i:%sZ') AS bucket, count() AS events
         FROM ${database}.${table}
         WHERE ${query}
-        GROUP BY bucket
-        ORDER BY bucket
+        GROUP BY bucket_dt
+        ORDER BY bucket_dt
       `,
       format: 'JSONEachRow',
       query_params: params,
@@ -144,7 +154,7 @@ export class ClickhouseService implements OnModuleInit {
     clauses.push('widget_id = {widget_id:String}');
     params.widget_id = filter.widget_id;
     if (filter.project_id) {
-      clauses.push('project_id = {project_id:String}');
+      clauses.push("(project_id = {project_id:String} OR project_id = '')");
       params.project_id = filter.project_id;
     }
     if (filter.event_name) {
