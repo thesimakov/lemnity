@@ -21,7 +21,8 @@
       "@stores/*": ["src/stores/*"],
       "@common/*": ["src/common/*"],
       "@services/*": ["src/services/*"],
-      "@hooks/*": ["src/common/hooks/*"]
+      "@hooks/*": ["src/common/hooks/*"],
+      "@utils/*": ["src/common/utils/*"]
     },
 
     /* Linting */

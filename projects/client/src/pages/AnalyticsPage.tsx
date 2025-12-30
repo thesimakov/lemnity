@@ -91,13 +91,11 @@ const AnalyticsPage = () => {
     if (!effectiveFilters.widget_id) return
     setLoading(true)
     try {
-      console.log(effectiveFilters)
       const [sum, ts, ev] = await Promise.all([
         fetchSummary(effectiveFilters),
         fetchTimeseries(effectiveFilters),
         fetchEvents({ ...effectiveFilters, limit: 50 })
       ])
-      console.log(ts)
       setSummary(sum.events)
       setTimeseries(ts)
       setEvents(ev)
@@ -114,7 +112,6 @@ const AnalyticsPage = () => {
   }, [granularity])
 
   const chartData = useMemo(() => {
-    console.log(timeseries)
     const stepMs = granularity === 'hour' ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000
 
     const toBucketMs = (iso: string) => {

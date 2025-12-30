@@ -85,7 +85,7 @@ type ScreenMap = Partial<Record<WidgetPreviewScreen, ComponentType<DesktopScreen
 interface DesktopPreviewProps {
   screen: WidgetPreviewScreen
   hideCloseButton?: boolean
-  onSubmit: () => void
+  onSubmit: DesktopScreenProps['onSubmit']
   screens?: ScreenMap
 }
 

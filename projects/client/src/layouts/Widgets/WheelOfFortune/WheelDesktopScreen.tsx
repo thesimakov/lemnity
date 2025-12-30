@@ -4,12 +4,12 @@ import RewardContent from '../Common/RewardContent/RewardContent'
 import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { useWheelOfFortuneSettings } from '@/layouts/Widgets/WheelOfFortune/hooks'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
-import type { WidgetPreviewScreen } from '../registry'
+import type { WidgetLeadFormValues, WidgetPreviewScreen } from '../registry'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
 
 type WheelDesktopScreenProps = {
   screen: WidgetPreviewScreen
-  onSubmit: () => void
+  onSubmit: (values: WidgetLeadFormValues) => void
 }
 
 const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
@@ -30,9 +30,7 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   const pointerPositionDeg = 135
 
   const renderForm = screen === 'main' || screen === 'panel'
-  const handleAction = () => {
-    onSubmit()
-  }
+  const handleAction = (values: WidgetLeadFormValues) => onSubmit(values)
   const content = renderForm ? (
     <DynamicFieldsForm onSubmit={handleAction} />
   ) : (

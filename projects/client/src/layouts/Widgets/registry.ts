@@ -19,9 +19,15 @@ import type { WidgetAction } from './actions'
 
 export type WidgetPreviewScreen = 'main' | 'prize' | 'panel'
 
+export type WidgetLeadFormValues = {
+  phone?: string
+  email?: string
+  name?: string
+}
+
 export type DesktopPreviewProps = {
   screen: WidgetPreviewScreen
-  onSubmit: () => void
+  onSubmit: (values: WidgetLeadFormValues) => void
   spinTrigger?: number
   hideCloseButton?: boolean
 }
@@ -34,12 +40,12 @@ export type WidgetPanelPreviewProps = {
 
 export type DesktopScreenProps = {
   screen: WidgetPreviewScreen
-  onSubmit: () => void
+  onSubmit: (values: WidgetLeadFormValues) => void
 }
 
 export type WidgetModalPreviewProps = {
   screen: WidgetPreviewScreen
-  onSubmit: () => void
+  onSubmit: (values: WidgetLeadFormValues) => void
 }
 
 export type WidgetInlinePreviewProps = {

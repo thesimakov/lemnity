@@ -10,9 +10,11 @@ import { Listbox, ListboxItem } from '@heroui/listbox'
 import { Tooltip } from '@heroui/tooltip'
 import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
-import { memo } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { Button } from '@heroui/button'
+import { useLocation } from 'react-router-dom'
+import { getNewRequestsCount } from '@/services/requests'
 
 interface MenuItem {
   key: string
@@ -24,32 +26,74 @@ interface MenuItem {
 
 const NavigationSidebar = () => {
   const { isVisible } = useSidebarStore()
+  const location = useLocation()
 
-  const menuItems: MenuItem[] = [
-    {
-      key: 'projects',
-      icon: <img src={iconProjects} alt="Проекты" className="w-5 h-5" />,
-      label: 'Проекты',
-      href: '/'
-    },
-    {
-      key: 'analytics',
-      icon: <img src={iconStatistics} alt="Аналитика" className="w-5 h-5" />,
-      label: 'Аналитика',
-      href: '/analytics'
-    },
-    {
-      key: 'requests',
-      icon: <img src={iconSuccessList} alt="Заявки" className="w-5 h-5" />,
-      label: 'Заявки',
-      badge: 999
-    },
-    {
-      key: 'payment',
-      icon: <img src={iconWallet} alt="Оплата и тарифы" className="w-5 h-5" />,
-      label: 'Оплата и тарифы'
+  const [newRequestsCount, setNewRequestsCount] = useState<number | null>(null)
+
+  const activeKey = (() => {
+    const path = location.pathname
+    if (path.startsWith('/analytics')) return 'analytics'
+    if (path.startsWith('/requests')) return 'requests'
+    if (path.startsWith('/projects')) return 'projects'
+    if (path === '/' || path.startsWith('/dashboard')) return 'projects'
+    return 'projects'
+  })()
+
+  useEffect(() => {
+    let isMounted = true
+
+    const load = async () => {
+      try {
+        const count = await getNewRequestsCount()
+        if (!isMounted) return
+        setNewRequestsCount(count)
+      } catch {
+        if (!isMounted) return
+        setNewRequestsCount(null)
+      }
     }
-  ]
+
+    void load()
+
+    const intervalId = window.setInterval(() => {
+      void load()
+    }, 30_000)
+
+    return () => {
+      isMounted = false
+      window.clearInterval(intervalId)
+    }
+  }, [])
+
+  const menuItems: MenuItem[] = useMemo(
+    () => [
+      {
+        key: 'projects',
+        icon: <img src={iconProjects} alt="Проекты" className="w-5 h-5" />,
+        label: 'Проекты',
+        href: '/'
+      },
+      {
+        key: 'analytics',
+        icon: <img src={iconStatistics} alt="Аналитика" className="w-5 h-5" />,
+        label: 'Аналитика',
+        href: '/analytics'
+      },
+      {
+        key: 'requests',
+        icon: <img src={iconSuccessList} alt="Заявки" className="w-5 h-5" />,
+        label: 'Заявки',
+        badge: newRequestsCount && newRequestsCount > 0 ? newRequestsCount : undefined,
+        href: '/requests'
+      },
+      {
+        key: 'payment',
+        icon: <img src={iconWallet} alt="Оплата и тарифы" className="w-5 h-5" />,
+        label: 'Оплата и тарифы'
+      }
+    ],
+    [newRequestsCount]
+  )
 
   const getFooter = () => (
     <div className="rounded-lg border border-default-200 flex flex-col justify-between gap-3.5 pt-1.5 p-3.5">
@@ -63,22 +107,7 @@ const NavigationSidebar = () => {
         color="default"
         variant="solid"
         className="w-full h-10 rounded-2.5 font-normal text-base"
-        style={
-          {
-            // color: button?.color,
-            // backgroundColor: button?.backgroundColor
-          }
-        }
-        // isLoading={isSubmitting}
-        // startContent={
-        //   <SvgIcon
-        //     src={iconReload}
-        //     size={'16px'}
-        //     // className={`w-min text-[${button?.color || '#FFBF1A'}]`}
-        //   />
-        // }
       >
-        {/* {button?.text || ''} */}
         Написать
       </Button>
       <a
@@ -107,6 +136,47 @@ const NavigationSidebar = () => {
     </div>
   )
 
+  const getExpandedMenu = useCallback(
+    (menuItems: MenuItem[]) => {
+      return (
+        <Listbox
+          aria-label="Navigation menu"
+          // defaultSelectedKeys={['analytics']} почему-то not working
+          variant="flat"
+          classNames={{
+            list: 'p-0 gap-3.5'
+          }}
+          itemClasses={{
+            title: 'text-base'
+          }}
+        >
+          {menuItems.map(item => (
+            <ListboxItem
+              key={item.key}
+              startContent={item.icon}
+              href={item.href || ''}
+              classNames={{
+                base: activeKey === item.key ? 'bg-default-200' : ''
+              }}
+              endContent={
+                item.badge && (
+                  <span className="bg-success text-white text-[9px] font-normal px-2.5 py-0.5 leading-3.5 rounded-full h-[18px] text-center">
+                    {typeof item.badge === 'number' && item.badge > 999
+                      ? '999+'
+                      : String('+ ' + item.badge)}
+                  </span>
+                )
+              }
+            >
+              {item.label}
+            </ListboxItem>
+          ))}
+        </Listbox>
+      )
+    },
+    [activeKey]
+  )
+
   return (
     <aside
       className={`${isVisible ? 'w-60 px-[19px]' : 'w-16 px-3'} h-full flex flex-col justify-between py-[18px] rounded-l-lg sidebar-bg transition-all duration-300 ease-in-out`}
@@ -118,7 +188,7 @@ const NavigationSidebar = () => {
               <Tooltip key={item.key} content={item.label} placement="right">
                 <a
                   href={item.href || '#'}
-                  className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-default-100 transition-colors relative"
+                  className={`flex items-center justify-center w-10 h-10 rounded-lg hover:bg-default-100 transition-colors relative ${activeKey === item.key ? 'bg-default-200' : ''}`}
                 >
                   {item.icon}
                   {item.badge && (
@@ -133,36 +203,7 @@ const NavigationSidebar = () => {
             ))}
           </div>
         ) : (
-          <Listbox
-            aria-label="Navigation menu"
-            defaultSelectedKeys={['projects']}
-            variant="flat"
-            classNames={{
-              list: 'p-0 gap-3.5'
-            }}
-            itemClasses={{
-              title: 'text-base'
-            }}
-          >
-            {menuItems.map(item => (
-              <ListboxItem
-                key={item.key}
-                startContent={item.icon}
-                href={item.href || ''}
-                endContent={
-                  item.badge && (
-                    <span className="bg-success text-white text-[9px] font-normal px-2.5 py-0.5 leading-3.5 rounded-full h-[18px] text-center">
-                      {typeof item.badge === 'number' && item.badge > 999
-                        ? '999+'
-                        : String('+ ' + item.badge)}
-                    </span>
-                  )
-                }
-              >
-                {item.label}
-              </ListboxItem>
-            ))}
-          </Listbox>
+          getExpandedMenu(menuItems)
         )}
 
         <hr className="w-full h-px mx-auto border-0 bg-default-300" />

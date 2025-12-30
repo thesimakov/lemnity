@@ -8,11 +8,12 @@
   "scripts": {
     "build:workspace-deps": "pnpm -C ../../ --filter @lemnity/nest-common --filter @lemnity/widget-config --filter @lemnity/database --if-present run build",
     "postinstall": "pnpm run build:workspace-deps",
+    "db:migrate": "pnpm -C ../../packages/database exec prisma migrate deploy",
     "build": "nest build",
     "format:fix": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" --ignore-path ../../.gitignore",
     "format": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\" --ignore-path ../../.gitignore",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "pnpm run db:migrate && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",

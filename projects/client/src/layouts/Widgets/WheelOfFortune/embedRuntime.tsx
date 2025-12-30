@@ -13,7 +13,8 @@ import Modal from '@/components/Modal/Modal'
 import DesktopPreview from '@/layouts/Widgets/Common/DesktopPreview/DesktopPreview'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
-import { sendEvent } from '@/common/api/httpWrapper'
+import { sendEvent, sendPublicRequest } from '@/common/api/httpWrapper'
+import type { WidgetLeadFormValues } from '@/layouts/Widgets/registry'
 
 type WheelModalContentProps = {
   initialScreen?: 'main' | 'prize'
@@ -32,31 +33,48 @@ export const WheelModalContent = ({ initialScreen = 'main', onSubmit }: WheelMod
     }
   }, [])
 
-  const handleSubmit = React.useCallback(() => {
-    const emit = usePreviewRuntimeStore.getState().emit
-    const setTimer = (ms: number, cb: () => void) => {
-      clearSpinTimer()
-      spinTimerRef.current = setTimeout(() => {
-        cb()
-        spinTimerRef.current = null
-      }, ms)
-    }
-    run(
-      'spin',
-      {
-        payload: { screen },
-        helpers: {
-          emit,
-          setScreen: (s: string) => setScreen(s === 'prize' ? 'prize' : 'main'),
-          setTimer,
-          clearTimer: clearSpinTimer
-        }
-      },
-      undefined,
-      handlerId => wheelActionHandlers[handlerId ?? '']
-    )
-    onSubmit?.()
-  }, [clearSpinTimer, onSubmit, run, screen])
+  const handleSubmit = React.useCallback(
+    (values: WidgetLeadFormValues) => {
+      const emit = usePreviewRuntimeStore.getState().emit
+      const setTimer = (ms: number, cb: () => void) => {
+        clearSpinTimer()
+        spinTimerRef.current = setTimeout(() => {
+          cb()
+          spinTimerRef.current = null
+        }, ms)
+      }
+
+      const widgetId = useWidgetSettingsStore.getState().settings?.id
+      if (widgetId) {
+        void sendPublicRequest({
+          widgetId,
+          fullName: values.name,
+          phone: values.phone,
+          email: values.email,
+          url: window.location.href,
+          referrer: document.referrer || undefined,
+          userAgent: navigator.userAgent
+        })
+      }
+
+      run(
+        'spin',
+        {
+          payload: { screen },
+          helpers: {
+            emit,
+            setScreen: (s: string) => setScreen(s === 'prize' ? 'prize' : 'main'),
+            setTimer,
+            clearTimer: clearSpinTimer
+          }
+        },
+        undefined,
+        handlerId => wheelActionHandlers[handlerId ?? '']
+      )
+      onSubmit?.()
+    },
+    [clearSpinTimer, onSubmit, run, screen]
+  )
 
   React.useEffect(() => () => clearSpinTimer(), [clearSpinTimer])
 

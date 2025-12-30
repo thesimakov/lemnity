@@ -6,6 +6,7 @@ model Project {
   enabled    Boolean  @default(true)
 
   widgets    Widget[]
+  requests   Request[]
 
   userId     String   @map("user_id")
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
