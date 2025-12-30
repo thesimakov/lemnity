@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "pnpm run typecheck && NODE_ENV=production vite build --mode production",
+    "build:workspace-deps": "pnpm -C ../.. --filter @lemnity/api-sdk --filter @lemnity/widget-config --if-present run build",
+    "build": "pnpm run build:workspace-deps && pnpm run typecheck && NODE_ENV=production vite build --mode production",
     "sync:public": "mkdir -p ../../projects/client/public ../../projects/test-platform/public && cp dist/embed.js ../../projects/client/public/embed.js && cp dist/embed.js ../../projects/test-platform/public/embed.js",
-    "typecheck": "tsc -b",
+    "typecheck": "pnpm run build:workspace-deps && tsc -b",
     "lint": "eslint .",
     "preview": "vite preview"
   },
