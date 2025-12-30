@@ -6,8 +6,6 @@ import { useWheelOfFortuneSettings } from '@/layouts/Widgets/WheelOfFortune/hook
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import type { WidgetPreviewScreen } from '../registry'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
-import { useWidgetActions } from '../useWidgetActions'
-import { wheelActionHandlers } from './actionHandlers'
 
 type WheelDesktopScreenProps = {
   screen: WidgetPreviewScreen
@@ -16,8 +14,6 @@ type WheelDesktopScreenProps = {
 
 const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   const spinTrigger = usePreviewRuntimeStore(s => s.counters['wheel.spin'] ?? 0)
-  const emit = usePreviewRuntimeStore(s => s.emit)
-  const { run } = useWidgetActions()
   const staticDefaults = useWidgetStaticDefaults()
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
   const templateDefaults = staticDefaults?.fields.template.templateSettings
@@ -35,7 +31,6 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
 
   const renderForm = screen === 'main' || screen === 'panel'
   const handleAction = () => {
-    run('spin', { helpers: { emit } }, undefined, handlerId => wheelActionHandlers[handlerId ?? ''])
     onSubmit()
   }
   const content = renderForm ? (

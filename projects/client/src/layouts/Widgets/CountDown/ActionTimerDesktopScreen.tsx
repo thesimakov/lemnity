@@ -6,8 +6,6 @@ import Badge from './Badge'
 import RewardContent from '../Common/RewardContent/RewardContent'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import { useActionTimerSettings } from './hooks'
-import { useWidgetActions } from '../useWidgetActions'
-import { actionTimerHandlers } from './actionHandlers'
 
 const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
@@ -19,7 +17,6 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
     useWidgetSettingsStore(s => s.settings?.fields?.template?.templateSettings?.contentPosition) ??
     'left'
   const { settings: actionTimerSettings } = useActionTimerSettings()
-  const { run } = useWidgetActions()
 
   const backgroundImage =
     imageMode == 'background'
@@ -34,7 +31,6 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const isPrize = screen === 'prize'
 
   const handleAction = () => {
-    run('submit', { helpers: {} }, undefined, handlerId => actionTimerHandlers[handlerId ?? ''])
     onSubmit()
   }
 
