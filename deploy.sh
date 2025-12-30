@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set -o errtrace
+
+trap 'exit_code=$?; echo "==> ERROR: deploy failed (exit ${exit_code}) at ${BASH_SOURCE[0]}:${LINENO}: ${BASH_COMMAND}" >&2' ERR
 
 IMAGE_TAG="${1:-}"
 REPOSITORY_OWNER="${2:-}"
@@ -57,13 +60,19 @@ docker compose -f docker-compose.prod.yml --profile setup run --rm minio_setup
 echo "==> Cleanup old versions of server and collector images"
 # Получаем ID текущего образа сервера и удаляем все остальные(устаревшие)
 CURRENT_SERVER_ID=$(docker images -q ghcr.io/${REPOSITORY_OWNER}/server:${IMAGE_TAG})
-docker images ghcr.io/${REPOSITORY_OWNER}/server --format "{{.ID}}" | grep -v "${CURRENT_SERVER_ID}" | xargs -r docker rmi -f
+if [ -n "${CURRENT_SERVER_ID}" ]; then
+  docker images ghcr.io/${REPOSITORY_OWNER}/server --format "{{.ID}}" | grep -v "${CURRENT_SERVER_ID}" | xargs -r docker rmi -f || true
+fi
 # Получаем ID текущего образа коллектора и удаляем все остальные(устаревшие)
 CURRENT_COLLECTOR_ID=$(docker images -q ghcr.io/${REPOSITORY_OWNER}/collector:${IMAGE_TAG})
-docker images ghcr.io/${REPOSITORY_OWNER}/collector --format "{{.ID}}" | grep -v "${CURRENT_COLLECTOR_ID}" | xargs -r docker rmi -f
+if [ -n "${CURRENT_COLLECTOR_ID}" ]; then
+  docker images ghcr.io/${REPOSITORY_OWNER}/collector --format "{{.ID}}" | grep -v "${CURRENT_COLLECTOR_ID}" | xargs -r docker rmi -f || true
+fi
 # Получаем ID текущего образа rabbitmq-gateway и удаляем все остальные(устаревшие)
 CURRENT_RABBITMQ_GATEWAY_ID=$(docker images -q ghcr.io/${REPOSITORY_OWNER}/rabbitmq-gateway:${IMAGE_TAG})
-docker images ghcr.io/${REPOSITORY_OWNER}/rabbitmq-gateway --format "{{.ID}}" | grep -v "${CURRENT_RABBITMQ_GATEWAY_ID}" | xargs -r docker rmi -f
+if [ -n "${CURRENT_RABBITMQ_GATEWAY_ID}" ]; then
+  docker images ghcr.io/${REPOSITORY_OWNER}/rabbitmq-gateway --format "{{.ID}}" | grep -v "${CURRENT_RABBITMQ_GATEWAY_ID}" | xargs -r docker rmi -f || true
+fi
 
 echo "==> Cleanup unused images"
 docker image prune -f
