@@ -13,7 +13,7 @@ const WheelSectorSchema = z
     icon: z.string().optional(),
     color: z.string(),
     promo: z.string().optional(),
-    chance: z.number().nonnegative().optional(),
+    chance: z.number().nonnegative().max(100).optional(),
     isWin: z.boolean().optional(),
     textSize: z.number().nonnegative().optional(),
     iconSize: z.number().nonnegative().optional(),
@@ -56,35 +56,45 @@ const WheelSectorSchema = z
 
 const WidgetType: WidgetTypeId = 'WHEEL_OF_FORTUNE'
 
-const WheelWidgetSchema = z.object({
-  type: z.literal(WidgetType),
-  sectors: z.object({
-    randomize: z.boolean(),
-    items: z.array(WheelSectorSchema)
-  }),
-  borderColor: z.string().optional(),
-  borderThickness: z.number().min(0).max(20).optional(),
-  messages: z
-    .object({
-      onWin: z.object({
-        enabled: z.boolean(),
-        text: z.string(),
-        textSize: z.number().nonnegative(),
-        description: z.string(),
-        descriptionSize: z.number().nonnegative(),
-        colorScheme: z.object({
+const WheelWidgetSchema = z
+.object({
+    type: z.literal(WidgetType),
+    sectors: z.object({
+      randomize: z.boolean(),
+      items: z.array(WheelSectorSchema)
+    }),
+    borderColor: z.string().optional(),
+    borderThickness: z.number().min(0).max(20).optional(),
+    messages: z
+      .object({
+        onWin: z.object({
           enabled: z.boolean(),
-          scheme: ColorScheme,
-          discount: z.object({ color: z.string(), bgColor: z.string() }),
-          promo: z.object({ color: z.string(), bgColor: z.string() })
-        })
-      }),
-      limitShows: z.object({ enabled: z.boolean(), text: z.string() }),
-      limitWins: z.object({ enabled: z.boolean(), text: z.string() }),
-      allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() })
-    })
-    .optional()
-})
+          text: z.string(),
+          textSize: z.number().nonnegative(),
+          description: z.string(),
+          descriptionSize: z.number().nonnegative(),
+          colorScheme: z.object({
+            enabled: z.boolean(),
+            scheme: ColorScheme,
+            discount: z.object({ color: z.string(), bgColor: z.string() }),
+            promo: z.object({ color: z.string(), bgColor: z.string() })
+          })
+        }),
+        limitShows: z.object({ enabled: z.boolean(), text: z.string() }),
+        limitWins: z.object({ enabled: z.boolean(), text: z.string() }),
+        allPrizesGiven: z.object({ enabled: z.boolean(), text: z.string() })
+      })
+      .optional()
+  })
+  .superRefine((v, ctx) => {
+    const totalChance = v.sectors.items.reduce((sum, item) => sum + (item.chance ?? 0), 0)
+    if (totalChance > 100) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['sectors', 'items'],
+        message: 'Сумма шансов выпадения секторов не должна превышать 100%'
+      })
+    }
+  })
 
 export const wheelOfFortuneSchema = buildWidgetSettingsSchema(WidgetType, WheelWidgetSchema)
-

@@ -1,4 +1,4 @@
-import React from 'react'
+import { type FC } from 'react'
 import { Button } from '@heroui/button'
 import SvgIcon from '@/components/SvgIcon'
 import iconCross from '@/assets/icons/cross.svg'
@@ -15,7 +15,7 @@ interface PreviewModalProps {
   containerClassName?: string
 }
 
-const PreviewModal: React.FC<PreviewModalProps> = ({
+const PreviewModal: FC<PreviewModalProps> = ({
   isOpen,
   onClose,
   screen,

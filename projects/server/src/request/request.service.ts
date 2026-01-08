@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
 import type { CreatePublicRequestDto } from './dto/create-public-request.dto'
 import type { ListRequestsDto } from './dto/list-requests.dto'
@@ -6,6 +11,11 @@ import type { UpdateRequestDto } from './dto/update-request.dto'
 import type { Request as DbRequest } from '@lemnity/database'
 import { subDays } from 'date-fns'
 import type { RequestEntity } from './entities/request.entity'
+import {
+  extractWebsiteHosts,
+  isDevOriginHostAllowed,
+  isHostAllowedByWebsiteHosts
+} from '../common/origin'
 
 const buildRequestNumber = (seq: number) => `${String(seq).padStart(4, '0')}`
 
@@ -43,15 +53,26 @@ const toEntity = (r: DbRequest): RequestEntity => ({
 export class RequestService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createPublic(dto: CreatePublicRequestDto, meta: { ip?: string; userAgent?: string }) {
+  async createPublic(
+    dto: CreatePublicRequestDto,
+    meta: { ip?: string; userAgent?: string; originHost: string | null }
+  ) {
     const widgetId = sanitizeString(dto.widgetId)
     if (!widgetId) throw new BadRequestException('widgetId is required')
 
     const widget = await this.prisma.widget.findFirst({
       where: { id: widgetId, enabled: true, project: { enabled: true } },
-      select: { id: true, projectId: true }
+      select: { id: true, projectId: true, project: { select: { websiteUrl: true } } }
     })
     if (!widget) throw new NotFoundException('Widget not found')
+    if (!meta.originHost) throw new ForbiddenException('Origin is required')
+    const isProd = process.env.NODE_ENV === 'production'
+    if (isProd || !isDevOriginHostAllowed(meta.originHost)) {
+      const websiteHosts = extractWebsiteHosts(widget.project.websiteUrl)
+      if (!websiteHosts.length || !isHostAllowedByWebsiteHosts(meta.originHost, websiteHosts)) {
+        throw new ForbiddenException('Origin is not allowed')
+      }
+    }
 
     const userAgent = sanitizeString(dto.userAgent ?? meta.userAgent)
 

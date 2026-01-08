@@ -1,0 +1,9 @@
+model WheelOfFortuneWidget {
+  widgetId  String   @id @map("widget_id")
+
+  spins     WheelOfFortuneSpin[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("wheel_of_fortune_widgets")
+}

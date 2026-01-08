@@ -14,6 +14,12 @@ type WheelDesktopScreenProps = {
 
 const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   const spinTrigger = usePreviewRuntimeStore(s => s.counters['wheel.spin'] ?? 0)
+  const winningSectorId = usePreviewRuntimeStore(
+    s => (s.values['wheel.winningSectorId'] as string | null | undefined) ?? undefined
+  )
+  const spinStatus = usePreviewRuntimeStore(
+    s => s.values['wheel.status'] as 'idle' | 'spinning' | 'locked' | undefined
+  )
   const staticDefaults = useWidgetStaticDefaults()
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
   const templateDefaults = staticDefaults?.fields.template.templateSettings
@@ -31,8 +37,9 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
 
   const renderForm = screen === 'main' || screen === 'panel'
   const handleAction = (values: WidgetLeadFormValues) => onSubmit(values)
+  const submitDisabled = spinStatus === 'spinning' || spinStatus === 'locked'
   const content = renderForm ? (
-    <DynamicFieldsForm onSubmit={handleAction} />
+    <DynamicFieldsForm onSubmit={handleAction} submitDisabled={submitDisabled} />
   ) : (
     <RewardContent companyLogo={companyLogo} onWin={fieldsSettings.messages?.onWin} />
   )
@@ -49,7 +56,7 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
       <WheelOfFortune
         className={className}
         pointerPositionDeg={pointerPositionDeg}
-        winningSectorId={undefined}
+        winningSectorId={winningSectorId}
         sectorsRandomize={sectors.randomize}
         sectors={sectors.items}
         spinTrigger={spinTrigger}

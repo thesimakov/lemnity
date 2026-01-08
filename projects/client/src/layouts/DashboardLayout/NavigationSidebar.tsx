@@ -10,7 +10,7 @@ import { Listbox, ListboxItem } from '@heroui/listbox'
 import { Tooltip } from '@heroui/tooltip'
 import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { Button } from '@heroui/button'
 import { useLocation } from 'react-router-dom'
@@ -18,7 +18,7 @@ import { getNewRequestsCount } from '@/services/requests'
 
 interface MenuItem {
   key: string
-  icon: React.ReactNode
+  icon: ReactNode
   label: string
   badge?: string | number
   href?: string

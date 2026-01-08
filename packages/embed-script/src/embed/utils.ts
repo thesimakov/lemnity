@@ -5,8 +5,27 @@ export const getWindowOrigin = () => {
   return window.location.origin
 }
 
+const isLocalHost = (host: string) =>
+  host === 'localhost' || host === '127.0.0.1' || host === '0.0.0.0'
+
+const isLanHost = (host: string) =>
+  /^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)
+
+const isLocalOrLanHost = (host: string) => isLocalHost(host) || isLanHost(host)
+
+const isLocalEnv = () => {
+  const { hostname } = window.location
+  return isLocalOrLanHost(hostname)
+}
+
 export const getApiBase = () => {
-  return getWindowOrigin().includes('localhost') ? 'http://localhost:3000/api' : 'https://app.lemnity.ru/api'
+  const { hostname } = window.location
+  if (isLocalOrLanHost(hostname)) {
+    const apiHost = isLanHost(hostname) ? hostname : 'localhost'
+    return `http://${apiHost}:3000/api`
+  }
+
+  return 'https://app.lemnity.ru/api'
 }
 
 export const findEmbedScript = () => {
@@ -15,7 +34,7 @@ export const findEmbedScript = () => {
     document.currentScript as HTMLScriptElement | null | undefined,
     ...Array.from(document.querySelectorAll<HTMLScriptElement>('script'))
   ]
-  const isProd = !getWindowOrigin().includes('localhost')
+  const isProd = !isLocalEnv()
   for (const script of scripts) {
     if (script?.src?.includes(isProd ? 'app.lemnity.ru/embed.js' : '/embed.js')) {
       return script
@@ -24,13 +43,16 @@ export const findEmbedScript = () => {
   return null
 }
 
-const buildPublicWidgetUrl = (widgetId: string) => {
-  const base = getApiBase()
+const buildPublicWidgetUrl = (widgetId: string, apiBase?: string) => {
+  const base = apiBase ?? getApiBase()
   return `${base}/public/widgets/${encodeURIComponent(widgetId)}`
 }
 
-export const fetchPublicWidget = async (widgetId: string): Promise<PublicWidgetResponse> => {
-  const res = await fetch(buildPublicWidgetUrl(widgetId), {
+export const fetchPublicWidget = async (
+  widgetId: string,
+  apiBase?: string
+): Promise<PublicWidgetResponse> => {
+  const res = await fetch(buildPublicWidgetUrl(widgetId, apiBase), {
     method: 'GET',
     credentials: 'omit'
   })

@@ -19,7 +19,11 @@ export const useWidgetActions = () => {
     const action = find(name, predicate) ?? find(name)
     if (!action) return false
     const handler = resolveHandler ? resolveHandler(action.id) : undefined
-    if (handler) handler({ ...ctx, payload: action.payload })
+    if (handler)
+      handler({
+        ...ctx,
+        payload: { ...(ctx.payload ?? {}), ...(action.payload ?? {}) }
+      })
     return Boolean(handler)
   }
 

@@ -199,7 +199,13 @@ const WheelSectorsField = () => {
             }
             const num = Number(trimmed)
             if (Number.isFinite(num) && num >= 0) {
-              handleUpdateSector(index, { chance: num })
+              const currentItems = wheelSectors.items ?? []
+              const sumOthers = currentItems.reduce((sum, item, i) => {
+                if (i === index) return sum
+                return sum + (item.chance ?? 0)
+              }, 0)
+              const next = Math.max(0, Math.min(num, 100 - sumOthers))
+              handleUpdateSector(index, { chance: next })
             }
           }}
           description="Оставьте поле пустым во всех бонусах для равномерного выпадения. Процент считается по формуле сумма всех полей ÷ количество бонусов. Посмотреть процент можно выше. Вероятность выпадения — 100%"

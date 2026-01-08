@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState, type CSSProperties } from 'react'
 import SvgIcon from '@/components/SvgIcon'
 import iconCross from '@/assets/icons/cross.svg'
 
@@ -9,7 +9,7 @@ type CloseButtonProps = {
   ariaLabel?: string
 }
 
-const baseStyle: React.CSSProperties = {
+const baseStyle: CSSProperties = {
   position: 'absolute',
   zIndex: 1,
   padding: 0,
@@ -29,13 +29,13 @@ const baseStyle: React.CSSProperties = {
   cursor: 'pointer'
 }
 
-const positionStyles: Record<'left' | 'right', React.CSSProperties> = {
+const positionStyles: Record<'left' | 'right', CSSProperties> = {
   left: { left: '16px' },
   right: { right: '16px' }
 }
 
 const CloseButton = ({ position, onClose, className, ariaLabel = 'Закрыть' }: CloseButtonProps) => {
-  const [hovered, setHovered] = React.useState(false)
+  const [hovered, setHovered] = useState(false)
   return (
     <button
       type="button"

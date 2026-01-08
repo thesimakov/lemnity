@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState } from 'react'
+import { useRef, useEffect, useMemo, useState, type FC } from 'react'
 import { Button } from '@heroui/button'
 import { Select, SelectItem } from '@heroui/select'
 import { useProjectsStore } from '@/stores/projectsStore'
@@ -8,7 +8,7 @@ import SvgIcon from '@/components/SvgIcon'
 import addIcon from '@/assets/icons/add.svg'
 import './ProjectList.css'
 
-const ProjectList: React.FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
+const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const topRef = useRef<HTMLDivElement | null>(null)
   const projects = useProjectsStore(s => s.projects)

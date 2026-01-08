@@ -24,6 +24,7 @@ html, body {
   box-sizing: border-box;
   background: transparent;
   height: 100%;
+  overflow: hidden;
 }
 
 *, *::before, *::after {
@@ -32,4 +33,17 @@ html, body {
 
 .lemnity-embed-root {
   display: contents;
+}
+
+@supports (-webkit-touch-callout: none) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  input:not([type='hidden']),
+  textarea,
+  select,
+  [contenteditable='true'] {
+    font-size: 16px !important;
+  }
 }
