@@ -1,7 +1,8 @@
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { getWidgetDefinition } from '../../registry'
+import type { ReactNode } from 'react'
 
-const MobilePreview = ({ children }: { children: React.ReactNode }) => {
+const MobilePreview = ({ children }: { children: ReactNode }) => {
   const settings = useWidgetSettingsStore(s => s.settings)
 
   if (!settings) {

@@ -3,7 +3,6 @@ import EmbedManager from './embedManager'
 import { findEmbedScript } from './utils'
 
 const manager = new EmbedManager()
-const currentScript = findEmbedScript()
 
 const api = {
   init: (options: InitOptions) => manager.init(options),
@@ -12,8 +11,9 @@ const api = {
 }
 
 const autoInitFromQuery = () => {
-  console.debug('[LemnityWidgets] autoInitFromQuery start', currentScript)
-  if (!currentScript) return
+  const currentScript = findEmbedScript()
+  console.debug('[LemnityWidgets] autoInitFromQuery start', currentScript?.src ?? null)
+  if (!currentScript?.src) return
   try {
     const url = new URL(currentScript.src)
     const widgetId = url.searchParams.get('widgetId')

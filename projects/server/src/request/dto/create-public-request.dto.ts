@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsArray, IsIn, IsOptional, IsString, MaxLength } from 'class-validator'
+import { IsArray, IsBoolean, IsIn, IsOptional, IsString, MaxLength } from 'class-validator'
 
 const devices = ['desktop', 'mobile_ios', 'mobile_android'] as const
 type Device = (typeof devices)[number]
@@ -32,6 +32,16 @@ export class CreatePublicRequestDto {
   @IsArray()
   @IsString({ each: true })
   prizes?: string[]
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  sectorId?: string
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  isWin?: boolean
 
   @ApiPropertyOptional({ enum: devices })
   @IsOptional()

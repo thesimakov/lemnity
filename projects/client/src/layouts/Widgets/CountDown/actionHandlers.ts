@@ -1,6 +1,6 @@
 import type { ActionHandler } from '../actions'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import { sendEvent } from '@/common/api/httpWrapper'
+import { sendEvent } from '@/common/api/publicApi'
 
 export const actionTimerHandlers: Record<string, ActionHandler> = {
   'actionTimer.submit': ctx => {

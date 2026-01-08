@@ -13,6 +13,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RequestService } from './request.service'
 import { CreatePublicRequestDto } from './dto/create-public-request.dto'
 import { RequestEntity } from './entities/request.entity'
+import { extractRequestOriginHost } from '../common/origin'
 
 @ApiTags('public-requests')
 @Controller('public/requests')
@@ -29,7 +30,11 @@ export class PublicRequestController {
       ''
 
     try {
-      return await this.requests.createPublic(body, { ip, userAgent: req.headers['user-agent'] })
+      return await this.requests.createPublic(body, {
+        ip,
+        userAgent: req.headers['user-agent'],
+        originHost: extractRequestOriginHost(req)
+      })
     } catch (e) {
       if (e instanceof HttpException) throw e
       throw new InternalServerErrorException('Failed to create request')

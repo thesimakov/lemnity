@@ -3,8 +3,9 @@ import { Button } from '@heroui/button'
 import type { PreviewMode } from '@/stores/widgetPreviewStore'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import type { ReactNode } from 'react'
 
-const WidgetPreviewLayout = ({ children }: { children: React.ReactNode }) => {
+const WidgetPreviewLayout = ({ children }: { children: ReactNode }) => {
   const mode = useWidgetPreviewStore(s => s.mode)
   const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
   const setMode = useWidgetPreviewStore(s => s.setMode)

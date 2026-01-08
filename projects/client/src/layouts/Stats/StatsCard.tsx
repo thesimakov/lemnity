@@ -1,4 +1,4 @@
-import React from 'react'
+import { type FC } from 'react'
 import SvgIcon from '../../components/SvgIcon'
 
 interface StatsCardProps {
@@ -18,7 +18,7 @@ interface StatsCardProps {
   }
 }
 
-const StatsCard: React.FC<StatsCardProps> = ({
+const StatsCard: FC<StatsCardProps> = ({
   title,
   amount,
   currency,

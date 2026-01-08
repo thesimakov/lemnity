@@ -1,4 +1,4 @@
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import styles from './embed.css?inline'
@@ -45,9 +45,45 @@ class EmbedManager {
   private interactiveRect: { left: number; top: number; width: number; height: number; padding?: number } | null = null
   private pointerLock = false
   private lastClipPath: string | null = null
+  private hasVisualViewportListeners = false
+  private resizeRaf = 0
   
+  private getViewportMetrics() {
+    const vv = window.visualViewport
+    const scale = vv?.scale ?? 1
+    const isScaleStable = Math.abs(scale - 1) < 0.01
+    if (vv && isScaleStable) {
+      return {
+        width: Math.ceil(vv.width),
+        height: Math.ceil(vv.height),
+        offsetLeft: Math.round(vv.offsetLeft),
+        offsetTop: Math.round(vv.offsetTop)
+      }
+    }
+    return {
+      width: Math.ceil(window.innerWidth),
+      height: Math.ceil(window.innerHeight),
+      offsetLeft: 0,
+      offsetTop: 0
+    }
+  }
+
+  private syncFrameSize() {
+    if (!this.container) return
+    const { width, height, offsetLeft, offsetTop } = this.getViewportMetrics()
+    if (!width || !height) return
+    this.container.style.width = `${width}px`
+    this.container.style.height = `${height}px`
+    this.container.style.left = `${offsetLeft}px`
+    this.container.style.top = `${offsetTop}px`
+  }
+
   private handleResize = () => {
-    this.syncFrameInteractivity(true)
+    cancelAnimationFrame(this.resizeRaf)
+    this.resizeRaf = requestAnimationFrame(() => {
+      this.syncFrameSize()
+      this.syncFrameInteractivity(true)
+    })
   }
 
   private handleMessage = (event: MessageEvent) => {
@@ -69,42 +105,62 @@ class EmbedManager {
 
   private handleChildMessage(data: unknown) {
     if (!data || typeof data !== 'object') return
-    const message = data as { type?: string; rect?: { left: number; top: number; width: number; height: number; padding?: number }; lock?: boolean }
+    const message = data as {
+      type?: string
+      rect?: { left: number; top: number; width: number; height: number; padding?: number }
+      lock?: boolean
+      level?: 'log' | 'info' | 'warn' | 'error' | 'debug'
+      args?: unknown[]
+    }
     if (message.type === 'interactive-region') {
       this.interactiveRect = message.rect ?? null
       this.pointerLock = Boolean(message.lock)
       this.syncFrameInteractivity(true)
     }
+    if (message.type === 'console') {
+      const level = message.level ?? 'log'
+      const args = Array.isArray(message.args) ? message.args : []
+      const fn: (...args: unknown[]) => void =
+        level === 'debug'
+          ? console.debug
+          : level === 'info'
+            ? console.info
+            : level === 'warn'
+              ? console.warn
+              : level === 'error'
+                ? console.error
+                : console.log
+      fn('[lemnity-embed/iframe]', ...args)
+    }
   }
 
   private syncFrameInteractivity(force = false) {
-    if (!this.iframe) return
+    if (!this.container) return
 
     const setClipPath = (clipPath: string | null) => {
       if (!clipPath) {
-        this.iframe!.style.clipPath = ''
-        ;(this.iframe!.style as CSSStyleDeclaration & { WebkitClipPath?: string }).WebkitClipPath = ''
+        this.container!.style.clipPath = ''
+        ;(this.container!.style as CSSStyleDeclaration & { WebkitClipPath?: string }).WebkitClipPath = ''
         this.lastClipPath = null
         return
       }
       if (this.lastClipPath === clipPath && !force) return
-      this.iframe!.style.clipPath = clipPath
-      ;(this.iframe!.style as CSSStyleDeclaration & { WebkitClipPath?: string }).WebkitClipPath = clipPath
+      this.container!.style.clipPath = clipPath
+      ;(this.container!.style as CSSStyleDeclaration & { WebkitClipPath?: string }).WebkitClipPath = clipPath
       this.lastClipPath = clipPath
     }
 
-    const vw = window.innerWidth
-    const vh = window.innerHeight
+    const { width: vw, height: vh } = this.getViewportMetrics()
     if (!vw || !vh) return
 
     if (this.pointerLock) {
-      this.iframe!.style.pointerEvents = 'auto'
+      this.container!.style.pointerEvents = 'auto'
       setClipPath('inset(0px 0px 0px 0px)')
       return
     }
 
     if (!this.interactiveRect) {
-      this.iframe!.style.pointerEvents = 'none'
+      this.container!.style.pointerEvents = 'none'
       setClipPath('inset(100% 100% 100% 100%)')
       return
     }
@@ -121,16 +177,16 @@ class EmbedManager {
     const rightInset = Math.max(0, vw - x2)
     const bottomInset = Math.max(0, vh - y2)
 
-    this.iframe!.style.pointerEvents = 'auto'
+    this.container!.style.pointerEvents = 'auto'
     setClipPath(`inset(${topInset}px ${rightInset}px ${bottomInset}px ${leftInset}px)`)
   }
 
   async init(options: InitOptions) {
     try {
-      const { widgetId } = options
+      const { widgetId, apiBase } = options
       await this.destroy()
 
-      const payload = await fetchPublicWidget(widgetId)
+      const payload = await fetchPublicWidget(widgetId, apiBase)
       if (!payload.enabled) throw new Error('Widget is disabled')
       if (!payload.config) throw new Error('Widget config is empty')
       const widgetType = (payload.config.widgetType as WidgetTypeEnum | undefined) ?? payload.type
@@ -144,27 +200,82 @@ class EmbedManager {
 
       Object.assign(iframe.style, {
         border: 'none',
-        width: '100vw',
-        height: '100vh',
-        position: 'fixed',
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
         inset: '0',
         background: 'transparent',
         colorScheme: 'light',
         zIndex: '2147483001',
-        pointerEvents: 'none',
-        clipPath: 'inset(100% 100% 100% 100%)'
+        pointerEvents: 'auto'
       })
       
       iframe.srcdoc = `<!DOCTYPE html>
         <html>
         <head>
           <meta name="color-scheme" content="light dark">
+          <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         </head>
         <body style="margin:0;padding:0;background:transparent;">
           <div id="lemnity-root-host"></div>
           <script>
             (() => {
+              const isIOS = (() => {
+                const ua = navigator.userAgent || ''
+                const platform = navigator.platform || ''
+                const iOS = /iP(hone|od|ad)/.test(platform)
+                const iPadOS = /Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1
+                return iOS || iPadOS
+              })()
+
+              if (isIOS) {
+                const existing = document.querySelector('meta[name="viewport"]')
+                const meta = existing || document.createElement('meta')
+                meta.setAttribute('name', 'viewport')
+                meta.setAttribute(
+                  'content',
+                  'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover'
+                )
+                if (!existing) document.head.appendChild(meta)
+              }
+
               const SCOPE = 'lemnity-embed'
+              const postMessage = payload => {
+                try {
+                  window.parent?.postMessage({ scope: SCOPE, ...payload }, '*')
+                } catch {
+                }
+              }
+              const safeStringify = value => {
+                try {
+                  if (typeof value === 'string') return value
+                  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') return String(value)
+                  if (value === null) return 'null'
+                  if (value === undefined) return 'undefined'
+                  if (value instanceof Error) return value.stack || value.message || 'Error'
+                  if (typeof value === 'function') return '[Function ' + (value.name || 'anonymous') + ']'
+                  if (typeof value === 'symbol') return value.toString()
+                  if (typeof value === 'object') return JSON.stringify(value)
+                  return String(value)
+                } catch {
+                  try {
+                    return String(value)
+                  } catch {
+                    return '[Unserializable]'
+                  }
+                }
+              }
+              ;(() => {
+                const levels = ['log', 'info', 'warn', 'error', 'debug']
+                const original = {}
+                for (const level of levels) {
+                  original[level] = console[level] ? console[level].bind(console) : () => {}
+                  console[level] = (...args) => {
+                    postMessage({ type: 'console', level, args: args.map(safeStringify) })
+                    original[level](...args)
+                  }
+                }
+              })()
               const selectors = [
                 'button',
                 'a[href]',
@@ -179,7 +290,7 @@ class EmbedManager {
               const getScopeRoot = () => document.getElementById('lemnity-theme-root') || document
 
               const post = (rect, lock = false) => {
-                window.parent?.postMessage({ scope: SCOPE, type: 'interactive-region', rect, lock }, '*')
+                postMessage({ type: 'interactive-region', rect, lock })
               }
 
               const toRect = el => {
@@ -247,10 +358,35 @@ class EmbedManager {
               ro.observe(document.documentElement)
 
               window.addEventListener('resize', schedule)
-              window.addEventListener('focus', schedule, true)
-              window.addEventListener('blur', schedule, true)
-              window.addEventListener('pointerenter', schedule, true)
-              window.addEventListener('pointerleave', schedule, true)
+              window.addEventListener('scroll', schedule, true)
+              if (isIOS) {
+                document.addEventListener(
+                  'focusin',
+                  e => {
+                    const t = e.target
+                    if (!(t instanceof HTMLElement)) return
+                    if (
+                      !t.matches(
+                        'input:not([type="hidden"]),textarea,select,[contenteditable="true"]'
+                      )
+                    )
+                      return
+                    const scale = window.visualViewport?.scale ?? 1
+                    if (Math.abs(scale - 1) >= 0.01) return
+                    setTimeout(() => {
+                      try {
+                        t.scrollIntoView({ block: 'center', inline: 'nearest' })
+                      } catch {
+                      }
+                    }, 60)
+                  },
+                  true
+                )
+              }
+              if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', schedule)
+                window.visualViewport.addEventListener('scroll', schedule)
+              }
 
               schedule()
             })();
@@ -270,47 +406,52 @@ class EmbedManager {
 
       window.addEventListener('message', this.handleMessage)
       window.addEventListener('resize', this.handleResize, { passive: true })
+      this.container = container
       this.iframe = iframe
       this.pointerLock = false
       this.interactiveRect = null
       this.lastClipPath = null
+      this.syncFrameSize()
       this.syncFrameInteractivity(true)
+
+      if (!this.hasVisualViewportListeners && window.visualViewport) {
+        this.hasVisualViewportListeners = true
+        window.visualViewport.addEventListener('resize', this.handleResize, { passive: true })
+        window.visualViewport.addEventListener('scroll', this.handleResize, { passive: true })
+      }
 
 
       const target = iframeDoc.body
 
-// 1) Styles inside iframe document
-ensureElement(iframeDoc.head, 'style[data-lemnity-embed]', (doc: Document) => {
-  const styleTag = doc.createElement('style')
-  styleTag.setAttribute('data-lemnity-embed', 'true')
-  styleTag.textContent = styles
-  return styleTag
-})
+      const styleTag = ensureElement(iframeDoc.head, 'style[data-lemnity-embed]', (doc: Document) => {
+        const el = doc.createElement('style')
+        el.setAttribute('data-lemnity-embed', 'true')
+        el.textContent = styles
+        return el
+      })
+      void styleTag
 
-// 2) Theme root
-const themeRoot = ensureElement(target, '#lemnity-theme-root', (doc: Document) => {
-  const div = doc.createElement('div')
-  div.id = 'lemnity-theme-root'
-  return div
-})
+      const themeRoot = ensureElement(target, '#lemnity-theme-root', (doc: Document) => {
+        const div = doc.createElement('div')
+        div.id = 'lemnity-theme-root'
+        return div
+      })
 
-// 3) React mount point
-const mountNode = ensureElement(themeRoot, '.lemnity-embed-root', (doc: Document) => {
-  const div = doc.createElement('div')
-  div.className = 'lemnity-embed-root'
-  return div
-})
+      const mountNode = ensureElement(themeRoot, '.lemnity-embed-root', (doc: Document) => {
+        const div = doc.createElement('div')
+        div.className = 'lemnity-embed-root'
+        return div
+      })
 
-// 4) Portal root
-const modalPortalRoot = ensureElement(themeRoot, '#lemnity-modal-root', (doc: Document) => {
-  const div = doc.createElement('div')
-  div.id = 'lemnity-modal-root'
-  return div
-})
-      // Рендерим React дерево в документ фрейма
+      const modalPortalRoot = ensureElement(themeRoot, '#lemnity-modal-root', (doc: Document) => {
+        const div = doc.createElement('div')
+        div.id = 'lemnity-modal-root'
+        return div
+      })
+
       const root = createRoot(mountNode)
       root.render(
-        <React.StrictMode>
+        <StrictMode>
           <UNSAFE_PortalProvider getContainer={() => modalPortalRoot}>
             <ModalPortalProvider value={modalPortalRoot}>
               <HeroUIProvider>
@@ -318,11 +459,10 @@ const modalPortalRoot = ensureElement(themeRoot, '#lemnity-modal-root', (doc: Do
               </HeroUIProvider>
             </ModalPortalProvider>
           </UNSAFE_PortalProvider>
-        </React.StrictMode>
+        </StrictMode>
       )
 
       this.root = root
-      this.container = container
       this.widgetId = widgetId
     } catch (error) {
       console.error('Error initializing embed manager', error)
@@ -331,18 +471,20 @@ const modalPortalRoot = ensureElement(themeRoot, '#lemnity-modal-root', (doc: Do
 
   async destroy(widgetId?: string) {
     if (widgetId && this.widgetId && widgetId !== this.widgetId) return
+    cancelAnimationFrame(this.resizeRaf)
     if (this.root) {
       this.root.unmount()
     }
     if (this.container) {
-      // Удаляем весь контейнер вместе с iframe
       if (this.container.parentElement) {
         this.container.parentElement.removeChild(this.container)
       }
     }
-    if (this.iframe) {
-      window.removeEventListener('message', this.handleMessage)
-      window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('message', this.handleMessage)
+    window.removeEventListener('resize', this.handleResize)
+    if (this.hasVisualViewportListeners && window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', this.handleResize)
+      window.visualViewport.removeEventListener('scroll', this.handleResize)
     }
     useWidgetSettingsStore.getState().reset()
     this.root = null
@@ -352,6 +494,7 @@ const modalPortalRoot = ensureElement(themeRoot, '#lemnity-modal-root', (doc: Do
     this.interactiveRect = null
     this.pointerLock = false
     this.lastClipPath = null
+    this.hasVisualViewportListeners = false
   }
 
   postMessage(message: unknown) {

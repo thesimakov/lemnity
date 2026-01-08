@@ -1,4 +1,4 @@
-import React from 'react'
+import { type FC } from 'react'
 import StatsCard from './StatsCard'
 import iconWallet from '../../assets/icons/wallet.svg'
 import iconBriefcase from '../../assets/icons/briefcase.svg'
@@ -61,7 +61,7 @@ const statsCards = [
   }
 ]
 
-const Stats: React.FC = () => {
+const Stats: FC = () => {
   const getPeriodSelector = () => {
     return (
       <Select

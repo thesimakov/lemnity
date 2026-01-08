@@ -1,7 +1,7 @@
 const STORAGE_WIDGET_ID = 'lemnity:test-platform:widgetId'
 const STORAGE_WIDGET_HISTORY = 'lemnity:test-platform:widgetHistory'
 
-export const DEFAULT_EMBED_SRC = 'http://localhost:5173/embed.js'
+export const DEFAULT_EMBED_SRC = '/embed.js'
 
 export function getCurrentWidgetId(): string {
   const params = new URLSearchParams(window.location.search)
@@ -26,8 +26,8 @@ export function parseWidgetId(input: string): string {
   if (!raw) return ''
 
   // Accept:
-  // - <script src="http://localhost:5173/embed.js?widgetId=..." ...></script>
-  // - http://localhost:5173/embed.js?widgetId=...
+  // - <script src="/embed.js?widgetId=..." ...></script>
+  // - /embed.js?widgetId=...
   // - widgetId itself
   const directId = raw.match(/^[a-z0-9]{8,}$/i)?.[0]
   if (directId) return directId
@@ -65,5 +65,4 @@ export function pushHistory(widgetId: string, limit = 12) {
   const next = [id, ...prev.filter(x => x !== id)].slice(0, limit)
   window.localStorage.setItem(STORAGE_WIDGET_HISTORY, JSON.stringify(next))
 }
-
 

@@ -25,13 +25,15 @@ type DynamicFieldsFormProps = {
   onSubmit: (values: FormFields) => void
   isMobile?: boolean
   noPadding?: boolean
+  submitDisabled?: boolean
 }
 
 const DynamicFieldsForm = ({
   centered = false,
   onSubmit,
   isMobile = false,
-  noPadding = false
+  noPadding = false,
+  submitDisabled = false
 }: DynamicFieldsFormProps) => {
   const { settings } = useFieldsSettings()
   const [agreementChecked, setAgreementChecked] = useState(false)
@@ -203,6 +205,7 @@ const DynamicFieldsForm = ({
           }}
           type="submit"
           isLoading={isSubmitting}
+          isDisabled={submitDisabled || isSubmitting}
           startContent={
             <SvgIcon
               src={iconReload}

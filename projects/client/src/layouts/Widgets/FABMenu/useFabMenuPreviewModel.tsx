@@ -4,7 +4,7 @@ import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { useFABMenuSettings } from './hooks'
 import type { FABMenuSectorItem } from './types'
 import { FAB_MENU_BUTTON_PRESETS } from './buttonLibrary'
-import { sendEvent } from '@/common/api/httpWrapper'
+import { sendEvent } from '@/common/api/publicApi'
 
 const FALLBACK_SECTORS: FABMenuSectorItem[] = FAB_MENU_BUTTON_PRESETS.slice(0, 9).map(
   (preset, index) => ({

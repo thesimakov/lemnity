@@ -4,6 +4,14 @@ import cookieParser from 'cookie-parser'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import type { NextFunction, Request, Response } from 'express'
 
+type CorsOptions = {
+  origin?: string | boolean
+  credentials?: boolean
+  exposedHeaders?: string[]
+  preflightContinue?: boolean
+  optionsSuccessStatus?: number
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
@@ -35,22 +43,29 @@ async function bootstrap() {
     }
   }
 
-  app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: boolean) => void
-    ) => {
-      if (!origin) return callback(null, true)
-      if (explicitFrontendOrigins.includes(origin)) return callback(null, true)
-      if (!isProd && isAllowedDevOrigin(origin)) return callback(null, true)
-      return callback(null, false)
-    },
-    credentials: true,
-    exposedHeaders: ['Set-Cookie'],
-    // Let Nest/Express handle OPTIONS automatically with 204 instead of
-    // forwarding to route handlers (which can return 404 for preflights).
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+  app.enableCors((req: Request, callback: (err: Error | null, options?: CorsOptions) => void) => {
+    const path = req.originalUrl ?? req.url ?? ''
+    if (path.startsWith('/api/public')) {
+      callback(null, {
+        origin: '*',
+        credentials: false,
+        preflightContinue: false,
+        optionsSuccessStatus: 204
+      })
+      return
+    }
+
+    const origin = req.header('Origin')
+    const allow =
+      !origin || explicitFrontendOrigins.includes(origin) || (!isProd && isAllowedDevOrigin(origin))
+
+    callback(null, {
+      origin: allow ? (origin ?? true) : false,
+      credentials: true,
+      exposedHeaders: ['Set-Cookie'],
+      preflightContinue: false,
+      optionsSuccessStatus: 204
+    })
   })
   app.use('/api/public', (req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Origin', '*')
