@@ -90,11 +90,15 @@ export function createHttpServer(opts: {
           return writeJson(res, 400, { ok: false, error: 'message is required' });
         }
 
+        const exchange = (body.exchange ?? '').trim();
+        const queue = (body.queue ?? '').trim() || config.defaultQueue;
+        const routingKey = (body.routingKey ?? '').trim() || config.defaultRoutingKey;
+
         const publishBody: PublishBody = {
           message,
-          queue: body.queue,
-          exchange: body.exchange,
-          routingKey: body.routingKey,
+          queue,
+          exchange,
+          routingKey,
           persistent: body.persistent,
           bufferWhenUnavailable: body.bufferWhenUnavailable,
         };
@@ -105,7 +109,13 @@ export function createHttpServer(opts: {
           if (publishBody.bufferWhenUnavailable) {
             const accepted = bufferPublish({ maxOutboxSize: config.maxOutboxSize }, state, publishBody);
             if (accepted) void scheduleReconnect();
-            return writeJson(res, accepted ? 202 : 503, { ok: accepted, buffered: accepted });
+            return writeJson(res, accepted ? 202 : 503, {
+              ok: accepted,
+              buffered: accepted,
+              queue,
+              exchange: exchange || null,
+              routingKey,
+            });
           }
           return writeJson(res, 503, { ok: false });
         }
@@ -127,14 +137,20 @@ export function createHttpServer(opts: {
               },
             },
           );
-          return writeJson(res, 202, { ok: true });
+          return writeJson(res, 202, { ok: true, confirmed: true, queue, exchange: exchange || null, routingKey });
         } catch (err) {
           onError(err);
           await safeClose();
           if (publishBody.bufferWhenUnavailable) {
             const accepted = bufferPublish({ maxOutboxSize: config.maxOutboxSize }, state, publishBody);
             if (accepted) void scheduleReconnect();
-            return writeJson(res, accepted ? 202 : 503, { ok: accepted, buffered: accepted });
+            return writeJson(res, accepted ? 202 : 503, {
+              ok: accepted,
+              buffered: accepted,
+              queue,
+              exchange: exchange || null,
+              routingKey,
+            });
           }
           return writeJson(res, 503, { ok: false });
         }

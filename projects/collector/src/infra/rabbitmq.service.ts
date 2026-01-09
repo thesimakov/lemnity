@@ -53,7 +53,10 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
     };
   }
 
-  async publish(message: unknown, opts?: { bufferWhenUnavailable?: boolean }) {
+  async publish(
+    message: unknown,
+    opts?: { bufferWhenUnavailable?: boolean },
+  ): Promise<{ ok: boolean; status: number; error: string | null }> {
     try {
       const res = await fetch(`${this.gatewayUrl}/publish`, {
         method: 'POST',
@@ -68,12 +71,13 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
       });
 
       const ok = res.status >= 200 && res.status < 300;
-      if (!ok) this.lastError = `Gateway publish failed (${res.status})`;
+      const error = ok ? null : `Gateway publish failed (${res.status})`;
+      if (error) this.lastError = error;
       await this.refreshStatus();
-      return ok;
+      return { ok, status: res.status, error };
     } catch (err) {
       this.handleCriticalError(err);
-      return false;
+      return { ok: false, status: 0, error: this.lastError };
     }
   }
 
