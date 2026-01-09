@@ -111,7 +111,7 @@ export function createHttpServer(opts: {
         }
 
         try {
-          const ok = await sendToRabbit(
+          await sendToRabbit(
             { defaultQueue: config.defaultQueue, defaultRoutingKey: config.defaultRoutingKey },
             ch as amqp.Channel,
             publishBody,
@@ -127,7 +127,7 @@ export function createHttpServer(opts: {
               },
             },
           );
-          return writeJson(res, ok ? 202 : 503, { ok });
+          return writeJson(res, 202, { ok: true });
         } catch (err) {
           onError(err);
           await safeClose();

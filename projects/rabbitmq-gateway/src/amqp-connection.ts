@@ -28,7 +28,7 @@ export function createAmqpConnectionManager(opts: {
 
     try {
       const conn = await amqp.connect(config.rabbitUrl);
-      const ch = await conn.createChannel();
+      const ch = await conn.createConfirmChannel();
 
       conn.on('error', (err) => onError(err));
       conn.on('close', () => {
@@ -48,6 +48,7 @@ export function createAmqpConnectionManager(opts: {
     } catch (err) {
       onError(err);
       await safeClose();
+      void scheduleReconnect();
     }
   }
 

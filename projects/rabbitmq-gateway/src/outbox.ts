@@ -3,6 +3,10 @@ import type { GatewayConfig } from './config';
 import type { GatewayState } from './state';
 import type { PublishBody } from './types';
 
+async function waitForConfirms(ch: amqp.Channel) {
+  await (ch as unknown as amqp.ConfirmChannel).waitForConfirms();
+}
+
 export async function sendToRabbit(
   config: Pick<GatewayConfig, 'defaultQueue' | 'defaultRoutingKey'>,
   ch: amqp.Channel,
@@ -16,10 +20,16 @@ export async function sendToRabbit(
 
   if (exchange) {
     await ch.assertExchange(exchange, 'topic', { durable: true });
-    return ch.publish(exchange, routingKey, payload, { persistent });
+    await ch.assertQueue(queue, { durable: true });
+    await ch.bindQueue(queue, exchange, routingKey);
+    const ok = ch.publish(exchange, routingKey, payload, { persistent });
+    await waitForConfirms(ch);
+    return ok;
   }
   await ch.assertQueue(queue, { durable: true });
-  return ch.sendToQueue(queue, payload, { persistent });
+  const ok = ch.sendToQueue(queue, payload, { persistent });
+  await waitForConfirms(ch);
+  return ok;
 }
 
 export function bufferPublish(
