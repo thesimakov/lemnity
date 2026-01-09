@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { ClickhouseService } from '../infra/clickhouse.service'
 import { InternalTokenGuard } from '../auth/internal-token.guard'
 import type { CollectedEvent } from './events.types'
@@ -13,6 +13,21 @@ export class InternalEventsController {
     const messages = extractMessages(body)
     const normalized = normalizeCollectedEvents(messages)
     const inserted = await this.clickhouse.insertEvents(normalized)
+
+    const subscriptionId = isRecord(body) && typeof body.subscriptionId === 'string' ? body.subscriptionId : undefined
+    console.log(
+      `4. collector(/collect from gateway): ${JSON.stringify({
+        subscriptionId: subscriptionId ?? null,
+        received: messages.length,
+        normalized: normalized.length,
+        inserted,
+        sampleEventNames: normalized.map((e) => e.event_name).slice(0, 10),
+      })}`,
+    )
+    
+    if (messages.length > 0 && inserted === 0) {
+      throw new BadRequestException({ ok: false, received: messages.length, normalized: normalized.length, inserted })
+    }
     return { ok: true, received: messages.length, normalized: normalized.length, inserted }
   }
 }

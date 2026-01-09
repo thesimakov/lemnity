@@ -19,6 +19,9 @@ const subscriptions = createSubscriptionManager({
   state,
   getChannel: () => state.channel,
   onError,
+  onDeliveryOk: () => {
+    state.lastError = null;
+  },
 });
 
 const amqpManager = createAmqpConnectionManager({

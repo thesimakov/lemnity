@@ -9,6 +9,15 @@ export class EventsController {
 
   @Post('collect')
   async collect(@Body() body: CreateEventDto, @Req() req: Request) {
+    console.log(
+      `1. collector(/collect ): ${JSON.stringify({
+        widget_id: body.widget_id,
+        event_name: body.event_name,
+        project_id: body.project_id ?? null,
+        session_id: body.session_id ?? null,
+      })}`,
+    );
+    
     const ip =
       (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ??
       req.socket.remoteAddress ??
