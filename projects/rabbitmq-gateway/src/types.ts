@@ -27,6 +27,8 @@ export type SubscriptionPublicInfo = {
   exchange: string | null;
   routingKey: string;
   webhookUrl: string;
+  headerKeys: string[];
+  hasCollectorTokenHeader: boolean;
   batchSize: number;
   flushIntervalMs: number;
   pending: number;

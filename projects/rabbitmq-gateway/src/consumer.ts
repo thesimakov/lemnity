@@ -9,8 +9,9 @@ export function createSubscriptionManager(opts: {
   state: Pick<GatewayState, 'subscriptions' | 'channelEpoch'>;
   getChannel: () => amqp.Channel | null;
   onError: (err: unknown) => void;
+  onDeliveryOk: () => void;
 }) {
-  const { config, state, getChannel, onError } = opts;
+  const { config, state, getChannel, onError, onDeliveryOk } = opts;
 
   function listIds() {
     return Object.keys(state.subscriptions);
@@ -34,6 +35,25 @@ export function createSubscriptionManager(opts: {
     const batch = s.pending.splice(0, s.pending.length);
     const messages = batch.map((x) => x.parsed);
 
+      const sampleEventNames = messages
+        .map((m) => {
+          if (!m || typeof m !== 'object' || Array.isArray(m)) return undefined;
+          const v = (m as Record<string, unknown>).event_name;
+          return typeof v === 'string' ? v : undefined;
+        })
+        .filter((v): v is string => typeof v === 'string' && v.length > 0)
+        .slice(0, 10);
+      console.log(
+        `3. gateway(/deliverBatch using webhookUrl): ${JSON.stringify({
+          subscriptionId: s.id,
+          queue: s.queue,
+          exchange: s.exchange,
+          routingKey: s.routingKey,
+          batchSize: batch.length,
+          sampleEventNames,
+        })}`,
+      );
+
     try {
       const res = await fetch(s.webhookUrl, {
         method: 'POST',
@@ -54,7 +74,9 @@ export function createSubscriptionManager(opts: {
         const text = await res.text().catch(() => '');
         throw new Error(`Webhook failed (${res.status}): ${text || res.statusText}`);
       }
+      console.log(`3. gateway(/deliverBatch - OK): ${JSON.stringify({ subscriptionId: s.id, status: res.status })}`);
 
+      onDeliveryOk();
       for (const msg of batch) {
         try {
           msg.channel.ack(msg.raw);
@@ -67,6 +89,7 @@ export function createSubscriptionManager(opts: {
     } catch (err) {
       s.failedBatches += 1;
       s.lastDeliveryError = err instanceof Error ? err.message : String(err);
+      console.log(`3. gateway(/deliverBatch - FAIL): ${JSON.stringify({ subscriptionId: s.id, error: s.lastDeliveryError })}`);
       onError(err);
       for (const msg of batch) {
         try {

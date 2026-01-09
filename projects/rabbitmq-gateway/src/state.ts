@@ -53,12 +53,16 @@ export function setCriticalError(state: GatewayState, err: unknown) {
 }
 
 export function toSubscriptionPublicInfo(s: SubscriptionState): SubscriptionPublicInfo {
+  const headerKeys = Object.keys(s.headers);
+  const hasCollectorTokenHeader = headerKeys.some((k) => k.toLowerCase() === 'x-collector-token');
   return {
     id: s.id,
     queue: s.queue,
     exchange: s.exchange,
     routingKey: s.routingKey,
     webhookUrl: s.webhookUrl,
+    headerKeys,
+    hasCollectorTokenHeader,
     batchSize: s.batchSize,
     flushIntervalMs: s.flushIntervalMs,
     pending: s.pending.length,

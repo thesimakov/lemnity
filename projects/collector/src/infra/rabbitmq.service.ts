@@ -73,6 +73,17 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
       const ok = res.status >= 200 && res.status < 300;
       const error = ok ? null : `Gateway publish failed (${res.status})`;
       if (error) this.lastError = error;
+
+      console.log(
+        `2. collector(/publish to rabbitmq-gateway): ${JSON.stringify({
+          ok,
+          status: res.status,
+          queue: this.queue,
+          exchange: this.exchange || null,
+          routingKey: this.routingKey,
+        })}`,
+      );
+
       await this.refreshStatus();
       return { ok, status: res.status, error };
     } catch (err) {

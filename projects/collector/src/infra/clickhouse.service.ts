@@ -82,6 +82,14 @@ export class ClickhouseService implements OnModuleInit {
       })),
       format: 'JSONEachRow',
     });
+
+    console.log(
+      `5. collector(/insertEvents into clickhouse): ${JSON.stringify({
+        inserted: events.length,
+        sampleEventNames: events.map((e) => e.event_name).slice(0, 10),
+      })}`,
+    );
+
     return events.length;
   }
 
