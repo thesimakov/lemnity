@@ -11,8 +11,9 @@ export class InternalEventsController {
   @Post('collect')
   async collect(@Body() body: unknown) {
     const messages = extractMessages(body)
-    await this.clickhouse.insertEvents(normalizeCollectedEvents(messages))
-    return { ok: true }
+    const normalized = normalizeCollectedEvents(messages)
+    const inserted = await this.clickhouse.insertEvents(normalized)
+    return { ok: true, received: messages.length, normalized: normalized.length, inserted }
   }
 }
 

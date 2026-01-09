@@ -14,13 +14,13 @@ export class EventsController {
       req.socket.remoteAddress ??
       '';
 
-    await this.eventsService.enqueueEvent({
+    const result = await this.eventsService.enqueueEvent({
       ...body,
       ip,
       user_agent: body.user_agent ?? req.headers['user-agent'],
       referrer: body.referrer ?? req.headers.referer
     });
 
-    return { status: 'accepted' };
+    return { status: 'accepted', ...result };
   }
 }

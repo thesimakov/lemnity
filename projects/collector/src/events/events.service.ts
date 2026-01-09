@@ -22,12 +22,14 @@ export class EventsService {
       event_time: event.event_time ?? new Date(),
     };
 
-    const publishOk = await this.rabbit.publish(normalizedEvent, {
+    const publish = await this.rabbit.publish(normalizedEvent, {
       bufferWhenUnavailable: this.fallback !== 'clickhouse',
     });
 
-    if (!publishOk && this.fallback === 'clickhouse') {
-      await this.clickhouse.insertEvents([normalizedEvent]);
+    if (!publish.ok && this.fallback === 'clickhouse') {
+      const inserted = await this.clickhouse.insertEvents([normalizedEvent]);
+      return { publish, fallback: { used: true, inserted } };
     }
+    return { publish, fallback: { used: false, inserted: 0 } };
   }
 }

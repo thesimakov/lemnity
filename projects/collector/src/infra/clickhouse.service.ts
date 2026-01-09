@@ -59,11 +59,11 @@ export class ClickhouseService implements OnModuleInit {
     });
   }
 
-  async insertEvents(events: CollectedEvent[]) {
+  async insertEvents(events: CollectedEvent[]): Promise<number> {
     const database = this.configService.get<string>('clickhouse.database');
     const table = this.configService.get<string>('clickhouse.eventsTable');
 
-    if (!events.length) return;
+    if (!events.length) return 0;
 
     await this.client.insert({
       table: `${database}.${table}`,
@@ -82,6 +82,7 @@ export class ClickhouseService implements OnModuleInit {
       })),
       format: 'JSONEachRow',
     });
+    return events.length;
   }
 
   async summary(filter: StatsFilterDto) {
