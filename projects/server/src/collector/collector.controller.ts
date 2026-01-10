@@ -55,16 +55,16 @@ export class CollectorController {
       req.socket.remoteAddress ??
       ''
 
-    const payload = {
-      ...body,
-      ip,
-      user_agent: body.user_agent ?? req.headers['user-agent'],
-      referrer: body.referrer ?? req.headers.referer
-    }
+    const payload = { ...body }
 
     const res = await fetch(`${this.collectorBaseUrl.replace(/\/+$/, '')}/collect`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': ip,
+        ...(req.headers['user-agent'] ? { 'user-agent': String(req.headers['user-agent']) } : {}),
+        ...(req.headers.referer ? { referer: String(req.headers.referer) } : {})
+      },
       body: JSON.stringify(payload)
     })
 

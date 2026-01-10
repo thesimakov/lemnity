@@ -13,6 +13,14 @@ export function createSubscriptionManager(opts: {
 }) {
   const { config, state, getChannel, onError, onDeliveryOk } = opts;
 
+  class WebhookError extends Error {
+    status: number;
+    constructor(status: number, message: string) {
+      super(`Webhook failed (${status}): ${message || 'no body'}`);
+      this.status = status;
+    }
+  }
+
   function listIds() {
     return Object.keys(state.subscriptions);
   }
@@ -35,24 +43,31 @@ export function createSubscriptionManager(opts: {
     const batch = s.pending.splice(0, s.pending.length);
     const messages = batch.map((x) => x.parsed);
 
-      const sampleEventNames = messages
-        .map((m) => {
-          if (!m || typeof m !== 'object' || Array.isArray(m)) return undefined;
-          const v = (m as Record<string, unknown>).event_name;
-          return typeof v === 'string' ? v : undefined;
-        })
-        .filter((v): v is string => typeof v === 'string' && v.length > 0)
-        .slice(0, 10);
-      console.log(
-        `3. gateway(/deliverBatch using webhookUrl): ${JSON.stringify({
-          subscriptionId: s.id,
-          queue: s.queue,
-          exchange: s.exchange,
-          routingKey: s.routingKey,
-          batchSize: batch.length,
-          sampleEventNames,
-        })}`,
-      );
+    const sampleEventNames = messages
+      .map((m) => {
+        if (!m || typeof m !== 'object' || Array.isArray(m)) return undefined;
+        const obj = m as Record<string, unknown>;
+        const v = obj.event_name ?? obj.eventName;
+        return typeof v === 'string' ? v : undefined;
+      })
+      .filter((v): v is string => typeof v === 'string' && v.length > 0)
+      .slice(0, 10);
+    const first = messages[0];
+    const sample =
+      first && typeof first === 'object' && !Array.isArray(first)
+        ? Object.keys(first as Record<string, unknown>).slice(0, 20)
+        : typeof first;
+    console.log(
+      `3. gateway(/deliverBatch using webhookUrl): ${JSON.stringify({
+        subscriptionId: s.id,
+        queue: s.queue,
+        exchange: s.exchange,
+        routingKey: s.routingKey,
+        batchSize: batch.length,
+        sampleEventNames,
+        sample,
+      })}`,
+    );
 
     try {
       const res = await fetch(s.webhookUrl, {
@@ -72,9 +87,11 @@ export function createSubscriptionManager(opts: {
 
       if (!res.ok) {
         const text = await res.text().catch(() => '');
-        throw new Error(`Webhook failed (${res.status}): ${text || res.statusText}`);
+        throw new WebhookError(res.status, text || res.statusText);
       }
+
       console.log(`3. gateway(/deliverBatch - OK): ${JSON.stringify({ subscriptionId: s.id, status: res.status })}`);
+
 
       onDeliveryOk();
       for (const msg of batch) {
@@ -89,11 +106,16 @@ export function createSubscriptionManager(opts: {
     } catch (err) {
       s.failedBatches += 1;
       s.lastDeliveryError = err instanceof Error ? err.message : String(err);
-      console.log(`3. gateway(/deliverBatch - FAIL): ${JSON.stringify({ subscriptionId: s.id, error: s.lastDeliveryError })}`);
+
+      console.log(
+        `3. gateway(/deliverBatch - FAIL): ${JSON.stringify({ subscriptionId: s.id, error: s.lastDeliveryError })}`,
+      );
+
       onError(err);
       for (const msg of batch) {
         try {
-          msg.channel.nack(msg.raw, false, true);
+          const requeue = err instanceof WebhookError ? !(err.status >= 400 && err.status < 500) : true;
+          msg.channel.nack(msg.raw, false, requeue);
         } catch (nackErr) {
           onError(nackErr);
         }

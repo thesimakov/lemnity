@@ -36,36 +36,10 @@ function normalizeCollectedEvents(messages: unknown[]): CollectedEvent[] {
   const out: CollectedEvent[] = []
 
   for (const rawItem of messages) {
-    const candidates = expandCandidateRecords(rawItem)
-    for (const item of candidates) {
-      const widget_id = typeof item.widget_id === 'string' ? item.widget_id : undefined
-      const event_name = typeof item.event_name === 'string' ? item.event_name : undefined
-      if (!widget_id || !event_name) continue
+    const item = normalizeSingleMessage(rawItem)
+    if (!item) continue
 
-      const event_time = parseDateLike(item.event_time)
-      const project_id = typeof item.project_id === 'string' ? item.project_id : undefined
-      const session_id = typeof item.session_id === 'string' ? item.session_id : undefined
-      const user_id = typeof item.user_id === 'string' ? item.user_id : undefined
-      const url = typeof item.url === 'string' ? item.url : undefined
-      const referrer = typeof item.referrer === 'string' ? item.referrer : undefined
-      const user_agent = typeof item.user_agent === 'string' ? item.user_agent : undefined
-      const ip = typeof item.ip === 'string' ? item.ip : undefined
-      const payload = isRecord(item.payload) ? (item.payload as Record<string, unknown>) : undefined
-
-      out.push({
-        event_time,
-        widget_id,
-        project_id,
-        session_id,
-        event_name,
-        user_id,
-        url,
-        referrer,
-        user_agent,
-        ip,
-        payload
-      })
-    }
+    out.push(item)
   }
 
   return out
@@ -108,43 +82,70 @@ function extractMessages(body: unknown): unknown[] {
   }
 }
 
-function expandCandidateRecords(value: unknown): Record<string, unknown>[] {
-  const out: Record<string, unknown>[] = []
-  const stack: unknown[] = [value]
+function normalizeSingleMessage(raw: unknown): CollectedEvent | null {
+  let cur: unknown = raw
   const seen = new WeakSet<object>()
 
-  while (stack.length) {
-    const cur = stack.pop()
-    if (cur === undefined) continue
-
+  while (true) {
     if (typeof cur === 'string') {
       const parsed = tryParseJson(cur)
-      if (parsed !== undefined) stack.push(parsed)
+      if (parsed === undefined) return null
+      cur = parsed
       continue
     }
 
-    if (Array.isArray(cur)) {
-      for (let i = cur.length - 1; i >= 0; i -= 1) stack.push(cur[i])
-      continue
-    }
+    if (!isRecord(cur)) return null
 
-    if (!isRecord(cur)) continue
-
-    if (typeof cur.widget_id === 'string' && typeof cur.event_name === 'string') {
-      out.push(cur)
-      continue
-    }
-
-    if (seen.has(cur)) continue
+    if (seen.has(cur)) return null
     seen.add(cur)
 
-    if (cur.message !== undefined) stack.push(cur.message)
-    if (cur.event !== undefined) stack.push(cur.event)
-    if (cur.data !== undefined) stack.push(cur.data)
-    if (cur.body !== undefined) stack.push(cur.body)
-  }
+    const widget_id = typeof cur.widget_id === 'string' && cur.widget_id.trim() ? cur.widget_id : undefined
+    const event_name = typeof cur.event_name === 'string' && cur.event_name.trim() ? cur.event_name : undefined
+    if (widget_id && event_name) {
+      const event_time = parseDateLike(cur.event_time)
+      const project_id = typeof cur.project_id === 'string' ? cur.project_id : undefined
+      const session_id = typeof cur.session_id === 'string' ? cur.session_id : undefined
+      const user_id = typeof cur.user_id === 'string' ? cur.user_id : undefined
+      const url = typeof cur.url === 'string' ? cur.url : undefined
+      const referrer = typeof cur.referrer === 'string' ? cur.referrer : undefined
+      const user_agent = typeof cur.user_agent === 'string' ? cur.user_agent : undefined
+      const ip = typeof cur.ip === 'string' ? cur.ip : undefined
+      const payload = isRecord(cur.payload) ? (cur.payload as Record<string, unknown>) : undefined
 
-  return out
+      return {
+        event_time,
+        widget_id,
+        project_id,
+        session_id,
+        event_name,
+        user_id,
+        url,
+        referrer,
+        user_agent,
+        ip,
+        payload,
+      }
+    }
+
+    if ('message' in cur) {
+      cur = cur.message
+      continue
+    }
+    if (cur.event !== undefined) {
+      cur = cur.event
+      continue
+    }
+    if (cur.data !== undefined) {
+      cur = cur.data
+      continue
+    }
+    if (cur.body !== undefined) {
+      cur = cur.body
+      continue
+    }
+
+    return null
+  }
 }
 
 function tryParseJson(value: string): unknown | undefined {
