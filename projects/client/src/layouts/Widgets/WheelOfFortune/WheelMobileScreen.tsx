@@ -11,6 +11,7 @@ import RewardContent from '../Common/RewardContent/RewardContent'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import { wheelActionHandlers } from './actionHandlers'
 import type { WidgetLeadFormValues } from '@/layouts/Widgets/registry'
+import type { PublicWheelSpinResponse } from '@/common/api/publicApi'
 
 type WheelMobileScreenProps = {
   variant?: 'preview' | 'embed'
@@ -35,6 +36,9 @@ const WheelMobileScreen = ({
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
   const winningSectorId = usePreviewRuntimeStore(
     s => (s.values['wheel.winningSectorId'] as string | null | undefined) ?? undefined
+  )
+  const wheelResult = usePreviewRuntimeStore(
+    s => s.values['wheel.result'] as PublicWheelSpinResponse | undefined
   )
   const spinStatus = usePreviewRuntimeStore(
     s => s.values['wheel.status'] as 'idle' | 'spinning' | 'locked' | undefined
@@ -123,7 +127,11 @@ const WheelMobileScreen = ({
     const content =
       screen === 'prize' ? (
         <div className="flex flex-1 items-center justify-center p-4">
-          <RewardContent companyLogo={companyLogo} onWin={fieldsSettings?.messages?.onWin} />
+          <RewardContent
+            companyLogo={companyLogo}
+            promo={wheelResult?.sector?.promo?.trim()}
+            onWin={fieldsSettings?.messages?.onWin}
+          />
         </div>
       ) : (
         <div className="flex flex-col gap-4 items-center">
@@ -173,7 +181,11 @@ const WheelMobileScreen = ({
         <CloseButton position="right" onClose={handleClose} />
         {screen === 'prize' ? (
           <div className="flex flex-1 items-center justify-center p-4">
-            <RewardContent companyLogo={companyLogo} onWin={fieldsSettings?.messages?.onWin} />
+            <RewardContent
+              companyLogo={companyLogo}
+              promo={wheelResult?.sector?.promo?.trim()}
+              onWin={fieldsSettings?.messages?.onWin}
+            />
           </div>
         ) : (
           <div className="flex flex-col gap-4 items-center">

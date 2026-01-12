@@ -5,12 +5,80 @@ import {
   fetchPublicWheelSpinResult,
   getCollectorSessionId,
   sendEvent,
-  sendPublicRequest
+  sendPublicRequest,
+  type PublicWheelSpinResult
 } from '@/common/api/publicApi'
+import { randomFloat, randomInt } from '@/common/utils/random'
+import type { SectorItem } from '@/stores/widgetSettings/types'
 
 const WHEEL_SPIN_RESULT_KEY_PREFIX = 'lemnity.wheel_of_fortune.spin_result.'
 
 const getSpinResultStorageKey = (widgetId: string) => `${WHEEL_SPIN_RESULT_KEY_PREFIX}${widgetId}`
+
+const pickWeightedIndex = (weights: number[], totalWeight: number): number => {
+  const randomValue = randomFloat(0, totalWeight)
+  let acc = 0
+  for (let i = 0; i < weights.length; i += 1) {
+    acc += weights[i]
+    if (randomValue < acc) return i
+  }
+  return Math.max(0, weights.length - 1)
+}
+
+const pickSectorIndex = (count: number, weights: number[], totalWeight: number): number => {
+  if (count <= 1) return 0
+  if (totalWeight <= 0) return randomInt(0, count)
+  return pickWeightedIndex(weights, totalWeight)
+}
+
+export const simulateWheelSpinResultFromSectors = (
+  items: SectorItem[]
+): PublicWheelSpinResult | null => {
+  const count = items.length
+  if (!count) return null
+
+  const weights: number[] = new Array(count)
+  const missing: number[] = []
+  let specifiedSum = 0
+
+  for (let i = 0; i < count; i += 1) {
+    const raw = items[i]?.chance
+    const chance = typeof raw === 'number' && Number.isFinite(raw) ? Math.max(0, raw) : undefined
+
+    if (typeof chance === 'number') {
+      weights[i] = chance
+      specifiedSum += chance
+    } else {
+      weights[i] = 0
+      missing.push(i)
+    }
+  }
+
+  if (missing.length > 0) {
+    const chance = Math.max(0, 100 - specifiedSum) / missing.length
+    for (const i of missing) weights[i] = chance
+  }
+
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0)
+  const selectedIndex = pickSectorIndex(count, weights, totalWeight)
+
+  const sector = items[selectedIndex]
+  if (!sector?.id) return null
+
+  return {
+    sectorId: sector.id,
+    isWin: Boolean(sector.isWin),
+    sector: {
+      id: sector.id,
+      mode: sector.mode,
+      text: sector.text,
+      icon: sector.icon,
+      promo: sector.promo,
+      chance: sector.chance,
+      isWin: sector.isWin
+    }
+  }
+}
 
 export const wheelActionHandlers: Record<string, ActionHandler> = {
   'wheel.spin': ctx => {
@@ -86,10 +154,6 @@ export const wheelActionHandlers: Record<string, ActionHandler> = {
         runtime.setValue('wheel.result', result)
 
         const prizes: string[] = []
-        if (result.sector.mode === 'text' && result.sector.text?.trim())
-          prizes.push(result.sector.text)
-        if (result.sector.mode === 'icon' && result.sector.icon?.trim())
-          prizes.push(result.sector.icon)
         if (result.sector.promo?.trim()) prizes.push(result.sector.promo)
 
         void sendPublicRequest({

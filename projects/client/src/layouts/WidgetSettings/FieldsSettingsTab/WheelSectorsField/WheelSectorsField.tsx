@@ -75,8 +75,7 @@ const WheelSectorsField = () => {
       isWin: false,
       textSize: 16,
       iconSize: 16,
-      textColor: '#ffffff',
-      chance: 0
+      textColor: '#ffffff'
     }
     addWheelSector(newSector)
   }
