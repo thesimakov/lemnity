@@ -221,14 +221,6 @@ const WheelSectorsField = () => {
         >
           Это выигрыш
         </Checkbox>
-        <div className="flex gap-3">
-          <Button radius="sm" className="bg-[#C8E9C7] text-[#138C26]">
-            Сохранить
-          </Button>
-          <Button radius="sm" className="bg-[#FFD3C8] text-[#C01010]">
-            Отменить
-          </Button>
-        </div>
       </div>
     ) : null
   }
