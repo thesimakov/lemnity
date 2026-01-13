@@ -42,12 +42,17 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   const renderForm = screen === 'main' || screen === 'panel'
   const handleAction = (values: WidgetLeadFormValues) => onSubmit(values)
   const submitDisabled = spinStatus === 'spinning' || spinStatus === 'locked'
+  const isEditPage =
+    typeof window !== 'undefined' && window.location.pathname.replace(/\/$/, '').endsWith('/edit')
+  const discountTrimmed = wheelResult?.sector?.text?.trim()
+  const promoTrimmed = wheelResult?.sector?.promo?.trim()
   const content = renderForm ? (
     <DynamicFieldsForm onSubmit={handleAction} submitDisabled={submitDisabled} />
   ) : (
     <RewardContent
       companyLogo={companyLogo}
-      promo={wheelResult?.sector?.promo?.trim()}
+      discountText={isEditPage ? discountTrimmed || 'Скидка 10%' : discountTrimmed}
+      promo={isEditPage ? promoTrimmed || 'PROMO-10' : promoTrimmed}
       onWin={fieldsSettings.messages?.onWin}
     />
   )

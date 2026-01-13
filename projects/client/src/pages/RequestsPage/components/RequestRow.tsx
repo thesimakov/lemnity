@@ -82,7 +82,7 @@ const RequestRow = ({ request, onStatusChange, onDelete }: RequestRowProps) => {
 
         <div className="px-4 py-4 text-xs min-w-0 break-words">{request.fullName ?? ''}</div>
 
-        <div className="px-4 py-3 flex flex-wrap items-center gap-2 min-w-0">
+        <div className="px-4 py-3 flex flex-wrap flex-col items-start gap-2 min-w-0">
           {request.prizes.map(prize => (
             <span
               key={prize}

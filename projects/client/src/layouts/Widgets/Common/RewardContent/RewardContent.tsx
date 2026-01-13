@@ -18,6 +18,7 @@ type ColorScheme = {
 
 export type RewardContentProps = {
   companyLogo?: { enabled?: boolean; url?: string }
+  discountText?: string
   promo?: string
   onWin?: {
     enabled?: boolean
@@ -36,11 +37,20 @@ export type RewardContentProps = {
   className?: string
 }
 
-const RewardContent = ({ companyLogo, promo, onWin, className }: RewardContentProps) => {
+const RewardContent = ({
+  companyLogo,
+  discountText: discountTextProp,
+  promo,
+  onWin,
+  className
+}: RewardContentProps) => {
   const { settings } = useFieldsSettings()
   const defaultOnWin = settings.messages?.onWin ?? onWin
   if (!defaultOnWin?.enabled) return null
-  const discountText = defaultOnWin.discount ?? 'Скидка 10%'
+  const resolvedDiscountText =
+    (typeof discountTextProp === 'string' ? discountTextProp.trim() : undefined) ??
+    defaultOnWin.discount ??
+    'Скидка 10%'
   const promoText = promo?.trim() || defaultOnWin.promo
   const scheme = defaultOnWin.colorScheme ?? {}
   const hasCustomScheme = Boolean(scheme.enabled && scheme.scheme === 'custom')
@@ -54,7 +64,7 @@ const RewardContent = ({ companyLogo, promo, onWin, className }: RewardContentPr
 
   return (
     <div
-      className={`flex flex-col gap-4 max-w-125 items-center justify-self-center ${className ?? ''}`}
+      className={`flex flex-col gap-4 w-88 min-w-fit items-center justify-self-center ${className ?? ''}`}
     >
       {companyLogo?.enabled && companyLogo.url && (
         <img src={companyLogo.url} alt="Company Logo" className="w-25 h-12.5 object-contain" />
@@ -64,7 +74,7 @@ const RewardContent = ({ companyLogo, promo, onWin, className }: RewardContentPr
         size={defaultOnWin.textSize}
         color={defaultOnWin.textColor ?? '#000000'}
       />
-      {discountText ? (
+      {resolvedDiscountText ? (
         <div
           className="h-10 w-full rounded-full font-medium flex items-center justify-center"
           style={{
@@ -73,11 +83,11 @@ const RewardContent = ({ companyLogo, promo, onWin, className }: RewardContentPr
             fontSize: defaultOnWin.discountSize ? `${defaultOnWin.discountSize}px` : undefined
           }}
         >
-          {discountText}
+          {resolvedDiscountText}
         </div>
       ) : null}
       <div
-        className="text-center opacity-90"
+        className="whitespace-pre-wrap text-center opacity-90"
         style={{
           fontSize: defaultOnWin.descriptionSize ? `${defaultOnWin.descriptionSize}px` : undefined,
           color: defaultOnWin.descriptionColor ?? '#000000'
