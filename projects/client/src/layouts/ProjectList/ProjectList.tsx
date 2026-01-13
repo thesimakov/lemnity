@@ -15,10 +15,14 @@ const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
   const [filter, setFilter] = useState<string>('all')
 
   const filteredProjects = useMemo(() => {
-    if (filter === 'all') return projects
+    // if (filter === 'all') return projects
     // пока фильтрация не реализована, возвращаем все проекты
-    return projects
-  }, [projects, filter])
+    return projects.sort((a, b) => {
+      const projectATimestamp = new Date(a.createdAt).getTime()
+      const projectBTimestamp = new Date(b.createdAt).getTime()
+      return projectBTimestamp - projectATimestamp
+    })
+  }, [projects/** , filter */])
 
   useEffect(() => {
     const root = scrollRef.current
