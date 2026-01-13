@@ -129,6 +129,7 @@ const WheelMobileScreen = ({
         <div className="flex flex-1 items-center justify-center p-4">
           <RewardContent
             companyLogo={companyLogo}
+            discountText={wheelResult?.sector?.text?.trim()}
             promo={wheelResult?.sector?.promo?.trim()}
             onWin={fieldsSettings?.messages?.onWin}
           />
@@ -183,6 +184,7 @@ const WheelMobileScreen = ({
           <div className="flex flex-1 items-center justify-center p-4">
             <RewardContent
               companyLogo={companyLogo}
+              discountText={wheelResult?.sector?.text?.trim()}
               promo={wheelResult?.sector?.promo?.trim()}
               onWin={fieldsSettings?.messages?.onWin}
             />
