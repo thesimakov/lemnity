@@ -12,7 +12,6 @@ export const createDefaultSector = (): SectorItem => {
     isWin: false,
     textSize: 16,
     iconSize: 16,
-    textColor: '#FFFFFF',
-    chance: 0
+    textColor: '#FFFFFF'
   }
 }

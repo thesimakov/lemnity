@@ -6,6 +6,7 @@ import { useWheelOfFortuneSettings } from '@/layouts/Widgets/WheelOfFortune/hook
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import type { WidgetLeadFormValues, WidgetPreviewScreen } from '../registry'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
+import type { PublicWheelSpinResponse } from '@/common/api/publicApi'
 
 type WheelDesktopScreenProps = {
   screen: WidgetPreviewScreen
@@ -19,6 +20,9 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   )
   const spinStatus = usePreviewRuntimeStore(
     s => s.values['wheel.status'] as 'idle' | 'spinning' | 'locked' | undefined
+  )
+  const wheelResult = usePreviewRuntimeStore(
+    s => s.values['wheel.result'] as PublicWheelSpinResponse | undefined
   )
   const staticDefaults = useWidgetStaticDefaults()
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
@@ -41,7 +45,11 @@ const WheelDesktopScreen = ({ screen, onSubmit }: WheelDesktopScreenProps) => {
   const content = renderForm ? (
     <DynamicFieldsForm onSubmit={handleAction} submitDisabled={submitDisabled} />
   ) : (
-    <RewardContent companyLogo={companyLogo} onWin={fieldsSettings.messages?.onWin} />
+    <RewardContent
+      companyLogo={companyLogo}
+      promo={wheelResult?.sector?.promo?.trim()}
+      onWin={fieldsSettings.messages?.onWin}
+    />
   )
 
   const renderWheel = (side: 'left' | 'right') => {

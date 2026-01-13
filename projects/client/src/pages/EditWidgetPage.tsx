@@ -19,6 +19,9 @@ import PreviewModal from '@/layouts/Widgets/Common/PreviewModal'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
 import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import { simulateWheelSpinResultFromSectors } from '@/layouts/Widgets/WheelOfFortune/actionHandlers'
+import type { WheelOfFortuneWidgetSettings } from '@/stores/widgetSettings/types'
 
 type TabKey = 'fields' | 'display' | 'integration'
 type TabDescriptor = { key: TabKey; label: string; visible: boolean }
@@ -156,9 +159,29 @@ const EditWidgetPage = () => {
   }
 
   const handleSubmit = useCallback(() => {
-    usePreviewRuntimeStore.getState().emit('wheel.spin')
+    const runtime = usePreviewRuntimeStore.getState()
+    const settings = useWidgetSettingsStore.getState().settings
+    const wheelSettings: WheelOfFortuneWidgetSettings | null =
+      settings?.widget?.type === WidgetTypeEnum.WHEEL_OF_FORTUNE
+        ? (settings.widget as WheelOfFortuneWidgetSettings)
+        : null
+
+    const previewResult = wheelSettings?.sectors?.items?.length
+      ? simulateWheelSpinResultFromSectors(wheelSettings.sectors.items)
+      : null
+    const isWin = Boolean(previewResult?.isWin ?? true)
+
+    if (previewResult) {
+      runtime.setValue('wheel.winningSectorId', previewResult.sectorId)
+      runtime.setValue('wheel.result', previewResult)
+      runtime.setValue('wheel.status', 'spinning')
+    }
+
+    runtime.emit('wheel.spin')
+
     setTimeout(() => {
-      setPreviewScreen('prize')
+      setPreviewScreen(isWin ? 'prize' : 'main')
+      runtime.setValue('wheel.status', 'idle')
     }, 5000)
   }, [setPreviewScreen])
 

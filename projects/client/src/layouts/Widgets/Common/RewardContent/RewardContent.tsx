@@ -18,6 +18,7 @@ type ColorScheme = {
 
 export type RewardContentProps = {
   companyLogo?: { enabled?: boolean; url?: string }
+  promo?: string
   onWin?: {
     enabled?: boolean
     text?: string
@@ -35,12 +36,12 @@ export type RewardContentProps = {
   className?: string
 }
 
-const RewardContent = ({ companyLogo, onWin, className }: RewardContentProps) => {
+const RewardContent = ({ companyLogo, promo, onWin, className }: RewardContentProps) => {
   const { settings } = useFieldsSettings()
   const defaultOnWin = settings.messages?.onWin ?? onWin
   if (!defaultOnWin?.enabled) return null
   const discountText = defaultOnWin.discount ?? 'Скидка 10%'
-  const promoText = defaultOnWin.promo ?? 'PROMO-10P'
+  const promoText = promo?.trim() || defaultOnWin.promo
   const scheme = defaultOnWin.colorScheme ?? {}
   const hasCustomScheme = Boolean(scheme.enabled && scheme.scheme === 'custom')
   const discountTextColor =

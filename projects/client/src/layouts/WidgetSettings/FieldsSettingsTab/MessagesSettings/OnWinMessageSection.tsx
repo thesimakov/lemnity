@@ -25,6 +25,7 @@ const OnWinMessageSection = () => {
     setOnWinPromoColors
   } = useFieldsSettings()
   const defaults = useWidgetStaticDefaults()
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
 
   const onWin = settings?.messages?.onWin ?? defaults?.fields.messages.onWin
 
@@ -195,7 +196,7 @@ const OnWinMessageSection = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      {widgetType !== 'WHEEL_OF_FORTUNE' && <div className="flex flex-col gap-2">
         <span className="text-sm font-medium text-gray-700">Скидка</span>
         <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-3">
           <div className="flex-1">
@@ -228,9 +229,9 @@ const OnWinMessageSection = () => {
             onChange={color => setOnWinDiscountWithColor(discountText, color)}
           />
         </div>
-      </div>
+      </div>}
 
-      <div className="flex flex-col gap-2">
+      {widgetType !== 'WHEEL_OF_FORTUNE' && <div className="flex flex-col gap-2">
         <span className="text-sm font-medium text-gray-700">Промокод</span>
         <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-3">
           <div className="flex-1">
@@ -263,7 +264,7 @@ const OnWinMessageSection = () => {
             onChange={color => setOnWinPromoWithColor(promoText, color)}
           />
         </div>
-      </div>
+      </div>}
 
       <SwitchableField
         classNames={{ title: 'font-normal' }}
