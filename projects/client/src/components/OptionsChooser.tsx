@@ -12,6 +12,7 @@ export type OptionItem = {
   tip?: string
   // Optional content shown BELOW the RadioGroup when this option is active
   below?: React.ReactNode
+  disabled?: boolean
 }
 
 export type OptionsChooserProps = {
@@ -83,6 +84,7 @@ const OptionsChooser = ({
                       'border-[#373737] group-data-[selected=true]:!border-[#373737] border-small',
                     control: 'bg-[#373737] w-3.5 h-3.5'
                   }}
+                  isDisabled={opt.disabled}
                 >
                   <div className="flex flex-row items-center gap-1">
                     {opt.label}{' '}

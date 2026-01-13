@@ -77,6 +77,7 @@ const FormSettings = () => {
             />
           ))
         }}
+        isDisabled={widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE}
       >
         {icons.map(opt => (
           <SelectItem key={opt.key} textValue={opt.key}>
@@ -161,7 +162,7 @@ const FormSettings = () => {
           }
         />
         {
-          <BorderedContainer className="border-2 border-[#E4E4E7] !p-0 min-w-max justify-center items-center">
+          <BorderedContainer className="border-2 border-[#E4E4E7] p-0! min-w-max justify-center items-center">
             {getIconSelector()}
           </BorderedContainer>
         }
@@ -171,16 +172,22 @@ const FormSettings = () => {
           label="Цвет кнопки"
         />
       </div>
-      <span className="text-black">Ссылка</span>
-      <Input
-        classNames={{ inputWrapper: 'h-14' }}
-        radius="sm"
-        variant="bordered"
-        placeholder="https://example.com"
-        type="url"
-        onChange={e => setFormLink(e.target.value)}
-        value={settings?.link ?? ''}
-      />
+
+      {widgetType !== WidgetTypeEnum.WHEEL_OF_FORTUNE && (
+        <>
+          <span className="text-black">Ссылка</span>
+          <Input
+            classNames={{ inputWrapper: 'h-14' }}
+            radius="sm"
+            variant="bordered"
+            placeholder="https://example.com"
+            type="url"
+            onChange={e => setFormLink(e.target.value)}
+            value={settings?.link ?? ''}
+          />
+        </>
+      )}
+
       <SwitchableField
         title="Окантовка формы"
         enabled={settings?.border?.enabled ?? true}
