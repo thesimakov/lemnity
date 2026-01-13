@@ -77,6 +77,7 @@ const FormSettings = () => {
             />
           ))
         }}
+        isDisabled={widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE}
       >
         {icons.map(opt => (
           <SelectItem key={opt.key} textValue={opt.key}>
@@ -161,7 +162,7 @@ const FormSettings = () => {
           }
         />
         {
-          <BorderedContainer className="border-2 border-[#E4E4E7] !p-0 min-w-max justify-center items-center">
+          <BorderedContainer className="border-2 border-[#E4E4E7] p-0! min-w-max justify-center items-center">
             {getIconSelector()}
           </BorderedContainer>
         }

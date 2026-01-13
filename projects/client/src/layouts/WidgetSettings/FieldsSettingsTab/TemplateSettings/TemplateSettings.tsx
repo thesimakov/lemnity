@@ -59,7 +59,11 @@ const TemplateSettings = () => {
   ]
 
   const windowFormatOptions: OptionItem[] = [
-    { key: 'sidePanel', label: 'Боковая панель' },
+    {
+      key: 'sidePanel',
+      label: 'Боковая панель',
+      disabled: widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE,
+    },
     { key: 'modalWindow', label: 'Модальное окно' }
   ]
 
