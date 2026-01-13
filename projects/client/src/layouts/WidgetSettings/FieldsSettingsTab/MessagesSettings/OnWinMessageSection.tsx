@@ -6,6 +6,7 @@ import ColorAccessory from '@/components/ColorAccessory'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import type { ColorScheme } from '@/stores/widgetSettings/types'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 const OnWinMessageSection = () => {
   const {
@@ -196,7 +197,7 @@ const OnWinMessageSection = () => {
         </div>
       </div>
 
-      {widgetType !== 'WHEEL_OF_FORTUNE' && (
+      {widgetType !== WidgetTypeEnum.WHEEL_OF_FORTUNE && (
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium text-gray-700">Скидка</span>
           <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-3">
@@ -235,7 +236,7 @@ const OnWinMessageSection = () => {
         </div>
       )}
 
-      {widgetType !== 'WHEEL_OF_FORTUNE' && (
+      {widgetType !== WidgetTypeEnum.WHEEL_OF_FORTUNE && (
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium text-gray-700">Промокод</span>
           <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-3">
