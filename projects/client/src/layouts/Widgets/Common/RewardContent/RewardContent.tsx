@@ -54,7 +54,7 @@ const RewardContent = ({ companyLogo, promo, onWin, className }: RewardContentPr
 
   return (
     <div
-      className={`flex flex-col gap-4 max-w-[300px] items-center justify-self-center ${className ?? ''}`}
+      className={`flex flex-col gap-4 max-w-125 items-center justify-self-center ${className ?? ''}`}
     >
       {companyLogo?.enabled && companyLogo.url && (
         <img src={companyLogo.url} alt="Company Logo" className="w-25 h-12.5 object-contain" />
