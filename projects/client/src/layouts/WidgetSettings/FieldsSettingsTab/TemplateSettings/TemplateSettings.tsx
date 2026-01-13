@@ -62,7 +62,7 @@ const TemplateSettings = () => {
     {
       key: 'sidePanel',
       label: 'Боковая панель',
-      disabled: widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE,
+      disabled: widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE
     },
     { key: 'modalWindow', label: 'Модальное окно' }
   ]

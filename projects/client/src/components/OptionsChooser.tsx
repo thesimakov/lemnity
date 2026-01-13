@@ -11,8 +11,8 @@ export type OptionItem = {
   accessory?: React.ReactNode
   tip?: string
   // Optional content shown BELOW the RadioGroup when this option is active
-  below?: React.ReactNode,
-  disabled?: boolean,
+  below?: React.ReactNode
+  disabled?: boolean
 }
 
 export type OptionsChooserProps = {

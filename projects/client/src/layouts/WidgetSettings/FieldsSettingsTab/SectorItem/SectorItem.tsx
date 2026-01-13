@@ -40,9 +40,7 @@ const SectorItem = ({
   const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
 
   const getRadioDot = (mode: Mode) => {
-    const isDisabled =
-      widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE
-      && mode === 'icon'
+    const isDisabled = widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE && mode === 'icon'
 
     return (
       <RadioGroup value={sector.mode} onValueChange={v => onModeChange(v as Mode)}>
@@ -92,9 +90,7 @@ const SectorItem = ({
         className={cn(
           'flex items-center gap-2 h-full rounded-md',
           'border px-2 border-[#D9D9E0]',
-          widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE
-            ? 'pointer-events-none'
-            : null
+          widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE ? 'pointer-events-none' : null
         )}
       >
         {getRadioDot('icon')}

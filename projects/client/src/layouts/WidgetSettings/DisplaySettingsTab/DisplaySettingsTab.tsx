@@ -16,13 +16,13 @@ const startShowingOptions: OptionItem[] = [
   {
     key: 'onClick',
     label: 'При нажатии на кнопку',
-    disabled: true,
+    disabled: true
   },
   {
     key: 'timer',
     label: 'Автоматически',
     tip: 'Запуск происходит спустя заданное время',
-    disabled: true,
+    disabled: true
   }
 ]
 
