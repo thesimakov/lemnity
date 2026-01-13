@@ -13,8 +13,17 @@ import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 import { uploadImage } from '@/api/upload'
 
 const startShowingOptions: OptionItem[] = [
-  { key: 'onClick', label: 'При нажатии на кнопку' },
-  { key: 'timer', label: 'Автоматически', tip: 'Запуск происходит спустя заданное время' }
+  {
+    key: 'onClick',
+    label: 'При нажатии на кнопку',
+    disabled: true
+  },
+  {
+    key: 'timer',
+    label: 'Автоматически',
+    tip: 'Запуск происходит спустя заданное время',
+    disabled: true
+  }
 ]
 
 const iconHideOptions: OptionItem[] = [

@@ -8,6 +8,9 @@ import iconTrophy from '@/assets/icons/trophy.svg'
 import iconSparkles from '@/assets/icons/sparkles.svg'
 import iconRocket from '@/assets/icons/rocket.svg'
 import type { SectorItem as SectorData, SectorItemMode as Mode } from '@stores/widgetSettings/types'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import { cn } from '@heroui/theme'
 type SectorItemProps = {
   sector: SectorData
   onModeChange: (mode: Mode) => void
@@ -34,8 +37,11 @@ const SectorItem = ({
   showValidation
 }: SectorItemProps) => {
   const invalidText = Boolean(showValidation && sector.mode === 'text' && validationMessage)
+  const widgetType = useWidgetSettingsStore(s => s.settings?.widgetType)
 
   const getRadioDot = (mode: Mode) => {
+    const isDisabled = widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE && mode === 'icon'
+
     return (
       <RadioGroup value={sector.mode} onValueChange={v => onModeChange(v as Mode)}>
         <Radio
@@ -45,6 +51,7 @@ const SectorItem = ({
             control: 'bg-[#373737] w-[14.5px] h-[14.5px]'
           }}
           value={mode}
+          isDisabled={isDisabled}
         ></Radio>
       </RadioGroup>
     )
@@ -80,7 +87,11 @@ const SectorItem = ({
     return (
       <div
         onClick={() => onModeChange('icon')}
-        className={`flex items-center gap-2 h-full rounded-md border px-2 border-[#D9D9E0]`}
+        className={cn(
+          'flex items-center gap-2 h-full rounded-md',
+          'border px-2 border-[#D9D9E0]',
+          widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE ? 'pointer-events-none' : null
+        )}
       >
         {getRadioDot('icon')}
         <Select
@@ -102,6 +113,7 @@ const SectorItem = ({
               />
             ))
           }}
+          isDisabled={widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE}
         >
           {prizeOptions.map(opt => (
             <SelectItem key={opt.key} textValue={opt.key}>
