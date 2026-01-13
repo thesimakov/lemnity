@@ -2,7 +2,6 @@ import EditableList, { type EditableListItem } from '@/components/EditableList'
 import { Checkbox } from '@heroui/checkbox'
 import { useCallback, useState } from 'react'
 import { Input } from '@heroui/input'
-import { Button } from '@heroui/button'
 import SectorItem from '../SectorItem/SectorItem'
 import type {
   SectorItem as SectorData,
