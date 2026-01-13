@@ -96,8 +96,8 @@ const Stats: FC = () => {
 
   return (
     <div className="flex flex-col justify-between h-full relative">
-      <div className='w-full h-full bg-white/85 absolute z-20 flex flex-col items-center justify-center'>
-        <p className='text-3xl font-light'>Скоро будет доступно!</p>
+      <div className="w-full h-full bg-white/85 absolute z-20 flex flex-col items-center justify-center">
+        <p className="text-3xl font-light">Скоро будет доступно!</p>
       </div>
       <div className="flex flex-row justify-between items-center w-full">
         <h2 className="text-xl font-roboto">Статистика</h2>
