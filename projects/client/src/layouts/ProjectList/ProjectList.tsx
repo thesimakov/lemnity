@@ -22,7 +22,7 @@ const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
       const projectBTimestamp = new Date(b.createdAt).getTime()
       return projectBTimestamp - projectATimestamp
     })
-  }, [projects/** , filter */])
+  }, [projects /** , filter */])
 
   useEffect(() => {
     const root = scrollRef.current
