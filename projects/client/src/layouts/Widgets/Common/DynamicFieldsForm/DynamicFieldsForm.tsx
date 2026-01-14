@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import iconReload from '@/assets/icons/reload.svg'
 import { Checkbox } from '@heroui/checkbox'
-import { useState } from 'react'
 import Timer from '../../CountDown/Timer'
 import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
@@ -16,6 +15,8 @@ type FormFields = {
   phone?: string
   email?: string
   name?: string
+  agreementChecked?: boolean
+  adsInfoChecked?: boolean
 }
 
 export type DynamicFieldsFormValues = FormFields
@@ -36,8 +37,6 @@ const DynamicFieldsForm = ({
   submitDisabled = false
 }: DynamicFieldsFormProps) => {
   const { settings } = useFieldsSettings()
-  const [agreementChecked, setAgreementChecked] = useState(false)
-  const [adsInfoChecked, setAdsInfoChecked] = useState(false)
   const fieldsSettings = useWidgetSettingsStore(s => s.settings?.fields)
   const { contacts, formTexts, agreement, adsInfo, companyLogo, border } = fieldsSettings ?? {}
   const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts ?? {}
@@ -95,6 +94,14 @@ const DynamicFieldsForm = ({
       shape.name = nameCfg.required ? base : base.optional().or(z.literal(''))
     } else {
       shape.name = z.string().optional().or(z.literal(''))
+    }
+
+    if (agreementEnabled) {
+      shape.agreementChecked = z.literal(true)
+    }
+
+    if (adsInfoEnabled) {
+      shape.adsInfoChecked = z.literal(true)
     }
     return z.object(shape)
   }
@@ -220,14 +227,14 @@ const DynamicFieldsForm = ({
         {agreementEnabled ? (
           <div className="flex flex-row">
             <Checkbox
-              isSelected={agreementChecked}
-              onValueChange={setAgreementChecked}
               classNames={{
                 wrapper:
                   'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
                 base: 'items-start max-w-full',
                 label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
               }}
+              {...register('agreementChecked')}
+              isInvalid={!!errors.agreementChecked}
             ></Checkbox>
             <span className="text-xs" style={{ color: agreementColor }}>
               Я даю{' '}
@@ -257,14 +264,14 @@ const DynamicFieldsForm = ({
         {adsInfoEnabled ? (
           <div className="flex flex-row">
             <Checkbox
-              isSelected={adsInfoChecked}
-              onValueChange={setAdsInfoChecked}
               classNames={{
                 wrapper:
                   'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
                 base: 'items-start max-w-full',
                 label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
               }}
+              {...register('adsInfoChecked')}
+              isInvalid={!!errors.adsInfoChecked}
             ></Checkbox>
             <a
               href={normalizeUrl(adsInfoPolicyUrl ?? '')}
