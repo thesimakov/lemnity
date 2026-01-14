@@ -15,7 +15,7 @@ const defaultMessages: FormMessages = {
     descriptionColor: '#FFFFFF',
     descriptionSize: 16,
     discount: '',
-    discountColor: '#FFFFFF',
+    discountColor: '#000000ff',
     discountSize: 16,
     promo: '',
     promoColor: '#FFFFFF',

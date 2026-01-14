@@ -154,7 +154,11 @@ export const wheelActionHandlers: Record<string, ActionHandler> = {
         runtime.setValue('wheel.result', result)
 
         const prizes: string[] = []
-        if (result.sector.promo?.trim()) prizes.push(result.sector.promo)
+        if (result.isWin) {
+          const { promo, text } = result.sector
+          if (text) prizes.push(text)
+          if (promo) prizes.push(promo)
+        }
 
         void sendPublicRequest({
           widgetId,
