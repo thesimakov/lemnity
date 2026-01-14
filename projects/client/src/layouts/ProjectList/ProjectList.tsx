@@ -1,28 +1,49 @@
 import { useRef, useEffect, useMemo, useState, type FC } from 'react'
 import { Button } from '@heroui/button'
 import { Select, SelectItem } from '@heroui/select'
-import { useProjectsStore } from '@/stores/projectsStore'
+import { useProjectsStore, type Project } from '@/stores/projectsStore'
 import ProjectRow from './ProjectRow'
 import ProjectListHeader from './ProjectListHeader'
 import SvgIcon from '@/components/SvgIcon'
 import addIcon from '@/assets/icons/add.svg'
 import './ProjectList.css'
+import { cn } from '@heroui/theme'
+
+type ProjectsFilterType = 'all' | 'active' | 'nonactive'
+type ProhjectsFilterItem = { key: ProjectsFilterType, label: string }[]
 
 const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const topRef = useRef<HTMLDivElement | null>(null)
   const projects = useProjectsStore(s => s.projects)
-  const [filter, setFilter] = useState<string>('all')
+  const [filter, setFilter] = useState<ProjectsFilterType>('all')
+
+  const sortByDateDesceningPredicate = (a: Project, b: Project) => {
+    const projectATimestamp = new Date(a.createdAt).getTime()
+    const projectBTimestamp = new Date(b.createdAt).getTime()
+    return projectBTimestamp - projectATimestamp
+  }
 
   const filteredProjects = useMemo(() => {
-    // if (filter === 'all') return projects
-    // пока фильтрация не реализована, возвращаем все проекты
-    return projects.sort((a, b) => {
-      const projectATimestamp = new Date(a.createdAt).getTime()
-      const projectBTimestamp = new Date(b.createdAt).getTime()
-      return projectBTimestamp - projectATimestamp
-    })
-  }, [projects /** , filter */])
+    switch (filter) {
+      case 'all':
+        return projects.sort(sortByDateDesceningPredicate)
+      
+      case 'active':
+        return projects
+          .filter((value) => {
+            return value.enabled
+          })
+          .sort(sortByDateDesceningPredicate)
+      
+      case 'nonactive':
+        return projects
+          .filter((value) => {
+            return !value.enabled
+          })
+          .sort(sortByDateDesceningPredicate)
+    }
+  }, [projects, filter])
 
   useEffect(() => {
     const root = scrollRef.current
@@ -52,15 +73,43 @@ const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
             size="sm"
             selectedKeys={[filter]}
             onSelectionChange={keys => {
-              const key = Array.from(keys)[0] as string
+              const key = Array.from(keys)[0] as ProjectsFilterType
               setFilter(key ?? 'all')
             }}
-            className="w-82"
             classNames={{
-              label: 'text-2xl'
+              label: 'text-2xl pr-0 mr-5.25',
+              trigger: cn(
+                'border border-[#E8E8E8] rounded-[6px] outline-none bg-white',
+                'px-3.5 shadow-none w-47 h-10 shrink-0'
+              ),
+              value: 'text-[16px]',
+              popoverContent: 'border-0 rounded-[6px] p-1.5',
             }}
+            items={[
+              { key: 'all', label: 'Все проекты' },
+              { key: 'active', label: 'Только активные' },
+              { key: 'nonactive', label: 'Черновики' },
+            ] as ProhjectsFilterItem}
           >
-            <SelectItem key="all">Все проекты</SelectItem>
+            {(item) => (
+              <SelectItem
+                key={item.key}
+                classNames={{
+                  selectedIcon: 'hidden',
+                  title: 'text-[16px]',
+                  base: cn(
+                    'h-8.75 min-w-fit mt-2 first:mt-0 px-4 rounded-[5px]',
+                    'border border-[#E8E8E8] transition-all duration-200',
+                    'data-[selectable=true]:focus:bg-white',
+                    'data-[selected=true]:border-[#915DC0]',
+                    'data-[hover=true]:bg-white',
+                    'data-[hover=true]:border-[#915DC0]'
+                  )
+                }}
+              >
+                {item.label}
+              </SelectItem>
+            )}
           </Select>
         </div>
         <Button
