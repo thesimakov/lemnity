@@ -10,7 +10,7 @@ import './ProjectList.css'
 import { cn } from '@heroui/theme'
 
 type ProjectsFilterType = 'all' | 'active' | 'nonactive'
-type ProhjectsFilterItem = { key: ProjectsFilterType; label: string }[]
+type ProjectsFilterItem = { key: ProjectsFilterType; label: string }[]
 
 const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -90,7 +90,7 @@ const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
                 { key: 'all', label: 'Все проекты' },
                 { key: 'active', label: 'Только активные' },
                 { key: 'nonactive', label: 'Черновики' }
-              ] as ProhjectsFilterItem
+              ] as ProjectsFilterItem
             }
           >
             {item => (
