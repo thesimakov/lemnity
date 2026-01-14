@@ -95,17 +95,10 @@ const ProjectRow = ({
           </div>
         </div>
 
-        <div
-          className={cn(
-            "col-span-8 grid grid-cols-4",
-            enabled && "relative"
-          )}
-        >
+        <div className={cn('col-span-8 grid grid-cols-4', enabled && 'relative')}>
           {enabled && (
             <div className="w-full h-full bg-white/85 absolute z-20 flex flex-col items-center justify-center">
-              <p className="text-3xl font-light">
-                Скоро будет доступно!
-              </p>
+              <p className="text-3xl font-light">Скоро будет доступно!</p>
             </div>
           )}
 
