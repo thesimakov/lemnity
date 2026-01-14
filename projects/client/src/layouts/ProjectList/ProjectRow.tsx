@@ -94,7 +94,11 @@ const ProjectRow = ({
           </div>
         </div>
 
-        <div className="col-span-8 grid grid-cols-4">
+        <div className="col-span-8 grid grid-cols-4 relative">
+          <div className="w-full h-full bg-white/85 absolute z-20 flex flex-col items-center justify-center">
+            <p className="text-3xl font-light">Скоро будет доступно!</p>
+          </div>
+
           <MetricCard
             value={visitors.desktop + visitors.mobile}
             desktop={visitors.desktop}
