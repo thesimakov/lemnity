@@ -10,7 +10,7 @@ import './ProjectList.css'
 import { cn } from '@heroui/theme'
 
 type ProjectsFilterType = 'all' | 'active' | 'nonactive'
-type ProhjectsFilterItem = { key: ProjectsFilterType, label: string }[]
+type ProhjectsFilterItem = { key: ProjectsFilterType; label: string }[]
 
 const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -28,17 +28,17 @@ const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
     switch (filter) {
       case 'all':
         return projects.sort(sortByDateDesceningPredicate)
-      
+
       case 'active':
         return projects
-          .filter((value) => {
+          .filter(value => {
             return value.enabled
           })
           .sort(sortByDateDesceningPredicate)
-      
+
       case 'nonactive':
         return projects
-          .filter((value) => {
+          .filter(value => {
             return !value.enabled
           })
           .sort(sortByDateDesceningPredicate)
@@ -83,15 +83,17 @@ const ProjectList: FC<{ onCreateClick?: () => void }> = ({ onCreateClick }) => {
                 'px-3.5 shadow-none w-47 h-10 shrink-0'
               ),
               value: 'text-[16px]',
-              popoverContent: 'border-0 rounded-[6px] p-1.5',
+              popoverContent: 'border-0 rounded-[6px] p-1.5'
             }}
-            items={[
-              { key: 'all', label: 'Все проекты' },
-              { key: 'active', label: 'Только активные' },
-              { key: 'nonactive', label: 'Черновики' },
-            ] as ProhjectsFilterItem}
+            items={
+              [
+                { key: 'all', label: 'Все проекты' },
+                { key: 'active', label: 'Только активные' },
+                { key: 'nonactive', label: 'Черновики' }
+              ] as ProhjectsFilterItem
+            }
           >
-            {(item) => (
+            {item => (
               <SelectItem
                 key={item.key}
                 classNames={{
