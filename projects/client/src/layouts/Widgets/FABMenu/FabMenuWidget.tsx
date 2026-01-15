@@ -75,11 +75,18 @@ const FabMenuWidget = ({
                 </button>
               )
             })}
-            <span
-              className={`mt-1 rounded-full bg-gray-200 px-4 py-1 text-xs font-medium text-gray-600 ${signatureClassName}`}
+
+            <a
+              href="https://lemnity.ru"
+              target="_blank"
+              className={cn(
+                'text-xs mt-1 rounded-full px-4 py-1',
+                'text-white bg-[#949494]',
+                signatureClassName
+              )}
             >
-              Сделано на lemnity
-            </span>
+              Создано на Lemnity
+            </a>
           </motion.div>
         ) : null}
       </AnimatePresence>
