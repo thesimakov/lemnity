@@ -329,7 +329,13 @@ const DynamicFieldsForm = ({
         )}
       </div>
 
-      <span className="text-xs leading-3 self-center">Создано на Lemnity</span>
+      <a
+        href="https://lemnity.ru"
+        target="_blank"
+        className="hover:underline text-xs leading-3 self-center"
+      >
+        Создано на Lemnity
+      </a>
     </form>
   )
 }
