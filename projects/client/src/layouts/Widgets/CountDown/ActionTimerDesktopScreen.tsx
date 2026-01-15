@@ -6,6 +6,8 @@ import Badge from './Badge'
 import RewardContent from '../Common/RewardContent/RewardContent'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import { useActionTimerSettings } from './hooks'
+import type { WidgetLeadFormValues } from '@/layouts/Widgets/registry'
+
 
 const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
@@ -30,13 +32,27 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const layoutClasses = `grid grid-cols-2 items-stretch w-full ${contentPosition === 'left' ? 'pl-6' : 'pr-6'}`
   const isPrize = screen === 'prize'
 
-  const handleAction: DesktopScreenProps['onSubmit'] = values => onSubmit(values)
+  const onDynamicFieldsFormSubmit = (values: WidgetLeadFormValues) => {
+    if (!settings.link) {
+      onSubmit(values)
+    }
+
+    if (settings.link && settings.link.length > 0) {
+      const tab = window.open(settings.link, '_blank')
+      
+      if (!tab) {
+        return
+      }
+
+      tab.focus()
+    }
+  }
 
   const form = (
     <div className="flex flex-col items-center h-full">
       <div className="flex flex-col items-center justify-between my-auto">
         <Badge className="mx-auto mb-3" />
-        <DynamicFieldsForm onSubmit={handleAction} noPadding centered />
+        <DynamicFieldsForm onSubmit={onDynamicFieldsFormSubmit} noPadding centered />
       </div>
     </div>
   )
@@ -48,21 +64,11 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   if (screen === 'panel') {
     return (
       <div className="grid grid-cols-1 gap-4 w-full h-full p-5">
-        {contentPosition === 'left' ? (
-          <>
-            {content}
-            <div className="bg-white p-5 shadow-sm">
-              <DynamicFieldsForm onSubmit={handleAction} centered />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="bg-white p-5 shadow-sm">
-              <DynamicFieldsForm onSubmit={handleAction} centered />
-            </div>
-            {content}
-          </>
-        )}
+        {contentPosition === 'left' && content}
+        <div className="bg-white p-5 shadow-sm">
+          <DynamicFieldsForm onSubmit={onDynamicFieldsFormSubmit} centered />
+        </div>
+        {contentPosition !== 'left' && content}
       </div>
     )
   }
