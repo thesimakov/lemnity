@@ -166,7 +166,7 @@ const DynamicFieldsForm = ({
       )}
 
       <div
-        className={`flex flex-col gap-3  rounded-xl ${borderEnabled ? 'border p-3' : 'p-0'}`}
+        className={`flex flex-col gap-3  rounded-xl ${borderEnabled ? 'border p-3.75' : 'p-0'}`}
         style={borderEnabled ? { borderColor } : undefined}
       >
         {description?.text && (
@@ -183,7 +183,7 @@ const DynamicFieldsForm = ({
             placeholder="Ваше имя"
             variant="bordered"
             classNames={{
-              inputWrapper: 'h-10 bg-white rounded-md border',
+              inputWrapper: 'h-10 bg-white rounded-2.5 border',
               input: 'text-black'
             }}
             {...register('name')}
@@ -221,7 +221,7 @@ const DynamicFieldsForm = ({
                 isInvalid={!!errors.phone}
                 errorMessage={errors.phone?.message}
                 classNames={{
-                  inputWrapper: 'h-10 bg-white rounded-md border',
+                  inputWrapper: 'h-10 bg-white rounded-2.5 border',
                   input: 'text-black'
                 }}
               />
@@ -234,7 +234,7 @@ const DynamicFieldsForm = ({
             placeholder="Ваш email"
             variant="bordered"
             classNames={{
-              inputWrapper: 'h-10 rounded-[6px] border bg-white',
+              inputWrapper: 'h-10 rounded-2.5 border bg-white',
               input: 'text-black'
             }}
             {...register('email')}
@@ -246,7 +246,7 @@ const DynamicFieldsForm = ({
         <Button
           color="primary"
           variant="solid"
-          className="w-full h-13.75 rounded-2.5 font-normal rounded-md"
+          className="w-full h-12.5 rounded-2.5 font-normal rounded-2.5"
           style={{
             color: button?.color,
             backgroundColor: button?.backgroundColor
