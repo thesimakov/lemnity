@@ -161,19 +161,19 @@ const EditWidgetPage = () => {
   const handleSubmit = useCallback(() => {
     const runtime = usePreviewRuntimeStore.getState()
     const settings = useWidgetSettingsStore.getState().settings
-    
+
     if (widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE) {
       const wheelSettings: WheelOfFortuneWidgetSettings | null =
         settings?.widget?.type === WidgetTypeEnum.WHEEL_OF_FORTUNE
           ? (settings.widget as WheelOfFortuneWidgetSettings)
           : null
-  
+
       const previewResult = wheelSettings?.sectors?.items?.length
         ? simulateWheelSpinResultFromSectors(wheelSettings.sectors.items)
         : null
       // Что за ересь
       const isWin = Boolean(previewResult?.isWin ?? true)
-  
+
       if (previewResult) {
         runtime.setValue('wheel.winningSectorId', previewResult.sectorId)
         runtime.setValue('wheel.result', previewResult)
@@ -181,7 +181,7 @@ const EditWidgetPage = () => {
       }
 
       runtime.emit('wheel.spin')
-      
+
       setTimeout(() => {
         setPreviewScreen(isWin ? 'prize' : 'main')
         runtime.setValue('wheel.status', 'idle')
@@ -192,7 +192,7 @@ const EditWidgetPage = () => {
       runtime.emit('actionTimer.submit')
       setPreviewScreen('prize')
     }
-  }, [setPreviewScreen])
+  }, [setPreviewScreen, widgetType])
 
   const breadcrumbs = (
     <Breadcrumbs size="lg" itemClasses={{ item: 'text-[#5951E5]', separator: 'text-[#5951E5]' }}>

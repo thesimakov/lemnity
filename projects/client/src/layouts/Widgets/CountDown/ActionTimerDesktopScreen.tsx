@@ -8,7 +8,6 @@ import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import { useActionTimerSettings } from './hooks'
 import type { WidgetLeadFormValues } from '@/layouts/Widgets/registry'
 
-
 const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
   const companyLogo = useWidgetSettingsStore(s => s?.settings?.fields?.companyLogo)
   const imageMode = useWidgetSettingsStore(
@@ -39,7 +38,7 @@ const ActionTimerDesktopScreen = ({ screen, onSubmit }: DesktopScreenProps) => {
 
     if (settings.link && settings.link.length > 0) {
       const tab = window.open(settings.link, '_blank')
-      
+
       if (!tab) {
         return
       }
