@@ -321,7 +321,7 @@ const DynamicFieldsForm = ({
         )}
       </div>
 
-      <span className='text-xs leading-3 self-center'>Создано на Lemnity</span>
+      <span className="text-xs leading-3 self-center">Создано на Lemnity</span>
     </form>
   )
 }
