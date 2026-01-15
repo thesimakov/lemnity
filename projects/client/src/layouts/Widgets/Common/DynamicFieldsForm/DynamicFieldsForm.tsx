@@ -1,15 +1,16 @@
-import SvgIcon from '@/components/SvgIcon'
+// import SvgIcon from '@/components/SvgIcon'
+// import iconReload from '@/assets/icons/reload.svg'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
-import iconReload from '@/assets/icons/reload.svg'
 import { Checkbox } from '@heroui/checkbox'
 import Timer from '../../CountDown/Timer'
 import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
+import { PatternFormat } from 'react-number-format'
 
 type FormFields = {
   phone?: string
@@ -109,6 +110,7 @@ const DynamicFieldsForm = ({
   const {
     register,
     handleSubmit,
+    control,
     setValue,
     getValues,
     formState: { errors, isSubmitting }
@@ -124,13 +126,14 @@ const DynamicFieldsForm = ({
       onSubmit={handleSubmit(values => onSubmit(values))}
       className={`flex flex-col gap-3 ${isMobile ? '' : noPadding ? '' : 'px-10'} w-full ${centered ? 'items-center justify-center' : ''}`}
     >
-      {logoEnabled && logoUrl ? (
+      {logoEnabled && logoUrl && (
         <img
           src={logoUrl}
           alt="Logo"
           className={`w-25 h-12.5 object-contain ${centered ? '' : 'object-left'}`}
         />
-      ) : null}
+      )}
+
       {title?.text && (
         <h2
           className={`text-2xl font-bold whitespace-pre-wrap ${centered ? 'text-center' : ''}`}
@@ -139,7 +142,8 @@ const DynamicFieldsForm = ({
           {title.text}
         </h2>
       )}
-      {settings?.countdown.enabled ? (
+
+      {settings?.countdown.enabled && (
         <>
           {timerSettings?.countdown.textBeforeCountdown && (
             <span
@@ -151,7 +155,8 @@ const DynamicFieldsForm = ({
           )}
           <Timer eventDate={timerSettings?.countdown.eventDate ?? new Date()} variant="mobile" />
         </>
-      ) : null}
+      )}
+
       <div
         className={`flex flex-col gap-3  rounded-xl ${borderEnabled ? 'border p-3' : 'p-0'}`}
         style={borderEnabled ? { borderColor } : undefined}
@@ -164,11 +169,15 @@ const DynamicFieldsForm = ({
             {description.text}
           </p>
         )}
-        {nameCfg?.enabled ? (
+
+        {nameCfg?.enabled && (
           <Input
             placeholder="Ваше имя"
             variant="bordered"
-            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+            classNames={{
+              inputWrapper: 'h-10 bg-white rounded-md border',
+              input: 'text-black'
+            }}
             {...register('name')}
             value={getValues('name')}
             onChange={e => {
@@ -178,34 +187,58 @@ const DynamicFieldsForm = ({
             isInvalid={!!errors.name}
             errorMessage={errors.name?.message}
           />
-        ) : null}
+        )}
 
-        {phoneCfg?.enabled ? (
-          <Input
-            placeholder="Номер телефона"
-            variant="bordered"
-            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
-            {...register('phone')}
-            isInvalid={!!errors.phone}
-            errorMessage={errors.phone?.message}
+        {phoneCfg?.enabled && (
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field: { ref, value, onChange, onBlur } }) => (
+              <PatternFormat
+                customInput={Input}
+                getInputRef={ref}
+                format="+7 (###) ###-##-##"
+                mask="_"
+                value={value?.startsWith('+7') ? value.substring(2) : value}
+                onBlur={onBlur}
+                onValueChange={values => {
+                  const cleanValue = values.value ? `+7${values.value}` : ''
+                  onChange(cleanValue)
+                }}
+                // Hero UI Input props
+                type="tel"
+                inputMode="numeric"
+                placeholder="Номер телефона"
+                variant="bordered"
+                isInvalid={!!errors.phone}
+                errorMessage={errors.phone?.message}
+                classNames={{
+                  inputWrapper: 'h-10 bg-white rounded-md border',
+                  input: 'text-black'
+                }}
+              />
+            )}
           />
-        ) : null}
+        )}
 
-        {emailCfg?.enabled ? (
+        {emailCfg?.enabled && (
           <Input
             placeholder="Ваш email"
             variant="bordered"
-            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+            classNames={{
+              inputWrapper: 'h-10 rounded-[6px] border bg-white',
+              input: 'text-black'
+            }}
             {...register('email')}
             isInvalid={!!errors.email}
             errorMessage={errors.email?.message}
           />
-        ) : null}
+        )}
 
         <Button
           color="primary"
           variant="solid"
-          className="w-full h-10 rounded-2.5 font-normal"
+          className="w-full h-13.75 rounded-2.5 font-normal rounded-md"
           style={{
             color: button?.color,
             backgroundColor: button?.backgroundColor
@@ -213,18 +246,18 @@ const DynamicFieldsForm = ({
           type="submit"
           isLoading={isSubmitting}
           isDisabled={submitDisabled || isSubmitting}
-          startContent={
-            <SvgIcon
-              src={iconReload}
-              size={'16px'}
-              className={`w-min text-[${button?.color || '#FFBF1A'}]`}
-            />
-          }
+          // startContent={
+          //   <SvgIcon
+          //     src={iconReload}
+          //     size={'16px'}
+          //     className={`w-min text-[${button?.color || '#FFBF1A'}]`}
+          //   />
+          // }
         >
           {button?.text || ''}
         </Button>
 
-        {agreementEnabled ? (
+        {agreementEnabled && (
           <div className="flex flex-row">
             <Checkbox
               classNames={{
@@ -235,7 +268,8 @@ const DynamicFieldsForm = ({
               }}
               {...register('agreementChecked')}
               isInvalid={!!errors.agreementChecked}
-            ></Checkbox>
+            />
+
             <span className="text-xs" style={{ color: agreementColor }}>
               Я даю{' '}
               <a
@@ -259,9 +293,9 @@ const DynamicFieldsForm = ({
               </a>
             </span>
           </div>
-        ) : null}
+        )}
 
-        {adsInfoEnabled ? (
+        {adsInfoEnabled && (
           <div className="flex flex-row">
             <Checkbox
               classNames={{
@@ -272,7 +306,8 @@ const DynamicFieldsForm = ({
               }}
               {...register('adsInfoChecked')}
               isInvalid={!!errors.adsInfoChecked}
-            ></Checkbox>
+            />
+
             <a
               href={normalizeUrl(adsInfoPolicyUrl ?? '')}
               target="_blank"
@@ -283,8 +318,10 @@ const DynamicFieldsForm = ({
               {adsInfoText}
             </a>
           </div>
-        ) : null}
+        )}
       </div>
+
+      <span className='text-xs leading-3 self-center'>Создано на Lemnity</span>
     </form>
   )
 }
