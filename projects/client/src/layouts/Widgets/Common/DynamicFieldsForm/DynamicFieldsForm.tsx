@@ -79,21 +79,19 @@ const DynamicFieldsForm = ({
       const base = z
         .string()
         .trim()
-        .min(12, "Некорректный номер телефона")
+        .min(12, 'Некорректный номер телефона')
         .refine(value => /^\+\d{11,}$/.test(value), {
           message: 'Формат телефона должен быть +79999999999'
         })
       shape.phone = phoneCfg.required ? base : base.optional().or(z.literal(''))
-    }
-    else {
+    } else {
       shape.phone = z.string().optional().or(z.literal(''))
     }
 
     if (emailCfg?.enabled) {
       const base = z.email('Некорректный email')
       shape.email = emailCfg.required ? base : base.optional().or(z.literal(''))
-    }
-    else {
+    } else {
       shape.email = z.string().optional().or(z.literal(''))
     }
 
@@ -103,8 +101,7 @@ const DynamicFieldsForm = ({
         .min(1, 'Имя обязательно')
         .regex(/^[a-zA-Zа-яА-Я]+$/, 'Имя должно содержать только буквы')
       shape.name = nameCfg.required ? base : base.optional().or(z.literal(''))
-    }
-    else {
+    } else {
       shape.name = z.string().optional().or(z.literal(''))
     }
 
