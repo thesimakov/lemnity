@@ -1,21 +1,23 @@
-import SvgIcon from '@/components/SvgIcon'
+// import SvgIcon from '@/components/SvgIcon'
+// import iconReload from '@/assets/icons/reload.svg'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { Button } from '@heroui/button'
 import { Input } from '@heroui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
-import iconReload from '@/assets/icons/reload.svg'
 import { Checkbox } from '@heroui/checkbox'
-import { useState } from 'react'
 import Timer from '../../CountDown/Timer'
 import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
+import { PatternFormat } from 'react-number-format'
 
 type FormFields = {
   phone?: string
   email?: string
   name?: string
+  agreementChecked?: boolean
+  adsInfoChecked?: boolean
 }
 
 export type DynamicFieldsFormValues = FormFields
@@ -36,8 +38,6 @@ const DynamicFieldsForm = ({
   submitDisabled = false
 }: DynamicFieldsFormProps) => {
   const { settings } = useFieldsSettings()
-  const [agreementChecked, setAgreementChecked] = useState(false)
-  const [adsInfoChecked, setAdsInfoChecked] = useState(false)
   const fieldsSettings = useWidgetSettingsStore(s => s.settings?.fields)
   const { contacts, formTexts, agreement, adsInfo, companyLogo, border } = fieldsSettings ?? {}
   const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts ?? {}
@@ -76,17 +76,25 @@ const DynamicFieldsForm = ({
   const buildSchema = () => {
     const shape: Record<string, z.ZodTypeAny> = {}
     if (phoneCfg?.enabled) {
-      const base = z.string().min(10, 'Некорректный номер телефона')
+      const base = z
+        .string()
+        .trim()
+        .min(12, 'Некорректный номер телефона')
+        .refine(value => /^\+\d{11,}$/.test(value), {
+          message: 'Формат телефона должен быть +79999999999'
+        })
       shape.phone = phoneCfg.required ? base : base.optional().or(z.literal(''))
     } else {
       shape.phone = z.string().optional().or(z.literal(''))
     }
+
     if (emailCfg?.enabled) {
       const base = z.email('Некорректный email')
       shape.email = emailCfg.required ? base : base.optional().or(z.literal(''))
     } else {
       shape.email = z.string().optional().or(z.literal(''))
     }
+
     if (nameCfg?.enabled) {
       const base = z
         .string()
@@ -96,12 +104,21 @@ const DynamicFieldsForm = ({
     } else {
       shape.name = z.string().optional().or(z.literal(''))
     }
+
+    if (agreementEnabled) {
+      shape.agreementChecked = z.literal(true)
+    }
+
+    if (adsInfoEnabled) {
+      shape.adsInfoChecked = z.literal(true)
+    }
     return z.object(shape)
   }
 
   const {
     register,
     handleSubmit,
+    control,
     setValue,
     getValues,
     formState: { errors, isSubmitting }
@@ -117,13 +134,14 @@ const DynamicFieldsForm = ({
       onSubmit={handleSubmit(values => onSubmit(values))}
       className={`flex flex-col gap-3 ${isMobile ? '' : noPadding ? '' : 'px-10'} w-full ${centered ? 'items-center justify-center' : ''}`}
     >
-      {logoEnabled && logoUrl ? (
+      {logoEnabled && logoUrl && (
         <img
           src={logoUrl}
           alt="Logo"
           className={`w-25 h-12.5 object-contain ${centered ? '' : 'object-left'}`}
         />
-      ) : null}
+      )}
+
       {title?.text && (
         <h2
           className={`text-2xl font-bold whitespace-pre-wrap ${centered ? 'text-center' : ''}`}
@@ -132,7 +150,8 @@ const DynamicFieldsForm = ({
           {title.text}
         </h2>
       )}
-      {settings?.countdown.enabled ? (
+
+      {settings?.countdown.enabled && (
         <>
           {timerSettings?.countdown.textBeforeCountdown && (
             <span
@@ -144,9 +163,10 @@ const DynamicFieldsForm = ({
           )}
           <Timer eventDate={timerSettings?.countdown.eventDate ?? new Date()} variant="mobile" />
         </>
-      ) : null}
+      )}
+
       <div
-        className={`flex flex-col gap-3  rounded-xl ${borderEnabled ? 'border p-3' : 'p-0'}`}
+        className={`flex flex-col gap-3  rounded-xl ${borderEnabled ? 'border p-3.75' : 'p-0'}`}
         style={borderEnabled ? { borderColor } : undefined}
       >
         {description?.text && (
@@ -157,11 +177,15 @@ const DynamicFieldsForm = ({
             {description.text}
           </p>
         )}
-        {nameCfg?.enabled ? (
+
+        {nameCfg?.enabled && (
           <Input
             placeholder="Ваше имя"
             variant="bordered"
-            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+            classNames={{
+              inputWrapper: 'h-10 bg-white rounded-2.5 border',
+              input: 'text-black'
+            }}
             {...register('name')}
             value={getValues('name')}
             onChange={e => {
@@ -171,34 +195,58 @@ const DynamicFieldsForm = ({
             isInvalid={!!errors.name}
             errorMessage={errors.name?.message}
           />
-        ) : null}
+        )}
 
-        {phoneCfg?.enabled ? (
-          <Input
-            placeholder="Номер телефона"
-            variant="bordered"
-            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
-            {...register('phone')}
-            isInvalid={!!errors.phone}
-            errorMessage={errors.phone?.message}
+        {phoneCfg?.enabled && (
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field: { ref, value, onChange, onBlur } }) => (
+              <PatternFormat
+                customInput={Input}
+                getInputRef={ref}
+                format="+7 (###) ###-##-##"
+                mask="_"
+                value={value?.startsWith('+7') ? value.substring(2) : value}
+                onBlur={onBlur}
+                onValueChange={values => {
+                  const cleanValue = values.value ? `+7${values.value}` : ''
+                  onChange(cleanValue)
+                }}
+                // Hero UI Input props
+                type="tel"
+                inputMode="numeric"
+                placeholder="Номер телефона"
+                variant="bordered"
+                isInvalid={!!errors.phone}
+                errorMessage={errors.phone?.message}
+                classNames={{
+                  inputWrapper: 'h-10 bg-white rounded-2.5 border',
+                  input: 'text-black'
+                }}
+              />
+            )}
           />
-        ) : null}
+        )}
 
-        {emailCfg?.enabled ? (
+        {emailCfg?.enabled && (
           <Input
             placeholder="Ваш email"
             variant="bordered"
-            classNames={{ inputWrapper: 'h-10 rounded-2.5 bg-white', input: 'text-black' }}
+            classNames={{
+              inputWrapper: 'h-10 rounded-2.5 border bg-white',
+              input: 'text-black'
+            }}
             {...register('email')}
             isInvalid={!!errors.email}
             errorMessage={errors.email?.message}
           />
-        ) : null}
+        )}
 
         <Button
           color="primary"
           variant="solid"
-          className="w-full h-10 rounded-2.5 font-normal"
+          className="w-full h-12.5 rounded-2.5 font-normal rounded-2.5"
           style={{
             color: button?.color,
             backgroundColor: button?.backgroundColor
@@ -206,29 +254,30 @@ const DynamicFieldsForm = ({
           type="submit"
           isLoading={isSubmitting}
           isDisabled={submitDisabled || isSubmitting}
-          startContent={
-            <SvgIcon
-              src={iconReload}
-              size={'16px'}
-              className={`w-min text-[${button?.color || '#FFBF1A'}]`}
-            />
-          }
+          // startContent={
+          //   <SvgIcon
+          //     src={iconReload}
+          //     size={'16px'}
+          //     className={`w-min text-[${button?.color || '#FFBF1A'}]`}
+          //   />
+          // }
         >
           {button?.text || ''}
         </Button>
 
-        {agreementEnabled ? (
+        {agreementEnabled && (
           <div className="flex flex-row">
             <Checkbox
-              isSelected={agreementChecked}
-              onValueChange={setAgreementChecked}
               classNames={{
                 wrapper:
                   'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
                 base: 'items-start max-w-full',
                 label: `text-xs opacity-90 items-start ${centered ? 'text-center' : ''}`
               }}
-            ></Checkbox>
+              {...register('agreementChecked')}
+              isInvalid={!!errors.agreementChecked}
+            />
+
             <span className="text-xs" style={{ color: agreementColor }}>
               Я даю{' '}
               <a
@@ -252,20 +301,21 @@ const DynamicFieldsForm = ({
               </a>
             </span>
           </div>
-        ) : null}
+        )}
 
-        {adsInfoEnabled ? (
+        {adsInfoEnabled && (
           <div className="flex flex-row">
             <Checkbox
-              isSelected={adsInfoChecked}
-              onValueChange={setAdsInfoChecked}
               classNames={{
                 wrapper:
                   'bg-white before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
                 base: 'items-start max-w-full',
                 label: `text-xs opacity-90 ${centered ? 'text-center' : ''}`
               }}
-            ></Checkbox>
+              {...register('adsInfoChecked')}
+              isInvalid={!!errors.adsInfoChecked}
+            />
+
             <a
               href={normalizeUrl(adsInfoPolicyUrl ?? '')}
               target="_blank"
@@ -276,8 +326,16 @@ const DynamicFieldsForm = ({
               {adsInfoText}
             </a>
           </div>
-        ) : null}
+        )}
       </div>
+
+      <a
+        href="https://lemnity.ru"
+        target="_blank"
+        className="hover:underline text-xs leading-3 self-center"
+      >
+        Создано на Lemnity
+      </a>
     </form>
   )
 }

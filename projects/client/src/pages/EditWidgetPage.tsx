@@ -161,29 +161,38 @@ const EditWidgetPage = () => {
   const handleSubmit = useCallback(() => {
     const runtime = usePreviewRuntimeStore.getState()
     const settings = useWidgetSettingsStore.getState().settings
-    const wheelSettings: WheelOfFortuneWidgetSettings | null =
-      settings?.widget?.type === WidgetTypeEnum.WHEEL_OF_FORTUNE
-        ? (settings.widget as WheelOfFortuneWidgetSettings)
+
+    if (widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE) {
+      const wheelSettings: WheelOfFortuneWidgetSettings | null =
+        settings?.widget?.type === WidgetTypeEnum.WHEEL_OF_FORTUNE
+          ? (settings.widget as WheelOfFortuneWidgetSettings)
+          : null
+
+      const previewResult = wheelSettings?.sectors?.items?.length
+        ? simulateWheelSpinResultFromSectors(wheelSettings.sectors.items)
         : null
+      // Что за ересь
+      const isWin = Boolean(previewResult?.isWin ?? true)
 
-    const previewResult = wheelSettings?.sectors?.items?.length
-      ? simulateWheelSpinResultFromSectors(wheelSettings.sectors.items)
-      : null
-    const isWin = Boolean(previewResult?.isWin ?? true)
+      if (previewResult) {
+        runtime.setValue('wheel.winningSectorId', previewResult.sectorId)
+        runtime.setValue('wheel.result', previewResult)
+        runtime.setValue('wheel.status', 'spinning')
+      }
 
-    if (previewResult) {
-      runtime.setValue('wheel.winningSectorId', previewResult.sectorId)
-      runtime.setValue('wheel.result', previewResult)
-      runtime.setValue('wheel.status', 'spinning')
+      runtime.emit('wheel.spin')
+
+      setTimeout(() => {
+        setPreviewScreen(isWin ? 'prize' : 'main')
+        runtime.setValue('wheel.status', 'idle')
+      }, 5000)
     }
 
-    runtime.emit('wheel.spin')
-
-    setTimeout(() => {
-      setPreviewScreen(isWin ? 'prize' : 'main')
-      runtime.setValue('wheel.status', 'idle')
-    }, 5000)
-  }, [setPreviewScreen])
+    if (widgetType === 'ACTION_TIMER') {
+      runtime.emit('actionTimer.submit')
+      setPreviewScreen('prize')
+    }
+  }, [setPreviewScreen, widgetType])
 
   const breadcrumbs = (
     <Breadcrumbs size="lg" itemClasses={{ item: 'text-[#5951E5]', separator: 'text-[#5951E5]' }}>

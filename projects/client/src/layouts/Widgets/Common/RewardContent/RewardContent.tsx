@@ -64,7 +64,7 @@ const RewardContent = ({
 
   return (
     <div
-      className={`flex flex-col gap-4 w-88 min-w-fit items-center justify-self-center ${className ?? ''}`}
+      className={`flex flex-col gap-4 w-88 min-w-125 items-center justify-self-center ${className ?? ''}`}
     >
       {companyLogo?.enabled && companyLogo.url && (
         <img src={companyLogo.url} alt="Company Logo" className="w-25 h-12.5 object-contain" />
