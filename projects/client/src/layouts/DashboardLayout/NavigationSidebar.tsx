@@ -15,6 +15,7 @@ import { useSidebarStore } from '@/stores/sidebarStore'
 import { Button } from '@heroui/button'
 import { useLocation } from 'react-router-dom'
 import { getNewRequestsCount } from '@/services/requests'
+import { cn } from '@heroui/theme'
 
 interface MenuItem {
   key: string
@@ -69,15 +70,14 @@ const NavigationSidebar = () => {
     () => [
       {
         key: 'projects',
-        // icon: <img src={iconProjects} alt="Проекты" className="w-5 h-5" />,
-      icon:
-        <div className='w-5.5 h-5.5'>
-          <SvgIcon
-            src={iconProjects}
-            size={'22px'}
-            className={'text-black '}
-          />
-        </div>,
+        icon:
+          <div className='w-5.5 h-5.5'>
+            <SvgIcon
+              src={iconProjects}
+              size={'22px'}
+              className={'text-black '}
+            />
+          </div>,
         label: 'Проекты',
         href: '/'
       },
@@ -89,30 +89,28 @@ const NavigationSidebar = () => {
       },
       {
         key: 'requests',
-        // icon: <img src={iconSuccessList} alt="Заявки" className="w-5 h-5" />,
-      icon:
-        <div className='w-5.5 h-5.5'>
-          <SvgIcon
-            src={iconSuccessList}
-            size={'22px'}
-            className={'text-black '}
-          />
-        </div>,
+        icon:
+          <div className='w-5.5 h-5.5'>
+            <SvgIcon
+              src={iconSuccessList}
+              size={'22px'}
+              className={'text-black '}
+            />
+          </div>,
         label: 'Заявки',
         badge: newRequestsCount && newRequestsCount > 0 ? newRequestsCount : undefined,
         href: '/requests'
       },
       {
         key: 'payment',
-        // icon: <img src={iconWallet} alt="Оплата и тарифы" className="w-5 h-5" />,
-      icon:
-        <div className='w-5.5 h-5.5'>
-          <SvgIcon
-            src={iconWallet}
-            size={'22px'}
-            className={'text-black '}
-          />
-        </div>,
+        icon:
+          <div className='w-5.5 h-5.5'>
+            <SvgIcon
+              src={iconWallet}
+              size={'22px'}
+              className={'text-black '}
+            />
+          </div>,
         label: 'Оплата и тарифы'
       }
     ],
@@ -167,15 +165,11 @@ const NavigationSidebar = () => {
       return (
         <Listbox
           aria-label="Navigation menu"
-          // defaultSelectedKeys={['analytics']} почему-то not working
+          // defaultSelectedKeys={['analytics']} // почему-то not working
           variant="flat"
           classNames={{
             list: 'p-0 gap-2.5',
             base: 'p-0'
-          }}
-          itemClasses={{
-            title: 'text-base',
-            base: 'h-[42px] px-4 gap-2.5 rounded-[5px] text-black data-[selectable=true]:focus:bg-[#E8E8E8] data-[hover=true]:bg-[#E8E8E8]',
           }}
         >
           {menuItems.map(item => (
@@ -184,7 +178,11 @@ const NavigationSidebar = () => {
               startContent={item.icon}
               href={item.href || ''}
               classNames={{
-                base: activeKey === item.key ? 'bg-default-200' : ''
+                title: 'text-base',
+                base: cn(
+                  'h-[42px] px-4 gap-2.5 rounded-[5px] text-black data-[selectable=true]:focus:bg-[#E8E8E8] data-[hover=true]:bg-[#E8E8E8]',
+                  activeKey === item.key ? 'bg-default-200' : ''
+                )
               }}
               endContent={
                 item.badge && (
@@ -211,12 +209,12 @@ const NavigationSidebar = () => {
     >
       <nav className="flex flex-col gap-2.5">
         {!isVisible ? (
-          <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-2.5">
             {menuItems.map(item => (
               <Tooltip key={item.key} content={item.label} placement="right">
                 <a
                   href={item.href || '#'}
-                  className={`flex items-center justify-center w-10 h-10 rounded-lg hover:bg-default-100 transition-colors relative ${activeKey === item.key ? 'bg-default-200' : ''}`}
+                  className={`flex items-center justify-center w-10 h-10.5 rounded-[5px] hover:bg-default-100 transition-colors relative ${activeKey === item.key ? 'bg-default-200' : ''}`}
                 >
                   {item.icon}
                   {item.badge && (
