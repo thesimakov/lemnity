@@ -42,6 +42,7 @@ const ICONS = [
   { icon: heartDislikeIcon, textValue: 'Heart dislike icon' },
 ]
 
+// @ts-ignore
 const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
   const [buttonText, setButtonText] = useState('')
   const [textColor, setTextColor] = useState('')
