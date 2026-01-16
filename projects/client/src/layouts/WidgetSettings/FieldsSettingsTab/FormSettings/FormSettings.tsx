@@ -14,6 +14,7 @@ import BadgeField from '@/layouts/Widgets/CountDown/BadgeField'
 import { useActionTimerSettings } from '@/layouts/Widgets/CountDown/hooks'
 import type { FieldsSettings } from '@/stores/widgetSettings/types'
 import SwitchableField from '@/components/SwitchableField'
+import WheelOfFortuneBorderColorField from '../WheelOfFortuneBorderColorField/WheelOfFortuneBorderColorField'
 
 const FormSettings = () => {
   const {
@@ -200,6 +201,10 @@ const FormSettings = () => {
           onChange={setFormBorderColor}
         />
       </SwitchableField>
+
+      {widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE && (
+        <WheelOfFortuneBorderColorField />
+      )}
     </div>
   )
 }
