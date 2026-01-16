@@ -85,7 +85,7 @@ const FieldsSettingsTab = () => {
 
   return (
     <>
-      <span className="text-xl font-rubik">Настройка окна</span>
+      <span className="text-[22px] leading-6.5 font-rubik">Настройка виджета</span>
       <div className="flex flex-col gap-3">
         {isStandardSurface && (
           <>

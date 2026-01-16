@@ -15,7 +15,7 @@ const Header = () => {
   const getAriaLabel = () => (isVisible ? 'Свернуть боковую панель' : 'Показать боковую панель')
 
   return (
-    <header className="h-[70px] min-h-[70px] flex items-center justify-between mx-5">
+    <header className="h-17.5 min-h-17.5 flex items-center justify-between mx-5">
       <div className="flex items-center gap-3">
         <Button
           isIconOnly

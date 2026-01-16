@@ -25,8 +25,8 @@ const OptionCard = ({ selected, onClick, children }: CardProps) => {
     <button
       type="button"
       onClick={onClick}
-      className={`relative w-20 h-20 rounded-md border border-[2px] transition-colors ${
-        selected ? 'border-[#7C3AED]' : 'border-[#D4D4D8]'
+      className={`relative w-[85px] h-[91px] rounded-[10px] border transition-colors ${
+        selected ? 'border-[#915DC0]' : 'border-[#C0C0C0]'
       } bg-white`}
       aria-pressed={selected}
     >
@@ -36,9 +36,9 @@ const OptionCard = ({ selected, onClick, children }: CardProps) => {
 }
 
 const POSITION_DOT_CLASS: Record<ButtonPosition, string> = {
-  'bottom-left': 'left-2 bottom-2',
+  'bottom-left': 'left-2.5 bottom-[7px]',
   'top-right': 'top-2 right-3',
-  'bottom-right': 'bottom-2 right-3'
+  'bottom-right': 'bottom-[7px] right-2.5'
 }
 
 const DEFAULT_POSITIONS: ButtonPosition[] = ['bottom-left', 'top-right', 'bottom-right']
@@ -56,11 +56,11 @@ const ButtonPositionChooser = ({
 
   return (
     <div
-      className={`flex flex-col gap-3 rounded-md ${noBorder ? '' : 'border border-[#E8E8E8]'} ${noPadding ? '' : 'p-3'}`}
+      className={`flex flex-col gap-2.5 rounded-md ${noBorder ? '' : 'border border-[#E8E8E8]'} ${noPadding ? '' : 'p-3'}`}
     >
-      <span className="text-black">{title}</span>
-      <div className="rounded-md border border-[#E8E8E8] p-2">
-        <div className="flex gap-2">
+      <span className="text-black leading-[19px]">{title}</span>
+      <div className="rounded-md border border-[#E8E8E8] px-2.5 py-4">
+        <div className="flex gap-2.5">
           {availableOptions.map(position => (
             <OptionCard
               key={position}

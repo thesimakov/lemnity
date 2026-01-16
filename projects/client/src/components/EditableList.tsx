@@ -132,8 +132,8 @@ const EditableList = <T,>({
                   onPress={onDelete ? () => onDelete(item, index) : () => handleDelete(item.id)}
                   isIconOnly
                   isDisabled={items.length <= (minItems ?? 0)}
-                  variant="light"
-                  className={`text-red-500 hover:text-red-700 p-1 ${classNames?.delete}`}
+                  variant="ghost"
+                  className={`min-w-7.75 w-7.75 border border-[#E8E8E8] h-10 rounded-[5px] text-red-500 hover:text-red-700 p-1 ${classNames?.delete}`}
                   aria-label="Удалить"
                 >
                   <SvgIcon src={iconBin} size={20} className="text-[#B7081B]" />
