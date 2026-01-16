@@ -37,9 +37,9 @@ const COLORS = [
 ]
 
 const ICONS = [
-  { icon: lightIcon },
-  { icon: balloonIcon },
-  { icon: heartDislikeIcon },
+  { icon: lightIcon, textValue: 'Light icon' },
+  { icon: balloonIcon, textValue: 'Balloon icon' },
+  { icon: heartDislikeIcon, textValue: 'Heart dislike icon' },
 ]
 
 const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
@@ -73,6 +73,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
               'shadow-none border border-[#D9D9E0] rounded-[5px]',
               'h-[51px] bg-white',
             ),
+            value: 'hidden',
           }}
           startContent={
             <div className='shrink-0 w-5 h-5'>
@@ -86,6 +87,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
             (item) => (
               <SelectItem
                 key={item.color}
+                aria-label={`Text color: ${item.text}`}
                 startContent={
                   <div className='shrink-0 w-5 h-5'>
                     <Circle fill={item.color} />
@@ -112,6 +114,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
               'shadow-none border border-[#D9D9E0] rounded-[5px]',
               'h-[51px] bg-white',
             ),
+            value: 'hidden',
           }}
           startContent={
             <div className='shrink-0 w-5 h-5'>
@@ -124,6 +127,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
             (item) => (
               <SelectItem
                 key={item.icon}
+                aria-label={item.textValue}
                 startContent={
                   <div className='shrink-0 w-5 h-5'>
                     <SvgIcon src={item.icon} />

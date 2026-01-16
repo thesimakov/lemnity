@@ -1,7 +1,6 @@
 import { Select, SelectItem, type SelectedItems } from '@heroui/select'
 import { Input } from '@heroui/input'
 import SvgIcon from '@/components/SvgIcon'
-import iconArrowUp from '@/assets/icons/arrow-up.svg'
 import iconHeartDislike from '@/assets/icons/heart-dislike.svg'
 import {
   FAB_MENU_BUTTON_PRESETS,
@@ -15,6 +14,7 @@ import type {
 } from '@/layouts/Widgets/FABMenu/types'
 import type { SharedSelection } from '@heroui/system'
 import { cn } from '@heroui/theme'
+import { PatternFormat } from 'react-number-format'
 
 type FABSectorItemProps = {
   sector: FABMenuSectorItem
@@ -73,7 +73,7 @@ const FABSectorItem = ({
           <SvgIcon
             src={FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].icon}
             size={20}
-            className="w-min"
+            className="w-min text-black"
           />
         )}
         {FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].label}
@@ -109,11 +109,6 @@ const FABSectorItem = ({
         className="text-current w-min"
       />
       Выбрать кнопку
-      <SvgIcon
-        src={iconArrowUp}
-        size={10}
-        className="text-gray-500 w-min ml-auto"
-      />
     </div>
   )
 
@@ -140,7 +135,7 @@ const FABSectorItem = ({
                 <SvgIcon
                   src={entry.icon}
                   size={22}
-                  className="w-min text-black"
+                  className="w-min text-black fill-black"
                 />
               )}
               <span className="text-base">{entry.label}</span>
@@ -209,6 +204,35 @@ const FABSectorItem = ({
   const renderPayloadValue = () => {
     if (isPendingSelection) return null
     if (!sector.payload.type) return null
+
+    if ('phone' === sector.payload.type) {
+      return (
+        <PatternFormat
+          customInput={Input}
+          format="+7 (###) ###-##-##"
+          mask="_"
+          value={
+            sector.payload.value.startsWith('+7')
+              ? sector.payload.value.substring(2)
+              : sector.payload.value
+          }
+          onValueChange={(values) => {
+            const cleanValue = values.value ? `+7${values.value}` : ''
+            onPayloadValueChange(cleanValue)
+          }}
+          // Hero UI Input props
+          placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[sector.payload.type] ?? ''}
+          classNames={{
+          inputWrapper: cn(
+              'shadow-none rounded-md border bg-white border-[#E4E4E7]',
+              'rounded-[5px] h-10 min-h-10 px-2.5',
+            ),
+          }}
+          size="lg"
+        />
+      )
+    }
+
     return (
       <Input
         placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[sector.payload.type] ?? ''}
@@ -226,7 +250,12 @@ const FABSectorItem = ({
   }
   return (
     <div className="flex flex-col gap-2">
-      <div className={`flex flex-row gap-2 h-10 w-full ${isPendingSelection ? 'opacity-95' : ''}`}>
+      <div
+        className={cn(
+          'flex flex-row gap-2 h-10 w-full',
+          isPendingSelection && 'opacity-95'
+        )}
+      >
         {renderPayloadType()}
         {renderCustomLabel()}
         {renderPayloadSubtype()}

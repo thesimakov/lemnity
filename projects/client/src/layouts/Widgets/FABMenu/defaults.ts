@@ -31,13 +31,13 @@ const presetByIcon = (icon: FABMenuIconKey) => {
 const DEFAULT_PRESET_ICONS: FABMenuIconKey[] = [
   'email',
   'phone',
-  'website',
-  'telegram-message',
-  'max-message',
-  'whatsapp-message',
-  'instagram',
-  'youtube',
-  'ok'
+  // 'website',
+  // 'telegram-message',
+  // 'max-message',
+  // 'whatsapp-message',
+  // 'instagram',
+  // 'youtube',
+  // 'ok'
 ]
 
 const DEFAULT_SECTORS: Omit<FABMenuSectorItem, 'id'>[] = DEFAULT_PRESET_ICONS.map(icon => {

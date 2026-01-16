@@ -20,8 +20,5 @@ export const fabMenuWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings
         Component: lazy(() => import('./FABMenuField'))
       },
     ],
-    // surfaces: {
-    //   display: lazy(() => import('./FABMenuDisplaySurface'))
-    // }
   }
 }
