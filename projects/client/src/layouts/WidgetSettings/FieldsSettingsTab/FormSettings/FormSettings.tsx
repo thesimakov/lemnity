@@ -202,9 +202,7 @@ const FormSettings = () => {
         />
       </SwitchableField>
 
-      {widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE && (
-        <WheelOfFortuneBorderColorField />
-      )}
+      {widgetType === WidgetTypeEnum.WHEEL_OF_FORTUNE && <WheelOfFortuneBorderColorField />}
     </div>
   )
 }

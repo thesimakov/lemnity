@@ -1,31 +1,34 @@
-import ColorAccessory from "@/components/ColorAccessory"
-import SwitchableField from "@/components/SwitchableField"
-import BorderedContainer from "@/layouts/BorderedContainer/BorderedContainer"
-import { useWheelOfFortuneSettings } from "@/layouts/Widgets/WheelOfFortune/hooks"
-import type { WheelOfFortuneWidgetSettings } from "@/stores/widgetSettings/types"
-import { useWidgetStaticDefaults } from "@/stores/widgetSettingsStore"
-import { Slider } from "@heroui/slider"
-import { useState } from "react"
+import ColorAccessory from '@/components/ColorAccessory'
+import SwitchableField from '@/components/SwitchableField'
+import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import { useWheelOfFortuneSettings } from '@/layouts/Widgets/WheelOfFortune/hooks'
+import type { WheelOfFortuneWidgetSettings } from '@/stores/widgetSettings/types'
+import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import { Slider } from '@heroui/slider'
+import { useEffect, useState } from 'react'
 
 const WheelOfFortuneBorderColorField = () => {
-  const {
-    settings,
-    setWheelBorderColor,
-    setWheelBorderThickness
-  } = useWheelOfFortuneSettings()
+  const { settings, setWheelBorderColor, setWheelBorderThickness } = useWheelOfFortuneSettings()
   const defaults = useWidgetStaticDefaults()
-  
+
   const fallbackSettings = defaults?.widget as WheelOfFortuneWidgetSettings
-  const wheelBorderThickness = settings?.borderThickness
-    ?? fallbackSettings.borderThickness
-  
+  const wheelBorderThickness = settings?.borderThickness ?? fallbackSettings.borderThickness
+
   const [switchableFieldEnabled, setSwitchableFieldEnabled] = useState(true)
+
+  useEffect(() => {
+    if (wheelBorderThickness === 0) {
+      setSwitchableFieldEnabled(false)
+    }
+    // Мне нужно, чтобы этот хук выполнился при первом рендере
+    // и только при первом рендере
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onSwitchableFieldToggle = () => {
     if (switchableFieldEnabled) {
       setWheelBorderThickness(0)
-    }
-    else {
+    } else {
       setWheelBorderThickness(fallbackSettings.borderThickness)
     }
 
@@ -34,7 +37,7 @@ const WheelOfFortuneBorderColorField = () => {
 
   return (
     <SwitchableField
-      title='Контур'
+      title="Контур"
       enabled={switchableFieldEnabled}
       onToggle={onSwitchableFieldToggle}
     >

@@ -22,7 +22,7 @@ const WheelSectorsField = () => {
     setWheelSectors,
     updateWheelSector,
     addWheelSector,
-    deleteWheelSector,
+    deleteWheelSector
   } = useWheelOfFortuneSettings()
   const defaults = useWidgetStaticDefaults()
 
