@@ -14,6 +14,7 @@ import type {
   FABMenuSectorItem
 } from '@/layouts/Widgets/FABMenu/types'
 import type { SharedSelection } from '@heroui/system'
+import { cn } from '@heroui/theme'
 
 type FABSectorItemProps = {
   sector: FABMenuSectorItem
@@ -58,15 +59,20 @@ const FABSectorItem = ({
 }: FABSectorItemProps) => {
   const renderValue = (items: SelectedItems<object>) => {
     if (isPendingSelection) {
-      return <span className="text-sm font-semibold text-gray-900">Выбрать кнопку</span>
+      return <span className="text-sm font-semibold text-gray-900">
+        Выбрать кнопку
+      </span>
     }
 
     return items.map(item => (
-      <span key={item.textValue} className="flex items-center justify-start gap-2 text-sm">
+      <span
+        key={item.textValue}
+        className="flex items-center justify-start gap-2 text-base"
+      >
         {FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].showIcon && (
           <SvgIcon
             src={FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].icon}
-            size={16}
+            size={20}
             className="w-min"
           />
         )}
@@ -91,12 +97,23 @@ const FABSectorItem = ({
 
   const renderPendingTrigger = () => (
     <div
-      className="pointer-events-none flex items-center gap-2 rounded-md border border-[#D9D9E0] bg-white px-3 py-2 text-sm w-full"
+      className={cn(
+        'pointer-events-none flex items-center gap-2 rounded-md',
+        'border border-[#E4E4E7] bg-white px-2.5 py-2 text-base w-full'
+      )}
       aria-label="Выбрать кнопку"
     >
-      <SvgIcon src={iconHeartDislike} size={16} className="text-current w-min" />
+      <SvgIcon
+        src={iconHeartDislike}
+        size={24}
+        className="text-current w-min"
+      />
       Выбрать кнопку
-      <SvgIcon src={iconArrowUp} size={10} className="text-gray-500 w-min ml-auto" />
+      <SvgIcon
+        src={iconArrowUp}
+        size={10}
+        className="text-gray-500 w-min ml-auto"
+      />
     </div>
   )
 
@@ -109,8 +126,10 @@ const FABSectorItem = ({
         onSelectionChange={handleIconChange}
         aria-label="Тип иконки"
         classNames={{
-          trigger:
-            'shadow-none border border-[#D9D9E0] rounded-md min-w-[160px] h-10 flex items-center bg-white'
+          trigger: cn(
+            'shadow-none border border-[#E4E4E7] rounded-md',
+            'min-w-[160px] h-10 px-2.5 flex items-center bg-white'
+          ),
         }}
         renderValue={renderValue}
       >
@@ -118,9 +137,13 @@ const FABSectorItem = ({
           <SelectItem key={key} textValue={key}>
             <div className="flex items-center gap-2">
               {entry.showIcon && (
-                <SvgIcon src={entry.icon} size="16px" className="w-min text-black" />
+                <SvgIcon
+                  src={entry.icon}
+                  size={22}
+                  className="w-min text-black"
+                />
               )}
-              <span className="text-sm">{entry.label}</span>
+              <span className="text-base">{entry.label}</span>
             </div>
           </SelectItem>
         ))}
@@ -137,7 +160,9 @@ const FABSectorItem = ({
         value={sector.label}
         onValueChange={onLabelChange}
         classNames={{
-          inputWrapper: 'rounded-md border bg-white border-[#E8E8E8] h-10 min-h-10'
+          inputWrapper: cn(
+            'rounded-md border bg-white border-[#E8E8E8] h-10 min-h-10',
+          ),
         }}
         size="lg"
       />
@@ -155,13 +180,20 @@ const FABSectorItem = ({
         onSelectionChange={handlePayloadTypeChange}
         aria-label="Тип действия"
         classNames={{
-          trigger:
-            'shadow-none border border-[#E8E8E8] rounded-md min-w-[160px] h-10 flex items-center bg-white'
+          trigger: cn(
+            'shadow-none border border-[#E8E8E8] rounded-md h-10 px-2.5',
+            'flex items-center bg-white',
+          ),
+          base: 'w-74',
         }}
         renderValue={items =>
           items.map(item => {
             const option = options.find(opt => opt.type === item.textValue)
-            return <span className="text-sm">{option?.label ?? item.textValue}</span>
+            return (
+              <span className="text-base">
+                {option?.label ?? item.textValue}
+              </span>
+            )
           })
         }
       >
@@ -183,7 +215,10 @@ const FABSectorItem = ({
         value={sector.payload.value}
         onValueChange={onPayloadValueChange}
         classNames={{
-          inputWrapper: 'rounded-md border bg-white border-[#E4E4E7] h-10 min-h-10'
+          inputWrapper: cn(
+            'shadow-none rounded-md border bg-white border-[#E4E4E7]',
+            'rounded-[5px] h-10 min-h-10 px-2.5',
+          ),
         }}
         size="lg"
       />

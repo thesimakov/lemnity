@@ -103,9 +103,11 @@ const FABMenuField = () => {
   const items: EditableListItem<FABMenuSectorItem>[] = sectors.map(item => item)
 
   return (
-    <div className="flex flex-col gap-3">
-      <BorderedContainer className="flex flex-col gap-2">
-        <span className="text-lg pb-2 font-medium">Сектора</span>
+    <div className="flex flex-col">
+      <BorderedContainer className="flex flex-col gap-2.5">
+        <div className='h-[37px] shrink-0'>
+          <span className="text-lg leading-5.25 font-medium">Сектора</span>
+        </div>
         <hr className="border-gray-200" />
         <EditableList
           showIndex={false}

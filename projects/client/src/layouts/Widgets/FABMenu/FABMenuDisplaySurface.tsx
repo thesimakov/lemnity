@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import ButtonAppearenceSettings from '@/layouts/WidgetSettings/DisplaySettingsTab/ButtonAppearenceSettings/ButtonAppearenceSettings'
 import ButtonPositionChooser from '@/layouts/WidgetSettings/DisplaySettingsTab/ButtonPositionChooser/ButtonPositionChooser'
 import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import type { ButtonPosition } from '@/stores/widgetSettingsStore'
@@ -34,6 +35,7 @@ const FABMenuDisplaySurface = () => {
         </h2>
       </div>
       <h2 className='leading-[19px]'>Кнопка</h2>
+      <ButtonAppearenceSettings onChange={() => {}} />
       <ButtonPositionChooser
         noBorder
         noPadding
