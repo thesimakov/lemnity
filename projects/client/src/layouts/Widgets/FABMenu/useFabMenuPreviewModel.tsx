@@ -85,7 +85,7 @@ export const useFabMenuPreviewModel = () => {
   )
   const widgetId = useWidgetSettingsStore(s => s.settings?.id)
   const projectId = useWidgetSettingsStore(s => s.projectId)
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
 
   const safePosition = normalizePosition(buttonPosition)
   const menuItems = useMenuItems(settings?.sectors.items ?? [])

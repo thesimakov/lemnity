@@ -4,11 +4,13 @@ import { Select, SelectItem } from '@heroui/select'
 import { cn } from '@heroui/theme'
 
 import SvgIcon from '@/components/SvgIcon'
+import ColorPicker from '@/components/ColorPicker'
 
 // import circle from '@/assets/icons/circle.svg'
 import lightIcon from '@/assets/icons/light.svg'
 import balloonIcon from '@/assets/icons/balloon.svg'
 import heartDislikeIcon from '@/assets/icons/heart-dislike.svg'
+import { Button } from '@heroui/button'
 
 type ButtonAppearance = {
   text?: string
@@ -42,10 +44,11 @@ const ICONS = [
   { icon: heartDislikeIcon, textValue: 'Heart dislike icon' },
 ]
 
-// @ts-ignore
+// @ts-expect-error: emnrorr
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
   const [buttonText, setButtonText] = useState('')
-  const [textColor, setTextColor] = useState('')
+  // const [textColor, setTextColor] = useState('')
   const [buttonColor, setButtonColor] = useState('')
   const [icon, setIcon] = useState(heartDislikeIcon)
 
@@ -65,7 +68,10 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
       />
 
       <div className='min-w-18'>
-        <Select
+        <ColorPicker>
+          <Button>:o</Button>
+        </ColorPicker>
+        {/* <Select
           aria-label='Цвет текста'
           selectedKeys={[textColor]}
           items={COLORS}
@@ -79,7 +85,6 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
           startContent={
             <div className='shrink-0 w-5 h-5'>
               <Circle fill={textColor} />
-              {/* <SvgIcon src={circle} className={`text-[${textColor}]`} /> */}
             </div>
           }
           onChange={(e) => { setTextColor(e.target.value) }}
@@ -92,7 +97,6 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
                 startContent={
                   <div className='shrink-0 w-5 h-5'>
                     <Circle fill={item.color} />
-                    {/* <SvgIcon src={circle} className={`text-[${item.color}]`} /> */}
                   </div>
                 }
                 classNames={{
@@ -102,7 +106,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
               </SelectItem>
             )
           }
-        </Select>
+        </Select> */}
       </div>
       
       <div className='min-w-18'>
