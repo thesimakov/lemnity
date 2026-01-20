@@ -33,5 +33,20 @@ export const createFABMenuActions = (updateWidget: TypedWidgetUpdater<FABMenuWid
         ...widget.sectors,
         items: widget.sectors.items.filter(item => item.id !== id)
       }
-    }))
+    })),
+  setFABMenuButtonTextColor: (color: string) =>
+    updateWidget(widget => ({
+      ...widget,
+      triggerTextColor: color
+    })),
+  setFABMenuButtonBackgroundColor: (color: string) =>
+    updateWidget(widget => ({
+      ...widget,
+      triggerBackgroundColor: color
+    })),
+  setFABMenuTriggerText: (text: string) =>
+      updateWidget(widget => ({
+        ...widget,
+        triggerText: text
+      }))
 })

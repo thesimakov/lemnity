@@ -50,7 +50,22 @@ const FABMenuWidgetSchema = z.object({
   type: z.literal(WidgetType),
   sectors: z.object({
     items: z.array(FABMenuSectorSchema)
-  })
+  }),
+  triggerTextColor: z
+    .string()
+    .regex(
+      /^#[0-9A-F]{6}$/i,
+      'Цвет должен быть в HEX формате'
+    ),
+  triggerBackgroundColor: z
+    .string()
+    .regex(
+      /^#[0-9A-F]{6}$/i,
+      'Цвет должен быть в HEX формате'
+    ),
+  triggerText: z
+    .string()
+    .max(15, 'Текст должен юыть не длиннее 15 символов')
 })
 
 const customSurfaces = {

@@ -80,6 +80,10 @@ const buildActionHref = (item: FABMenuSectorItem): string | null => {
 
 export const useFabMenuPreviewModel = () => {
   const { settings } = useFABMenuSettings()
+  // TODO: const defaults = useWidgetStaticDefaults() ????
+  const triggerTextColor = settings?.triggerTextColor ?? '#FFFFFF'
+  const triggerBackgroundColor = settings?.triggerBackgroundColor ?? '#5951E5'
+  const triggerText = settings?.triggerText ?? 'Супер-кнопка'
   const buttonPosition = useWidgetSettingsStore(
     s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
   )
@@ -97,6 +101,12 @@ export const useFabMenuPreviewModel = () => {
     const gradientStops = preset?.gradientColors?.join(', ')
     const hasGradient = Boolean(gradientStops)
     const isMaxButton = item.icon === 'max-message'
+    const isNotMessenger =
+      item.icon === 'custom'
+      || item.icon === 'email'
+      || item.icon === 'phone'
+      || item.icon === 'website'
+      || item.icon === 'calendar'
     const baseColor = preset?.color ?? item.color
     const style: CSSProperties = {}
 
@@ -110,6 +120,10 @@ export const useFabMenuPreviewModel = () => {
       style.backgroundImage = `linear-gradient(135deg, ${gradientStops})`
       style.backgroundColor = preset?.gradientColors?.[0] ?? baseColor
       style.color = preset?.textColor ?? '#ffffff'
+    }
+    else if (isNotMessenger) {
+      style.backgroundColor = triggerBackgroundColor
+      style.color = triggerTextColor
     } else {
       style.backgroundColor = baseColor
       style.color = preset?.textColor ?? '#ffffff'
@@ -172,6 +186,9 @@ export const useFabMenuPreviewModel = () => {
   )
 
   return {
+    triggerTextColor,
+    triggerBackgroundColor,
+    triggerText,
     menuItems,
     alignClassName,
     safePosition,

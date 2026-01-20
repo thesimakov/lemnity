@@ -11,6 +11,10 @@ import lightIcon from '@/assets/icons/light.svg'
 import balloonIcon from '@/assets/icons/balloon.svg'
 import heartDislikeIcon from '@/assets/icons/heart-dislike.svg'
 import { Button } from '@heroui/button'
+import { useFABMenuSettings } from '@/layouts/Widgets/FABMenu/hooks'
+import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
+import { withDefaults } from '@/stores/widgetSettings/utils'
 
 type ButtonAppearance = {
   text?: string
@@ -47,66 +51,70 @@ const ICONS = [
 // @ts-expect-error: emnrorr
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
-  const [buttonText, setButtonText] = useState('')
-  // const [textColor, setTextColor] = useState('')
-  const [buttonColor, setButtonColor] = useState('')
   const [icon, setIcon] = useState(heartDislikeIcon)
+  const [isInputInvalid, setIsInputInvalid] = useState(false)
+
+  const defaults = useWidgetStaticDefaults()
+  const {
+    settings,
+    setFABMenuButtonTextColor,
+    setFABMenuButtonBackgroundColor,
+    setFABMenuTriggerText
+  } = useFABMenuSettings()
+
+  if (!settings || !defaults) {
+    // TODO: Сообщение пользователю с просьбой обновить страницу
+    return
+  }
+
+  const initialFABMenuTextColor = settings.triggerTextColor
+    ?? (defaults.widget as FABMenuWidgetSettings).triggerTextColor
+
+  const handleTextColorChange = (color: string) => {
+    console.log(color)
+    setFABMenuButtonTextColor(color)
+  }
+
+  const initialFABMenuBackgroundColor = settings.triggerBackgroundColor
+    ?? (defaults.widget as FABMenuWidgetSettings).triggerBackgroundColor
+  
+  const handleBackgroundColorChange = (color: string) => {
+    console.log(color)
+    setFABMenuButtonBackgroundColor(color)
+  }
+
+  const handleTriggerTextChange = (value: string) => {
+    if (value.length > 14) {
+      // TODO: сообщение пользователю
+      setIsInputInvalid(true)
+      return
+    }
+
+    setIsInputInvalid(false)
+    setFABMenuTriggerText(value)
+  }
 
   return (
     <div className="flex flex-row gap-2.5">
       <Input
-        value={buttonText}
-        onValueChange={setButtonText}
+        value={settings.triggerText}
+        onValueChange={handleTriggerTextChange}
+        isInvalid={isInputInvalid}
         placeholder="Супер кнопка"
         classNames={{
           inputWrapper: cn(
-            'rounded-md border bg-white border-[#E4E4E7] rounded-[5px]',
+            'border bg-white border-[#E4E4E7] rounded-[5px]',
             'shadow-none h-12.75 min-h-10 px-2.5',
           ),
           input: 'text-base'
         }}
       />
 
-      <div className='min-w-18'>
-        <ColorPicker>
-          <Button>:o</Button>
-        </ColorPicker>
-        {/* <Select
-          aria-label='Цвет текста'
-          selectedKeys={[textColor]}
-          items={COLORS}
-          classNames={{
-            trigger: cn(
-              'shadow-none border border-[#D9D9E0] rounded-[5px]',
-              'h-[51px] bg-white',
-            ),
-            value: 'hidden',
-          }}
-          startContent={
-            <div className='shrink-0 w-5 h-5'>
-              <Circle fill={textColor} />
-            </div>
-          }
-          onChange={(e) => { setTextColor(e.target.value) }}
-        >
-          {
-            (item) => (
-              <SelectItem
-                key={item.color}
-                aria-label={`Text color: ${item.text}`}
-                startContent={
-                  <div className='shrink-0 w-5 h-5'>
-                    <Circle fill={item.color} />
-                  </div>
-                }
-                classNames={{
-                  title: "hidden",
-                }}
-              >
-              </SelectItem>
-            )
-          }
-        </Select> */}
+      <div className=''>
+        <ColorPicker
+          initialColor={initialFABMenuTextColor}
+          onColorChange={handleTextColorChange}
+        />
       </div>
       
       <div className='min-w-18'>
@@ -149,53 +157,11 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
       </div>
 
       <div className='min-w-43'>
-        <Select
-          aria-label='Цвет кнопки'
-          placeholder='Цвет кнопки'
-          selectedKeys={[buttonColor]}
-          items={COLORS}
-          classNames={{
-            trigger: cn(
-              'shadow-none border border-[#D9D9E0] rounded-[5px]',
-              'h-[51px] bg-white',
-            ),
-            value: cn('text-base')
-          }}
-          renderValue={(items) => (
-            items.map((item) => (
-              <div key={item.key} className='flex flex-row gap-1.25 items-center'>
-                <span className='text-base text-[#797979]'>
-                  Цвет кнопки
-                </span>
-                {
-                  item.data &&
-                  <div className='shrink-0'>
-                    <Circle fill={item.data.color} />
-                    {/* <SvgIcon
-                      src={circle} className={`fill-[${item.data.color}]`}
-                    /> */}
-                  </div>
-                }
-              </div>
-            ))
-          )}
-          onChange={(e) => { setButtonColor(e.target.value) }}
-        >
-          {
-            (item) => (
-              <SelectItem
-                key={item.color}
-                textValue={item.text}
-                startContent={
-                  <Circle fill={item.color} />
-                  // <SvgIcon src={circle} className={`fill-[${item.color}]`} />
-                }
-              >
-                <span>{item.text}</span>
-              </SelectItem>
-            )
-          }
-        </Select>
+        <ColorPicker
+          initialColor={initialFABMenuBackgroundColor}
+          onColorChange={handleBackgroundColorChange}
+          triggerText='Цвет кнопки'
+        />
       </div>
     </div>
   )

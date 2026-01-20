@@ -71,7 +71,10 @@ export const buildFABMenuWidgetSettings = (): FABMenuWidgetSettings => ({
   type: WidgetTypeEnum.FAB_MENU,
   sectors: {
     items: DEFAULT_SECTORS.map(createSector)
-  }
+  },
+  triggerTextColor: '#FFFFFF',
+  triggerBackgroundColor: '#5951E5',
+  triggerText: 'Супер-кнопка'
 })
 
 export const buildFABMenuFieldsSettings = (): FieldsSettings => ({}) as FieldsSettings

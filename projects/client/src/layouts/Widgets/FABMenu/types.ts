@@ -38,4 +38,7 @@ export type FABMenuWidgetSettings = {
   sectors: {
     items: FABMenuSectorItem[]
   }
+  triggerTextColor: string
+  triggerBackgroundColor: string
+  triggerText: string
 }
