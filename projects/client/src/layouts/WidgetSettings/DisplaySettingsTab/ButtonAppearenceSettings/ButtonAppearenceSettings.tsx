@@ -100,7 +100,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         <ColorPicker
           initialColor={initialFABMenuTextColor}
           onColorChange={handleTextColorChange}
-          triggerText='Цвет текста'
+          triggerText="Цвет текста"
         />
       </div>
 
