@@ -8,9 +8,7 @@ type IconProps = {
   color: string
 }
 
-export const FabMenuBalloonIcon = (
-  props: { alignClassName: string, color: string }
-) => (
+export const FabMenuBalloonIcon = (props: { alignClassName: string; color: string }) => (
   <motion.span
     // animate={BALLOON_GLOW_ANIMATION}
     // transition={BALLOON_GLOW_TRANSITION}
@@ -26,13 +24,9 @@ export const FabMenuBalloonIcon = (
 )
 
 export const FabMenuAddIcon = ({ color }: IconProps) => (
-  <div style={{ color: color }} className=''>
-    <div className='w-8 h-8'>
-      <SvgIcon
-        src={iconAdd}
-        size={40}
-        className="rotate-45" 
-      />
+  <div style={{ color: color }} className="">
+    <div className="w-8 h-8">
+      <SvgIcon src={iconAdd} size={40} className="rotate-45" />
     </div>
   </div>
 )

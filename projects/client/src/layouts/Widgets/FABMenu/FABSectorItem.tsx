@@ -69,11 +69,7 @@ const FABSectorItem = ({
       )}
       aria-label="Выбрать кнопку"
     >
-      <SvgIcon
-        src={iconHeartDislike}
-        size={24}
-        className="text-current w-min"
-      />
+      <SvgIcon src={iconHeartDislike} size={24} className="text-current w-min" />
       Выбрать кнопку
     </div>
   )
@@ -103,17 +99,19 @@ const FABSectorItem = ({
         classNames={{
           inputWrapper: cn(
             'border bg-white border-[#E4E4E7] rounded-[5px]',
-            'shadow-none h-12.75 min-h-10 px-2.5',
+            'shadow-none h-12.75 min-h-10 px-2.5'
           ),
           input: 'text-base'
         }}
-        startContent={FAB_MENU_ICON_OPTIONS[sector.icon].showIcon && (
-          <SvgIcon
-            src={FAB_MENU_ICON_OPTIONS[sector.icon].icon}
-            size={20}
-            className="w-min text-black"
-          />
-        )}
+        startContent={
+          FAB_MENU_ICON_OPTIONS[sector.icon].showIcon && (
+            <SvgIcon
+              src={FAB_MENU_ICON_OPTIONS[sector.icon].icon}
+              size={20}
+              className="w-min text-black"
+            />
+          )
+        }
       />
     )
   }
@@ -131,18 +129,14 @@ const FABSectorItem = ({
         classNames={{
           trigger: cn(
             'shadow-none border border-[#E8E8E8] rounded-md h-10 px-2.5',
-            'flex items-center bg-white',
+            'flex items-center bg-white'
           ),
-          base: 'w-74',
+          base: 'w-74'
         }}
         renderValue={items =>
           items.map(item => {
             const option = options.find(opt => opt.type === item.textValue)
-            return (
-              <span className="text-base">
-                {option?.label ?? item.textValue}
-              </span>
-            )
+            return <span className="text-base">{option?.label ?? item.textValue}</span>
           })
         }
       >
@@ -170,17 +164,17 @@ const FABSectorItem = ({
               ? sector.payload.value.substring(2)
               : sector.payload.value
           }
-          onValueChange={(values) => {
+          onValueChange={values => {
             const cleanValue = values.value ? `+7${values.value}` : ''
             onPayloadValueChange(cleanValue)
           }}
           // Hero UI Input props
           placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[sector.payload.type] ?? ''}
           classNames={{
-          inputWrapper: cn(
+            inputWrapper: cn(
               'shadow-none rounded-md border bg-white border-[#E4E4E7]',
-              'rounded-[5px] h-10 min-h-10 px-2.5',
-            ),
+              'rounded-[5px] h-10 min-h-10 px-2.5'
+            )
           }}
           size="lg"
         />
@@ -195,8 +189,8 @@ const FABSectorItem = ({
         classNames={{
           inputWrapper: cn(
             'shadow-none rounded-md border bg-white border-[#E4E4E7]',
-            'rounded-[5px] h-10 min-h-10 px-2.5',
-          ),
+            'rounded-[5px] h-10 min-h-10 px-2.5'
+          )
         }}
         size="lg"
       />
@@ -204,12 +198,7 @@ const FABSectorItem = ({
   }
   return (
     <div className="flex flex-col gap-2">
-      <div
-        className={cn(
-          'flex flex-row gap-2 h-10 w-full',
-          isPendingSelection && 'opacity-95'
-        )}
-      >
+      <div className={cn('flex flex-row gap-2 h-10 w-full', isPendingSelection && 'opacity-95')}>
         {renderPayloadType()}
         {renderPayloadSubtype()}
         {renderPayloadValue()}

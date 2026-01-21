@@ -18,7 +18,7 @@ export const fabMenuWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings
       {
         id: 'fab-menu.sectors',
         Component: lazy(() => import('./FABMenuField'))
-      },
-    ],
+      }
+    ]
   }
 }

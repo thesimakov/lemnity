@@ -19,7 +19,7 @@ type FabMenuWidgetProps = {
 const FabMenuWidget = ({
   anchorBaseClassName = '',
   anchorOffsetClassName,
-  listClassName = '',
+  listClassName = ''
   // triggerClassName = '',
   // signatureClassName = ''
 }: FabMenuWidgetProps) => {
@@ -60,11 +60,11 @@ const FabMenuWidget = ({
               const style = renderBackground(item)
               const showIcon = iconEntry?.showIcon ?? true
               const isNotMessenger =
-                item.icon === 'custom'
-                || item.icon === 'email'
-                || item.icon === 'phone'
-                || item.icon === 'website'
-                || item.icon === 'calendar'
+                item.icon === 'custom' ||
+                item.icon === 'email' ||
+                item.icon === 'phone' ||
+                item.icon === 'website' ||
+                item.icon === 'calendar'
 
               return (
                 <button
@@ -85,14 +85,11 @@ const FabMenuWidget = ({
                       className="h-5 w-5 object-contain"
                       style={
                         isNotMessenger
-                        ? { color: triggerTextColor, fill: triggerTextColor }
-                        : undefined
+                          ? { color: triggerTextColor, fill: triggerTextColor }
+                          : undefined
                       }
                     >
-                      <SvgIcon
-                        src={iconEntry.icon}
-                        alt={iconEntry.label}
-                      />
+                      <SvgIcon src={iconEntry.icon} alt={iconEntry.label} />
                     </div>
                   )}
                   <span className="flex-1">{item.label}</span>
@@ -105,7 +102,7 @@ const FabMenuWidget = ({
               target="_blank"
               className={cn(
                 'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
-                'text-white bg-[#949494] grow-0',
+                'text-white bg-[#949494] grow-0'
                 // signatureClassName
               )}
             >
@@ -130,14 +127,12 @@ const FabMenuWidget = ({
         }}
         aria-label={expanded ? 'Скрыть кнопки' : 'Показать кнопки'}
       >
-        {triggerText && (<span className=''>{triggerText}</span>)}
-        {expanded
-          ? <FabMenuAddIcon color={triggerTextColor} />
-          : <FabMenuBalloonIcon
-              color={triggerTextColor}
-              alignClassName={alignClassName}
-            />
-        }
+        {triggerText && <span className="">{triggerText}</span>}
+        {expanded ? (
+          <FabMenuAddIcon color={triggerTextColor} />
+        ) : (
+          <FabMenuBalloonIcon color={triggerTextColor} alignClassName={alignClassName} />
+        )}
       </button>
     </div>
   )

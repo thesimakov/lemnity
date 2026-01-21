@@ -30,7 +30,7 @@ const presetByIcon = (icon: FABMenuIconKey) => {
 
 const DEFAULT_PRESET_ICONS: FABMenuIconKey[] = [
   'email',
-  'phone',
+  'phone'
   // 'website',
   // 'telegram-message',
   // 'max-message',

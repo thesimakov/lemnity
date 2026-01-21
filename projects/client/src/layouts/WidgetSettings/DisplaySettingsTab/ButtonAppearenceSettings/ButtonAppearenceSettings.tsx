@@ -45,7 +45,7 @@ type ButtonAppearenceSettingsProps = {
 const ICONS = [
   { icon: lightIcon, textValue: 'Light icon' },
   { icon: balloonIcon, textValue: 'Balloon icon' },
-  { icon: heartDislikeIcon, textValue: 'Heart dislike icon' },
+  { icon: heartDislikeIcon, textValue: 'Heart dislike icon' }
 ]
 
 // @ts-expect-error: emnrorr
@@ -67,17 +67,18 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     return
   }
 
-  const initialFABMenuTextColor = settings.triggerTextColor
-    ?? (defaults.widget as FABMenuWidgetSettings).triggerTextColor
+  const initialFABMenuTextColor =
+    settings.triggerTextColor ?? (defaults.widget as FABMenuWidgetSettings).triggerTextColor
 
   const handleTextColorChange = (color: string) => {
     // console.log(color)
     setFABMenuButtonTextColor(color)
   }
 
-  const initialFABMenuBackgroundColor = settings.triggerBackgroundColor
-    ?? (defaults.widget as FABMenuWidgetSettings).triggerBackgroundColor
-  
+  const initialFABMenuBackgroundColor =
+    settings.triggerBackgroundColor ??
+    (defaults.widget as FABMenuWidgetSettings).triggerBackgroundColor
+
   const handleBackgroundColorChange = (color: string) => {
     // console.log(color)
     setFABMenuButtonBackgroundColor(color)
@@ -104,63 +105,56 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         classNames={{
           inputWrapper: cn(
             'border bg-white border-[#E4E4E7] rounded-[5px]',
-            'shadow-none h-12.75 min-h-10 px-2.5',
+            'shadow-none h-12.75 min-h-10 px-2.5'
           ),
           input: 'text-base'
         }}
       />
 
-      <div className=''>
-        <ColorPicker
-          initialColor={initialFABMenuTextColor}
-          onColorChange={handleTextColorChange}
-        />
+      <div className="">
+        <ColorPicker initialColor={initialFABMenuTextColor} onColorChange={handleTextColorChange} />
       </div>
-      
-      <div className='min-w-18'>
+
+      <div className="min-w-18">
         <Select
-          aria-label='Иконка кнопки'
+          aria-label="Иконка кнопки"
           selectedKeys={[icon]}
           items={ICONS}
           classNames={{
-            trigger: cn(
-              'shadow-none border border-[#D9D9E0] rounded-[5px]',
-              'h-[51px] bg-white',
-            ),
-            value: 'hidden',
+            trigger: cn('shadow-none border border-[#D9D9E0] rounded-[5px]', 'h-[51px] bg-white'),
+            value: 'hidden'
           }}
           startContent={
-            <div className='shrink-0 w-5 h-5'>
+            <div className="shrink-0 w-5 h-5">
               <SvgIcon src={icon} />
             </div>
           }
-          onChange={(e) => { setIcon(e.target.value) }}
+          onChange={e => {
+            setIcon(e.target.value)
+          }}
         >
-          {
-            (item) => (
-              <SelectItem
-                key={item.icon}
-                aria-label={item.textValue}
-                startContent={
-                  <div className='shrink-0 w-5 h-5'>
-                    <SvgIcon src={item.icon} />
-                  </div>
-                }
-                classNames={{
-                  title: "hidden",
-                }}
-              >
-              </SelectItem>
-            )
-          }
+          {item => (
+            <SelectItem
+              key={item.icon}
+              aria-label={item.textValue}
+              startContent={
+                <div className="shrink-0 w-5 h-5">
+                  <SvgIcon src={item.icon} />
+                </div>
+              }
+              classNames={{
+                title: 'hidden'
+              }}
+            ></SelectItem>
+          )}
         </Select>
       </div>
 
-      <div className='min-w-43'>
+      <div className="min-w-43">
         <ColorPicker
           initialColor={initialFABMenuBackgroundColor}
           onColorChange={handleBackgroundColorChange}
-          triggerText='Цвет кнопки'
+          triggerText="Цвет кнопки"
         />
       </div>
     </div>

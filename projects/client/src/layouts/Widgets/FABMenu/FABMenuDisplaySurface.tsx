@@ -41,24 +41,22 @@ const FABMenuDisplaySurface = () => {
   // }
 
   const handleFile = (file: File | null) => {
-  if (file) {
-    uploadImage(file).then(({ key, url }) => {
-      console.log('[SVG] NAME=', file.name, '  KEY=', key, '  URL=', url)
-    })
-    // uploadToProd(file).then(({ key, url }) => {
-    //   console.log('[SVG] NAME=', file.name, '  KEY=', key, '  URL=', url)
-    // })
+    if (file) {
+      uploadImage(file).then(({ key, url }) => {
+        console.log('[SVG] NAME=', file.name, '  KEY=', key, '  URL=', url)
+      })
+      // uploadToProd(file).then(({ key, url }) => {
+      //   console.log('[SVG] NAME=', file.name, '  KEY=', key, '  URL=', url)
+      // })
+    }
   }
-}
 
   return (
     <section className="flex flex-col gap-2.5 rounded-[14px] border border-[#E6E6E6] p-4.5 bg-white">
-      <div className='h-[37px]'>
-        <h2 className="text-lg font-medium text-gray-900 leading-[21px]">
-          Форма
-        </h2>
+      <div className="h-[37px]">
+        <h2 className="text-lg font-medium text-gray-900 leading-[21px]">Форма</h2>
       </div>
-      <h2 className='leading-[19px]'>Кнопка</h2>
+      <h2 className="leading-[19px]">Кнопка</h2>
       <ButtonAppearenceSettings onChange={() => {}} />
       <ButtonPositionChooser
         noBorder

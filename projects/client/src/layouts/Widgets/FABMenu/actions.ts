@@ -45,8 +45,8 @@ export const createFABMenuActions = (updateWidget: TypedWidgetUpdater<FABMenuWid
       triggerBackgroundColor: color
     })),
   setFABMenuTriggerText: (text: string) =>
-      updateWidget(widget => ({
-        ...widget,
-        triggerText: text
-      }))
+    updateWidget(widget => ({
+      ...widget,
+      triggerText: text
+    }))
 })

@@ -105,7 +105,7 @@ const FABMenuField = () => {
   return (
     <div className="flex flex-col">
       <BorderedContainer className="flex flex-col gap-2.5">
-        <div className='h-[37px] shrink-0 flex justify-between'>
+        <div className="h-[37px] shrink-0 flex justify-between">
           <span className="text-lg leading-5.25 font-medium">Сектора</span>
           <span className="text-lg text-[#C0C0C0] leading-5.25">Максимум 8</span>
         </div>
@@ -117,7 +117,7 @@ const FABMenuField = () => {
           onItemsChange={items => setFABMenuSectors(items)}
           canReorder
           classNames={{
-            index: 'min-w-[40px]',
+            index: 'min-w-[40px]'
             // delete: 'min-w-[40px]'
           }}
           renderItem={(sector, index) => (
@@ -142,8 +142,10 @@ const FABMenuField = () => {
           addButtonLabel="Добавить кнопку"
           disabledReorderIds={pendingSectorId ? [pendingSectorId] : []}
         />
-        <span className='text-[#BABABA] text-[10px] leading-3'>
-          *Компания Meta Platforms Inc., владеющая социальными сетями Facebook и Instagram, по решению суда от 21.03.2022 признана экстремистской организацией, ее деятельность на территории России запрещена.
+        <span className="text-[#BABABA] text-[10px] leading-3">
+          *Компания Meta Platforms Inc., владеющая социальными сетями Facebook и Instagram, по
+          решению суда от 21.03.2022 признана экстремистской организацией, ее деятельность на
+          территории России запрещена.
         </span>
       </BorderedContainer>
     </div>

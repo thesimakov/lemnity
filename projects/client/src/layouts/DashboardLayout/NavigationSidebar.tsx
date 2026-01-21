@@ -70,14 +70,11 @@ const NavigationSidebar = () => {
     () => [
       {
         key: 'projects',
-        icon:
-          <div className='w-5.5 h-5.5'>
-            <SvgIcon
-              src={iconProjects}
-              size={'22px'}
-              className={'text-black '}
-            />
-          </div>,
+        icon: (
+          <div className="w-5.5 h-5.5">
+            <SvgIcon src={iconProjects} size={'22px'} className={'text-black '} />
+          </div>
+        ),
         label: 'Проекты',
         href: '/'
       },
@@ -89,28 +86,22 @@ const NavigationSidebar = () => {
       },
       {
         key: 'requests',
-        icon:
-          <div className='w-5.5 h-5.5'>
-            <SvgIcon
-              src={iconSuccessList}
-              size={'22px'}
-              className={'text-black '}
-            />
-          </div>,
+        icon: (
+          <div className="w-5.5 h-5.5">
+            <SvgIcon src={iconSuccessList} size={'22px'} className={'text-black '} />
+          </div>
+        ),
         label: 'Заявки',
         badge: newRequestsCount && newRequestsCount > 0 ? newRequestsCount : undefined,
         href: '/requests'
       },
       {
         key: 'payment',
-        icon:
-          <div className='w-5.5 h-5.5'>
-            <SvgIcon
-              src={iconWallet}
-              size={'22px'}
-              className={'text-black '}
-            />
-          </div>,
+        icon: (
+          <div className="w-5.5 h-5.5">
+            <SvgIcon src={iconWallet} size={'22px'} className={'text-black '} />
+          </div>
+        ),
         label: 'Оплата и тарифы'
       }
     ],
@@ -243,7 +234,7 @@ const NavigationSidebar = () => {
             className="relative h-10.5 gap-2 flex flex-row justify-center items-center mt-auto mb-2.5"
           >
             <span className="relative text-normal group">
-              <div className='absolute right-full mr-2.5 top-1/2 -translate-y-1/2'>
+              <div className="absolute right-full mr-2.5 top-1/2 -translate-y-1/2">
                 <SvgIcon src={iconDocumentation} size={'20px'} />
               </div>
               Документация

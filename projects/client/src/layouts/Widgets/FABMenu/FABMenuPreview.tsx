@@ -8,11 +8,7 @@ type FABMenuPreviewProps = {
 const FABMenuPreview = ({ mode }: FABMenuPreviewProps) => {
   return (
     <div className="flex h-full flex-col gap-4">
-      <div
-        className={`flex flex-1 ${
-          mode === 'mobile' ? 'max-w-90 self-center w-full' : ''
-        }`}
-      >
+      <div className={`flex flex-1 ${mode === 'mobile' ? 'max-w-90 self-center w-full' : ''}`}>
         <div className="relative flex h-full w-full flex-col bg-white">
           <div className="flex flex-col gap-3 text-indigo-200 absolute top-0 left-0">
             <span className="h-6 w-2/3 rounded-full bg-current" />

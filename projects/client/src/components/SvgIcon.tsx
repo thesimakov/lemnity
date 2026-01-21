@@ -26,7 +26,7 @@
 //       .then(res => res.text())
 //       .then(text => {
 //         const purifier = DOMPurify()
-        
+
 //         purifier.addHook('afterSanitizeElements', (node) => {
 //           if (node instanceof Element && !preserveOriginalColors) {
 //             const fillValue = node.getAttribute('fill')

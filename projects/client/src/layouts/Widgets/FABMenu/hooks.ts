@@ -9,15 +9,11 @@ export const useFABMenuSettings = () => {
   const updateFABMenuSector = useWidgetSettingsStore(s => s.updateFABMenuSector)
   const addFABMenuSector = useWidgetSettingsStore(s => s.addFABMenuSector)
   const deleteFABMenuSector = useWidgetSettingsStore(s => s.deleteFABMenuSector)
-  const setFABMenuButtonTextColor = useWidgetSettingsStore(
-    s => s.setFABMenuButtonTextColor
-  )
+  const setFABMenuButtonTextColor = useWidgetSettingsStore(s => s.setFABMenuButtonTextColor)
   const setFABMenuButtonBackgroundColor = useWidgetSettingsStore(
     s => s.setFABMenuButtonBackgroundColor
   )
-  const setFABMenuTriggerText = useWidgetSettingsStore(
-    s => s.setFABMenuTriggerText
-  )
+  const setFABMenuTriggerText = useWidgetSettingsStore(s => s.setFABMenuTriggerText)
 
   const settings =
     widget?.type === WidgetTypeEnum.FAB_MENU ? (widget as FABMenuWidgetSettings) : null

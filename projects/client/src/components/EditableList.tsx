@@ -110,7 +110,7 @@ const EditableList = <T,>({
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   >
                     {/* <div className='w-2 h-1.5'> */}
-                      <SvgIcon src={iconArrowUp} size={9} className="text-current" />
+                    <SvgIcon src={iconArrowUp} size={9} className="text-current" />
                     {/* </div> */}
                   </motion.button>
                   <motion.button
@@ -124,7 +124,7 @@ const EditableList = <T,>({
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   >
                     {/* <div className='w-2 h-1.5'> */}
-                      <SvgIcon src={iconArrowDown} size={9} className="text-current" />
+                    <SvgIcon src={iconArrowDown} size={9} className="text-current" />
                     {/* </div> */}
                   </motion.button>
                 </div>
@@ -142,7 +142,7 @@ const EditableList = <T,>({
                   className={`min-w-7.75 w-7.75 border border-[#E8E8E8] h-10 rounded-[5px] text-red-500 hover:text-red-700 p-1 ${classNames?.delete}`}
                   aria-label="Удалить"
                 >
-                  <div className='w-3.25 h-4'>
+                  <div className="w-3.25 h-4">
                     <SvgIcon src={iconBin} className="text-[#B7081B]" />
                   </div>
                 </Button>
