@@ -1,7 +1,6 @@
-import { Select, SelectItem, type SelectedItems } from '@heroui/select'
+import { Select, SelectItem } from '@heroui/select'
 import { Input } from '@heroui/input'
 import SvgIcon from '@/components/SvgIcon'
-import iconArrowUp from '@/assets/icons/arrow-up.svg'
 import iconHeartDislike from '@/assets/icons/heart-dislike.svg'
 import {
   FAB_MENU_BUTTON_PRESETS,
@@ -14,6 +13,9 @@ import type {
   FABMenuSectorItem
 } from '@/layouts/Widgets/FABMenu/types'
 import type { SharedSelection } from '@heroui/system'
+import { cn } from '@heroui/theme'
+import { PatternFormat } from 'react-number-format'
+import { useState } from 'react'
 
 type FABSectorItemProps = {
   sector: FABMenuSectorItem
@@ -30,10 +32,6 @@ const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS.filter(
   preset => preset.group === 'messenger'
 ).map(preset => preset.icon)
 const MESSENGER_PAYLOAD_TYPES: FABMenuPayloadType[] = ['nickname', 'link']
-const ICON_DEFAULT_PAYLOAD_TYPE = FAB_MENU_BUTTON_PRESETS.reduce(
-  (acc, preset) => ({ ...acc, [preset.icon]: preset.payload.type }),
-  {} as Record<FABMenuIconKey, FABMenuPayloadType>
-)
 
 const isMessengerIcon = (icon: FABMenuIconKey) => MESSENGER_ICONS.includes(icon)
 const getMessengerPayloadOptions = () =>
@@ -51,38 +49,12 @@ const PAYLOAD_OPTIONS: { label: string; type: FABMenuPayloadType }[] = [
 const FABSectorItem = ({
   sector,
   onLabelChange,
-  onIconChange,
+  // onIconChange,
   onPayloadTypeChange,
   onPayloadValueChange,
   isPendingSelection
 }: FABSectorItemProps) => {
-  const renderValue = (items: SelectedItems<object>) => {
-    if (isPendingSelection) {
-      return <span className="text-sm font-semibold text-gray-900">Выбрать кнопку</span>
-    }
-
-    return items.map(item => (
-      <span key={item.textValue} className="flex items-center justify-start gap-2 text-sm">
-        {FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].showIcon && (
-          <SvgIcon
-            src={FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].icon}
-            size={16}
-            className="w-min"
-          />
-        )}
-        {FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].label}
-      </span>
-    ))
-  }
-
-  const handleIconChange = (keys: SharedSelection) => {
-    const selected = Array.from(keys)[0]
-    if (!selected) return
-    const nextIcon = selected as FABMenuIconKey
-    onIconChange(nextIcon)
-    const defaultType = ICON_DEFAULT_PAYLOAD_TYPE[nextIcon]
-    if (defaultType) onPayloadTypeChange(defaultType)
-  }
+  const [isInputInvalid, setIsInputInvalid] = useState(false)
 
   const handlePayloadTypeChange = (keys: SharedSelection) => {
     const next = Array.from(keys)[0]
@@ -91,55 +63,55 @@ const FABSectorItem = ({
 
   const renderPendingTrigger = () => (
     <div
-      className="pointer-events-none flex items-center gap-2 rounded-md border border-[#D9D9E0] bg-white px-3 py-2 text-sm w-full"
+      className={cn(
+        'pointer-events-none flex items-center gap-2 rounded-md',
+        'border border-[#E4E4E7] bg-white px-2.5 py-2 text-base w-full'
+      )}
       aria-label="Выбрать кнопку"
     >
-      <SvgIcon src={iconHeartDislike} size={16} className="text-current w-min" />
+      <SvgIcon src={iconHeartDislike} size={24} className="text-current w-min" />
       Выбрать кнопку
-      <SvgIcon src={iconArrowUp} size={10} className="text-gray-500 w-min ml-auto" />
     </div>
   )
 
   const renderPayloadType = () => {
-    if (isPendingSelection) return renderPendingTrigger()
+    if (isPendingSelection) {
+      return renderPendingTrigger()
+    }
 
-    return (
-      <Select
-        selectedKeys={sector.icon ? [sector.icon] : []}
-        onSelectionChange={handleIconChange}
-        aria-label="Тип иконки"
-        classNames={{
-          trigger:
-            'shadow-none border border-[#D9D9E0] rounded-md min-w-[160px] h-10 flex items-center !bg-transparent'
-        }}
-        renderValue={renderValue}
-      >
-        {Object.entries(FAB_MENU_ICON_OPTIONS).map(([key, entry]) => (
-          <SelectItem key={key} textValue={key}>
-            <div className="flex items-center gap-2">
-              {entry.showIcon && (
-                <SvgIcon src={entry.icon} size="16px" className="w-min text-black" />
-              )}
-              <span className="text-sm">{entry.label}</span>
-            </div>
-          </SelectItem>
-        ))}
-      </Select>
-    )
-  }
+    const handleSectorLabelChnage = (value: string) => {
+      if (value.length > 14) {
+        // TODO: сообщение пользователю
+        setIsInputInvalid(true)
+        return
+      }
 
-  const renderCustomLabel = () => {
-    if (sector.icon !== 'custom') return null
-    if (isPendingSelection) return null
+      setIsInputInvalid(false)
+      onLabelChange(value)
+    }
+
     return (
       <Input
-        placeholder="Название кнопки"
         value={sector.label}
-        onValueChange={onLabelChange}
+        onValueChange={handleSectorLabelChnage}
+        placeholder={sector.label}
+        isInvalid={isInputInvalid}
         classNames={{
-          inputWrapper: 'rounded-md border bg-white border-[#E4E4E7] h-10 min-h-10'
+          inputWrapper: cn(
+            'border bg-white border-[#E4E4E7] rounded-[5px]',
+            'shadow-none h-12.75 min-h-10 px-2.5'
+          ),
+          input: 'text-base'
         }}
-        size="lg"
+        startContent={
+          FAB_MENU_ICON_OPTIONS[sector.icon].showIcon && (
+            <SvgIcon
+              src={FAB_MENU_ICON_OPTIONS[sector.icon].icon}
+              size={20}
+              className="w-min text-black"
+            />
+          )
+        }
       />
     )
   }
@@ -155,13 +127,16 @@ const FABSectorItem = ({
         onSelectionChange={handlePayloadTypeChange}
         aria-label="Тип действия"
         classNames={{
-          trigger:
-            'shadow-none border border-[#D9D9E0] rounded-md min-w-[160px] h-10 flex items-center !bg-transparent'
+          trigger: cn(
+            'shadow-none border border-[#E8E8E8] rounded-md h-10 px-2.5',
+            'flex items-center bg-white'
+          ),
+          base: 'w-74'
         }}
         renderValue={items =>
           items.map(item => {
             const option = options.find(opt => opt.type === item.textValue)
-            return <span className="text-sm">{option?.label ?? item.textValue}</span>
+            return <span className="text-base">{option?.label ?? item.textValue}</span>
           })
         }
       >
@@ -177,13 +152,45 @@ const FABSectorItem = ({
   const renderPayloadValue = () => {
     if (isPendingSelection) return null
     if (!sector.payload.type) return null
+
+    if ('phone' === sector.payload.type) {
+      return (
+        <PatternFormat
+          customInput={Input}
+          format="+7 (###) ###-##-##"
+          mask="_"
+          value={
+            sector.payload.value.startsWith('+7')
+              ? sector.payload.value.substring(2)
+              : sector.payload.value
+          }
+          onValueChange={values => {
+            const cleanValue = values.value ? `+7${values.value}` : ''
+            onPayloadValueChange(cleanValue)
+          }}
+          // Hero UI Input props
+          placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[sector.payload.type] ?? ''}
+          classNames={{
+            inputWrapper: cn(
+              'shadow-none rounded-md border bg-white border-[#E4E4E7]',
+              'rounded-[5px] h-10 min-h-10 px-2.5'
+            )
+          }}
+          size="lg"
+        />
+      )
+    }
+
     return (
       <Input
         placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[sector.payload.type] ?? ''}
         value={sector.payload.value}
         onValueChange={onPayloadValueChange}
         classNames={{
-          inputWrapper: 'rounded-md border bg-white border-[#E4E4E7] h-10 min-h-10'
+          inputWrapper: cn(
+            'shadow-none rounded-md border bg-white border-[#E4E4E7]',
+            'rounded-[5px] h-10 min-h-10 px-2.5'
+          )
         }}
         size="lg"
       />
@@ -191,9 +198,8 @@ const FABSectorItem = ({
   }
   return (
     <div className="flex flex-col gap-2">
-      <div className={`flex flex-row gap-2 h-10 w-full ${isPendingSelection ? 'opacity-95' : ''}`}>
+      <div className={cn('flex flex-row gap-2 h-10 w-full', isPendingSelection && 'opacity-95')}>
         {renderPayloadType()}
-        {renderCustomLabel()}
         {renderPayloadSubtype()}
         {renderPayloadValue()}
       </div>

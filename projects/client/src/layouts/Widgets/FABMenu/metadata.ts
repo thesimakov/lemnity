@@ -12,12 +12,13 @@ export const fabMenuWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings
   settings: {
     sections: [
       {
+        id: 'fab-menu.sectors-d',
+        Component: lazy(() => import('./FABMenuDisplaySurface'))
+      },
+      {
         id: 'fab-menu.sectors',
         Component: lazy(() => import('./FABMenuField'))
       }
-    ],
-    surfaces: {
-      display: lazy(() => import('./FABMenuDisplaySurface'))
-    }
+    ]
   }
 }

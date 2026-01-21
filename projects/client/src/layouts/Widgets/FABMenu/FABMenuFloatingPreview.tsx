@@ -29,8 +29,8 @@ const FABMenuFloatingPreview = ({ onClose }: FABMenuFloatingPreviewProps) => {
         anchorBaseClassName="absolute bottom-6"
         anchorOffsetClassName={{ left: 'left-6', right: 'right-6' }}
         listClassName="w-full max-w-[320px]"
-        triggerClassName="h-20 w-20 shadow-[0_14px_30px_rgba(108,92,255,0.55)]"
-        signatureClassName="bg-gray-200/90"
+        triggerClassName="h-20 min-w-20 flex flex-row"
+        // signatureClassName="bg-gray-200/90"
       />
     </div>,
     document.body

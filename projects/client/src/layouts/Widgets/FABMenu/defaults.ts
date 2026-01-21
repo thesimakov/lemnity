@@ -30,14 +30,14 @@ const presetByIcon = (icon: FABMenuIconKey) => {
 
 const DEFAULT_PRESET_ICONS: FABMenuIconKey[] = [
   'email',
-  'phone',
-  'website',
-  'telegram-message',
-  'max-message',
-  'whatsapp-message',
-  'instagram',
-  'youtube',
-  'ok'
+  'phone'
+  // 'website',
+  // 'telegram-message',
+  // 'max-message',
+  // 'whatsapp-message',
+  // 'instagram',
+  // 'youtube',
+  // 'ok'
 ]
 
 const DEFAULT_SECTORS: Omit<FABMenuSectorItem, 'id'>[] = DEFAULT_PRESET_ICONS.map(icon => {
@@ -71,7 +71,10 @@ export const buildFABMenuWidgetSettings = (): FABMenuWidgetSettings => ({
   type: WidgetTypeEnum.FAB_MENU,
   sectors: {
     items: DEFAULT_SECTORS.map(createSector)
-  }
+  },
+  triggerTextColor: '#FFFFFF',
+  triggerBackgroundColor: '#5951E5',
+  triggerText: 'Супер-кнопка'
 })
 
 export const buildFABMenuFieldsSettings = (): FieldsSettings => ({}) as FieldsSettings
