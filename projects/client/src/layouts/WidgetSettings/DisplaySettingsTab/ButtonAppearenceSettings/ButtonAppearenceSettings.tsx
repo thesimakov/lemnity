@@ -27,21 +27,6 @@ type ButtonAppearenceSettingsProps = {
   onChange: (value: ButtonAppearance) => void
 }
 
-// const Circle = (props: { fill: string, stroke?: string }) => {
-//   return (
-//     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-//       <circle cx="10" cy="10" r="9.5" fill={props.fill} stroke={props.stroke ?? 'black'}/>
-//     </svg>
-//   )
-// }
-
-// const COLORS = [
-//   { color: '#E11D48', text: 'Красный' },
-//   { color: '#67E8F9', text: 'Аква' },
-//   { color: '#FEE2E2', text: 'Розовый' },
-//   { color: '#000000', text: 'Чёрный' },
-// ]
-
 const ICONS = [
   { icon: lightIcon, textValue: 'Light icon' },
   { icon: balloonIcon, textValue: 'Balloon icon' },
@@ -111,8 +96,12 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         }}
       />
 
-      <div className="">
-        <ColorPicker initialColor={initialFABMenuTextColor} onColorChange={handleTextColorChange} />
+      <div className="min-w-43">
+        <ColorPicker
+          initialColor={initialFABMenuTextColor}
+          onColorChange={handleTextColorChange}
+          triggerText="Цвет текста"
+        />
       </div>
 
       <div className="min-w-18">
