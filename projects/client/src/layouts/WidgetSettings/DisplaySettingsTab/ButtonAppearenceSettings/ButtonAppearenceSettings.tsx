@@ -10,11 +10,11 @@ import ColorPicker from '@/components/ColorPicker'
 import lightIcon from '@/assets/icons/light.svg'
 import balloonIcon from '@/assets/icons/balloon.svg'
 import heartDislikeIcon from '@/assets/icons/heart-dislike.svg'
-import { Button } from '@heroui/button'
+// import { Button } from '@heroui/button'
 import { useFABMenuSettings } from '@/layouts/Widgets/FABMenu/hooks'
 import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
-import { withDefaults } from '@/stores/widgetSettings/utils'
+// import { withDefaults } from '@/stores/widgetSettings/utils'
 
 type ButtonAppearance = {
   text?: string
@@ -27,20 +27,20 @@ type ButtonAppearenceSettingsProps = {
   onChange: (value: ButtonAppearance) => void
 }
 
-const Circle = (props: { fill: string, stroke?: string }) => {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="10" cy="10" r="9.5" fill={props.fill} stroke={props.stroke ?? 'black'}/>
-    </svg>
-  )
-}
+// const Circle = (props: { fill: string, stroke?: string }) => {
+//   return (
+//     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+//       <circle cx="10" cy="10" r="9.5" fill={props.fill} stroke={props.stroke ?? 'black'}/>
+//     </svg>
+//   )
+// }
 
-const COLORS = [
-  { color: '#E11D48', text: 'Красный' },
-  { color: '#67E8F9', text: 'Аква' },
-  { color: '#FEE2E2', text: 'Розовый' },
-  { color: '#000000', text: 'Чёрный' },
-]
+// const COLORS = [
+//   { color: '#E11D48', text: 'Красный' },
+//   { color: '#67E8F9', text: 'Аква' },
+//   { color: '#FEE2E2', text: 'Розовый' },
+//   { color: '#000000', text: 'Чёрный' },
+// ]
 
 const ICONS = [
   { icon: lightIcon, textValue: 'Light icon' },
@@ -71,7 +71,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     ?? (defaults.widget as FABMenuWidgetSettings).triggerTextColor
 
   const handleTextColorChange = (color: string) => {
-    console.log(color)
+    // console.log(color)
     setFABMenuButtonTextColor(color)
   }
 
@@ -79,7 +79,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     ?? (defaults.widget as FABMenuWidgetSettings).triggerBackgroundColor
   
   const handleBackgroundColorChange = (color: string) => {
-    console.log(color)
+    // console.log(color)
     setFABMenuButtonBackgroundColor(color)
   }
 

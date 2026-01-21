@@ -20,7 +20,7 @@ const FabMenuWidget = ({
   anchorBaseClassName = '',
   anchorOffsetClassName,
   listClassName = '',
-  triggerClassName = '',
+  // triggerClassName = '',
   signatureClassName = ''
 }: FabMenuWidgetProps) => {
   const {

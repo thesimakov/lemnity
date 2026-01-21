@@ -130,7 +130,7 @@ export const useFabMenuPreviewModel = () => {
     }
 
     return style
-  }, [])
+  }, [triggerBackgroundColor, triggerTextColor])
 
   const toggleExpanded = useCallback(() => {
     setExpanded(prev => {
