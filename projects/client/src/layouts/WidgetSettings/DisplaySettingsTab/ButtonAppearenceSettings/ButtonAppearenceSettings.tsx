@@ -96,11 +96,11 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         }}
       />
 
-      <div className="min-w-43">
+      <div className="min-w-45">
         <ColorPicker
           initialColor={initialFABMenuTextColor}
           onColorChange={handleTextColorChange}
-          triggerText="Цвет текста"
+          triggerText="Цвет шрифта"
         />
       </div>
 
