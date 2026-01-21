@@ -3,6 +3,7 @@ import { FAB_MENU_ICON_OPTIONS } from './buttonLibrary'
 import { FabMenuAddIcon, FabMenuBalloonIcon } from './fabMenuPreviewVisuals'
 import { useFabMenuPreviewModel } from './useFabMenuPreviewModel'
 import { cn } from '@heroui/theme'
+import SvgIcon from '@/components/SvgIcon'
 
 type FabMenuWidgetProps = {
   anchorBaseClassName?: string
@@ -18,11 +19,14 @@ type FabMenuWidgetProps = {
 const FabMenuWidget = ({
   anchorBaseClassName = '',
   anchorOffsetClassName,
-  listClassName = '',
-  triggerClassName = '',
-  signatureClassName = ''
+  listClassName = ''
+  // triggerClassName = '',
+  // signatureClassName = ''
 }: FabMenuWidgetProps) => {
   const {
+    triggerText,
+    triggerTextColor,
+    triggerBackgroundColor,
     menuItems,
     alignClassName,
     safePosition,
@@ -44,33 +48,50 @@ const FabMenuWidget = ({
       <AnimatePresence>
         {expanded ? (
           <motion.div
-            layout
+            // layout
             initial={{ opacity: 0, translateY: '12px' }}
             animate={{ opacity: 1, translateY: '0' }}
             exit={{ opacity: 0, translateY: '12px' }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className={`flex flex-col gap-2 ${alignClassName} ${listClassName}`}
+            className={`flex flex-col gap-2.5 ${alignClassName} ${listClassName}`}
           >
             {menuItems.map(item => {
               const iconEntry = FAB_MENU_ICON_OPTIONS[item.icon]
               const style = renderBackground(item)
               const showIcon = iconEntry?.showIcon ?? true
+              const isNotMessenger =
+                item.icon === 'custom' ||
+                item.icon === 'email' ||
+                item.icon === 'phone' ||
+                item.icon === 'website' ||
+                item.icon === 'calendar'
+
               return (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => handleItemAction(item)}
-                  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm shadow-sm transition hover:scale-[1.05] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                  className={cn(
+                    'h-11.5 flex items-center gap-2 rounded-full px-4 py-2',
+                    'text-sm transition motion-reduce:transition-none',
+                    'duration-250 hover:scale-[1.05] focus:outline-none',
+                    'focus-visible:ring-2 focus-visible:ring-white/70'
+                  )}
                   style={style}
                   title={item.description || item.label}
                 >
-                  {showIcon && iconEntry ? (
-                    <img
-                      src={iconEntry.icon}
-                      alt={iconEntry.label}
+                  {showIcon && iconEntry && (
+                    <div
                       className="h-5 w-5 object-contain"
-                    />
-                  ) : null}
+                      style={
+                        isNotMessenger
+                          ? { color: triggerTextColor, fill: triggerTextColor }
+                          : undefined
+                      }
+                    >
+                      <SvgIcon src={iconEntry.icon} alt={iconEntry.label} />
+                    </div>
+                  )}
                   <span className="flex-1">{item.label}</span>
                 </button>
               )
@@ -80,9 +101,9 @@ const FabMenuWidget = ({
               href="https://lemnity.ru"
               target="_blank"
               className={cn(
-                'text-xs mt-1 rounded-full px-4 py-1',
-                'text-white bg-[#949494]',
-                signatureClassName
+                'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
+                'text-white bg-[#949494] grow-0'
+                // signatureClassName
               )}
             >
               Создано на Lemnity
@@ -95,14 +116,23 @@ const FabMenuWidget = ({
         onClick={toggleExpanded}
         className={cn(
           'flex items-center justify-center rounded-full',
-          'bg-gradient-to-br from-[#6C5CFF] to-[#8F5CFF]',
-          'text-white shadow-lg ring-1 ring-white/20',
-          'transition-transform hover:scale-105',
-          triggerClassName
+          'text-white ring-1 ring-white/20',
+          'transition-transform motion-reduce:transition-none duration-250 hover:scale-105',
+          'h-14.75 min-w-14.75 gap-2.5 px-4'
+          // triggerClassName
         )}
+        style={{
+          backgroundColor: triggerBackgroundColor,
+          color: triggerTextColor
+        }}
         aria-label={expanded ? 'Скрыть кнопки' : 'Показать кнопки'}
       >
-        {expanded ? <FabMenuAddIcon /> : <FabMenuBalloonIcon alignClassName={alignClassName} />}
+        {triggerText && <span className="">{triggerText}</span>}
+        {expanded ? (
+          <FabMenuAddIcon color={triggerTextColor} />
+        ) : (
+          <FabMenuBalloonIcon color={triggerTextColor} alignClassName={alignClassName} />
+        )}
       </button>
     </div>
   )

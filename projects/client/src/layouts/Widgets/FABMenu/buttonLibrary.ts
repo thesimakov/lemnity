@@ -40,7 +40,7 @@ export const FAB_MENU_BUTTON_GROUPS: { id: FABMenuButtonGroupId; label: string }
 
 export const FAB_MENU_PAYLOAD_PLACEHOLDERS: Record<FABMenuPayloadType, string> = {
   email: 'hello@lemnity.ru',
-  phone: '+79091805391',
+  phone: '+7 (000) 000-00-00',
   link: 'https://lemnity.ru',
   nickname: '@lemnity',
   script: "<script id='pixel-script-poptin' src='https://'></script>",

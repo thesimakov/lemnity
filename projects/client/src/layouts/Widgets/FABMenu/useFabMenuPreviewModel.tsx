@@ -80,43 +80,59 @@ const buildActionHref = (item: FABMenuSectorItem): string | null => {
 
 export const useFabMenuPreviewModel = () => {
   const { settings } = useFABMenuSettings()
+  // TODO: const defaults = useWidgetStaticDefaults() ????
+  const triggerTextColor = settings?.triggerTextColor ?? '#FFFFFF'
+  const triggerBackgroundColor = settings?.triggerBackgroundColor ?? '#5951E5'
+  const triggerText = settings?.triggerText ?? 'Супер-кнопка'
   const buttonPosition = useWidgetSettingsStore(
     s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
   )
   const widgetId = useWidgetSettingsStore(s => s.settings?.id)
   const projectId = useWidgetSettingsStore(s => s.projectId)
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
 
   const safePosition = normalizePosition(buttonPosition)
   const menuItems = useMenuItems(settings?.sectors.items ?? [])
   const alignClassName =
     safePosition === 'bottom-left' ? 'items-start text-left' : 'items-end text-right'
 
-  const renderBackground = useCallback((item: FABMenuSectorItem): CSSProperties => {
-    const preset = FAB_MENU_BUTTON_PRESETS.find(p => p.icon === item.icon)
-    const gradientStops = preset?.gradientColors?.join(', ')
-    const hasGradient = Boolean(gradientStops)
-    const isMaxButton = item.icon === 'max-message'
-    const baseColor = preset?.color ?? item.color
-    const style: CSSProperties = {}
+  const renderBackground = useCallback(
+    (item: FABMenuSectorItem): CSSProperties => {
+      const preset = FAB_MENU_BUTTON_PRESETS.find(p => p.icon === item.icon)
+      const gradientStops = preset?.gradientColors?.join(', ')
+      const hasGradient = Boolean(gradientStops)
+      const isMaxButton = item.icon === 'max-message'
+      const isNotMessenger =
+        item.icon === 'custom' ||
+        item.icon === 'email' ||
+        item.icon === 'phone' ||
+        item.icon === 'website' ||
+        item.icon === 'calendar'
+      const baseColor = preset?.color ?? item.color
+      const style: CSSProperties = {}
 
-    if (isMaxButton && hasGradient) {
-      style.backgroundImage = `linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, ${gradientStops})`
-      style.backgroundOrigin = 'padding-box, border-box'
-      style.backgroundClip = 'padding-box, border-box'
-      style.border = '1px solid transparent'
-      style.color = preset?.textColor ?? '#6B21A8'
-    } else if (hasGradient) {
-      style.backgroundImage = `linear-gradient(135deg, ${gradientStops})`
-      style.backgroundColor = preset?.gradientColors?.[0] ?? baseColor
-      style.color = preset?.textColor ?? '#ffffff'
-    } else {
-      style.backgroundColor = baseColor
-      style.color = preset?.textColor ?? '#ffffff'
-    }
+      if (isMaxButton && hasGradient) {
+        style.backgroundImage = `linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, ${gradientStops})`
+        style.backgroundOrigin = 'padding-box, border-box'
+        style.backgroundClip = 'padding-box, border-box'
+        style.border = '1px solid transparent'
+        style.color = preset?.textColor ?? '#6B21A8'
+      } else if (hasGradient) {
+        style.backgroundImage = `linear-gradient(135deg, ${gradientStops})`
+        style.backgroundColor = preset?.gradientColors?.[0] ?? baseColor
+        style.color = preset?.textColor ?? '#ffffff'
+      } else if (isNotMessenger) {
+        style.backgroundColor = triggerBackgroundColor
+        style.color = triggerTextColor
+      } else {
+        style.backgroundColor = baseColor
+        style.color = preset?.textColor ?? '#ffffff'
+      }
 
-    return style
-  }, [])
+      return style
+    },
+    [triggerBackgroundColor, triggerTextColor]
+  )
 
   const toggleExpanded = useCallback(() => {
     setExpanded(prev => {
@@ -172,6 +188,9 @@ export const useFabMenuPreviewModel = () => {
   )
 
   return {
+    triggerTextColor,
+    triggerBackgroundColor,
+    triggerText,
     menuItems,
     alignClassName,
     safePosition,

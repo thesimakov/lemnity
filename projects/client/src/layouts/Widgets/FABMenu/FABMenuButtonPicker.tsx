@@ -17,12 +17,12 @@ type FABMenuButtonPickerProps = {
 const getButtonStylesNamesByType = (button: FABMenuButtonDefinition) => {
   switch (button.group) {
     case 'universal':
-      return 'bg-[#5951E5] text-white text-sm rounded-md'
+      return 'bg-[#5951E5] text-white text-xs rounded-[3.61px] h-8 px-3'
     case 'messenger':
     case 'social':
-      return 'text-white text-sm rounded-md'
+      return 'text-white text-xs rounded-[3.61px] h-8 px-3'
     default:
-      return 'text-sm'
+      return 'text-xs h-8 px-3'
   }
 }
 
@@ -59,14 +59,14 @@ const getButtonInlineStyle = (button: FABMenuButtonDefinition): CSSProperties | 
 
 const FABMenuButtonPicker = ({ onSelect }: FABMenuButtonPickerProps) => {
   return (
-    <div className="space-y-2  border border-[#E8E8E8] bg-[#EAEAEA] p-3 rounded-md">
+    <div className="space-y-2 border border-[#E8E8E8] bg-[#EAEAEA] p-3 rounded-md">
       {FAB_MENU_BUTTON_GROUPS.map(group => {
         const buttons = FAB_MENU_BUTTON_PRESETS.filter(preset => preset.group === group.id)
         if (!buttons.length) return null
         return (
           <div key={group.id} className="space-y-2.5 rounded-xl border border-[#E5E7EB]">
-            <p className="text-xs tracking-wider color-[#3D3D3B]">{group.label}</p>
-            <div className="flex flex-wrap gap-3">
+            <p className="text-sm color-[#3D3D3B]">{group.label}</p>
+            <div className="flex flex-wrap gap-2.5">
               {buttons.map(button => {
                 const showSvg = Boolean(button.icon && (button.showIcon ?? true))
                 return (

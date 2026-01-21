@@ -1,3 +1,75 @@
+// import React, { useEffect } from 'react'
+// import DOMPurify from 'dompurify'
+// import { cn } from '@heroui/theme'
+
+// interface SvgIconProps {
+//   src: string
+//   className?: string
+//   size?: number | string
+//   alt?: string
+//   preserveOriginalColors?: boolean
+// }
+
+// const SvgIcon: React.FC<SvgIconProps> = ({
+//   src,
+//   className = '',
+//   size = '100%',
+//   alt = 'icon',
+//   preserveOriginalColors = false
+// }) => {
+//   const containerRef = React.useRef<HTMLDivElement>(null)
+
+//   useEffect(() => {
+//     if (!containerRef.current) return
+
+//     fetch(src)
+//       .then(res => res.text())
+//       .then(text => {
+//         const purifier = DOMPurify()
+
+//         purifier.addHook('afterSanitizeElements', (node) => {
+//           if (node instanceof Element && !preserveOriginalColors) {
+//             const fillValue = node.getAttribute('fill')
+//             if (fillValue) {
+//               node.setAttribute('fill', 'currentColor')
+//             }
+//           }
+//         })
+
+//         const sanitizedSvgString = purifier.sanitize(text, {
+//           USE_PROFILES: { svg: true, svgFilters: true },
+//           // ADD_ATTR: ['xlink:href'],
+//         })
+
+//         console.log(purifier.removed)
+
+//         if (!containerRef.current) return
+
+//         containerRef.current.innerHTML = sanitizedSvgString
+//         const svgElement = containerRef.current.querySelector('svg')
+
+//         if (svgElement) {
+//           svgElement.setAttribute('width', size.toString())
+//           svgElement.setAttribute('height', size.toString())
+//         }
+//       })
+//   }, [src])
+
+//   return (
+//     <div
+//       ref={containerRef}
+//       className={cn(
+//         'w-full h-full flex items-center justify-center select-none',
+//         className,
+//       )}
+//       role="img"
+//       aria-label={alt}
+//     />
+//   )
+// }
+
+// export default SvgIcon
+
 import React from 'react'
 
 interface SvgIconProps {

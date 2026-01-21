@@ -79,7 +79,7 @@ const EditableList = <T,>({
   const canAddMore = !maxItems || items.length < maxItems
 
   return (
-    <div className="flex flex-col gap-2 h-full w-full">
+    <div className="flex flex-col gap-2.5 h-full w-full">
       {items.map((item, index) => {
         const below = renderBelow?.(item, index)
         return (
@@ -91,14 +91,14 @@ const EditableList = <T,>({
           >
             <div className={`flex items-center gap-2`}>
               {showIndex && (
-                <div className={`min-w-[40px] ${classNames?.index}`}>
+                <div className={`min-w-10 ${classNames?.index}`}>
                   <span className={'text-sm font-normal text-gray-900'}>
                     #{String(index + 1).padStart(2, '0')}
                   </span>
                 </div>
               )}
               {canReorder && (
-                <div className={`flex flex-col gap-1 ${classNames?.reorder || ''}`}>
+                <div className={`flex flex-col ${classNames?.reorder || ''}`}>
                   <motion.button
                     type="button"
                     onClick={() => handleMoveUp(index)}
@@ -109,7 +109,9 @@ const EditableList = <T,>({
                     whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   >
-                    <SvgIcon src={iconArrowUp} size={14} className="text-current !h-2.5" />
+                    {/* <div className='w-2 h-1.5'> */}
+                    <SvgIcon src={iconArrowUp} size={9} className="text-current" />
+                    {/* </div> */}
                   </motion.button>
                   <motion.button
                     type="button"
@@ -121,7 +123,9 @@ const EditableList = <T,>({
                     whileTap={{ scale: 0.95 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   >
-                    <SvgIcon src={iconArrowDown} size={14} className="text-current !h-2.5" />
+                    {/* <div className='w-2 h-1.5'> */}
+                    <SvgIcon src={iconArrowDown} size={9} className="text-current" />
+                    {/* </div> */}
                   </motion.button>
                 </div>
               )}
@@ -132,11 +136,15 @@ const EditableList = <T,>({
                   onPress={onDelete ? () => onDelete(item, index) : () => handleDelete(item.id)}
                   isIconOnly
                   isDisabled={items.length <= (minItems ?? 0)}
-                  variant="light"
-                  className={`text-red-500 hover:text-red-700 p-1 ${classNames?.delete}`}
+                  variant="ghost"
+                  // Необходимо переопределить дефолтное значение
+                  // min-w-10
+                  className={`min-w-7.75 w-7.75 border border-[#E8E8E8] h-10 rounded-[5px] text-red-500 hover:text-red-700 p-1 ${classNames?.delete}`}
                   aria-label="Удалить"
                 >
-                  <SvgIcon src={iconBin} size={20} className="text-[#B7081B]" />
+                  <div className="w-3.25 h-4">
+                    <SvgIcon src={iconBin} className="text-[#B7081B]" />
+                  </div>
                 </Button>
               )}
             </div>
@@ -160,8 +168,8 @@ const EditableList = <T,>({
         <Button
           variant="flat"
           onPress={onAdd}
-          radius="sm"
-          className={`text-md w-fit ${classNames?.add}`}
+          // radius="sm"
+          className={`text-md w-fit rounded-[5px] ${classNames?.add}`}
           startContent={<SvgIcon src={iconAdd} size={'20px'} className="text-[#797979]" />}
         >
           {addButtonLabel}

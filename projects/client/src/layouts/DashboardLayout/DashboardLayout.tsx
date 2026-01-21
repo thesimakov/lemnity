@@ -20,7 +20,7 @@ const DashboardLayout = ({
   const getSidebarWidth = () => (isVisible ? 'w-60' : 'w-16')
 
   return (
-    <div className="flex flex-1 min-h-0 mx-5 gap-[15px]">
+    <div className="flex flex-1 min-h-0 mx-5 mb-[38px] gap-[15px]">
       <div
         className={`shrink-0 transition-all duration-300 ease-in-out overflow-hidden ${getSidebarWidth()}`}
       >
