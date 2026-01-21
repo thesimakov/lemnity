@@ -21,7 +21,7 @@ const FabMenuWidget = ({
   anchorOffsetClassName,
   listClassName = '',
   // triggerClassName = '',
-  signatureClassName = ''
+  // signatureClassName = ''
 }: FabMenuWidgetProps) => {
   const {
     triggerText,
@@ -48,7 +48,7 @@ const FabMenuWidget = ({
       <AnimatePresence>
         {expanded ? (
           <motion.div
-            layout
+            // layout
             initial={{ opacity: 0, translateY: '12px' }}
             animate={{ opacity: 1, translateY: '0' }}
             exit={{ opacity: 0, translateY: '12px' }}
@@ -104,9 +104,9 @@ const FabMenuWidget = ({
               href="https://lemnity.ru"
               target="_blank"
               className={cn(
-                'text-xs rounded-full px-4 h-5 flex items-center',
-                'text-white bg-[#949494]',
-                signatureClassName
+                'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
+                'text-white bg-[#949494] grow-0',
+                // signatureClassName
               )}
             >
               Создано на Lemnity

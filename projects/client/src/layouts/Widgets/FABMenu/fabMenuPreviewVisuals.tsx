@@ -14,7 +14,7 @@ export const FabMenuBalloonIcon = (
   <motion.span
     // animate={BALLOON_GLOW_ANIMATION}
     // transition={BALLOON_GLOW_TRANSITION}
-    className="flex items-center justify-center"
+    className="flex items-center justify-center w-8 h-8"
     style={{ color: props.color }}
   >
     <SvgIcon

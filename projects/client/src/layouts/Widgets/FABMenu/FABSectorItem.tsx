@@ -1,4 +1,4 @@
-import { Select, SelectItem, type SelectedItems } from '@heroui/select'
+import { Select, SelectItem } from '@heroui/select'
 import { Input } from '@heroui/input'
 import SvgIcon from '@/components/SvgIcon'
 import iconHeartDislike from '@/assets/icons/heart-dislike.svg'
@@ -15,6 +15,7 @@ import type {
 import type { SharedSelection } from '@heroui/system'
 import { cn } from '@heroui/theme'
 import { PatternFormat } from 'react-number-format'
+import { useState } from 'react'
 
 type FABSectorItemProps = {
   sector: FABMenuSectorItem
@@ -31,10 +32,6 @@ const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS.filter(
   preset => preset.group === 'messenger'
 ).map(preset => preset.icon)
 const MESSENGER_PAYLOAD_TYPES: FABMenuPayloadType[] = ['nickname', 'link']
-const ICON_DEFAULT_PAYLOAD_TYPE = FAB_MENU_BUTTON_PRESETS.reduce(
-  (acc, preset) => ({ ...acc, [preset.icon]: preset.payload.type }),
-  {} as Record<FABMenuIconKey, FABMenuPayloadType>
-)
 
 const isMessengerIcon = (icon: FABMenuIconKey) => MESSENGER_ICONS.includes(icon)
 const getMessengerPayloadOptions = () =>
@@ -52,43 +49,12 @@ const PAYLOAD_OPTIONS: { label: string; type: FABMenuPayloadType }[] = [
 const FABSectorItem = ({
   sector,
   onLabelChange,
-  onIconChange,
+  // onIconChange,
   onPayloadTypeChange,
   onPayloadValueChange,
   isPendingSelection
 }: FABSectorItemProps) => {
-  const renderValue = (items: SelectedItems<object>) => {
-    if (isPendingSelection) {
-      return <span className="text-sm font-semibold text-gray-900">
-        Выбрать кнопку
-      </span>
-    }
-
-    return items.map(item => (
-      <span
-        key={item.textValue}
-        className="flex items-center justify-start gap-2 text-base"
-      >
-        {FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].showIcon && (
-          <SvgIcon
-            src={FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].icon}
-            size={20}
-            className="w-min text-black"
-          />
-        )}
-        {FAB_MENU_ICON_OPTIONS[item.textValue as FABMenuIconKey].label}
-      </span>
-    ))
-  }
-
-  const handleIconChange = (keys: SharedSelection) => {
-    const selected = Array.from(keys)[0]
-    if (!selected) return
-    const nextIcon = selected as FABMenuIconKey
-    onIconChange(nextIcon)
-    const defaultType = ICON_DEFAULT_PAYLOAD_TYPE[nextIcon]
-    if (defaultType) onPayloadTypeChange(defaultType)
-  }
+  const [isInputInvalid, setIsInputInvalid] = useState(false)
 
   const handlePayloadTypeChange = (keys: SharedSelection) => {
     const next = Array.from(keys)[0]
@@ -113,53 +79,41 @@ const FABSectorItem = ({
   )
 
   const renderPayloadType = () => {
-    if (isPendingSelection) return renderPendingTrigger()
+    if (isPendingSelection) {
+      return renderPendingTrigger()
+    }
 
-    return (
-      <Select
-        selectedKeys={sector.icon ? [sector.icon] : []}
-        onSelectionChange={handleIconChange}
-        aria-label="Тип иконки"
-        classNames={{
-          trigger: cn(
-            'shadow-none border border-[#E4E4E7] rounded-md',
-            'min-w-[160px] h-10 px-2.5 flex items-center bg-white'
-          ),
-        }}
-        renderValue={renderValue}
-      >
-        {Object.entries(FAB_MENU_ICON_OPTIONS).map(([key, entry]) => (
-          <SelectItem key={key} textValue={key}>
-            <div className="flex items-center gap-2">
-              {entry.showIcon && (
-                <SvgIcon
-                  src={entry.icon}
-                  size={22}
-                  className="w-min text-black fill-black"
-                />
-              )}
-              <span className="text-base">{entry.label}</span>
-            </div>
-          </SelectItem>
-        ))}
-      </Select>
-    )
-  }
+    const handleSectorLabelChnage = (value: string) => {
+      if (value.length > 14) {
+        // TODO: сообщение пользователю
+        setIsInputInvalid(true)
+        return
+      }
 
-  const renderCustomLabel = () => {
-    if (sector.icon !== 'custom') return null
-    if (isPendingSelection) return null
+      setIsInputInvalid(false)
+      onLabelChange(value)
+    }
+
     return (
       <Input
-        placeholder="Название кнопки"
         value={sector.label}
-        onValueChange={onLabelChange}
+        onValueChange={handleSectorLabelChnage}
+        placeholder={sector.label}
+        isInvalid={isInputInvalid}
         classNames={{
           inputWrapper: cn(
-            'rounded-md border bg-white border-[#E8E8E8] h-10 min-h-10',
+            'border bg-white border-[#E4E4E7] rounded-[5px]',
+            'shadow-none h-12.75 min-h-10 px-2.5',
           ),
+          input: 'text-base'
         }}
-        size="lg"
+        startContent={FAB_MENU_ICON_OPTIONS[sector.icon].showIcon && (
+          <SvgIcon
+            src={FAB_MENU_ICON_OPTIONS[sector.icon].icon}
+            size={20}
+            className="w-min text-black"
+          />
+        )}
       />
     )
   }
@@ -257,7 +211,6 @@ const FABSectorItem = ({
         )}
       >
         {renderPayloadType()}
-        {renderCustomLabel()}
         {renderPayloadSubtype()}
         {renderPayloadValue()}
       </div>
