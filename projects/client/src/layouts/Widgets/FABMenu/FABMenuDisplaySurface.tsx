@@ -32,7 +32,7 @@ const FABMenuDisplaySurface = () => {
       <div className="h-[37px]">
         <h2 className="text-lg font-medium text-gray-900 leading-[21px]">Форма</h2>
       </div>
-      <h2 className="leading-[19px]">Кнопка</h2>
+      <h2 className="leading-[19px]">Название кнопки</h2>
       <ButtonAppearenceSettings onChange={() => {}} />
       <ButtonPositionChooser
         noBorder

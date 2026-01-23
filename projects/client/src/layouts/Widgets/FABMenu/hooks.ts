@@ -14,6 +14,7 @@ export const useFABMenuSettings = () => {
     s => s.setFABMenuButtonBackgroundColor
   )
   const setFABMenuTriggerText = useWidgetSettingsStore(s => s.setFABMenuTriggerText)
+  const setFABMenuTriggerIcon = useWidgetSettingsStore(s => s.setFABMenuTriggerIcon)
 
   const settings =
     widget?.type === WidgetTypeEnum.FAB_MENU ? (widget as FABMenuWidgetSettings) : null
@@ -27,7 +28,8 @@ export const useFABMenuSettings = () => {
       deleteFABMenuSector,
       setFABMenuButtonTextColor,
       setFABMenuButtonBackgroundColor,
-      setFABMenuTriggerText
+      setFABMenuTriggerText,
+      setFABMenuTriggerIcon
     }),
     [
       settings,
@@ -37,7 +39,8 @@ export const useFABMenuSettings = () => {
       deleteFABMenuSector,
       setFABMenuButtonTextColor,
       setFABMenuButtonBackgroundColor,
-      setFABMenuTriggerText
+      setFABMenuTriggerText,
+      setFABMenuTriggerIcon
     ]
   )
 }

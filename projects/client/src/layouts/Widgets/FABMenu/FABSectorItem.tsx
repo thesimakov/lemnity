@@ -80,7 +80,7 @@ const FABSectorItem = ({
     }
 
     const handleSectorLabelChnage = (value: string) => {
-      if (value.length > 14) {
+      if (value.length > 20) {
         // TODO: сообщение пользователю
         setIsInputInvalid(true)
         return
