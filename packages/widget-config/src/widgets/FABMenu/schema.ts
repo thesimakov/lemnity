@@ -89,7 +89,7 @@ const FABMenuWidgetSchema = z.object({
     ),
   triggerText: z
     .string()
-    .max(15, 'Текст должен юыть не длиннее 15 символов'),
+    .max(20, 'Текст должен быть не длиннее 20 символов'),
   triggerIcon: FABMenuTriggerIconEnum
 })
 
