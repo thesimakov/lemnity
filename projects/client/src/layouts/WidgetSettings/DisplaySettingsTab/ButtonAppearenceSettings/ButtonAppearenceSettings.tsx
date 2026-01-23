@@ -1,20 +1,13 @@
 import { useState } from 'react'
 import { Input } from '@heroui/input'
-import { Select, SelectItem } from '@heroui/select'
 import { cn } from '@heroui/theme'
 
-import SvgIcon from '@/components/SvgIcon'
 import ColorPicker from '@/components/ColorPicker'
+import IconPicker, { type IconName } from '@/components/IconPicker'
 
-// import circle from '@/assets/icons/circle.svg'
-import lightIcon from '@/assets/icons/light.svg'
-import balloonIcon from '@/assets/icons/balloon.svg'
-import heartDislikeIcon from '@/assets/icons/heart-dislike.svg'
-// import { Button } from '@heroui/button'
 import { useFABMenuSettings } from '@/layouts/Widgets/FABMenu/hooks'
 import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
-// import { withDefaults } from '@/stores/widgetSettings/utils'
 
 type ButtonAppearance = {
   text?: string
@@ -27,16 +20,9 @@ type ButtonAppearenceSettingsProps = {
   onChange: (value: ButtonAppearance) => void
 }
 
-const ICONS = [
-  { icon: lightIcon, textValue: 'Light icon' },
-  { icon: balloonIcon, textValue: 'Balloon icon' },
-  { icon: heartDislikeIcon, textValue: 'Heart dislike icon' }
-]
-
 // @ts-expect-error: emnrorr
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
-  const [icon, setIcon] = useState(heartDislikeIcon)
   const [isInputInvalid, setIsInputInvalid] = useState(false)
 
   const defaults = useWidgetStaticDefaults()
@@ -44,7 +30,8 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     settings,
     setFABMenuButtonTextColor,
     setFABMenuButtonBackgroundColor,
-    setFABMenuTriggerText
+    setFABMenuTriggerText,
+    setFABMenuTriggerIcon
   } = useFABMenuSettings()
 
   if (!settings || !defaults) {
@@ -56,7 +43,6 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     settings.triggerTextColor ?? (defaults.widget as FABMenuWidgetSettings).triggerTextColor
 
   const handleTextColorChange = (color: string) => {
-    // console.log(color)
     setFABMenuButtonTextColor(color)
   }
 
@@ -65,12 +51,11 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     (defaults.widget as FABMenuWidgetSettings).triggerBackgroundColor
 
   const handleBackgroundColorChange = (color: string) => {
-    // console.log(color)
     setFABMenuButtonBackgroundColor(color)
   }
 
   const handleTriggerTextChange = (value: string) => {
-    if (value.length > 14) {
+    if (value.length > 20) {
       // TODO: сообщение пользователю
       setIsInputInvalid(true)
       return
@@ -80,14 +65,22 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     setFABMenuTriggerText(value)
   }
 
+  const initialFABMenuTriggerIcon =
+    settings.triggerIcon ?? (defaults.widget as FABMenuWidgetSettings).triggerIcon
+
+  const handleTriggerIconChange = (icon: IconName) => {
+    setFABMenuTriggerIcon(icon)
+  }
+
   return (
-    <div className="flex flex-row gap-2.5">
+    <div className="flex flex-row flex-wrap gap-2.5">
       <Input
         value={settings.triggerText}
         onValueChange={handleTriggerTextChange}
         isInvalid={isInputInvalid}
         placeholder="Супер кнопка"
         classNames={{
+          base: 'w-90 grow',
           inputWrapper: cn(
             'border bg-white border-[#E4E4E7] rounded-[5px]',
             'shadow-none h-12.75 min-h-10 px-2.5'
@@ -96,7 +89,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         }}
       />
 
-      <div className="min-w-45">
+      <div className="">
         <ColorPicker
           initialColor={initialFABMenuTextColor}
           onColorChange={handleTextColorChange}
@@ -104,42 +97,14 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         />
       </div>
 
-      <div className="min-w-18">
-        <Select
-          aria-label="Иконка кнопки"
-          selectedKeys={[icon]}
-          items={ICONS}
-          classNames={{
-            trigger: cn('shadow-none border border-[#D9D9E0] rounded-[5px]', 'h-[51px] bg-white'),
-            value: 'hidden'
-          }}
-          startContent={
-            <div className="shrink-0 w-5 h-5">
-              <SvgIcon src={icon} />
-            </div>
-          }
-          onChange={e => {
-            setIcon(e.target.value)
-          }}
-        >
-          {item => (
-            <SelectItem
-              key={item.icon}
-              aria-label={item.textValue}
-              startContent={
-                <div className="shrink-0 w-5 h-5">
-                  <SvgIcon src={item.icon} />
-                </div>
-              }
-              classNames={{
-                title: 'hidden'
-              }}
-            ></SelectItem>
-          )}
-        </Select>
+      <div className="">
+        <IconPicker
+          initialIcon={initialFABMenuTriggerIcon}
+          onIconChange={handleTriggerIconChange}
+        />
       </div>
 
-      <div className="min-w-43">
+      <div className="">
         <ColorPicker
           initialColor={initialFABMenuBackgroundColor}
           onColorChange={handleBackgroundColorChange}

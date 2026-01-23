@@ -8,11 +8,13 @@ import useAuthStore from '@stores/authStore.ts'
 import { useEffect } from 'react'
 import { useProjectsStore } from '@/stores/projectsStore'
 import YandexMetrika from './common/utils/yandexMetrika.ts'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export const Root = () => {
   const bootstrap = useAuthStore(s => s.bootstrap)
   const sessionStatus = useAuthStore(s => s.sessionStatus)
   const ensureProjectsLoaded = useProjectsStore(s => s.ensureLoaded)
+  const queryClient = new QueryClient()
 
   useEffect(() => {
     bootstrap().catch(() => undefined)
@@ -30,7 +32,9 @@ export const Root = () => {
       <HeroUIProvider>
         <BrowserRouter>
           <YandexMetrika />
-          <App />
+          <QueryClientProvider client={queryClient}>
+            <App />
+          </QueryClientProvider>
         </BrowserRouter>
       </HeroUIProvider>
     </StrictMode>

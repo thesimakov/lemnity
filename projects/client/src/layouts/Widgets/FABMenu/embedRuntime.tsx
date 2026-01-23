@@ -1,12 +1,23 @@
+import useWidgetSettingsStore, { type ButtonPosition } from '@/stores/widgetSettingsStore'
 import FabMenuWidget from './FabMenuWidget'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-export const FABMenuEmbedRuntime = () => (
-  <div className="fixed bottom-6 right-6 pointer-events-auto">
-    <FabMenuWidget
-      anchorBaseClassName="relative"
-      anchorOffsetClassName={{ left: 'left-0', right: 'right-0' }}
-      listClassName="max-w-[280px]"
-      triggerClassName="h-16 w-16"
-    />
-  </div>
-)
+export const FABMenuEmbedRuntime = () => {
+  const queryClient = new QueryClient()
+  const buttonPosition = useWidgetSettingsStore(
+    s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
+  )
+
+  return (
+    <div
+      className={`fixed ${buttonPosition === 'bottom-right' ? 'right-6' : 'left-6'} bottom-6 pointer-events-auto`}
+    >
+      <QueryClientProvider client={queryClient}>
+        <FabMenuWidget
+          anchorBaseClassName="relative"
+          anchorOffsetClassName={{ left: 'left-0', right: 'right-0' }}
+        />
+      </QueryClientProvider>
+    </div>
+  )
+}

@@ -84,12 +84,13 @@ export const useFabMenuPreviewModel = () => {
   const triggerTextColor = settings?.triggerTextColor ?? '#FFFFFF'
   const triggerBackgroundColor = settings?.triggerBackgroundColor ?? '#5951E5'
   const triggerText = settings?.triggerText ?? 'Супер-кнопка'
+  const triggerIcon = settings?.triggerIcon ?? 'Sparkles'
   const buttonPosition = useWidgetSettingsStore(
     s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
   )
   const widgetId = useWidgetSettingsStore(s => s.settings?.id)
   const projectId = useWidgetSettingsStore(s => s.projectId)
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(false)
 
   const safePosition = normalizePosition(buttonPosition)
   const menuItems = useMenuItems(settings?.sectors.items ?? [])
@@ -101,7 +102,7 @@ export const useFabMenuPreviewModel = () => {
       const preset = FAB_MENU_BUTTON_PRESETS.find(p => p.icon === item.icon)
       const gradientStops = preset?.gradientColors?.join(', ')
       const hasGradient = Boolean(gradientStops)
-      const isMaxButton = item.icon === 'max-message'
+      // const isMaxButton = item.icon === 'max-message'
       const isNotMessenger =
         item.icon === 'custom' ||
         item.icon === 'email' ||
@@ -111,13 +112,14 @@ export const useFabMenuPreviewModel = () => {
       const baseColor = preset?.color ?? item.color
       const style: CSSProperties = {}
 
-      if (isMaxButton && hasGradient) {
-        style.backgroundImage = `linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, ${gradientStops})`
-        style.backgroundOrigin = 'padding-box, border-box'
-        style.backgroundClip = 'padding-box, border-box'
-        style.border = '1px solid transparent'
-        style.color = preset?.textColor ?? '#6B21A8'
-      } else if (hasGradient) {
+      // if (isMaxButton && hasGradient) {
+      //   style.backgroundImage = `linear-gradient(#ffffff, #ffffff), linear-gradient(135deg, ${gradientStops})`
+      //   style.backgroundOrigin = 'padding-box, border-box'
+      //   style.backgroundClip = 'padding-box, border-box'
+      //   style.border = '1px solid transparent'
+      //   style.color = preset?.textColor ?? '#6B21A8'
+      // } else
+      if (hasGradient) {
         style.backgroundImage = `linear-gradient(135deg, ${gradientStops})`
         style.backgroundColor = preset?.gradientColors?.[0] ?? baseColor
         style.color = preset?.textColor ?? '#ffffff'
@@ -191,6 +193,7 @@ export const useFabMenuPreviewModel = () => {
     triggerTextColor,
     triggerBackgroundColor,
     triggerText,
+    triggerIcon,
     menuItems,
     alignClassName,
     safePosition,

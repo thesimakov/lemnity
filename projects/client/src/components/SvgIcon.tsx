@@ -1,6 +1,6 @@
-import React from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-interface SvgIconProps {
+export interface SvgIconProps {
   src: string
   className?: string
   size?: number | string
@@ -15,67 +15,65 @@ const SvgIcon: React.FC<SvgIconProps> = ({
   alt = 'icon',
   preserveOriginalColors = false
 }) => {
-  const containerRef = React.useRef<HTMLDivElement>(null)
+  const { data: processedSvg } = useQuery({
+    queryKey: ['svg', src, preserveOriginalColors],
+    queryFn: async () => {
+      const response = await fetch(src)
+      const text = await response.text()
 
-  React.useEffect(() => {
-    if (!containerRef.current) return
+      const parser = new DOMParser()
+      const svgDoc = parser.parseFromString(text, 'image/svg+xml')
+      const svgElement = svgDoc.querySelector('svg')
 
-    fetch(src)
-      .then(res => res.text())
-      .then(text => {
-        const parser = new DOMParser()
-        const svgDoc = parser.parseFromString(text, 'image/svg+xml')
-        const svgElement = svgDoc.querySelector('svg')
+      if (!svgElement) {
+        throw new Error('Invalid SVG')
+      }
 
-        if (svgElement) {
-          // Удаляем потенциально опасные элементы и атрибуты
-          const dangerousElements = svgElement.querySelectorAll('script, object, embed, iframe')
-          dangerousElements.forEach(el => el.remove())
+      svgElement.querySelectorAll('script, object, embed, iframe').forEach(el => el.remove())
 
-          const allElements = svgElement.querySelectorAll('*')
+      svgElement.querySelectorAll('*').forEach(el => {
+        // Удаляем event handlers
+        const attributes = [...el.attributes]
 
-          allElements.forEach(el => {
-            // Удаляем event handlers
-            const attributes = [...el.attributes]
-            attributes.forEach(attr => {
-              const attrValue = attr.value ?? ''
-              const isHrefAttr = attr.name === 'href' || attr.name === 'xlink:href'
-              const isInternalRef = isHrefAttr && attrValue.startsWith('#')
-              const isDataUri = isHrefAttr && attrValue.startsWith('data:')
-              const keepsDataUri = isDataUri && preserveOriginalColors
+        attributes.forEach(attr => {
+          const attrValue = attr.value ?? ''
+          const isHrefAttr = attr.name === 'href' || attr.name === 'xlink:href'
+          const isInternalRef = isHrefAttr && attrValue.startsWith('#')
+          const isDataUri = isHrefAttr && attrValue.startsWith('data:')
+          const keepsDataUri = isDataUri && preserveOriginalColors
 
-              const shouldStripHref = isHrefAttr && !isInternalRef && !keepsDataUri
+          const shouldStripHref = isHrefAttr && !isInternalRef && !keepsDataUri
 
-              if (attr.name.startsWith('on') || shouldStripHref) {
-                el.removeAttribute(attr.name)
-              }
-            })
+          if (attr.name.startsWith('on') || shouldStripHref) {
+            el.removeAttribute(attr.name)
+          }
+        })
 
-            if (!preserveOriginalColors && el.hasAttribute('fill')) {
-              const fillValue = el.getAttribute('fill')
-              // Сохраняем градиенты (url(...))
-              if (!fillValue || !fillValue.startsWith('url(')) {
-                el.setAttribute('fill', 'currentColor')
-              }
-            }
-          })
-
-          svgElement.setAttribute('width', size.toString())
-          svgElement.setAttribute('height', size.toString())
-
-          // Очищаем контейнер и добавляем SVG
-          containerRef.current!.innerHTML = ''
-          containerRef.current!.appendChild(svgElement)
+        if (!preserveOriginalColors && el.hasAttribute('fill')) {
+          const fillValue = el.getAttribute('fill')
+          // Сохраняем градиенты (url(...))
+          if (!fillValue || !fillValue.startsWith('url(')) {
+            el.setAttribute('fill', 'currentColor')
+          }
         }
       })
-  }, [src, size, preserveOriginalColors])
+
+      svgElement.setAttribute('width', size.toString())
+      svgElement.setAttribute('height', size.toString())
+
+      return svgElement.outerHTML
+    },
+    staleTime: Infinity,
+    gcTime: Infinity
+  })
 
   return (
     <div
-      ref={containerRef}
       className={`w-full h-full flex items-center justify-center ${className} select-none`}
+      style={{ width: size, height: size }}
       role="img"
       aria-label={alt}
+      dangerouslySetInnerHTML={processedSvg ? { __html: processedSvg } : undefined}
     />
   )
 }
