@@ -32,15 +32,16 @@ const getButtonInlineStyle = (button: FABMenuButtonDefinition): CSSProperties | 
     const gradientStops = button.gradientColors?.join(', ')
     const firstGradientColor = button.gradientColors?.[0]
     const hasGradient = Boolean(gradientStops)
-    const isMaxButton = button.icon === 'max-message'
+    // const isMaxButton = button.icon === 'max-message'
 
-    if (isMaxButton && hasGradient) {
-      style.backgroundImage = `linear-gradient(#ffffff, #ffffff), linear-gradient(90deg, ${gradientStops})`
-      style.backgroundOrigin = 'padding-box, border-box'
-      style.backgroundClip = 'padding-box, border-box'
-      style.border = '1px solid transparent'
-      style.borderRadius = '4px'
-    } else if (hasGradient) {
+    // if (isMaxButton && hasGradient) {
+    //   style.backgroundImage = `linear-gradient(#ffffff, #ffffff), linear-gradient(90deg, ${gradientStops})`
+    //   style.backgroundOrigin = 'padding-box, border-box'
+    //   style.backgroundClip = 'padding-box, border-box'
+    //   style.border = '1px solid transparent'
+    //   style.borderRadius = '4px'
+    // } else
+    if (hasGradient) {
       style.backgroundImage = `linear-gradient(90deg, ${gradientStops})`
       style.backgroundColor = firstGradientColor ?? button.color
     } else {

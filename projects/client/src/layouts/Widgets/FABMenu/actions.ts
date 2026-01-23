@@ -1,3 +1,4 @@
+import type { IconName } from '@/components/IconPicker'
 import type { FABMenuSectorItem, FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
 import type { TypedWidgetUpdater } from '@/stores/widgetSettings/widgetActions/types'
 
@@ -48,5 +49,10 @@ export const createFABMenuActions = (updateWidget: TypedWidgetUpdater<FABMenuWid
     updateWidget(widget => ({
       ...widget,
       triggerText: text
-    }))
+    })),
+  setFABMenuTriggerIcon: (icon: IconName) =>
+    updateWidget(widget => ({
+      ...widget,
+      triggerIcon: icon
+    })),
 })

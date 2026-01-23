@@ -37,6 +37,7 @@
     "@lemnity/nest-common": "workspace:*",
     "@lemnity/widget-config": "workspace:*",
     "@tailwindcss/vite": "catalog:tailwind",
+    "@tanstack/react-query": "^5.90.19",
     "axios": "^1.11.0",
     "framer-motion": "^12.23.12",
     "react": "^19.1.1",

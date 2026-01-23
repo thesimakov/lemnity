@@ -1,3 +1,4 @@
+import type { IconName } from '@/components/IconPicker'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
 export type FABMenuIconKey =
@@ -40,5 +41,6 @@ export type FABMenuWidgetSettings = {
   }
   triggerTextColor: string
   triggerBackgroundColor: string
-  triggerText: string
+  triggerText: string,
+  triggerIcon: IconName
 }

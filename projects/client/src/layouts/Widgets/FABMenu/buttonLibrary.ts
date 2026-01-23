@@ -5,7 +5,7 @@ import iconEmail from '@/assets/icons/closed-envelope.svg'
 import iconPhone from '@/assets/icons/telephone.svg'
 import iconTelegram from '@/assets/icons/telegram.svg'
 import iconWebsite from '@/assets/icons/web-globe.svg'
-import iconMaxMessage from '@/assets/icons/max-messenger-sign-logo.svg'
+import iconMaxMessage from '@/assets/icons/max-messenger.svg'
 import iconWhatsappMessage from '@/assets/icons/whatsapp.svg'
 import iconInstagram from '@/assets/icons/instagram.svg'
 import iconYoutube from '@/assets/icons/youtube.svg'
@@ -113,8 +113,8 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     buttonLabel: 'MAX',
     group: 'messenger',
     color: '#FFFFFF',
-    gradientColors: ['#3D96FD', '#A24EDD'],
-    textColor: '#9343DF',
+    gradientColors: ['#3AB4FD', '#A652DD'],
+    textColor: '#FFFFFF',
     payload: { type: 'nickname', value: '@lemnity' }
   },
   {

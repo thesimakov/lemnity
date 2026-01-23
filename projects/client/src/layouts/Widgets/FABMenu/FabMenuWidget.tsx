@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { FAB_MENU_ICON_OPTIONS } from './buttonLibrary'
-import { FabMenuAddIcon, FabMenuBalloonIcon } from './fabMenuPreviewVisuals'
+import { FabMenuAddIcon } from './fabMenuPreviewVisuals'
 import { useFabMenuPreviewModel } from './useFabMenuPreviewModel'
 import { cn } from '@heroui/theme'
 import SvgIcon from '@/components/SvgIcon'
+import * as Icons from '@/components/Icons'
 
 type FabMenuWidgetProps = {
   anchorBaseClassName?: string
@@ -19,14 +20,13 @@ type FabMenuWidgetProps = {
 const FabMenuWidget = ({
   anchorBaseClassName = '',
   anchorOffsetClassName,
-  listClassName = ''
-  // triggerClassName = '',
-  // signatureClassName = ''
+  listClassName = '',
 }: FabMenuWidgetProps) => {
   const {
     triggerText,
     triggerTextColor,
     triggerBackgroundColor,
+    triggerIcon,
     menuItems,
     alignClassName,
     safePosition,
@@ -35,6 +35,8 @@ const FabMenuWidget = ({
     renderBackground,
     handleItemAction
   } = useFabMenuPreviewModel()
+
+  const TriggerIcon = triggerIcon ? Icons[triggerIcon] : null
 
   const horizontalOffset =
     safePosition === 'bottom-left'
@@ -48,7 +50,6 @@ const FabMenuWidget = ({
       <AnimatePresence>
         {expanded ? (
           <motion.div
-            // layout
             initial={{ opacity: 0, translateY: '12px' }}
             animate={{ opacity: 1, translateY: '0' }}
             exit={{ opacity: 0, translateY: '12px' }}
@@ -103,7 +104,6 @@ const FabMenuWidget = ({
               className={cn(
                 'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
                 'text-white bg-[#949494] grow-0'
-                // signatureClassName
               )}
             >
               Создано на Lemnity
@@ -118,8 +118,7 @@ const FabMenuWidget = ({
           'flex items-center justify-center rounded-full',
           'text-white ring-1 ring-white/20',
           'transition-transform motion-reduce:transition-none duration-250 hover:scale-105',
-          'h-14.75 min-w-14.75 gap-2.5 px-4'
-          // triggerClassName
+          'h-14.75 min-w-14.75 gap-2.5 px-4',
         )}
         style={{
           backgroundColor: triggerBackgroundColor,
@@ -127,11 +126,22 @@ const FabMenuWidget = ({
         }}
         aria-label={expanded ? 'Скрыть кнопки' : 'Показать кнопки'}
       >
-        {triggerText && <span className="">{triggerText}</span>}
+        {safePosition === 'bottom-right' && triggerText && (
+          <span className="">{triggerText}</span>
+        )}
+
         {expanded ? (
           <FabMenuAddIcon color={triggerTextColor} />
         ) : (
-          <FabMenuBalloonIcon color={triggerTextColor} alignClassName={alignClassName} />
+          triggerIcon !== 'HeartDislike' && TriggerIcon && (
+            <div className={`w-7.5 h-7.5 ${alignClassName}`}>
+              <TriggerIcon />
+            </div>
+          )
+        )}
+
+        {safePosition !== 'bottom-right' && triggerText && (
+          <span className="">{triggerText}</span>
         )}
       </button>
     </div>

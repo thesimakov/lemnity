@@ -74,7 +74,8 @@ export const buildFABMenuWidgetSettings = (): FABMenuWidgetSettings => ({
   },
   triggerTextColor: '#FFFFFF',
   triggerBackgroundColor: '#5951E5',
-  triggerText: 'Супер-кнопка'
+  triggerText: 'Супер-кнопка',
+  triggerIcon: 'Sparkles'
 })
 
 export const buildFABMenuFieldsSettings = (): FieldsSettings => ({}) as FieldsSettings

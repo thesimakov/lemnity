@@ -8,6 +8,7 @@ import type {
   SectorItem,
   WidgetSpecificSettings
 } from '@/stores/widgetSettings/types'
+import type { IconName } from '@/components/IconPicker'
 
 export type WidgetUpdater = (
   mutator: (settings: WidgetSpecificSettings) => WidgetSpecificSettings
@@ -26,6 +27,7 @@ export type WidgetActions = {
   setFABMenuButtonTextColor: (color: string) => void
   setFABMenuButtonBackgroundColor: (color: string) => void
   setFABMenuTriggerText: (text: string) => void
+  setFABMenuTriggerIcon: (icon: IconName) => void
   setWheelRandomize: (randomize: boolean) => void
   setWheelSectors: (items: SectorItem[]) => void
   updateWheelSector: (index: number, updates: Partial<SectorItem>) => void

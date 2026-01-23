@@ -22,6 +22,30 @@ const FABMenuIconEnum = z.enum([
   'custom'
 ])
 
+const FABMenuTriggerIconEnum = z.enum([
+  "Balloon",
+  "Basket",
+  "Fish",
+  "Flame",
+  "Flower",
+  "GameController",
+  "Hammer",
+  "Heart",
+  "Key",
+  "Moon",
+  "Nuclear",
+  "Paw",
+  "Pizza",
+  "Restaurant",
+  "Rocket",
+  "Send",
+  "Sparkles",
+  "Star",
+  "Sunny",
+  "Reload",
+  "HeartDislike"
+])
+
 const FABMenuPayloadTypeEnum = z.enum([
   'email',
   'phone',
@@ -65,7 +89,8 @@ const FABMenuWidgetSchema = z.object({
     ),
   triggerText: z
     .string()
-    .max(15, 'Текст должен юыть не длиннее 15 символов')
+    .max(15, 'Текст должен юыть не длиннее 15 символов'),
+  triggerIcon: FABMenuTriggerIconEnum
 })
 
 const customSurfaces = {
