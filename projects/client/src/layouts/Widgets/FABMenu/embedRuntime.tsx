@@ -10,7 +10,7 @@ export const FABMenuEmbedRuntime = () => {
 
   return (
     <div
-      className={`fixed ${ buttonPosition === 'bottom-right' ? 'right-6' : 'left-6'} bottom-6 pointer-events-auto`}
+      className={`fixed ${buttonPosition === 'bottom-right' ? 'right-6' : 'left-6'} bottom-6 pointer-events-auto`}
     >
       <QueryClientProvider client={queryClient}>
         <FabMenuWidget

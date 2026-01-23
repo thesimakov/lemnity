@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 type IconButtonProps = {
   selected?: boolean
-  children: React.ReactNode,
+  children: React.ReactNode
   onClick: () => void
 }
 
@@ -49,7 +49,7 @@ const icons: IconName[] = [
 ]
 
 type IconPickerProps = {
-  initialIcon?: IconName,
+  initialIcon?: IconName
   onIconChange: (icon: IconName) => void
 }
 
@@ -70,40 +70,40 @@ const IconPicker = (props: IconPickerProps) => {
         content: cn('w-104 h-47 flex-row flex-wrap gap-2 p-4 justify-start')
       }}
     >
-        <PopoverTrigger>
-          <Button
-            className={cn(
-              'rounded-[5px] min-w-18 grow h-12.75 bg-white',
-              'border border-[#E4E4E7] p-3.75',
-              'flex items-center justify-center gap-1.25'
-            )}
-          >
-            {SelectedIcon && (
-              <div className="w-6 h-6">
-                <SelectedIcon />
-              </div>
-            )}
+      <PopoverTrigger>
+        <Button
+          className={cn(
+            'rounded-[5px] min-w-18 grow h-12.75 bg-white',
+            'border border-[#E4E4E7] p-3.75',
+            'flex items-center justify-center gap-1.25'
+          )}
+        >
+          {SelectedIcon && (
+            <div className="w-6 h-6">
+              <SelectedIcon />
+            </div>
+          )}
 
-            <svg
-              aria-hidden="true"
-              fill="none"
-              focusable="false"
-              height="1em"
-              role="presentation"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-              width="1em"
-              className="w-4 h-4 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
-            >
-              <path d="m6 9 6 6 6-6"></path>
-            </svg>
-          </Button>
+          <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height="1em"
+            role="presentation"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1.5"
+            viewBox="0 0 24 24"
+            width="1em"
+            className="w-4 h-4 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
+          >
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </Button>
       </PopoverTrigger>
       <PopoverContent>
-        {icons.map((name) => {
+        {icons.map(name => {
           const IconComponent = Icons[name]
           if (typeof IconComponent !== 'function') return null
 

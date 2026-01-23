@@ -20,7 +20,7 @@ type FabMenuWidgetProps = {
 const FabMenuWidget = ({
   anchorBaseClassName = '',
   anchorOffsetClassName,
-  listClassName = '',
+  listClassName = ''
 }: FabMenuWidgetProps) => {
   const {
     triggerText,
@@ -118,7 +118,7 @@ const FabMenuWidget = ({
           'flex items-center justify-center rounded-full',
           'text-white ring-1 ring-white/20',
           'transition-transform motion-reduce:transition-none duration-250 hover:scale-105',
-          'h-14.75 min-w-14.75 gap-2.5 px-4',
+          'h-14.75 min-w-14.75 gap-2.5 px-4'
         )}
         style={{
           backgroundColor: triggerBackgroundColor,
@@ -126,23 +126,20 @@ const FabMenuWidget = ({
         }}
         aria-label={expanded ? 'Скрыть кнопки' : 'Показать кнопки'}
       >
-        {safePosition === 'bottom-right' && triggerText && (
-          <span className="">{triggerText}</span>
-        )}
+        {safePosition === 'bottom-right' && triggerText && <span className="">{triggerText}</span>}
 
         {expanded ? (
           <FabMenuAddIcon color={triggerTextColor} />
         ) : (
-          triggerIcon !== 'HeartDislike' && TriggerIcon && (
+          triggerIcon !== 'HeartDislike' &&
+          TriggerIcon && (
             <div className={`w-7.5 h-7.5 ${alignClassName}`}>
               <TriggerIcon />
             </div>
           )
         )}
 
-        {safePosition !== 'bottom-right' && triggerText && (
-          <span className="">{triggerText}</span>
-        )}
+        {safePosition !== 'bottom-right' && triggerText && <span className="">{triggerText}</span>}
       </button>
     </div>
   )

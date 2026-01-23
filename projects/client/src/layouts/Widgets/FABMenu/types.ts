@@ -41,6 +41,6 @@ export type FABMenuWidgetSettings = {
   }
   triggerTextColor: string
   triggerBackgroundColor: string
-  triggerText: string,
+  triggerText: string
   triggerIcon: IconName
 }

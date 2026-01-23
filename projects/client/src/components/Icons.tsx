@@ -420,4 +420,3 @@ export const HeartDislike = (props: Omit<SvgIconProps, 'src'>) => (
     preserveOriginalColors={props.preserveOriginalColors}
   />
 )
-

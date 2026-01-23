@@ -66,8 +66,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
   }
 
   const initialFABMenuTriggerIcon =
-    settings.triggerIcon ??
-    (defaults.widget as FABMenuWidgetSettings).triggerIcon
+    settings.triggerIcon ?? (defaults.widget as FABMenuWidgetSettings).triggerIcon
 
   const handleTriggerIconChange = (icon: IconName) => {
     setFABMenuTriggerIcon(icon)

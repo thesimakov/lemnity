@@ -54,5 +54,5 @@ export const createFABMenuActions = (updateWidget: TypedWidgetUpdater<FABMenuWid
     updateWidget(widget => ({
       ...widget,
       triggerIcon: icon
-    })),
+    }))
 })
