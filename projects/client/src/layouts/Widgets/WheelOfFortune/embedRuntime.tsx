@@ -17,6 +17,7 @@ import { sendEvent } from '@/common/api/publicApi'
 import type { WidgetLeadFormValues } from '@/layouts/Widgets/registry'
 import WheelMobileScreen from './WheelMobileScreen'
 import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const WHEEL_SPIN_RESULT_KEY_PREFIX = 'lemnity.wheel_of_fortune.spin_result.'
 
@@ -156,6 +157,7 @@ export const WheelModalContent = ({
 }
 
 export const WheelEmbedRuntime = () => {
+  const queryClient = new QueryClient()
   const [open, setOpen] = useState(false)
   const [initialScreen, setInitialScreen] = useState<'main' | 'prize'>('main')
   const isMobile = useIsMobileViewport()
@@ -319,7 +321,7 @@ export const WheelEmbedRuntime = () => {
   const overlayStyle = useVisualViewportOverlayStyle(Boolean(open && isMobile))
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <div style={anchorStyle}>{Trigger}</div>
       {isMobile ? (
         open ? (
@@ -345,6 +347,6 @@ export const WheelEmbedRuntime = () => {
           <WheelModalContent initialScreen={initialScreen} />
         </Modal>
       )}
-    </>
+    </QueryClientProvider>
   )
 }
