@@ -211,7 +211,7 @@ export type DisplaySettings = Extendable<{
   schedule: {
     date: { enabled: boolean; value: string }
     time: { enabled: boolean; value: string }
-  },
+  }
   // Временно. После реализации оплаты будет в оплате
   brandingEnabled: boolean
 }>

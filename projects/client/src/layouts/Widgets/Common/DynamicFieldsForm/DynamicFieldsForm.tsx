@@ -330,13 +330,15 @@ const DynamicFieldsForm = ({
         )}
       </div>
 
-      {brandingEnabled && (<a
-        href="https://lemnity.ru"
-        target="_blank"
-        className="hover:underline text-xs leading-3 self-center"
-      >
-        Создано на Lemnity
-      </a>)}
+      {brandingEnabled && (
+        <a
+          href="https://lemnity.ru"
+          target="_blank"
+          className="hover:underline text-xs leading-3 self-center"
+        >
+          Создано на Lemnity
+        </a>
+      )}
     </form>
   )
 }

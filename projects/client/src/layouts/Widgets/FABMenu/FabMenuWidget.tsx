@@ -103,16 +103,18 @@ const FabMenuWidget = ({
               )
             })}
 
-            {brandingEnabled && (<a
-              href="https://lemnity.ru"
-              target="_blank"
-              className={cn(
-                'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
-                'text-white bg-[#949494] grow-0'
-              )}
-            >
-              Создано на Lemnity
-            </a>)}
+            {brandingEnabled && (
+              <a
+                href="https://lemnity.ru"
+                target="_blank"
+                className={cn(
+                  'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
+                  'text-white bg-[#949494] grow-0'
+                )}
+              >
+                Создано на Lemnity
+              </a>
+            )}
           </motion.div>
         ) : null}
       </AnimatePresence>

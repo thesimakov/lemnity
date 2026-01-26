@@ -1,6 +1,6 @@
-import SwitchableField from "@/components/SwitchableField"
-import useWidgetSettingsStore from "@/stores/widgetSettingsStore"
-import { cn } from "@heroui/theme"
+import SwitchableField from '@/components/SwitchableField'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { cn } from '@heroui/theme'
 
 const DisableBranding = () => {
   const { settings, setBrandingEnabled } = useWidgetSettingsStore()
@@ -26,11 +26,7 @@ const DisableBranding = () => {
           'flex flex-row items-center text-left h-7.5'
         )}
       >
-        <span
-          className="text-[#AAAAAA] text-[16px] leading-4.75"
-        >
-          Сделано на Lemnity
-        </span>
+        <span className="text-[#AAAAAA] text-[16px] leading-4.75">Сделано на Lemnity</span>
       </div>
     </SwitchableField>
   )

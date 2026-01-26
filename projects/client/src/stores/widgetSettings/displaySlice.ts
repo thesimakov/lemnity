@@ -103,7 +103,7 @@ export const createDisplaySlice = (updateDisplay: DisplayUpdater): DisplaySlice 
           time: { enabled, value: value ?? s.schedule.time.value }
         }
       })),
-    setBrandingEnabled: (enabled) =>
+    setBrandingEnabled: enabled =>
       updateDisplay(s => ({
         ...s,
         brandingEnabled: enabled
