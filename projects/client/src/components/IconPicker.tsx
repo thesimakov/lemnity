@@ -73,7 +73,7 @@ const IconPicker = (props: IconPickerProps) => {
       <PopoverTrigger>
         <Button
           className={cn(
-            'rounded-[5px] min-w-18 grow h-12.75 bg-white',
+            'rounded-[5px] w-18 grow @min-[270px]:shrink-0 @min-[270px]:grow-0 h-12.75 bg-white',
             'border border-[#E4E4E7] p-3.75',
             'flex items-center justify-center gap-1.25'
           )}
@@ -96,7 +96,7 @@ const IconPicker = (props: IconPickerProps) => {
             strokeWidth="1.5"
             viewBox="0 0 24 24"
             width="1em"
-            className="w-4 h-4 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
+            className="w-4 h-4 shrink-0 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
           >
             <path d="m6 9 6 6 6-6"></path>
           </svg>

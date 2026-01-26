@@ -116,9 +116,10 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
       <PopoverTrigger>
         <Button
           className={cn(
-            'rounded-[5px] min-w-18 grow h-12.75 bg-white',
+            'rounded-[5px] h-12.75 bg-white',
             'border border-[#E4E4E7] p-3.75',
-            'flex items-center justify-center gap-1.25'
+            'flex items-center justify-center gap-1.25',
+            triggerText ? 'min-w-45 flex-1' : 'w-18 shrink-0'
           )}
         >
           {triggerText && <span className="text-base text-[#797979]">{triggerText}</span>}
