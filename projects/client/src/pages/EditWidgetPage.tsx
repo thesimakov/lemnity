@@ -23,6 +23,21 @@ import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import { simulateWheelSpinResultFromSectors } from '@/layouts/Widgets/WheelOfFortune/actionHandlers'
 import type { WheelOfFortuneWidgetSettings } from '@/stores/widgetSettings/types'
 
+import breadcrumbSeparator from '@/assets/icons/breadcrumb-separator.svg'
+import floppyIcon from '@/assets/icons/floppy-icon.svg'
+
+const BreadcrumbSeparator = () => (
+  <div className='w-2.5 h-2.5'>
+    <SvgIcon src={breadcrumbSeparator} />
+  </div>
+)
+
+const FloppyIcon = () => (
+  <div className="w-4 h-4">
+    <SvgIcon src={floppyIcon} />
+  </div>
+)
+
 type TabKey = 'fields' | 'display' | 'integration'
 type TabDescriptor = { key: TabKey; label: string; visible: boolean }
 // use store action to keep state in sync after update
@@ -194,23 +209,12 @@ const EditWidgetPage = () => {
     }
   }, [setPreviewScreen, widgetType])
 
-  const breadcrumbSeparator = (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M3.26229 1.85604C3.44535 1.67299 3.74215 1.67299 3.92521 1.85604L6.73771 4.66854C6.92076 4.8516 6.92076 5.1484 6.73771 5.33146L3.92521 8.14396C3.74215 8.32701 3.44535 8.32701 3.26229 8.14396C3.07924 7.9609 3.07924 7.6641 3.26229 7.48104L5.74334 5L3.26229 2.51896C3.07924 2.3359 3.07924 2.0391 3.26229 1.85604Z"
-        fill="#373737"
-      />
-    </svg>
-  )
-
   const breadcrumbs = (
     <div className="h-[39px] flex flex-col justify-center">
       <Breadcrumbs
         size="lg"
         itemClasses={{ item: 'text-[#1E73BE]', separator: 'text-[#5951E5] mx-3.5' }}
-        separator={breadcrumbSeparator}
+        separator={<BreadcrumbSeparator />}
       >
         <BreadcrumbItem href="/">Проекты</BreadcrumbItem>
         <BreadcrumbItem href={`/projects/${projectId}`}>{projectName}</BreadcrumbItem>
@@ -222,26 +226,6 @@ const EditWidgetPage = () => {
   const rightPanel = (
     <div className="w-full h-full flex flex-col px-4 py-4">
       <WidgetPreview />
-    </div>
-  )
-
-  const FloppyIcon = () => (
-    // <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-    //   <path d="M4 3h12l4 4v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM7 3v6h8V3H7zm9 10H8v8h8v-8z" />
-    // </svg>
-    <div className="text-black">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M2.94375 15C1.87187 15 1 14.1281 1 13.0562V2.94375C1 1.87187 1.87187 1 2.94375 1H11.1969C11.5969 1 11.975 1.15625 12.2563 1.44062L14.5594 3.74375C14.8438 4.02813 15 4.40312 15 4.80312V13.0562C14.9969 14.125 14.125 14.9969 13.0562 15H2.94375ZM2.94375 2C2.69062 2 2.45313 2.09688 2.275 2.275C2.09688 2.45313 2 2.69062 2 2.94375V13.0562C2 13.5781 2.42187 14 2.94375 14H13.0562C13.575 14 14 13.575 14 13.0531V4.80312C14 4.66875 13.9469 4.54375 13.8531 4.45L11.55 2.14687C11.4563 2.05312 11.3313 2 11.1969 2H2.94375ZM8.00625 13.5H8C6.62188 13.5 5.5 12.3781 5.5 11C5.5 9.62188 6.62188 8.5 8 8.5C9.37813 8.5 10.5 9.62188 10.5 11C10.5 11.6656 10.2406 12.2938 9.77188 12.7656C9.3 13.2375 8.67188 13.5 8.00625 13.5ZM8 9.5C7.17188 9.5 6.5 10.1719 6.5 11C6.5 11.8281 7.17188 12.5 8 12.5H8.00625C8.40625 12.5 8.78125 12.3438 9.0625 12.0594C9.34375 11.775 9.5 11.4 9.5 11C9.5 10.1719 8.82812 9.5 8 9.5ZM9.5 6.5H3.5C2.95 6.5 2.5 6.05 2.5 5.5V3.5C2.5 2.95 2.95 2.5 3.5 2.5H9.5C10.05 2.5 10.5 2.95 10.5 3.5V5.5C10.5 6.05 10.05 6.5 9.5 6.5ZM3.5 3.5V5.5H9.5V3.5H3.5Z"
-          fill="currentColor"
-        />
-      </svg>
     </div>
   )
 
