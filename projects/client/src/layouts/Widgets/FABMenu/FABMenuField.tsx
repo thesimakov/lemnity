@@ -13,6 +13,7 @@ import FABSectorItem from './FABSectorItem'
 import FABMenuButtonPicker from './FABMenuButtonPicker'
 import { createPlaceholderFABMenuSector } from './defaults'
 import { FAB_MENU_BUTTON_PRESETS, type FABMenuButtonDefinition } from './buttonLibrary'
+import DisableBranding from '@/layouts/WidgetSettings/FieldsSettingsTab/DisableBranding/DisableBranding'
 
 const FABMenuField = () => {
   const defaults = useWidgetStaticDefaults()
@@ -103,7 +104,7 @@ const FABMenuField = () => {
   const items: EditableListItem<FABMenuSectorItem>[] = sectors.map(item => item)
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2.5">
       <BorderedContainer className="flex flex-col gap-2.5">
         <div className="h-[37px] shrink-0 flex justify-between">
           <span className="text-lg leading-5.25 font-medium">Сектора</span>
@@ -148,6 +149,8 @@ const FABMenuField = () => {
           территории России запрещена.
         </span>
       </BorderedContainer>
+
+      <DisableBranding />
     </div>
   )
 }

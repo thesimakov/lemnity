@@ -39,6 +39,7 @@ const DynamicFieldsForm = ({
 }: DynamicFieldsFormProps) => {
   const { settings } = useFieldsSettings()
   const fieldsSettings = useWidgetSettingsStore(s => s.settings?.fields)
+  const brandingEnabled = useWidgetSettingsStore(s => s.settings?.display.brandingEnabled)
   const { contacts, formTexts, agreement, adsInfo, companyLogo, border } = fieldsSettings ?? {}
   const { phone: phoneCfg, email: emailCfg, name: nameCfg } = contacts ?? {}
   const { title, description, button } = formTexts || {}
@@ -329,13 +330,13 @@ const DynamicFieldsForm = ({
         )}
       </div>
 
-      <a
+      {brandingEnabled && (<a
         href="https://lemnity.ru"
         target="_blank"
         className="hover:underline text-xs leading-3 self-center"
       >
         Создано на Lemnity
-      </a>
+      </a>)}
     </form>
   )
 }
