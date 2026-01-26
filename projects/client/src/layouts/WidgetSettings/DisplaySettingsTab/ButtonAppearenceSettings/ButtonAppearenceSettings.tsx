@@ -73,14 +73,14 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
   }
 
   return (
-    <div className="flex flex-row flex-wrap gap-2.5">
+    <div className="flex flex-row flex-wrap gap-2.5 @container">
       <Input
         value={settings.triggerText}
         onValueChange={handleTriggerTextChange}
         isInvalid={isInputInvalid}
         placeholder="Супер кнопка"
         classNames={{
-          base: 'w-90 grow',
+          base: 'min-w-40 flex-3',
           inputWrapper: cn(
             'border bg-white border-[#E4E4E7] rounded-[5px]',
             'shadow-none h-12.75 min-h-10 px-2.5'
@@ -88,29 +88,23 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
           input: 'text-base'
         }}
       />
+    
+      <ColorPicker
+        initialColor={initialFABMenuTextColor}
+        onColorChange={handleTextColorChange}
+        triggerText="Цвет шрифта"
+      />
 
-      <div className="">
-        <ColorPicker
-          initialColor={initialFABMenuTextColor}
-          onColorChange={handleTextColorChange}
-          triggerText="Цвет шрифта"
-        />
-      </div>
+      <IconPicker
+        initialIcon={initialFABMenuTriggerIcon}
+        onIconChange={handleTriggerIconChange}
+      />
 
-      <div className="">
-        <IconPicker
-          initialIcon={initialFABMenuTriggerIcon}
-          onIconChange={handleTriggerIconChange}
-        />
-      </div>
-
-      <div className="">
-        <ColorPicker
-          initialColor={initialFABMenuBackgroundColor}
-          onColorChange={handleBackgroundColorChange}
-          triggerText="Цвет кнопки"
-        />
-      </div>
+      <ColorPicker
+        initialColor={initialFABMenuBackgroundColor}
+        onColorChange={handleBackgroundColorChange}
+        triggerText="Цвет кнопки"
+      />
     </div>
   )
 }
