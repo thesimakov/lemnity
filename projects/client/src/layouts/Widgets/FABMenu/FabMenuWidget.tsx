@@ -95,9 +95,7 @@ const FabMenuWidget = ({
                     </div>
                   )}
 
-                  {item.label && (
-                    <span className="flex-1">{item.label}</span>)
-                  }
+                  {item.label && <span className="flex-1">{item.label}</span>}
                 </button>
               )
             })}
@@ -131,9 +129,7 @@ const FabMenuWidget = ({
         }}
         aria-label={expanded ? 'Скрыть кнопки' : 'Показать кнопки'}
       >
-        {safePosition === 'bottom-right' && triggerText && (
-          <span>{triggerText}</span>
-        )}
+        {safePosition === 'bottom-right' && triggerText && <span>{triggerText}</span>}
 
         {expanded ? (
           <FabMenuAddIcon color={triggerTextColor} />
@@ -146,9 +142,7 @@ const FabMenuWidget = ({
           )
         )}
 
-        {safePosition !== 'bottom-right' && triggerText && (
-          <span>{triggerText}</span>
-        )}
+        {safePosition !== 'bottom-right' && triggerText && <span>{triggerText}</span>}
       </button>
     </div>
   )
