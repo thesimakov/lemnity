@@ -27,7 +27,7 @@ import breadcrumbSeparator from '@/assets/icons/breadcrumb-separator.svg'
 import floppyIcon from '@/assets/icons/floppy-icon.svg'
 
 const BreadcrumbSeparator = () => (
-  <div className='w-2.5 h-2.5'>
+  <div className="w-2.5 h-2.5">
     <SvgIcon src={breadcrumbSeparator} />
   </div>
 )
