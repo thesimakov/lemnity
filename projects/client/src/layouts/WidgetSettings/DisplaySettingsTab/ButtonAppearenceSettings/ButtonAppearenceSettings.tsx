@@ -88,17 +88,14 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
           input: 'text-base'
         }}
       />
-    
+
       <ColorPicker
         initialColor={initialFABMenuTextColor}
         onColorChange={handleTextColorChange}
         triggerText="Цвет шрифта"
       />
 
-      <IconPicker
-        initialIcon={initialFABMenuTriggerIcon}
-        onIconChange={handleTriggerIconChange}
-      />
+      <IconPicker initialIcon={initialFABMenuTriggerIcon} onIconChange={handleTriggerIconChange} />
 
       <ColorPicker
         initialColor={initialFABMenuBackgroundColor}
