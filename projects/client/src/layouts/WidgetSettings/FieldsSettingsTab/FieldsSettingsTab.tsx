@@ -20,6 +20,7 @@ import MessagesSettings from './MessagesSettings/MessagesSettings'
 import type { FieldsSettings as FieldsSettingsType } from '@/stores/widgetSettings/types'
 import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import SurfaceNotice from '@/layouts/WidgetSettings/Common/SurfaceNotice'
+import DisableBranding from './DisableBranding/DisableBranding'
 
 const templateOptions = [
   { key: 'template1', label: 'Новогодний' },
@@ -149,6 +150,7 @@ const FieldsSettingsTab = () => {
             <AgreementPoliciesField />
             <AdsInfoField />
             <MessagesSettings />
+            <DisableBranding />
           </>
         )}
 

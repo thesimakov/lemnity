@@ -222,7 +222,6 @@ const WheelSectorsField = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-2xl">Настройка виджета</span>
       <div className="flex flex-col gap-2 p-3 rounded-lg border border-gray-200">
         <span className="text-black font-semibold pb-2">Сектора</span>
         {getRandomOrderCheckbox()}

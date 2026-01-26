@@ -5,6 +5,7 @@ import { useFabMenuPreviewModel } from './useFabMenuPreviewModel'
 import { cn } from '@heroui/theme'
 import SvgIcon from '@/components/SvgIcon'
 import * as Icons from '@/components/Icons'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 type FabMenuWidgetProps = {
   anchorBaseClassName?: string
@@ -35,6 +36,8 @@ const FabMenuWidget = ({
     renderBackground,
     handleItemAction
   } = useFabMenuPreviewModel()
+
+  const brandingEnabled = useWidgetSettingsStore(s => s.settings?.display.brandingEnabled)
 
   const TriggerIcon = triggerIcon ? Icons[triggerIcon] : null
 
@@ -100,16 +103,18 @@ const FabMenuWidget = ({
               )
             })}
 
-            <a
-              href="https://lemnity.ru"
-              target="_blank"
-              className={cn(
-                'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
-                'text-white bg-[#949494] grow-0'
-              )}
-            >
-              Создано на Lemnity
-            </a>
+            {brandingEnabled && (
+              <a
+                href="https://lemnity.ru"
+                target="_blank"
+                className={cn(
+                  'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
+                  'text-white bg-[#949494] grow-0'
+                )}
+              >
+                Создано на Lemnity
+              </a>
+            )}
           </motion.div>
         ) : null}
       </AnimatePresence>

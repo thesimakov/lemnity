@@ -24,5 +24,6 @@ export const buildStandardDisplaySettings = (): DisplaySettings => ({
   schedule: {
     date: { enabled: true, value: 'fromDate' },
     time: { enabled: true, value: 'fromTime' }
-  }
+  },
+  brandingEnabled: true
 })

@@ -29,6 +29,7 @@ export type DisplayActions = {
   setButtonIcon: (text: string, buttonColor: string, textColor: string) => void
   setScheduleDate: (enabled: boolean, value?: string) => void
   setScheduleTime: (enabled: boolean, value?: string) => void
+  setBrandingEnabled: (enabled: boolean) => void
 }
 
 export type DisplaySlice = {
@@ -101,6 +102,11 @@ export const createDisplaySlice = (updateDisplay: DisplayUpdater): DisplaySlice 
           ...s.schedule,
           time: { enabled, value: value ?? s.schedule.time.value }
         }
+      })),
+    setBrandingEnabled: enabled =>
+      updateDisplay(s => ({
+        ...s,
+        brandingEnabled: enabled
       }))
   }
 }

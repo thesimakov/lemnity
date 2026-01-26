@@ -3,7 +3,7 @@ import CustomSwitch from './CustomSwitch'
 
 export type SwitchableFieldProps = {
   title: string
-  description?: string
+  switchLabel?: string
   enabled: boolean
   onToggle: (nextEnabled: boolean) => void
   disabled?: boolean
@@ -12,7 +12,7 @@ export type SwitchableFieldProps = {
   classNames?: {
     container?: string
     title?: string
-    description?: string
+    switchLabel?: string
     switch?: string
     content?: string
   }
@@ -20,7 +20,7 @@ export type SwitchableFieldProps = {
 
 const SwitchableField = ({
   title,
-  description,
+  switchLabel,
   enabled,
   onToggle,
   disabled = false,
@@ -29,18 +29,20 @@ const SwitchableField = ({
   classNames = {
     container: '',
     title: '',
-    description: '',
+    switchLabel: '',
     switch: '',
     content: ''
   }
 }: SwitchableFieldProps) => {
   return (
     <div className={`flex flex-col p-3 rounded-lg border border-gray-200 ${classNames.container}`}>
-      <div className="flex flex-row items-center gap-2">
-        <div className="flex flex-col gap-1 flex-1">
+      <div className="flex flex-row items-center gap-2.5">
+        <div className="flex items-center justify-between grow gap-2.5">
           <span className={`text-black text-base font-medium ${classNames.title}`}>{title}</span>
-          {description && (
-            <span className={`text-sm text-gray-600 ${classNames.description}`}>{description}</span>
+          {switchLabel && (
+            <span className={`text-[10px] text-black ${classNames.switchLabel}`}>
+              {switchLabel}
+            </span>
           )}
         </div>
         <CustomSwitch

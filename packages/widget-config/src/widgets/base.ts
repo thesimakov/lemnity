@@ -86,6 +86,7 @@ export const DisplaySchemaBase = z
 
 export const FieldsSchema = z
   .object({
+    brandingEnabled: z.boolean(),
     companyLogo: z.object({
       enabled: z.boolean(),
       fileName: z.string().optional(),
