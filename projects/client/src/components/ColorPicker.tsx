@@ -1,9 +1,10 @@
 import { cn } from '@heroui/theme'
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { Input } from '@heroui/input'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@heroui/button'
 import { useMask } from '@react-input/mask'
+import useDebouncedCallback from '@/hooks/useDebouncedCallback'
 
 type ColorCircleProps = {
   color: string
@@ -80,8 +81,13 @@ const defaultColors: ColorPickerItem[] = [
 ]
 
 const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerProps) => {
-  const [selectedColor, setSelectedColor] = useState(initialColor)
+  const [selectedColor, setSelectedColor] = useState('')
   const [inputValue, setInputValue] = useState(selectedColor)
+
+  useEffect(() => {
+    setSelectedColor(initialColor)
+    setInputValue(initialColor)
+  }, [])
 
   const inputRef = useMask({
     mask: '#______',
@@ -102,7 +108,10 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
     onColorChange(color)
   }
 
+  const debouncedOnColorChange = useDebouncedCallback(onColorChange, 150)
+
   const handleValueChange = (value: string) => {
+    value = value.toUpperCase()
     setInputValue(value)
 
     if (isInvalid) {
@@ -110,7 +119,7 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
     }
 
     setSelectedColor(value)
-    onColorChange(value)
+    debouncedOnColorChange(value)
   }
 
   return (

@@ -42,17 +42,9 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
   const initialFABMenuTextColor =
     settings.triggerTextColor ?? (defaults.widget as FABMenuWidgetSettings).triggerTextColor
 
-  const handleTextColorChange = (color: string) => {
-    setFABMenuButtonTextColor(color)
-  }
-
   const initialFABMenuBackgroundColor =
     settings.triggerBackgroundColor ??
     (defaults.widget as FABMenuWidgetSettings).triggerBackgroundColor
-
-  const handleBackgroundColorChange = (color: string) => {
-    setFABMenuButtonBackgroundColor(color)
-  }
 
   const handleTriggerTextChange = (value: string) => {
     if (value.length > 20) {
@@ -91,7 +83,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
 
       <ColorPicker
         initialColor={initialFABMenuTextColor}
-        onColorChange={handleTextColorChange}
+        onColorChange={setFABMenuButtonTextColor}
         triggerText="Цвет шрифта"
       />
 
@@ -99,7 +91,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
 
       <ColorPicker
         initialColor={initialFABMenuBackgroundColor}
-        onColorChange={handleBackgroundColorChange}
+        onColorChange={setFABMenuButtonBackgroundColor}
         triggerText="Цвет кнопки"
       />
     </div>
