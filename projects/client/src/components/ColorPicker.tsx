@@ -3,6 +3,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { Input } from '@heroui/input'
 import { useState } from 'react'
 import { Button } from '@heroui/button'
+import { useMask } from '@react-input/mask'
 
 type ColorCircleProps = {
   color: string
@@ -80,29 +81,36 @@ const defaultColors: ColorPickerItem[] = [
 
 const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerProps) => {
   const [selectedColor, setSelectedColor] = useState(initialColor)
-  const [isInputInvalid, setIsInputInvalid] = useState(false)
   const [inputValue, setInputValue] = useState(selectedColor)
+
+  const inputRef = useMask({
+    mask: '#______',
+    replacement: { _: /[0-9a-fA-F]/ },
+    showMask: true
+  })
+
+  const isValidHex = (hex: string) => {
+    const cleanHex = hex.replace('#', '')
+    return cleanHex.length === 6 || cleanHex.length === 0
+  }
+
+  const isInvalid = !isValidHex(inputValue)
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color)
     setInputValue(color)
-    setIsInputInvalid(false)
     onColorChange(color)
   }
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value.toUpperCase())
-
-    const isCustomColorValid = /^#[0-9A-F]{6}$/i.test(value)
-
-    if (isCustomColorValid) {
-      setSelectedColor(value)
-      setIsInputInvalid(false)
-      onColorChange(value)
+  const handleValueChange = (value: string) =>{
+    setInputValue(value)
+   
+    if (isInvalid) {
       return
     }
-
-    setIsInputInvalid(true)
+    
+    setSelectedColor(value)
+    onColorChange(value)
   }
 
   return (
@@ -154,11 +162,12 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
         ))}
 
         <Input
+          ref={inputRef}
           placeholder="Свой код"
           value={inputValue}
-          onValueChange={handleInputChange}
+          onValueChange={handleValueChange}
           spellCheck="false"
-          isInvalid={isInputInvalid}
+          isInvalid={isInvalid}
           isRequired
           classNames={{
             base: 'w-33.5 ml-1',
