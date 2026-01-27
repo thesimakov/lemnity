@@ -16,11 +16,12 @@ import type { SharedSelection } from '@heroui/system'
 import { cn } from '@heroui/theme'
 import { PatternFormat } from 'react-number-format'
 import { useState } from 'react'
+import useDebouncedCallback from '@/hooks/useDebouncedCallback'
 
 type FABSectorItemProps = {
   sector: FABMenuSectorItem
   onLabelChange: (label: string) => void
-  onIconChange: (icon: FABMenuIconKey) => void
+  // onIconChange: (icon: FABMenuIconKey) => void
   onPayloadTypeChange: (type: FABMenuPayloadType) => void
   onPayloadValueChange: (value: string) => void
   onColorChange: (color: string) => void
@@ -28,9 +29,14 @@ type FABSectorItemProps = {
   isPendingSelection?: boolean
 }
 
-const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS.filter(
-  preset => preset.group === 'messenger'
-).map(preset => preset.icon)
+const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS
+  .filter(
+    preset => preset.group === 'messenger' && preset.icon !== 'whatsapp-message'
+  )
+  .map(preset => preset.icon)
+
+console.log('MESSENGER_ICONS', MESSENGER_ICONS)
+
 const MESSENGER_PAYLOAD_TYPES: FABMenuPayloadType[] = ['nickname', 'link']
 
 const isMessengerIcon = (icon: FABMenuIconKey) => MESSENGER_ICONS.includes(icon)
@@ -45,6 +51,72 @@ const PAYLOAD_OPTIONS: { label: string; type: FABMenuPayloadType }[] = [
   { label: 'Скрипт', type: 'script' },
   { label: 'Якорь', type: 'anchor' }
 ]
+
+type PhoneNumberInputProps = {
+  payloadType: FABMenuPayloadType
+  payloadValue: string
+  onPayloadValueChange: (value: string) => void
+}
+
+const PhoneNumberInput = (props: PhoneNumberInputProps) => {
+  const debouncedOnPayloadValueChange = useDebouncedCallback(
+    props.onPayloadValueChange,
+    150
+  )
+
+  return (
+    <PatternFormat
+      customInput={Input}
+      format="+7 (###) ###-##-##"
+      mask="_"
+      value={
+        props.payloadValue.startsWith('+7')
+          ? props.payloadValue.substring(2)
+          : props.payloadValue
+      }
+      onValueChange={values => {
+        const cleanValue = values.value ? `+7${values.value}` : ''
+        debouncedOnPayloadValueChange(cleanValue)
+      }}
+      // Hero UI Input props
+      placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[props.payloadType] ?? ''}
+      classNames={{
+        inputWrapper: cn(
+          'shadow-none rounded-md border bg-white border-[#E4E4E7]',
+          'rounded-[5px] h-10 min-h-10 px-2.5'
+        )
+      }}
+      size="lg"
+    />
+  )
+}
+
+type PayloadInputProps = {
+  payloadType: FABMenuPayloadType
+  payloadValue: string
+  isPendingSelection?: boolean
+  onPayloadValueChange: (value: string) => void
+}
+
+const PayloadInput = (props: PayloadInputProps) => {
+  if (props.isPendingSelection) return null
+  if (!props.payloadType) return null
+
+  return (
+    <Input
+      placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[props.payloadType] ?? ''}
+      value={props.payloadValue}
+      onValueChange={props.onPayloadValueChange}
+      classNames={{
+        inputWrapper: cn(
+          'shadow-none rounded-md border bg-white border-[#E4E4E7]',
+          'rounded-[5px] h-10 min-h-10 px-2.5'
+        )
+      }}
+      size="lg"
+    />
+  )
+}
 
 const FABSectorItem = ({
   sector,
@@ -149,59 +221,24 @@ const FABSectorItem = ({
     )
   }
 
-  const renderPayloadValue = () => {
-    if (isPendingSelection) return null
-    if (!sector.payload.type) return null
-
-    if ('phone' === sector.payload.type) {
-      return (
-        <PatternFormat
-          customInput={Input}
-          format="+7 (###) ###-##-##"
-          mask="_"
-          value={
-            sector.payload.value.startsWith('+7')
-              ? sector.payload.value.substring(2)
-              : sector.payload.value
-          }
-          onValueChange={values => {
-            const cleanValue = values.value ? `+7${values.value}` : ''
-            onPayloadValueChange(cleanValue)
-          }}
-          // Hero UI Input props
-          placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[sector.payload.type] ?? ''}
-          classNames={{
-            inputWrapper: cn(
-              'shadow-none rounded-md border bg-white border-[#E4E4E7]',
-              'rounded-[5px] h-10 min-h-10 px-2.5'
-            )
-          }}
-          size="lg"
-        />
-      )
-    }
-
-    return (
-      <Input
-        placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[sector.payload.type] ?? ''}
-        value={sector.payload.value}
-        onValueChange={onPayloadValueChange}
-        classNames={{
-          inputWrapper: cn(
-            'shadow-none rounded-md border bg-white border-[#E4E4E7]',
-            'rounded-[5px] h-10 min-h-10 px-2.5'
-          )
-        }}
-        size="lg"
-      />
-    )
-  }
   return (
     <div className="flex flex-col gap-2">
       <div className={cn('flex flex-row gap-2 h-10 w-full', isPendingSelection && 'opacity-95')}>
         {renderPayloadType()}
         {renderPayloadSubtype()}
-        {renderPayloadValue()}
+        {/* {renderPayloadValue()} */}
+        {'phone' === sector.payload.type
+          ? <PhoneNumberInput 
+              payloadType={sector.payload.type}
+              payloadValue={sector.payload.value}
+              onPayloadValueChange={onPayloadValueChange}
+            />
+          : <PayloadInput
+              payloadType={sector.payload.type}
+              payloadValue={sector.payload.value}
+              onPayloadValueChange={onPayloadValueChange}
+            />
+        }
       </div>
     </div>
   )

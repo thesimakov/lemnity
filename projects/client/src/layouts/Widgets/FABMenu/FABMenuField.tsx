@@ -5,14 +5,14 @@ import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import { useFABMenuSettings } from './hooks'
 import type {
-  FABMenuIconKey,
+  // FABMenuIconKey,
   FABMenuSectorItem,
   FABMenuWidgetSettings
 } from '@/layouts/Widgets/FABMenu/types'
 import FABSectorItem from './FABSectorItem'
 import FABMenuButtonPicker from './FABMenuButtonPicker'
 import { createPlaceholderFABMenuSector } from './defaults'
-import { FAB_MENU_BUTTON_PRESETS, type FABMenuButtonDefinition } from './buttonLibrary'
+import { /*FAB_MENU_BUTTON_PRESETS,*/ type FABMenuButtonDefinition } from './buttonLibrary'
 import DisableBranding from '@/layouts/WidgetSettings/FieldsSettingsTab/DisableBranding/DisableBranding'
 
 const FABMenuField = () => {
@@ -63,21 +63,21 @@ const FABMenuField = () => {
   }
 
   const handleLabelChange = (index: number, label: string) => updateFABMenuSector(index, { label })
-  const handleIconChange = (index: number, icon: FABMenuIconKey) => {
-    const preset = FAB_MENU_BUTTON_PRESETS.find(entry => entry.icon === icon)
-    if (!preset) {
-      updateFABMenuSector(index, { icon })
-      return
-    }
+  // const handleIconChange = (index: number, icon: FABMenuIconKey) => {
+  //   const preset = FAB_MENU_BUTTON_PRESETS.find(entry => entry.icon === icon)
+  //   if (!preset) {
+  //     updateFABMenuSector(index, { icon })
+  //     return
+  //   }
 
-    updateFABMenuSector(index, {
-      icon: preset.icon,
-      label: preset.label,
-      payload: preset.payload,
-      color: preset.color,
-      description: preset.description
-    })
-  }
+  //   updateFABMenuSector(index, {
+  //     icon: preset.icon,
+  //     label: preset.label,
+  //     payload: preset.payload,
+  //     color: preset.color,
+  //     description: preset.description
+  //   })
+  // }
   const handlePayloadTypeChange = (index: number, type: FABMenuSectorItem['payload']['type']) =>
     updateFABMenuSector(index, {
       payload: {
@@ -125,7 +125,7 @@ const FABMenuField = () => {
             <FABSectorItem
               sector={sector}
               onLabelChange={label => handleLabelChange(index, label)}
-              onIconChange={icon => handleIconChange(index, icon)}
+              // onIconChange={icon => handleIconChange(index, icon)}
               onPayloadTypeChange={type => handlePayloadTypeChange(index, type)}
               onPayloadValueChange={value => handlePayloadValueChange(index, value)}
               onColorChange={color => handleColorChange(index, color)}
