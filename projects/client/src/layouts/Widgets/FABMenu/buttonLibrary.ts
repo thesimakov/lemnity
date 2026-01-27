@@ -28,7 +28,7 @@ export type FABMenuButtonDefinition = {
   color: string
   gradientColors?: string[]
   textColor?: string
-  showIcon?: boolean,
+  showIcon?: boolean
   messengerBaseUrl?: string
 }
 

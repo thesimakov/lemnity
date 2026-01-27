@@ -1,7 +1,7 @@
 import { cn } from '@heroui/theme'
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { Input } from '@heroui/input'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@heroui/button'
 import { useMask } from '@react-input/mask'
 import useDebouncedCallback from '@/hooks/useDebouncedCallback'
@@ -87,6 +87,7 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
   useEffect(() => {
     setSelectedColor(initialColor)
     setInputValue(initialColor)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const inputRef = useMask({

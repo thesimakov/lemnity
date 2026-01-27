@@ -29,13 +29,11 @@ type FABSectorItemProps = {
   isPendingSelection?: boolean
 }
 
-const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS
-  .filter(
-    preset => preset.group === 'messenger' && preset.icon !== 'whatsapp-message'
-  )
-  .map(preset => preset.icon)
+const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS.filter(
+  preset => preset.group === 'messenger' && preset.icon !== 'whatsapp-message'
+).map(preset => preset.icon)
 
-console.log('MESSENGER_ICONS', MESSENGER_ICONS)
+// console.log('MESSENGER_ICONS', MESSENGER_ICONS)
 
 const MESSENGER_PAYLOAD_TYPES: FABMenuPayloadType[] = ['nickname', 'link']
 
@@ -59,10 +57,7 @@ type PhoneNumberInputProps = {
 }
 
 const PhoneNumberInput = (props: PhoneNumberInputProps) => {
-  const debouncedOnPayloadValueChange = useDebouncedCallback(
-    props.onPayloadValueChange,
-    150
-  )
+  const debouncedOnPayloadValueChange = useDebouncedCallback(props.onPayloadValueChange, 150)
 
   return (
     <PatternFormat
@@ -70,9 +65,7 @@ const PhoneNumberInput = (props: PhoneNumberInputProps) => {
       format="+7 (###) ###-##-##"
       mask="_"
       value={
-        props.payloadValue.startsWith('+7')
-          ? props.payloadValue.substring(2)
-          : props.payloadValue
+        props.payloadValue.startsWith('+7') ? props.payloadValue.substring(2) : props.payloadValue
       }
       onValueChange={values => {
         const cleanValue = values.value ? `+7${values.value}` : ''
@@ -227,18 +220,19 @@ const FABSectorItem = ({
         {renderPayloadType()}
         {renderPayloadSubtype()}
         {/* {renderPayloadValue()} */}
-        {'phone' === sector.payload.type
-          ? <PhoneNumberInput 
-              payloadType={sector.payload.type}
-              payloadValue={sector.payload.value}
-              onPayloadValueChange={onPayloadValueChange}
-            />
-          : <PayloadInput
-              payloadType={sector.payload.type}
-              payloadValue={sector.payload.value}
-              onPayloadValueChange={onPayloadValueChange}
-            />
-        }
+        {'phone' === sector.payload.type ? (
+          <PhoneNumberInput
+            payloadType={sector.payload.type}
+            payloadValue={sector.payload.value}
+            onPayloadValueChange={onPayloadValueChange}
+          />
+        ) : (
+          <PayloadInput
+            payloadType={sector.payload.type}
+            payloadValue={sector.payload.value}
+            onPayloadValueChange={onPayloadValueChange}
+          />
+        )}
       </div>
     </div>
   )
