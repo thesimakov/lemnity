@@ -102,13 +102,13 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
     onColorChange(color)
   }
 
-  const handleValueChange = (value: string) =>{
+  const handleValueChange = (value: string) => {
     setInputValue(value)
-   
+
     if (isInvalid) {
       return
     }
-    
+
     setSelectedColor(value)
     onColorChange(value)
   }
