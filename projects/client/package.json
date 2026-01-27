@@ -36,6 +36,7 @@
     "@lemnity/api-sdk": "workspace:*",
     "@lemnity/nest-common": "workspace:*",
     "@lemnity/widget-config": "workspace:*",
+    "@react-input/mask": "^2.0.4",
     "@tailwindcss/vite": "catalog:tailwind",
     "@tanstack/react-query": "^5.90.19",
     "axios": "^1.11.0",
