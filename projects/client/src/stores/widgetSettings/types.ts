@@ -212,6 +212,8 @@ export type DisplaySettings = Extendable<{
     date: { enabled: boolean; value: string }
     time: { enabled: boolean; value: string }
   }
+  // Временно. После реализации оплаты будет в оплате
+  brandingEnabled: boolean
 }>
 
 export type IntegrationSettings = Extendable<{

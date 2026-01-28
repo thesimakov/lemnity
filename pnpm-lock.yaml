@@ -266,6 +266,9 @@ importers:
       '@lemnity/widget-config':
         specifier: workspace:*
         version: link:../../packages/widget-config
+      '@react-input/mask':
+        specifier: ^2.0.4
+        version: 2.0.4(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@tailwindcss/vite':
         specifier: catalog:tailwind
         version: 4.1.18(vite@7.2.7(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0))
@@ -2594,6 +2597,26 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
       react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1
+
+  '@react-input/core@2.0.2':
+    resolution: {integrity: sha512-xLLBueYFbant9308uv3cIJQz5NYSixeGspjP3Nt6jogRHTcHYMRmlVFUuSzQiP8Z8/5BdnPkudRSsN0/AJ1fbw==}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      react: '>=16.8 || ^19.0.0-rc'
+      react-dom: '>=16.8 || ^19.0.0-rc'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  '@react-input/mask@2.0.4':
+    resolution: {integrity: sha512-NOielvQSBOlGLVuEcxtkjaGneC0GJFXjC7KOF99ed9H9XSDruWnQirjht5uSbWqLeeiOup0VD2YjM+6FH+aWBg==}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      react: '>=16.8 || ^19.0.0-rc'
+      react-dom: '>=16.8 || ^19.0.0-rc'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   '@react-stately/checkbox@3.7.2':
     resolution: {integrity: sha512-j1ycUVz5JmqhaL6mDZgDNZqBilOB8PBW096sDPFaTtuYreDx2HOd1igxiIvwlvPESZwsJP7FVM3mYnaoXtpKPA==}
@@ -10357,6 +10380,21 @@ snapshots:
       '@swc/helpers': 0.5.17
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
+
+  '@react-input/core@2.0.2(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+    dependencies:
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+    optionalDependencies:
+      '@types/react': 19.2.7
+
+  '@react-input/mask@2.0.4(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+    dependencies:
+      '@react-input/core': 2.0.2(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+    optionalDependencies:
+      '@types/react': 19.2.7
 
   '@react-stately/checkbox@3.7.2(react@19.2.1)':
     dependencies:

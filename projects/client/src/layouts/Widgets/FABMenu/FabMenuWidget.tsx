@@ -5,6 +5,7 @@ import { useFabMenuPreviewModel } from './useFabMenuPreviewModel'
 import { cn } from '@heroui/theme'
 import SvgIcon from '@/components/SvgIcon'
 import * as Icons from '@/components/Icons'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 type FabMenuWidgetProps = {
   anchorBaseClassName?: string
@@ -35,6 +36,8 @@ const FabMenuWidget = ({
     renderBackground,
     handleItemAction
   } = useFabMenuPreviewModel()
+
+  const brandingEnabled = useWidgetSettingsStore(s => s.settings?.display.brandingEnabled)
 
   const TriggerIcon = triggerIcon ? Icons[triggerIcon] : null
 
@@ -73,10 +76,11 @@ const FabMenuWidget = ({
                   type="button"
                   onClick={() => handleItemAction(item)}
                   className={cn(
-                    'h-11.5 flex items-center gap-2 rounded-full px-4 py-2',
+                    'h-11.5 flex items-center justify-center gap-2 rounded-full px-4 py-2',
                     'text-sm transition motion-reduce:transition-none',
                     'duration-250 hover:scale-[1.05] focus:outline-none',
-                    'focus-visible:ring-2 focus-visible:ring-white/70'
+                    'focus-visible:ring-2 focus-visible:ring-white/70',
+                    !item.label && 'w-11.5'
                   )}
                   style={style}
                   title={item.description || item.label}
@@ -93,24 +97,28 @@ const FabMenuWidget = ({
                       <SvgIcon src={iconEntry.icon} alt={iconEntry.label} />
                     </div>
                   )}
-                  <span className="flex-1">{item.label}</span>
+
+                  {item.label && <span className="flex-1">{item.label}</span>}
                 </button>
               )
             })}
 
-            <a
-              href="https://lemnity.ru"
-              target="_blank"
-              className={cn(
-                'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
-                'text-white bg-[#949494] grow-0'
-              )}
-            >
-              Создано на Lemnity
-            </a>
+            {brandingEnabled && (
+              <a
+                href="https://lemnity.ru"
+                target="_blank"
+                className={cn(
+                  'text-xs rounded-full px-4 h-5 max-h-5 flex items-center',
+                  'text-white bg-[#949494] grow-0'
+                )}
+              >
+                Создано на Lemnity
+              </a>
+            )}
           </motion.div>
         ) : null}
       </AnimatePresence>
+
       <button
         type="button"
         onClick={toggleExpanded}
@@ -118,7 +126,7 @@ const FabMenuWidget = ({
           'flex items-center justify-center rounded-full',
           'text-white ring-1 ring-white/20',
           'transition-transform motion-reduce:transition-none duration-250 hover:scale-105',
-          'h-14.75 min-w-14.75 gap-2.5 px-4'
+          'h-15.5 min-w-15.5 gap-2.5 px-4'
         )}
         style={{
           backgroundColor: triggerBackgroundColor,
@@ -126,7 +134,7 @@ const FabMenuWidget = ({
         }}
         aria-label={expanded ? 'Скрыть кнопки' : 'Показать кнопки'}
       >
-        {safePosition === 'bottom-right' && triggerText && <span className="">{triggerText}</span>}
+        {safePosition === 'bottom-right' && triggerText && <span>{triggerText}</span>}
 
         {expanded ? (
           <FabMenuAddIcon color={triggerTextColor} />
@@ -139,7 +147,7 @@ const FabMenuWidget = ({
           )
         )}
 
-        {safePosition !== 'bottom-right' && triggerText && <span className="">{triggerText}</span>}
+        {safePosition !== 'bottom-right' && triggerText && <span>{triggerText}</span>}
       </button>
     </div>
   )

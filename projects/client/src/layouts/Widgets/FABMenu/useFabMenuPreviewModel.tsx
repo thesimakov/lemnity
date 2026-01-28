@@ -6,22 +6,11 @@ import type { FABMenuSectorItem } from './types'
 import { FAB_MENU_BUTTON_PRESETS } from './buttonLibrary'
 import { sendEvent } from '@/common/api/publicApi'
 
-const FALLBACK_SECTORS: FABMenuSectorItem[] = FAB_MENU_BUTTON_PRESETS.slice(0, 9).map(
-  (preset, index) => ({
-    id: `fallback-${preset.icon}-${index}`,
-    label: preset.label,
-    icon: preset.icon,
-    payload: preset.payload,
-    color: preset.color,
-    description: preset.description
-  })
-)
-
 const normalizePosition = (position: ButtonPosition): ButtonPosition =>
   position === 'bottom-left' ? 'bottom-left' : 'bottom-right'
 
 const useMenuItems = (items: FABMenuSectorItem[]) =>
-  useMemo(() => (items.length ? items : FALLBACK_SECTORS), [items])
+  useMemo(() => (items.length ? items : []), [items])
 
 const sanitizeNickname = (value: string) => value.replace(/^@/, '').trim()
 const sanitizePhone = (value: string) => value.replace(/[^\d+]/g, '')

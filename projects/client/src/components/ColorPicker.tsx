@@ -3,6 +3,8 @@ import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { Input } from '@heroui/input'
 import { useState } from 'react'
 import { Button } from '@heroui/button'
+import { useMask } from '@react-input/mask'
+import useDebouncedCallback from '@/hooks/useDebouncedCallback'
 
 type ColorCircleProps = {
   color: string
@@ -79,30 +81,35 @@ const defaultColors: ColorPickerItem[] = [
 ]
 
 const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerProps) => {
-  const [selectedColor, setSelectedColor] = useState(initialColor)
-  const [isInputInvalid, setIsInputInvalid] = useState(false)
-  const [inputValue, setInputValue] = useState(selectedColor)
+  const [selectedColor, setSelectedColor] = useState(() => initialColor)
+  const [inputValue, setInputValue] = useState(() => initialColor)
+
+  const inputRef = useMask({
+    mask: '#______',
+    replacement: { _: /[0-9a-fA-F]/ },
+    showMask: false
+  })
+
+  const isValidHex = (hex: string) => {
+    const cleanHex = hex.replace('#', '')
+    return cleanHex.length === 6 || cleanHex.length === 0
+  }
+
+  const isInvalid = !isValidHex(inputValue)
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color)
     setInputValue(color)
-    setIsInputInvalid(false)
     onColorChange(color)
   }
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value.toUpperCase())
+  const debouncedOnColorChange = useDebouncedCallback(onColorChange, 300)
 
-    const isCustomColorValid = /^#[0-9A-F]{6}$/i.test(value)
-
-    if (isCustomColorValid) {
-      setSelectedColor(value)
-      setIsInputInvalid(false)
-      onColorChange(value)
-      return
-    }
-
-    setIsInputInvalid(true)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toUpperCase()
+    setInputValue(value)
+    setSelectedColor(value)
+    debouncedOnColorChange(value)
   }
 
   return (
@@ -116,9 +123,10 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
       <PopoverTrigger>
         <Button
           className={cn(
-            'rounded-[5px] min-w-18 grow h-12.75 bg-white',
+            'rounded-[5px] h-12.75 bg-white',
             'border border-[#E4E4E7] p-3.75',
-            'flex items-center justify-center gap-1.25'
+            'flex items-center justify-center gap-1.25',
+            triggerText ? 'min-w-45 flex-1' : 'w-18 shrink-0'
           )}
         >
           {triggerText && <span className="text-base text-[#797979]">{triggerText}</span>}
@@ -153,11 +161,12 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
         ))}
 
         <Input
+          ref={inputRef}
           placeholder="Свой код"
           value={inputValue}
-          onValueChange={handleInputChange}
+          onChange={handleChange}
           spellCheck="false"
-          isInvalid={isInputInvalid}
+          isInvalid={isInvalid}
           isRequired
           classNames={{
             base: 'w-33.5 ml-1',
