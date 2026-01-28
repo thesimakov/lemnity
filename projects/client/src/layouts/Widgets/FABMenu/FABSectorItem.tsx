@@ -165,7 +165,7 @@ const PayloadInput = (props: PayloadInputProps) => {
       classNames={{
         inputWrapper: cn(
           'shadow-none rounded-md border bg-white border-[#E4E4E7]',
-          'rounded-[5px] h-10 min-h-10 px-2.5'
+          'rounded-[5px] h-10 min-h-10 px-2.5 grow'
         ),
         input: 'data-[has-start-content=true]:ps-0'
       }}
@@ -224,11 +224,13 @@ const FABSectorItem = ({
         placeholder={sector.label}
         isInvalid={isInputInvalid}
         classNames={{
+          mainWrapper: 'h-10',
           inputWrapper: cn(
             'border bg-white border-[#E4E4E7] rounded-[5px]',
             'shadow-none h-12.75 min-h-10 px-2.5'
           ),
-          input: 'text-base'
+          input: 'text-base',
+          base: 'w-50 shrink-0 grow'
         }}
         startContent={
           FAB_MENU_ICON_OPTIONS[sector.icon].showIcon && (
@@ -258,7 +260,7 @@ const FABSectorItem = ({
             'shadow-none border border-[#E8E8E8] rounded-md h-10 px-2.5',
             'flex items-center bg-white'
           ),
-          base: 'w-74'
+          base: 'w-30 shrink-0 grow',
         }}
         renderValue={items =>
           items.map(item => {
@@ -277,25 +279,31 @@ const FABSectorItem = ({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className={cn('flex flex-row gap-2 h-10 w-full', isPendingSelection && 'opacity-95')}>
+    <div className="flex flex-col gap-2 @container">
+      <div className={cn(
+        'flex flex-row flex-wrap @min-[550px]:flex-nowrap gap-2 w-full',
+        isPendingSelection && 'opacity-95'
+      )}>
         {renderPayloadType()}
-        {renderPayloadSubtype()}
 
-        {'phone' === sector.payload.type ? (
-          <PhoneNumberInput
-            payloadType={sector.payload.type}
-            payloadValue={sector.payload.value}
-            onPayloadValueChange={onPayloadValueChange}
-          />
-        ) : (
-          <PayloadInput
-            icon={sector.icon}
-            payloadType={sector.payload.type}
-            payloadValue={sector.payload.value}
-            onPayloadValueChange={onPayloadValueChange}
-          />
-        )}
+        <div className='grow flex flex-row flex-wrap @min-[348px]:flex-nowrap gap-2.5'>
+          {renderPayloadSubtype()}
+
+          {'phone' === sector.payload.type ? (
+            <PhoneNumberInput
+              payloadType={sector.payload.type}
+              payloadValue={sector.payload.value}
+              onPayloadValueChange={onPayloadValueChange}
+            />
+          ) : (
+            <PayloadInput
+              icon={sector.icon}
+              payloadType={sector.payload.type}
+              payloadValue={sector.payload.value}
+              onPayloadValueChange={onPayloadValueChange}
+            />
+          )}
+        </div>
       </div>
     </div>
   )
