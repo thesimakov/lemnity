@@ -28,7 +28,7 @@ const FABMenuDisplaySurface = () => {
   }, [rawPosition, currentPosition, setButtonPosition])
 
   return (
-    <section className="flex flex-col gap-2.5 rounded-[14px] border border-[#E6E6E6] p-4.5 bg-white">
+    <section className="flex flex-col gap-2.5 rounded-[14px] border border-[#E6E6E6] p-4.5 bg-white min-w-74">
       <div className="h-[37px]">
         <h2 className="text-lg font-medium text-gray-900 leading-[21px]">Форма</h2>
       </div>
@@ -37,7 +37,6 @@ const FABMenuDisplaySurface = () => {
       <ButtonPositionChooser
         noBorder
         noPadding
-        // title="Положение кнопки"
         value={currentPosition}
         options={ALLOWED_POSITIONS}
         onChange={next => setButtonPosition(normalizePosition(next))}

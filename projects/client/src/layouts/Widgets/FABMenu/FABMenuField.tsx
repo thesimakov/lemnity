@@ -86,7 +86,7 @@ const FABMenuField = () => {
 
   return (
     <div className="flex flex-col gap-2.5">
-      <BorderedContainer className="flex flex-col gap-2.5">
+      <BorderedContainer className="flex flex-col gap-2.5 min-w-74">
         <div className="h-[37px] shrink-0 flex justify-between">
           <span className="text-lg leading-5.25 font-medium">Сектора</span>
           <span className="text-lg text-[#C0C0C0] leading-5.25">Максимум 8</span>
