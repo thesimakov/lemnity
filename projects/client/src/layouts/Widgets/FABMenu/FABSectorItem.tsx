@@ -29,7 +29,10 @@ type FABSectorItemProps = {
 }
 
 const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS.filter(
-  preset => preset.group === 'messenger' && preset.icon !== 'whatsapp-message'
+  preset =>
+    preset.group === 'messenger' &&
+    preset.icon !== 'whatsapp-message' &&
+    preset.icon !== 'max-message'
 ).map(preset => preset.icon)
 
 const MESSENGER_PAYLOAD_TYPES: FABMenuPayloadType[] = ['nickname', 'link']
@@ -96,13 +99,17 @@ const PayloadInputPrefix = (props: PayloadInputPrefixProps) => {
     props.icon === 'telegram-message' || props.icon === 'vk-message'
   // || props.icon === 'max-message'
 
+  const shouldDisplayNickPrefix = () => props.icon !== 'max-message'
+
   return (
     <>
       {props.payloadType === 'link' && (
         <>{shouldDisplayLinkPrefix() && <span className="text-[#C0C0C0]">{props.prefix}</span>}</>
       )}
 
-      {props.payloadType === 'nickname' && <span className="text-[#C0C0C0]">@</span>}
+      {props.payloadType === 'nickname' && (
+        <>{shouldDisplayNickPrefix() && <span className="text-[#C0C0C0]">@</span>}</>
+      )}
     </>
   )
 }
