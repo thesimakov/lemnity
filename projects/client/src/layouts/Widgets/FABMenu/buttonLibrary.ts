@@ -29,6 +29,7 @@ export type FABMenuButtonDefinition = {
   gradientColors?: string[]
   textColor?: string
   showIcon?: boolean
+  messengerBaseUrl?: string
 }
 
 export const FAB_MENU_BUTTON_GROUPS: { id: FABMenuButtonGroupId; label: string }[] = [
@@ -41,8 +42,8 @@ export const FAB_MENU_BUTTON_GROUPS: { id: FABMenuButtonGroupId; label: string }
 export const FAB_MENU_PAYLOAD_PLACEHOLDERS: Record<FABMenuPayloadType, string> = {
   email: 'hello@lemnity.ru',
   phone: '+7 (000) 000-00-00',
-  link: 'https://lemnity.ru',
-  nickname: '@lemnity',
+  link: 'lemnity',
+  nickname: 'lemnity',
   script: "<script id='pixel-script-poptin' src='https://'></script>",
   anchor: '#form'
 }
@@ -96,6 +97,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     label: 'Telegram',
     buttonLabel: 'Телеграм',
     group: 'messenger',
+    messengerBaseUrl: 'https://t.me/',
     color: '#2F80ED',
     payload: { type: 'nickname', value: '@lemnity' }
   },
@@ -104,8 +106,9 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     label: 'VK Мессенджер',
     buttonLabel: 'ВК Мессенджер',
     group: 'messenger',
+    messengerBaseUrl: 'https://vk.me/',
     color: '#4C77A6',
-    payload: { type: 'nickname', value: '@lemnity' }
+    payload: { type: 'nickname', value: 'lemnity' }
   },
   {
     icon: 'max-message',
@@ -113,6 +116,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     buttonLabel: 'MAX',
     group: 'messenger',
     color: '#FFFFFF',
+    messengerBaseUrl: 'https://',
     gradientColors: ['#3AB4FD', '#A652DD'],
     textColor: '#FFFFFF',
     payload: { type: 'nickname', value: '@lemnity' }
