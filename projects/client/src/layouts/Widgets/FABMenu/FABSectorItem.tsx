@@ -21,7 +21,6 @@ import useDebouncedCallback from '@/hooks/useDebouncedCallback'
 type FABSectorItemProps = {
   sector: FABMenuSectorItem
   onLabelChange: (label: string) => void
-  // onIconChange: (icon: FABMenuIconKey) => void
   onPayloadTypeChange: (type: FABMenuPayloadType) => void
   onPayloadValueChange: (value: string) => void
   onColorChange: (color: string) => void
@@ -32,8 +31,6 @@ type FABSectorItemProps = {
 const MESSENGER_ICONS: FABMenuIconKey[] = FAB_MENU_BUTTON_PRESETS.filter(
   preset => preset.group === 'messenger' && preset.icon !== 'whatsapp-message'
 ).map(preset => preset.icon)
-
-// console.log('MESSENGER_ICONS', MESSENGER_ICONS)
 
 const MESSENGER_PAYLOAD_TYPES: FABMenuPayloadType[] = ['nickname', 'link']
 
