@@ -260,7 +260,7 @@ const FABSectorItem = ({
             'shadow-none border border-[#E8E8E8] rounded-md h-10 px-2.5',
             'flex items-center bg-white'
           ),
-          base: 'w-30 shrink-0 grow',
+          base: 'w-30 shrink-0 grow'
         }}
         renderValue={items =>
           items.map(item => {
@@ -280,13 +280,15 @@ const FABSectorItem = ({
 
   return (
     <div className="flex flex-col gap-2 @container">
-      <div className={cn(
-        'flex flex-row flex-wrap @min-[550px]:flex-nowrap gap-2 w-full',
-        isPendingSelection && 'opacity-95'
-      )}>
+      <div
+        className={cn(
+          'flex flex-row flex-wrap @min-[550px]:flex-nowrap gap-2 w-full',
+          isPendingSelection && 'opacity-95'
+        )}
+      >
         {renderPayloadType()}
 
-        <div className='grow flex flex-row flex-wrap @min-[348px]:flex-nowrap gap-2.5'>
+        <div className="grow flex flex-row flex-wrap @min-[348px]:flex-nowrap gap-2.5">
           {renderPayloadSubtype()}
 
           {'phone' === sector.payload.type ? (
