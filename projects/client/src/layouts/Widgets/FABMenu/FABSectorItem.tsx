@@ -96,23 +96,16 @@ const PayloadInputPrefix = (props: PayloadInputPrefixProps) => {
   }
 
   const shouldDisplayLinkPrefix = () =>
-    props.icon === 'telegram-message'
-    || props.icon === 'vk-message'
-    // || props.icon === 'max-message'
+    props.icon === 'telegram-message' || props.icon === 'vk-message'
+  // || props.icon === 'max-message'
 
   return (
     <>
       {props.payloadType === 'link' && (
-        <>
-          {shouldDisplayLinkPrefix() && (
-            <span className="text-[#C0C0C0]">{props.prefix}</span>
-          )}
-        </>
+        <>{shouldDisplayLinkPrefix() && <span className="text-[#C0C0C0]">{props.prefix}</span>}</>
       )}
 
-      {props.payloadType === 'nickname' && (
-        <span className="text-[#C0C0C0]">@</span>
-      )}
+      {props.payloadType === 'nickname' && <span className="text-[#C0C0C0]">@</span>}
     </>
   )
 }
@@ -131,8 +124,8 @@ const PayloadInput = (props: PayloadInputProps) => {
 
   const handleValueChange = (value: string) => {
     if (
-      props.icon === 'telegram-message'
-      || props.icon === 'vk-message'
+      props.icon === 'telegram-message' ||
+      props.icon === 'vk-message'
       // || props.icon === 'max-message'
     ) {
       // Заменить https://<domain>.<name>/ на пустую строку
@@ -144,9 +137,7 @@ const PayloadInput = (props: PayloadInputProps) => {
 
   // useCallback?
   const getPrefix = () => {
-    const preset = FAB_MENU_BUTTON_PRESETS.find(
-      preset => preset.icon === props.icon
-    )
+    const preset = FAB_MENU_BUTTON_PRESETS.find(preset => preset.icon === props.icon)
 
     if (!preset) {
       return

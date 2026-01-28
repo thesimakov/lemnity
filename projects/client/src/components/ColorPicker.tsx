@@ -106,7 +106,7 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
   const debouncedOnColorChange = useDebouncedCallback(onColorChange, 300)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.toUpperCase()
+    const value = e.target.value.toUpperCase()
     setInputValue(value)
     setSelectedColor(value)
     debouncedOnColorChange(value)
