@@ -42,8 +42,8 @@ export const FAB_MENU_BUTTON_GROUPS: { id: FABMenuButtonGroupId; label: string }
 export const FAB_MENU_PAYLOAD_PLACEHOLDERS: Record<FABMenuPayloadType, string> = {
   email: 'hello@lemnity.ru',
   phone: '+7 (000) 000-00-00',
-  link: 'https://lemnity.ru',
-  nickname: '@lemnity',
+  link: 'lemnity',
+  nickname: 'lemnity',
   script: "<script id='pixel-script-poptin' src='https://'></script>",
   anchor: '#form'
 }
@@ -108,7 +108,7 @@ export const FAB_MENU_BUTTON_PRESETS: FABMenuButtonDefinition[] = [
     group: 'messenger',
     messengerBaseUrl: 'https://vk.me/',
     color: '#4C77A6',
-    payload: { type: 'nickname', value: '@lemnity' }
+    payload: { type: 'nickname', value: 'lemnity' }
   },
   {
     icon: 'max-message',

@@ -1,7 +1,7 @@
 import { cn } from '@heroui/theme'
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { Input } from '@heroui/input'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@heroui/button'
 import { useMask } from '@react-input/mask'
 import useDebouncedCallback from '@/hooks/useDebouncedCallback'
@@ -81,19 +81,13 @@ const defaultColors: ColorPickerItem[] = [
 ]
 
 const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerProps) => {
-  const [selectedColor, setSelectedColor] = useState('')
-  const [inputValue, setInputValue] = useState(selectedColor)
-
-  useEffect(() => {
-    setSelectedColor(initialColor)
-    setInputValue(initialColor)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const [selectedColor, setSelectedColor] = useState(() => initialColor)
+  const [inputValue, setInputValue] = useState(() => initialColor)
 
   const inputRef = useMask({
     mask: '#______',
     replacement: { _: /[0-9a-fA-F]/ },
-    showMask: true
+    showMask: false
   })
 
   const isValidHex = (hex: string) => {
@@ -109,16 +103,11 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
     onColorChange(color)
   }
 
-  const debouncedOnColorChange = useDebouncedCallback(onColorChange, 150)
+  const debouncedOnColorChange = useDebouncedCallback(onColorChange, 300)
 
-  const handleValueChange = (value: string) => {
-    value = value.toUpperCase()
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.toUpperCase()
     setInputValue(value)
-
-    if (isInvalid) {
-      return
-    }
-
     setSelectedColor(value)
     debouncedOnColorChange(value)
   }
@@ -175,7 +164,7 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
           ref={inputRef}
           placeholder="Свой код"
           value={inputValue}
-          onValueChange={handleValueChange}
+          onChange={handleChange}
           spellCheck="false"
           isInvalid={isInvalid}
           isRequired

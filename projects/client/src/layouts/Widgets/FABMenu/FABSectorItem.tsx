@@ -84,8 +84,42 @@ const PhoneNumberInput = (props: PhoneNumberInputProps) => {
   )
 }
 
+type PayloadInputPrefixProps = {
+  icon: FABMenuIconKey
+  prefix?: string
+  payloadType: FABMenuPayloadType
+}
+
+const PayloadInputPrefix = (props: PayloadInputPrefixProps) => {
+  if (!props.prefix) {
+    return null
+  }
+
+  const shouldDisplayLinkPrefix = () =>
+    props.icon === 'telegram-message'
+    || props.icon === 'vk-message'
+    // || props.icon === 'max-message'
+
+  return (
+    <>
+      {props.payloadType === 'link' && (
+        <>
+          {shouldDisplayLinkPrefix() && (
+            <span className="text-[#C0C0C0]">{props.prefix}</span>
+          )}
+        </>
+      )}
+
+      {props.payloadType === 'nickname' && (
+        <span className="text-[#C0C0C0]">@</span>
+      )}
+    </>
+  )
+}
+
 type PayloadInputProps = {
   payloadType: FABMenuPayloadType
+  icon: FABMenuIconKey
   payloadValue: string
   isPendingSelection?: boolean
   onPayloadValueChange: (value: string) => void
@@ -95,16 +129,50 @@ const PayloadInput = (props: PayloadInputProps) => {
   if (props.isPendingSelection) return null
   if (!props.payloadType) return null
 
+  const handleValueChange = (value: string) => {
+    if (
+      props.icon === 'telegram-message'
+      || props.icon === 'vk-message'
+      // || props.icon === 'max-message'
+    ) {
+      // Заменить https://<domain>.<name>/ на пустую строку
+      value = value.replace(/^https:\/\/[a-zA-Z\d]+\.[a-zA-Z]+\//, '')
+    }
+
+    props.onPayloadValueChange(value)
+  }
+
+  // useCallback?
+  const getPrefix = () => {
+    const preset = FAB_MENU_BUTTON_PRESETS.find(
+      preset => preset.icon === props.icon
+    )
+
+    if (!preset) {
+      return
+    }
+
+    return preset.messengerBaseUrl
+  }
+
   return (
     <Input
       placeholder={FAB_MENU_PAYLOAD_PLACEHOLDERS[props.payloadType] ?? ''}
+      startContent={
+        <PayloadInputPrefix
+          icon={props.icon}
+          prefix={getPrefix()}
+          payloadType={props.payloadType}
+        />
+      }
       value={props.payloadValue}
-      onValueChange={props.onPayloadValueChange}
+      onValueChange={handleValueChange}
       classNames={{
         inputWrapper: cn(
           'shadow-none rounded-md border bg-white border-[#E4E4E7]',
           'rounded-[5px] h-10 min-h-10 px-2.5'
-        )
+        ),
+        input: 'data-[has-start-content=true]:ps-0'
       }}
       size="lg"
     />
@@ -114,7 +182,6 @@ const PayloadInput = (props: PayloadInputProps) => {
 const FABSectorItem = ({
   sector,
   onLabelChange,
-  // onIconChange,
   onPayloadTypeChange,
   onPayloadValueChange,
   isPendingSelection
@@ -219,7 +286,7 @@ const FABSectorItem = ({
       <div className={cn('flex flex-row gap-2 h-10 w-full', isPendingSelection && 'opacity-95')}>
         {renderPayloadType()}
         {renderPayloadSubtype()}
-        {/* {renderPayloadValue()} */}
+
         {'phone' === sector.payload.type ? (
           <PhoneNumberInput
             payloadType={sector.payload.type}
@@ -228,6 +295,7 @@ const FABSectorItem = ({
           />
         ) : (
           <PayloadInput
+            icon={sector.icon}
             payloadType={sector.payload.type}
             payloadValue={sector.payload.value}
             onPayloadValueChange={onPayloadValueChange}
