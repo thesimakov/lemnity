@@ -40,7 +40,7 @@ const SwitchableField = ({
         <div className="flex items-center justify-between grow gap-2.5">
           <span className={`text-black text-base font-medium ${classNames.title}`}>{title}</span>
           {switchLabel && (
-            <span className={`text-[10px] text-black ${classNames.switchLabel}`}>
+            <span className={`text-[10px] text-[#BABABA] ${classNames.switchLabel}`}>
               {switchLabel}
             </span>
           )}

@@ -35,6 +35,11 @@ const canonicalizeFieldsSurface = (settings: MutableWidgetSettings) => {
   const fields = isObject(settings.fields) ? settings.fields : null
   if (!fields) return
 
+  // Ensure brandingEnabled exists (for widgets created before this field was added)
+  if (typeof fields.brandingEnabled === 'undefined') {
+    fields.brandingEnabled = true
+  }
+
   const template = isObject(fields.template) ? fields.template : null
   if (template) {
     if (template.enabled) {
