@@ -36,6 +36,7 @@ export const buildFieldsSettings = ({
   formTexts,
   messages
 }: BuildFieldsSettingsParams): FieldsSettings => ({
+  brandingEnabled: true,
   companyLogo: { enabled: true, fileName: '', url: '' },
   template: {
     enabled: false,
