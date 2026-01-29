@@ -252,11 +252,12 @@ const useWidgetSettingsStore = create<WidgetSettingsStore>()(
           },
           prepareForSave: () => {
             const n = get().snapshotNormalized()
-            if (!n)
+            if (!n) {
               return {
                 ok: false as const,
                 issues: [{ path: 'settings', message: 'Не инициализировано' }]
               }
+            }
             const v = validateWidgetSettings(n)
             if (!v.ok) return { ok: false as const, issues: v.issues }
             return { ok: true as const, data: n }
