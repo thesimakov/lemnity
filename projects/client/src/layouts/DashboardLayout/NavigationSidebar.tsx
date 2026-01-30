@@ -117,14 +117,16 @@ const NavigationSidebar = () => {
           </p>
         </div>
       </div>
-      <Button
-        radius="sm"
-        color="default"
-        variant="solid"
-        className="w-full h-8.75 rounded-[5px] font-normal text-base mt-2.5 bg-[#E7E8EA]"
-      >
-        Написать
-      </Button>
+      <a href="mailto:hello@lemnity.ru?subject=У меня возникли проблемы или вопросы по работе в личном кабинете.&body=Опишите подробно возникшую проблему или свой вопрос:">
+        <Button
+          radius="sm"
+          color="default"
+          variant="solid"
+          className="w-full h-8.75 rounded-[5px] font-normal text-base mt-2.5 bg-[#E7E8EA]"
+        >
+          Написать
+        </Button>
+      </a>
       <a
         href="mailto:support@lemnity.ru"
         className="mt-2 text-sm leading-5.5 text-[#292D32] text-center font-bold underline "
