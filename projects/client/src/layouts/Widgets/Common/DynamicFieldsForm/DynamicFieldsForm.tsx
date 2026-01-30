@@ -107,11 +107,11 @@ const DynamicFieldsForm = ({
     }
 
     if (agreementEnabled) {
-      shape.agreementChecked = z.literal(true)
+      shape.agreementChecked = z.literal(true).default(true)
     }
 
     if (adsInfoEnabled) {
-      shape.adsInfoChecked = z.literal(true)
+      shape.adsInfoChecked = z.boolean().optional().default(true)
     }
     return z.object(shape)
   }
@@ -127,7 +127,7 @@ const DynamicFieldsForm = ({
     resolver: zodResolver(buildSchema()),
     mode: 'onSubmit',
     reValidateMode: 'onChange',
-    defaultValues: { phone: '', email: '', name: '' }
+    defaultValues: { phone: '', email: '', name: '', adsInfoChecked: true, agreementChecked: true }
   })
 
   return (

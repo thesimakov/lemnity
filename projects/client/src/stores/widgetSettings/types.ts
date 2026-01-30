@@ -179,7 +179,7 @@ export type FieldsSettings = Extendable<{
     agreementUrl: string
     color: string
   }
-  adsInfo: { enabled: boolean; text: string; policyUrl: string; color: string }
+  adsInfo: { enabled?: boolean; text: string; policyUrl: string; color: string }
   messages: FormMessages
   link: string
   border: { enabled: boolean; color: string }
