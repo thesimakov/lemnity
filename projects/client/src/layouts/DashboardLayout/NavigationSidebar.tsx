@@ -16,6 +16,7 @@ import { Button } from '@heroui/button'
 import { useLocation } from 'react-router-dom'
 import { getNewRequestsCount } from '@/services/requests'
 import { cn } from '@heroui/theme'
+import { useViewportWidth } from '@/hooks/useViewportWidth'
 
 interface MenuItem {
   key: string
@@ -26,10 +27,17 @@ interface MenuItem {
 }
 
 const NavigationSidebar = () => {
-  const { isVisible } = useSidebarStore()
+  const { isVisible, hide } = useSidebarStore()
   const location = useLocation()
+  const viewportWidth = useViewportWidth()
 
   const [newRequestsCount, setNewRequestsCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (viewportWidth < 1350 && isVisible) {
+      hide()
+    }
+  }, [viewportWidth, isVisible, hide])
 
   const activeKey = (() => {
     const path = location.pathname
