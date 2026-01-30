@@ -297,7 +297,7 @@ const EditWidgetPage = () => {
     <>
       <div className="h-full flex flex-col">
         <Header />
-        <DashboardLayout rightPanel={rightPanel} rightPanelWidthClassName="w-[500px]">
+        <DashboardLayout rightPanel={rightPanel} rightPanelWidthClassName="w-[450px]">
           <div className="flex flex-col gap-2.5 h-full min-h-0">
             {breadcrumbs}
             {tabsBar}

@@ -135,7 +135,7 @@ export const FieldsSchema = z
       color: z.string()
     }),
     adsInfo: z.object({
-      enabled: z.boolean(),
+      enabled: z.boolean().optional(),
       text: z.string(),
       policyUrl: z.string(),
       color: z.string()

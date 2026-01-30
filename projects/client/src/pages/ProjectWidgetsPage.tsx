@@ -13,6 +13,14 @@ import type { WidgetBadge } from '@/layouts/WidgetCard/WidgetCard'
 import { AVAILABLE_WIDGETS } from '@/layouts/Widgets/constants'
 import type { CreateWidgetDtoTypeEnum } from '@lemnity/api-sdk'
 
+import breadcrumbSeparator from '@/assets/icons/breadcrumb-separator.svg'
+
+const BreadcrumbSeparator = () => (
+  <div className="w-2.5 h-2.5">
+    <SvgIcon src={breadcrumbSeparator} />
+  </div>
+)
+
 const ProjectWidgetsPage = (): ReactElement => {
   const { projectId } = useParams()
   const navigate = useNavigate()
@@ -57,9 +65,10 @@ const ProjectWidgetsPage = (): ReactElement => {
     <Breadcrumbs
       size="lg"
       itemClasses={{
-        item: 'text-[#5951E5]',
-        separator: 'text-[#5951E5]'
+        item: 'text-[#1E73BE]',
+        separator: 'text-[#5951E5] mx-3.5'
       }}
+      separator={<BreadcrumbSeparator />}
     >
       <BreadcrumbItem href="/">Главная</BreadcrumbItem>
       <BreadcrumbItem>{`Проект "${projectName}"`}</BreadcrumbItem>
