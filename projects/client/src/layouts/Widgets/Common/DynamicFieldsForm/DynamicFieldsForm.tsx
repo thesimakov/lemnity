@@ -334,7 +334,7 @@ const DynamicFieldsForm = ({
         <a
           href="https://lemnity.ru"
           target="_blank"
-          className="hover:underline text-xs leading-3 self-center"
+          className="hover:underline text-[#797979] text-xs leading-3 self-center"
         >
           Создано на Lemnity
         </a>
