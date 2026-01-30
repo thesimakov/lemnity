@@ -10,7 +10,7 @@ import { Listbox, ListboxItem } from '@heroui/listbox'
 import { Tooltip } from '@heroui/tooltip'
 import SvgIcon from '@/components/SvgIcon'
 import iconDocumentation from '@/assets/icons/doc.svg'
-import { memo, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { Button } from '@heroui/button'
 import { useLocation } from 'react-router-dom'
@@ -30,13 +30,15 @@ const NavigationSidebar = () => {
   const { isVisible, hide } = useSidebarStore()
   const location = useLocation()
   const viewportWidth = useViewportWidth()
+  const previousWidthRef = useRef(viewportWidth)
 
   const [newRequestsCount, setNewRequestsCount] = useState<number | null>(null)
 
   useEffect(() => {
-    if (viewportWidth < 1350 && isVisible) {
+    if (previousWidthRef.current >= 1350 && viewportWidth < 1350 && isVisible) {
       hide()
     }
+    previousWidthRef.current = viewportWidth
   }, [viewportWidth, isVisible, hide])
 
   const activeKey = (() => {
