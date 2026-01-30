@@ -111,7 +111,7 @@ const DynamicFieldsForm = ({
     }
 
     if (adsInfoEnabled) {
-      shape.adsInfoChecked = z.boolean().optional().default(true)
+      shape.adsInfoChecked = z.boolean().default(true)
     }
     return z.object(shape)
   }
