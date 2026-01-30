@@ -10,11 +10,11 @@ const TechnicalDisclaimer = () => {
         <SvgIcon src={alerCirccle} preserveOriginalColors />
       </div>
       <span className="text-white text-xs leading-3.75">
-        На платформе ведутся плановые технические работы, поэтому некоторые функции могут быть недоступны
+        На платформе ведутся плановые технические работы, поэтому некоторые функции могут быть
+        недоступны
       </span>
     </div>
   )
 }
 
 export default TechnicalDisclaimer
-
