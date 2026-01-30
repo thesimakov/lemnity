@@ -13,7 +13,8 @@ export const buildActionTimerWidgetSettings = (): ActionTimerWidgetSettings => (
     // eventDate: new Date(new Date().getMilliseconds() + 1000 * 60 * 60 * 24),
     eventDate: new Date(Date.now() + 1000 * 60 * 60 * 24),
     enabled: true,
-    imageUrl: 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp',
+    imageUrl:
+      'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp',
     imagePosition: 'center'
   }
 })
