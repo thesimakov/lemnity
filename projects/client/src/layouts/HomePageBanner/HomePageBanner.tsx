@@ -10,7 +10,7 @@ const HomePageBanner = () => {
         </span>
 
         <span className="grow font-roboto font-bold text-xl leading-[23px]">
-          Скоро запуск! Видео-виджет. Подключите перым.
+          Скоро запуск! Видео-виджет. Подключите первым.
         </span>
 
         <Button className="w-[150px] h-[30px] rounded-[5px] border-1 border-[#E8E8E8] bg-[#FF6B00]/15 text-[#FF5A2A] text-[16px]">
