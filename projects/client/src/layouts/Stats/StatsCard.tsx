@@ -64,7 +64,7 @@ const StatsCard: FC<StatsCardProps> = ({
   return (
     <div
       className={`relative flex flex-col gap-[9px] justify-between font-roboto
-    min-h-0 h-auto w-full max-w-[195px]
+    min-h-42 h-auto w-full max-w-[195px]
     aspect-6/5
     bg-[#F7FBFF] rounded-[5px] border border-gray-200
     p-1 lg:p-2 pr-0.5 md:pr-0.5 lg:pr-0.5 xl:pr-1.5 ${className || ''}`}
