@@ -9,6 +9,8 @@ import { getJwtConfig } from 'src/config/jwt.config'
 import { MailerModule } from '../mailer/mailer.module'
 import { PasswordResetModule } from '../password-reset/password-reset.module'
 import { PasswordResetController } from 'src/password-reset/password-reset.controller'
+import { NotisendService } from 'src/mailer/notisend.service'
+import { Logger } from '@nestjs/common'
 
 @Module({
   imports: [
@@ -23,6 +25,6 @@ import { PasswordResetController } from 'src/password-reset/password-reset.contr
     })
   ],
   controllers: [AuthController, PasswordResetController],
-  providers: [AuthService, JwtStrategy]
+  providers: [AuthService, JwtStrategy, NotisendService, Logger]
 })
 export class AuthModule {}

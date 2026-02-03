@@ -4,6 +4,7 @@ import { MailerController } from './mailer.controller'
 import { MailerModule as NestMailerModule } from '@nestjs-modules/mailer'
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
 import { join } from 'node:path'
+import { NotisendService } from './notisend.service'
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { join } from 'node:path'
     })
   ],
   controllers: [MailerController],
-  providers: [MailerService],
+  providers: [MailerService, NotisendService],
   exports: [MailerService]
 })
 export class MailerModule {}

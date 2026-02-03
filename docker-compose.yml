@@ -172,6 +172,7 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       COLLECTOR_API_URL: ${COLLECTOR_API_URL}
       COLLECTOR_API_TOKEN: ${COLLECTOR_API_TOKEN}
+      NOTISEND_API_KEY: ${NOTISEND_API_KEY}
     ports:
       - '3000:3000'
     depends_on:

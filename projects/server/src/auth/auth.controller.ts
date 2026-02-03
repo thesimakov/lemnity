@@ -49,6 +49,8 @@ export class AuthController {
     const { refreshToken, ...response } = await this.authService.register(dto)
     this.authService.addRefreshTokenToResponse(res, refreshToken)
 
+    await this.authService.sendWelcomeEmail(dto.email, dto.name, dto.password)
+
     return response
   }
 
