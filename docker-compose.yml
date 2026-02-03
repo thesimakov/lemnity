@@ -78,7 +78,7 @@ services:
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 10s
-      timeout: 5s
+      timeout: 15s
       retries: 5
     restart: unless-stopped
 
