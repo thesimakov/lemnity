@@ -10,7 +10,7 @@ export class NotisendService {
 
   constructor() {
     if (!this.apiKey) {
-      this.logger.error('NOTISEND_API_KEY не задан в переменных окружения!');
+      this.logger.error('NOTISEND_API_KEY не задан в переменных окружения!')
     }
   }
 
@@ -23,7 +23,7 @@ export class NotisendService {
   async sendEmailWithTemplate(
     to: string,
     templateId: string | number,
-    context?: Record<string, any>,
+    context?: Record<string, any>
   ): Promise<AxiosResponse> {
     try {
       const response = await axios.post(
@@ -31,26 +31,23 @@ export class NotisendService {
         {
           to: to,
           // payment: "credit",
-          params: context,
+          params: context
         },
         {
           headers: {
             Authorization: `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json',
-          },
-        },
+            'Content-Type': 'application/json'
+          }
+        }
       )
 
       return response
-    }
-    catch (error) {
-      this.logger.error(
-        `Ошибка при отправке письма на ${to}: ${error}`
-      )
+    } catch (error) {
+      this.logger.error(`Ошибка при отправке письма на ${to}: ${error}`)
 
       throw new HttpException(
         { message: 'Не удалось отправить письмо' },
-        HttpStatus.SERVICE_UNAVAILABLE,
+        HttpStatus.SERVICE_UNAVAILABLE
       )
     }
   }

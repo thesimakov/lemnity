@@ -65,8 +65,7 @@ export class AuthService {
           password: password
         }
       )
-    }
-    catch (e) {
+    } catch (e) {
       this.logger.error(e)
     }
   }
