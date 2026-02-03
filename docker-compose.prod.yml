@@ -155,6 +155,7 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       COLLECTOR_API_URL: ${COLLECTOR_API_URL}
       COLLECTOR_API_TOKEN: ${COLLECTOR_API_TOKEN}
+      NOTISEND_API_KEY: ${NOTISEND_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
