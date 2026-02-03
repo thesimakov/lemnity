@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException
 } from '@nestjs/common'
@@ -11,6 +12,7 @@ import { verify } from 'argon2'
 import { Response } from 'express'
 import { PasswordResetService } from '../password-reset/password-reset.service'
 import { RegisterDto } from './dto/register.dto'
+import { NotisendService } from 'src/mailer/notisend.service'
 
 @Injectable()
 export class AuthService {
@@ -20,7 +22,9 @@ export class AuthService {
   constructor(
     private jwt: JwtService,
     private userService: UserService,
-    private passwordResetService: PasswordResetService
+    private passwordResetService: PasswordResetService,
+    private notisendService: NotisendService,
+    private readonly logger: Logger
   ) {}
 
   async login(dto: AuthDto) {
@@ -47,6 +51,22 @@ export class AuthService {
     return {
       user: publicUser,
       ...tokens
+    }
+  }
+
+  async sendWelcomeEmail(email: string, name: string, password: string) {
+    try {
+      await this.notisendService.sendEmailWithTemplate(
+        email,
+        '1752486', // ID шаблона notisend
+        {
+          username: name,
+          email: email,
+          password: password
+        }
+      )
+    } catch (e) {
+      this.logger.error(e)
     }
   }
 

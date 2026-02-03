@@ -95,7 +95,7 @@ const Stats: FC = () => {
   }
 
   return (
-    <div className="flex flex-col justify-between h-full relative">
+    <div className="flex flex-col h-full relative">
       <div className="w-full h-full bg-white/85 absolute z-20 flex flex-col items-center justify-center">
         <p className="text-3xl font-light">Скоро будет доступно!</p>
       </div>
@@ -103,7 +103,7 @@ const Stats: FC = () => {
         <h2 className="text-xl font-roboto">Статистика</h2>
         {getPeriodSelector()}
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-1 sm:gap-1 md:gap-2 lg:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-1 sm:gap-1 md:gap-2 lg:gap-3 h-full mt-2.5">
         {getStatsCards()}
       </div>
     </div>
