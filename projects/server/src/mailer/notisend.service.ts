@@ -25,7 +25,6 @@ export class NotisendService {
     templateId: string | number,
     context?: Record<string, any>,
   ): Promise<AxiosResponse> {
-    console.log(this.apiKey)
     try {
       const response = await axios.post(
         `${this.apiUrl}/${templateId}/messages`,
@@ -42,8 +41,6 @@ export class NotisendService {
         },
       )
 
-      this.logger.log(`Письмо отправлено на ${to}. ID шаблона: ${templateId}`);
-      console.log(response)
       return response
     }
     catch (error) {

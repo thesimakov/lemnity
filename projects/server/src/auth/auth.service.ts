@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException
 } from '@nestjs/common'
@@ -22,7 +23,8 @@ export class AuthService {
     private jwt: JwtService,
     private userService: UserService,
     private passwordResetService: PasswordResetService,
-    private notisendService: NotisendService
+    private notisendService: NotisendService,
+    private readonly logger: Logger
   ) {}
 
   async login(dto: AuthDto) {
@@ -46,28 +48,26 @@ export class AuthService {
     const publicUser = await this.userService.getPublicByIdOrThrow(user.id)
     const tokens = this.issueTokenPair(user.id)
 
-    console.log(dto)
-
-    try {
-      const notisendReponse = await this.notisendService.sendEmailWithTemplate(
-        user.email,
-        '1752486', // ID шаблона notisend
-        {
-          username: user.name,
-          email: user.email,
-          password: dto.password
-        }
-      )
-  
-      console.log(notisendReponse.data)
-    }
-    catch (e) {
-      console.log(e)
-    }
-
     return {
       user: publicUser,
       ...tokens
+    }
+  }
+
+  async sendWelcomeEmail(email: string, name: string, password: string) {
+    try {
+      await this.notisendService.sendEmailWithTemplate(
+        email,
+        '1752486', // ID шаблона notisend
+        {
+          username: name,
+          email: email,
+          password: password
+        }
+      )
+    }
+    catch (e) {
+      this.logger.error(e)
     }
   }
 
