@@ -17,42 +17,42 @@
 /**
  * 
  * @export
- * @interface CreateWidgetDto
+ * @interface PublicWidget
  */
-export interface CreateWidgetDto {
+export interface PublicWidget {
     /**
-     * The ID of the project this widget belongs to
+     * Widget id
      * @type {string}
-     * @memberof CreateWidgetDto
+     * @memberof PublicWidget
+     */
+    'id': string;
+    /**
+     * Project id
+     * @type {string}
+     * @memberof PublicWidget
      */
     'projectId': string;
     /**
-     * The name of the widget
+     * Widget type
      * @type {string}
-     * @memberof CreateWidgetDto
+     * @memberof PublicWidget
      */
-    'name': string;
+    'type': PublicWidgetTypeEnum;
     /**
-     * The type of the widget
-     * @type {string}
-     * @memberof CreateWidgetDto
-     */
-    'type': CreateWidgetDtoTypeEnum;
-    /**
-     * Whether the widget is enabled
+     * Whether widget is enabled
      * @type {boolean}
-     * @memberof CreateWidgetDto
+     * @memberof PublicWidget
      */
     'enabled': boolean;
     /**
-     * JSON configuration for the widget
+     * Canonical widget configuration
      * @type {object}
-     * @memberof CreateWidgetDto
+     * @memberof PublicWidget
      */
-    'config'?: object;
+    'config'?: object | null;
 }
 
-export const CreateWidgetDtoTypeEnum = {
+export const PublicWidgetTypeEnum = {
     WHEEL_OF_FORTUNE: 'WHEEL_OF_FORTUNE',
     CONVEYOR_OF_GIFTS: 'CONVEYOR_OF_GIFTS',
     ACTION_TIMER: 'ACTION_TIMER',
@@ -64,6 +64,6 @@ export const CreateWidgetDtoTypeEnum = {
     ANNOUNCEMENT: 'ANNOUNCEMENT'
 } as const;
 
-export type CreateWidgetDtoTypeEnum = typeof CreateWidgetDtoTypeEnum[keyof typeof CreateWidgetDtoTypeEnum];
+export type PublicWidgetTypeEnum = typeof PublicWidgetTypeEnum[keyof typeof PublicWidgetTypeEnum];
 
 
