@@ -51,7 +51,7 @@ export class AuthService {
     try {
       const notisendReponse = await this.notisendService.sendEmailWithTemplate(
         user.email,
-        '1752486',
+        '1752486', // ID шаблона notisend
         {
           username: user.name,
           email: user.email,
