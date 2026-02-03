@@ -13,9 +13,11 @@ const HomePageBanner = () => {
           Скоро запуск! Видео-виджет. Подключите первым.
         </span>
 
-        <Button className="w-[150px] h-[30px] rounded-[5px] border-1 border-[#E8E8E8] bg-[#FF6B00]/15 text-[#FF5A2A] text-[16px]">
-          Подписаться!
-        </Button>
+        <a href="https://t.me/lemnity" target="_blank">
+          <Button className="w-[150px] h-[30px] rounded-[5px] border-1 border-[#E8E8E8] bg-[#FF6B00]/15 text-[#FF5A2A] text-[16px]">
+            Подписаться!
+          </Button>
+        </a>
       </div>
       <div className="rounded-[10px] grow min-w-[207px] bg-pink-500">
         <img
