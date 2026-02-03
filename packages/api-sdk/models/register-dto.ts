@@ -38,5 +38,11 @@ export interface RegisterDto {
      * @memberof RegisterDto
      */
     'password': string;
+    /**
+     * Phone number starting with + followed by digits (12-16 characters: + and 11-15 digits)
+     * @type {string}
+     * @memberof RegisterDto
+     */
+    'phone': string;
 }
 

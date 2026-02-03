@@ -104,4 +104,3 @@ export const fabMenuSchema = buildWidgetSettingsSchema(
   FABMenuWidgetSchema,
   customSurfaces
 )
-

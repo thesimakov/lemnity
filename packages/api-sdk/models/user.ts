@@ -43,6 +43,12 @@ export interface User {
      * @type {string}
      * @memberof User
      */
+    'phone': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof User
+     */
     'role': UserRoleEnum;
     /**
      * 

@@ -29,4 +29,5 @@ enum WidgetType {
   ADVENT_CALENDAR
   TEASER
   FAB_MENU
+  ANNOUNCEMENT
 }

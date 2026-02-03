@@ -3,6 +3,7 @@ import type { ComponentType, LazyExoticComponent } from 'react'
 import { wheelWidgetMetadata } from './WheelOfFortune/metadata'
 import { actionTimerWidgetMetadata } from './CountDown/metadata'
 import { fabMenuWidgetMetadata } from './FABMenu/metadata'
+import { announcementWidgetMetadata } from './Announcement/metadata'
 import {
   StubWidgetPanelPreview,
   StubDesktopScreen,
@@ -112,7 +113,8 @@ const widgetMetadata: Partial<
 > = {
   [WidgetTypeEnum.WHEEL_OF_FORTUNE]: wheelWidgetMetadata,
   [WidgetTypeEnum.ACTION_TIMER]: actionTimerWidgetMetadata,
-  [WidgetTypeEnum.FAB_MENU]: fabMenuWidgetMetadata
+  [WidgetTypeEnum.FAB_MENU]: fabMenuWidgetMetadata,
+  [WidgetTypeEnum.ANNOUNCEMENT]: announcementWidgetMetadata
 }
 
 const definitions: Record<WidgetTypeEnum, WidgetDefinition> = Object.fromEntries(
