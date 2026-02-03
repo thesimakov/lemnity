@@ -15,6 +15,8 @@ type CorsOptions = {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  console.log(process.env)
+
   const config = new DocumentBuilder()
     .setTitle('Lemnity API')
     .setDescription('The Lemnity API description')

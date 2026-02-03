@@ -11,6 +11,7 @@ import { verify } from 'argon2'
 import { Response } from 'express'
 import { PasswordResetService } from '../password-reset/password-reset.service'
 import { RegisterDto } from './dto/register.dto'
+import { NotisendService } from 'src/mailer/notisend.service'
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,8 @@ export class AuthService {
   constructor(
     private jwt: JwtService,
     private userService: UserService,
-    private passwordResetService: PasswordResetService
+    private passwordResetService: PasswordResetService,
+    private notisendService: NotisendService
   ) {}
 
   async login(dto: AuthDto) {
@@ -43,6 +45,25 @@ export class AuthService {
     const user = await this.userService.create(dto)
     const publicUser = await this.userService.getPublicByIdOrThrow(user.id)
     const tokens = this.issueTokenPair(user.id)
+
+    console.log(dto)
+
+    try {
+      const notisendReponse = await this.notisendService.sendEmailWithTemplate(
+        user.email,
+        '1752486',
+        {
+          username: user.name,
+          email: user.email,
+          password: dto.password
+        }
+      )
+  
+      console.log(notisendReponse.data)
+    }
+    catch (e) {
+      console.log(e)
+    }
 
     return {
       user: publicUser,
