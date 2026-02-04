@@ -12,7 +12,7 @@ import { createActionTimerActions } from '@/layouts/Widgets/CountDown/actions'
 import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
 import { createFABMenuActions } from '@/layouts/Widgets/FABMenu/actions'
 import type { AnnouncementWidgetSettings } from '@/layouts/Widgets/Announcement/types'
-import { createAnnouncementActions } from '@/layouts/Widgets/Announcement/acttions'
+import { createAnnouncementActions } from '@/layouts/Widgets/Announcement/actions'
 
 export const createWidgetSlice = (updateWidget: WidgetUpdater): WidgetSlice => {
   const createTypedUpdater =

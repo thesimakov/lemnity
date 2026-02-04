@@ -1,6 +1,12 @@
+// import AnnouncementWidget from "./AnnouncementWidget"
+import CountdownAnnouncementWidget from "./CountdownAnnouncementWidget"
+
 const AnnouncementPreview = () => {
   return (
-    <div className="w-50 h-50 bg-pink-300"></div>
+    <div className="w-full h-full flex items-end justify-end">
+      {/* <AnnouncementWidget /> */}
+      <CountdownAnnouncementWidget />
+    </div>
   )
 }
 
