@@ -1,54 +1,57 @@
-// import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { Duration } from "luxon"
+import { cn } from '@heroui/theme'
 
-// type CountdownTimerProps = {
-//   initialTime: number
-//   onComplete: () => void
-// }
+type CountdownSectionProps = {
+  value: [string, string]
+  label: string
+}
 
-// const CountdownTimer = (props: CountdownTimerProps) => {
-//   const [timeRemaining, setTimeRemaining] = useState(props.initialTime)
+const CountdownSection = (props: CountdownSectionProps) => {
+  return (
+    <div className='flex flex-col gap-1'>
+      <div className='flex flex-row gap-1'>
+        {props.value.map((displayValue, index) => (
+          <div
+            key={index}
+            className={cn(
+              'w-11 h-18.5 flex items-center justify-center',
+              'rounded-[5px] bg-white',
+            )}
+          >
+            <span className='font-medium text-[30px] leading-9'>
+              {displayValue}
+            </span>
+          </div>
+        ))}
+      </div>
 
-//   const intervalRef =
-//     useRef<undefined | ReturnType<typeof setInterval>>(undefined)
+      <div
+        className={cn(
+          'w-full h-5 flex items-center justify-center',
+          'rounded-[5px] bg-white'
+        )}
+      >
+        <span className='font-medium text-[12px] leading-3.5'>
+          {props.label}
+        </span>
+      </div>
+    </div>
+  )
+}
 
-//   useEffect(() => {
-//     // Start the countdown
-//     intervalRef.current = setInterval(() => {
-//       setTimeRemaining(prevTime => {
-//         if (prevTime <= 1) {
-//           // Clear interval when we reach zero
-//           clearInterval(intervalRef.current)
-//           // Call completion handler if provided
-//           props.onComplete?.()
-//           return 0
-//         }
-//         return prevTime - 1
-//       })
-//     }, 1000)
 
-//     return () => {
-//       if (intervalRef.current) {
-//         clearInterval(intervalRef.current)
-//       }
-//     }
-//   }, []) // Empty dependency array means this effect runs once on mount
+const CountdownDelimiter = () => (
+  <div className='w-4 h-full flex items-center justify-center pb-6'>
+    <span className={cn(
+      'font-roboto font-bold text-[30px] leading-8.75 text-white',
+      'animate-clock'
+    )}>
+      :
+    </span>
+  </div>
+)
 
-//   // Convert seconds to hours, minutes, seconds
-//   const hours = Math.floor(timeRemaining / 3600)
-//   const minutes = Math.floor((timeRemaining % 3600) / 60)
-//   const seconds = timeRemaining % 60
-//   return (
-//     <div className="countdown-timer">
-//       {hours.toString().padStart(2, '0')}:
-//       {minutes.toString().padStart(2, '0')}:
-//       {seconds.toString().padStart(2, '0')}
-//     </div>
-//   )
-// }
-
-// export default CountdownTimer
-
-import React, { useState, useRef, useEffect } from 'react'
 
 type CountdownTimerProps = {
   initialTime: number
@@ -67,6 +70,15 @@ const CountdownTimer = ({
   const intervalRef = useRef<null | ReturnType<typeof setInterval>>(null)
   const previousTime = useRef(Date.now())
 
+  const durationObject = Duration
+    .fromObject({ seconds: timeRemaining })
+    .shiftTo('days', 'hours', 'minutes')
+    .toObject()
+  
+  const days = convertDurationUnitToString(durationObject.days)
+  const hours = convertDurationUnitToString(durationObject.hours)
+  const minutes = convertDurationUnitToString(durationObject.minutes)
+
   const clearTimer = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
@@ -83,6 +95,7 @@ const CountdownTimer = ({
     intervalRef.current = setInterval(() => {
       const currentTime = Date.now()
       const deltaTime = Math.floor((currentTime - previousTime.current) / 1000)
+
       previousTime.current = currentTime
 
       setTimeRemaining(prevTime => {
@@ -108,18 +121,30 @@ const CountdownTimer = ({
   }, [initialTime])
 
   return (
-    <div className="countdown-timer">
-      {formatTime(timeRemaining)}
+    <div className="flex flex-row">
+      <CountdownSection
+        value={[days.charAt(0), days.charAt(1)]}
+        label="дней"
+      />
+      <CountdownDelimiter />
+      <CountdownSection
+        value={[hours.charAt(0), hours.charAt(1)]}
+        label="часов"
+      />
+      <CountdownDelimiter />
+      <CountdownSection
+        value={[minutes.charAt(0), minutes.charAt(1)]}
+        label="минут"
+      />
     </div>
   )
 }
 
-const formatTime = (totalSeconds: number) => {
-  const days = Math.floor(totalSeconds / 3600 / 24)
-  const hours = Math.floor(totalSeconds / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  const seconds = totalSeconds % 60
-  return `${days.toString()}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+const convertDurationUnitToString = (unit: number | undefined) => {
+  const value = unit ?? 0
+  return value
+    .toString()
+    .padStart(2, '0')
 }
 
 export default CountdownTimer
