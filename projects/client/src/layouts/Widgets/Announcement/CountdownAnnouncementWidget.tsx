@@ -4,8 +4,12 @@ import { Button } from '@heroui/button'
 
 import lemnityBlackLogo from '@/assets/logos/lemnity-black-logo.svg'
 import crossIcon from '@/assets/icons/cross.svg'
+import CountdownTimer from '@/components/CountdownTimer'
+import { useState } from 'react'
 
 const CoiuntdownScreen = () => {
+  const [initialTime, setInitialTime] = useState<number>(259200)
+
   return (
     <div
     className={cn(
@@ -19,6 +23,8 @@ const CoiuntdownScreen = () => {
       <span className="text-white text-[16px] leading-4.75 text-center">
         Вы можете разместить здесь описание
       </span>
+
+      <CountdownTimer initialTime={initialTime} />
 
       <Button className="w-full h-10.75 bg-[#FFB400] rounded-md">
         Хочу скидку!
