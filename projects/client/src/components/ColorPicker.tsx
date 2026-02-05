@@ -53,6 +53,7 @@ type ColorPickerItem = {
 type ColorPickerProps = {
   initialColor: string
   triggerText?: string
+  disabled?: boolean
   onColorChange: (color: string) => void
 }
 
@@ -80,7 +81,7 @@ const defaultColors: ColorPickerItem[] = [
   { color: '#DDD3F4' }
 ]
 
-const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerProps) => {
+const ColorPicker = ({initialColor, triggerText, onColorChange, disabled }: ColorPickerProps) => {
   const [selectedColor, setSelectedColor] = useState(() => initialColor)
   const [inputValue, setInputValue] = useState(() => initialColor)
 
@@ -128,6 +129,7 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
             'flex items-center justify-center gap-1.25',
             triggerText ? 'min-w-45 flex-1' : 'w-18 shrink-0'
           )}
+          isDisabled={disabled}
         >
           {triggerText && <span className="text-base text-[#797979]">{triggerText}</span>}
           <TriggerColorCircle fill={selectedColor} />
