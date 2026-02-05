@@ -15,7 +15,7 @@ const CountdownSection = (props: CountdownSectionProps) => {
           <div
             key={index}
             className={cn(
-              'w-11 h-18.5 flex items-center justify-center',
+              'w-11.5 h-18.5 flex items-center justify-center',
               'rounded-[5px] bg-white',
             )}
           >
@@ -42,7 +42,7 @@ const CountdownSection = (props: CountdownSectionProps) => {
 
 
 const CountdownDelimiter = () => (
-  <div className='w-4 h-full flex items-center justify-center pb-6'>
+  <div className='w-7.25 h-full flex items-center justify-center pb-6'>
     <span className={cn(
       'font-roboto font-bold text-[30px] leading-8.75 text-white',
       'animate-clock'
@@ -121,7 +121,7 @@ const CountdownTimer = ({
   }, [initialTime])
 
   return (
-    <div className="flex flex-row">
+    <div className="w-full flex flex-row">
       <CountdownSection
         value={[days.charAt(0), days.charAt(1)]}
         label="дней"
