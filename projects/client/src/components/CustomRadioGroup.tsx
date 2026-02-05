@@ -13,14 +13,13 @@ export const CustomRadio = (props: CustomRadio) => {
       classNames={{
         base: cn(
           'inline-flex m-0 h-12.75 bg-content1 hover:bg-content2',
-          'flex-row flex-1 grow max-w-1/2 cursor-pointer rounded-lg gap-4 p-4',
-          'items-center border border-pink-300',
+          'flex-row flex-1 grow min-w-53 max-w-none cursor-pointer rounded-lg gap-4 p-4',
+          'items-center border',
           'border-[#E8E8E8]/60 data-[selected=true]:border-[#E8E8E8] px-2.5',
         ),
         control: 'bg-black w-3.5 h-3.5',
         wrapper: cn(
           'border-[#E8E8E8] group-data-[selected=true]:border-black border-small',
-          // 'flex items-center justify-center'
         ),
         label: 'text-[#797979] group-data-[selected=true]:text-black',
         labelWrapper: '',
@@ -34,6 +33,7 @@ export const CustomRadio = (props: CustomRadio) => {
 type CustomRadioGroupOption = {
   label: string
   value: string
+  payloadNode?: React.ReactNode
 }
 
 type CustomRadioGroupProps = {
@@ -52,11 +52,27 @@ const CustomRadioGroup = (props: CustomRadioGroupProps) => {
         wrapper: 'gap-2.5'
       }}
     >
-      {props.options.map((option) => (
-        <CustomRadio key={option.value} value={option.value}>
-          {option.label}
-        </CustomRadio>
-      ))}
+      {props.options.map((option) => {
+        return (
+          <>
+            {option.value === 'custom'
+              ? (
+                <div className="flex flex-1 flex-row gap-2.5">
+                  <CustomRadio key={option.value} value={option.value}>
+                    {option.label}
+                  </CustomRadio>
+                  {option.payloadNode}
+                </div>
+              )
+              : (
+                <CustomRadio key={option.value} value={option.value}>
+                  {option.label}
+                </CustomRadio>
+              )
+            }
+          </>
+        )
+      })}
     </RadioGroup>
   )
 }
