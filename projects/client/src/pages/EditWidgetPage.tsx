@@ -304,7 +304,7 @@ const EditWidgetPage = () => {
             {/* <span className="text-[22px] leading-[26px] font-rubik">Настройка виджета</span> */}
             <div
               ref={scrollRef}
-              className="flex flex-col px-[15px] py-2.5 gap-2.5 flex-1 min-h-0 overflow-auto rounded-md"
+              className="flex flex-col py-2.5 gap-2.5 flex-1 min-h-0 overflow-auto rounded-md"
             >
               <div ref={topRef} aria-hidden="true" className="sentinelTop"></div>
               {tab === 'fields' && <FieldsSettingsTab />}

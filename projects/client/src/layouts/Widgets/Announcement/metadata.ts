@@ -11,7 +11,10 @@ export const announcementWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'set
   },
   settings: {
     sections: [
-
+      {
+        id: 'announcement.widget-settings',
+        Component: lazy(() => import('./AnnouncementWidgetSettings')),
+      },
     ]
   }
 }

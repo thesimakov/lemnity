@@ -1,7 +1,7 @@
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
-import CountdownRewardScreen from './CountdownRewardScreen'
+// import CountdownRewardScreen from './CountdownRewardScreen'
 
 const AnnouncementWidgetContent = () => {
   return (
@@ -41,8 +41,8 @@ const AnnouncementWidget = () => {
         'flex flex-col items-center text-center'
       )}
     >
-      {/* <AnnouncementWidgetContent /> */}
-      <CountdownRewardScreen isAnnouncement />
+      <AnnouncementWidgetContent />
+      {/* <CountdownRewardScreen isAnnouncement /> */}
       
       <div className="flex justify-center py-2 mt-auto mb-0">
         <FreePlanBrandingLink />
