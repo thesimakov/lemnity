@@ -19,7 +19,7 @@ const WidgetType = () => {
 
   return (
     <BorderedContainer>
-      <div className="w-full flex flex-col gap-2.5">
+      <div className="w-full flex flex-col gap-6">
         <h2 className="text-[16px] leading-4.75">Формат</h2>
 
         <CustomRadioGroup
