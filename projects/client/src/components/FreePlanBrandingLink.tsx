@@ -3,7 +3,7 @@ const FreePlanBrandingLink = ({ color = '#797979' }) => {
     <a
       href="https://lemnity.ru"
       target="_blank"
-      className="hover:underline text-xs leading-3 self-center"
+      className="hover:underline text-[12px] leading-3 h-3"
       style={{ color: color }}
     >
       Создано на Lemnity
