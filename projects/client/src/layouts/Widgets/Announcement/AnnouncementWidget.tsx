@@ -1,15 +1,11 @@
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
+import CountdownRewardScreen from './CountdownRewardScreen'
 
-const AnnouncementWidget = () => {
+const AnnouncementWidgetContent = () => {
   return (
-    <div
-      className={cn(
-        'w-99.5 h-129.5 p-3.75 pb-0 rounded-2xl bg-white border border-black',
-        'flex flex-col text-center'
-      )}
-    >
+    <>
       <img
         src="https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp"
         alt="Announcement Widget Image"
@@ -32,10 +28,24 @@ const AnnouncementWidget = () => {
             Билеты
           </Button>
         </a>
+      </div>
+    </>
+  )
+}
 
-        <div className="flex justify-center py-2">
-          <FreePlanBrandingLink />
-        </div>
+const AnnouncementWidget = () => {
+  return (
+    <div
+      className={cn(
+        'w-99.5 h-129.5 p-3.75 pb-0 rounded-2xl bg-white border border-black',
+        'flex flex-col items-center text-center'
+      )}
+    >
+      {/* <AnnouncementWidgetContent /> */}
+      <CountdownRewardScreen isAnnouncement />
+      
+      <div className="flex justify-center py-2 mt-auto mb-0">
+        <FreePlanBrandingLink />
       </div>
     </div>
   )
