@@ -11,7 +11,15 @@ const WidgetBackgroundColor = () => {
 
   const options = [
     { label: 'Основная', value: 'system' },
-    { label: 'Пользовательская', value: 'custom' },
+    {
+      label: 'Пользовательская',
+      value: 'custom',
+      payloadNode: <ColorPicker
+        disabled={type !== 'custom'}
+        initialColor="#FFC943"
+        onColorChange={() => {}}
+      />
+    },
   ]
 
   const handleTypeChange = (value: string) => {
@@ -32,11 +40,11 @@ const WidgetBackgroundColor = () => {
             />
           </div>
 
-          <ColorPicker
+          {/* <ColorPicker
             disabled={type !== 'custom'}
             initialColor="#FFC943"
             onColorChange={() => {}}
-          />
+          /> */}
         </div>
       </div>
     </BorderedContainer>
