@@ -1,3 +1,4 @@
+import { cn } from '@heroui/theme'
 import { AnimatePresence, motion } from 'framer-motion'
 import CustomSwitch from './CustomSwitch'
 
@@ -35,12 +36,30 @@ const SwitchableField = ({
   }
 }: SwitchableFieldProps) => {
   return (
-    <div className={`flex flex-col p-3 rounded-lg border border-gray-200 ${classNames.container}`}>
+    <div
+      className={cn(
+        'flex flex-col px-4.5 pb-4.5 pt-4 rounded-[14px] border border-gray-200',
+        classNames.container
+      )}
+    >
       <div className="flex flex-row items-center gap-2.5">
         <div className="flex items-center justify-between grow gap-2.5">
-          <span className={`text-black text-base font-medium ${classNames.title}`}>{title}</span>
+          <span
+            className={cn(
+              'text-black text-base font-medium',
+              classNames.title
+            )}
+          >
+            {title}
+          </span>
+
           {switchLabel && (
-            <span className={`text-[10px] text-[#BABABA] ${classNames.switchLabel}`}>
+            <span
+              className={cn(
+                'text-[10px] text-[#BABABA]',
+                classNames.switchLabel
+              )}
+            >
               {switchLabel}
             </span>
           )}
@@ -50,21 +69,23 @@ const SwitchableField = ({
           onValueChange={onToggle}
           isDisabled={disabled}
           selectedColor="group-data-[selected=true]:!bg-[#5951E5]"
-          className={`ml-auto ${classNames.switch}`}
+          className={cn('ml-auto', classNames.switch)}
           size="sm"
         />
       </div>
       <AnimatePresence>
         {children && enabled ? (
           <motion.div
-            layout
+            // layout
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: animationDuration, ease: 'easeInOut' }}
             className={`overflow-hidden`}
           >
-            <div className={`pt-4 ${classNames.content}`}>{children}</div>
+            <div className={cn('pt-4', classNames.content)}>
+              {children}
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
