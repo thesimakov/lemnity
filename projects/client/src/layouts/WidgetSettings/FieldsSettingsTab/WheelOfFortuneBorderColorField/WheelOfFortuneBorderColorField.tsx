@@ -20,6 +20,7 @@ const WheelOfFortuneBorderColorField = () => {
     if (wheelBorderThickness === 0) {
       setSwitchableFieldEnabled(false)
     }
+    // TODO: разобраться с зависимостями и избавиться от отключения правила eslint
     // Мне нужно, чтобы этот хук выполнился при первом рендере
     // и только при первом рендере
     // eslint-disable-next-line react-hooks/exhaustive-deps

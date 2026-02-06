@@ -1,5 +1,6 @@
-import WidgetBackgroundColor from "./WidgetBackgroundColor"
-import WidgetType from "./WidgetType"
+import WidgetBackgroundColor from './WidgetBackgroundColor'
+import WidgetBorderRadius from './WidgetBorderRadius'
+import WidgetType from './WidgetType'
 
 const DisplaySettings = () => {
   return (
@@ -7,6 +8,7 @@ const DisplaySettings = () => {
       <h1 className="text-[25px] leading-7.5 font-normal text-[#060606]">Оформление</h1>
       <WidgetType />
       <WidgetBackgroundColor />
+      <WidgetBorderRadius />
     </div>
   )
 }
