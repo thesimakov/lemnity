@@ -114,7 +114,7 @@ const ImageUploader = ({
         />}
         <label
           htmlFor={inputId}
-          className={`@container flex-1 min-w-0 h-14 flex items-center justify-center gap-3 px-3 py-2 bg-[#F4F4F5] hover:bg-[#E4E4E7] border-2 border-[#E4E4E7] rounded-md cursor-pointer transition-colors overflow-hidden ${classNames.label}`}
+          className={`@container flex-1 min-w-0 h-14 flex items-center justify-center gap-3 px-3 py-2 bg-[#D7DBFF]/24 hover:bg-[#E4E4E7] border border-[#E8E8E8] rounded-md cursor-pointer transition-colors overflow-hidden ${classNames.label}`}
         >
           <SvgIcon src={iconUpload} size={20} className="text-black w-min" />
           <div className="min-w-0 flex-1 overflow-hidden hidden @min-[130px]:block">
