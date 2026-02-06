@@ -39,12 +39,6 @@ const WidgetBackgroundColor = () => {
               onValueChange={handleTypeChange}
             />
           </div>
-
-          {/* <ColorPicker
-            disabled={type !== 'custom'}
-            initialColor="#FFC943"
-            onColorChange={() => {}}
-          /> */}
         </div>
       </div>
     </BorderedContainer>

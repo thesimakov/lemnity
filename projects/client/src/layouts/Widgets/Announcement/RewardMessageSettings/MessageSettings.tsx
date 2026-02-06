@@ -45,18 +45,23 @@ const FontSizeSettings = (props: FontSizeSettingsProps) => {
   )
 }
 
-const MessageSettings = () => {
+type MessageSettingsProps = {
+  title: string
+  placeholder?: string
+}
+
+const MessageSettings = (props: MessageSettingsProps) => {
   const [titleFontSize, setTitleFontSize] = useState<number>(16)
 
   return (
     <div className="@container min-w-76 flex flex-col gap-2.5">
       <h3 className="text-[16px] leading-4.75 text-[#060606]">
-        Заголовок
+        {props.title}
       </h3>
 
       <div className="flex flex-row flex-wrap gap-2.5">
         <Input
-          placeholder="Введите текст"
+          placeholder={props.placeholder || "Введите текст"}
           classNames={{
             base: 'min-w-76 flex-1',
             inputWrapper: cn(
@@ -74,7 +79,7 @@ const MessageSettings = () => {
         >
           <FontSizeSettings value={titleFontSize} onChange={setTitleFontSize} />
           <ColorPicker
-            initialColor="#FFC943"
+            initialColor="#757575"
             onColorChange={() => {}}
           />
         </div>
