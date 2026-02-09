@@ -1,11 +1,11 @@
 import { useState } from 'react'
 
 import SwitchableField from '@/components/SwitchableField'
-import MessageSettings from './MessageSettings'
+import TextSettings from '@/components/TextSettings'
 import RewardScreenColors from './RewardScreenColors'
 
 const RewardMessageSettings = () => {
-    const [enabled, setEnabled] = useState(true)
+  const [enabled, setEnabled] = useState(true)
   
   return (
     <div className="w-full min-w-85.5 flex flex-col gap-2.5">
@@ -22,19 +22,19 @@ const RewardMessageSettings = () => {
         }}
       >
         <div className="w-full flex flex-col gap-2.5">
-          <MessageSettings
+          <TextSettings
             title="Заголовок"
             placeholder="Ура! Вы выиграли"
           />
-          <MessageSettings
+          <TextSettings
             title="Описание"
             placeholder="Поздравляем! Вы выиграли, заберите Ваш приз!"
           />
-          <MessageSettings
+          <TextSettings
             title="Скидка"
             placeholder="Ваша скидка 10%"
           />
-          <MessageSettings
+          <TextSettings
             title="Промокод"
             placeholder="TNF2026"
           />

@@ -48,9 +48,10 @@ const FontSizeSettings = (props: FontSizeSettingsProps) => {
 type MessageSettingsProps = {
   title: string
   placeholder?: string
+  noFontSize?: boolean
 }
 
-const MessageSettings = (props: MessageSettingsProps) => {
+const TextSettings = (props: MessageSettingsProps) => {
   const [titleFontSize, setTitleFontSize] = useState<number>(16)
 
   return (
@@ -77,7 +78,12 @@ const MessageSettings = (props: MessageSettingsProps) => {
             '@min-[600px]:w-fit @min-[600px]:justify-normal @min-[600px]:gap-2.5'
           )}
         >
-          <FontSizeSettings value={titleFontSize} onChange={setTitleFontSize} />
+          {!props.noFontSize && (
+            <FontSizeSettings
+              value={titleFontSize}
+              onChange={setTitleFontSize}
+            />
+          )}
           <ColorPicker
             initialColor="#757575"
             onColorChange={() => {}}
@@ -88,4 +94,4 @@ const MessageSettings = (props: MessageSettingsProps) => {
   )
 }
 
-export default MessageSettings
+export default TextSettings
