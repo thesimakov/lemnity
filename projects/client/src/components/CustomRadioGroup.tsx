@@ -13,7 +13,7 @@ export const CustomRadio = (props: CustomRadio) => {
       classNames={{
         base: cn(
           'inline-flex m-0 h-12.75 bg-content1 hover:bg-content2',
-          'flex-row flex-1 grow min-w-53 max-w-none cursor-pointer rounded-lg gap-4 p-4',
+          'flex-row flex-1 grow min-w-53 max-w-none cursor-pointer rounded-[5px] gap-4 p-4',
           'items-center border',
           'border-[#E8E8E8]/60 data-[selected=true]:border-[#E8E8E8] px-2.5',
         ),

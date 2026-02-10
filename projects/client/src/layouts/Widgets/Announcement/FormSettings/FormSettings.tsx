@@ -1,5 +1,7 @@
 import TextSettings from '@/components/TextSettings'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import ContactAcquisitionSettings from './ContactAcquisitionSettings'
+// import AgreementPoliciesField from '@/layouts/WidgetSettings/FieldsSettingsTab/AgreementPoliciesField/AgreementPoliciesField'
 
 const FormSettings = () => {
   return (
@@ -27,6 +29,9 @@ const FormSettings = () => {
           />
         </div>
       </BorderedContainer>
+
+      <ContactAcquisitionSettings />
+      {/* <AgreementPoliciesField /> */}
     </div>
   )
 }
