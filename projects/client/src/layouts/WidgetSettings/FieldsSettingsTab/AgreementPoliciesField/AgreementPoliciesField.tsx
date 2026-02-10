@@ -36,9 +36,9 @@ const AgreementPoliciesField = () => {
     base: 'min-w-76 flex-1',
     inputWrapper: cn(
       'border bg-white border-[#E8E8E8] rounded-[5px]',
-      'shadow-none h-12.5 px-2.5',
+      'shadow-none h-12.75 px-2.5',
     ),
-    input: 'placeholder:text-[#AAAAAA] text-base'
+    input: 'placeholder:text-[#AAAAAA] text-base',
   }
 
   const handleToggle = (nextEnabled: boolean) => setAgreement(
