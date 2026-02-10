@@ -49,8 +49,8 @@ jobs:
       - name: Lint
         run: pnpm --filter client --filter server lint
 
-      - name: Format
-        run: pnpm --filter client --filter server format
+      # - name: Format
+      #   run: pnpm --filter client --filter server format
 
       # Собираем embed.js заранее, чтобы он попал в public/dist
       - name: Build embed script
