@@ -33,7 +33,7 @@ export class PasswordResetService {
       '1645034', // ID шаблона notisend
       {
         passwordResetUrl: url,
-        ttlMinutes: this.ttlMinutes.toString(),
+        ttlMinutes: Math.trunc(this.ttlMinutes).toString(),
       }
     )
 
