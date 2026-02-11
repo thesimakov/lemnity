@@ -291,3 +291,27 @@ export const buildWidgetSettingsSchema = (
     integration: resolveSurface(surfaces, 'integration')
   })
 
+
+export const IconEnum = z.enum([
+  "Balloon",
+  "Basket",
+  "Fish",
+  "Flame",
+  "Flower",
+  "GameController",
+  "Hammer",
+  "Heart",
+  "Key",
+  "Moon",
+  "Nuclear",
+  "Paw",
+  "Pizza",
+  "Restaurant",
+  "Rocket",
+  "Send",
+  "Sparkles",
+  "Star",
+  "Sunny",
+  "Reload",
+  "HeartDislike"
+])

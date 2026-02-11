@@ -4,12 +4,18 @@ import { Button } from '@heroui/button'
 import SvgIcon from '@/components/SvgIcon'
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 import CountdownScreen from './CountdownScreen'
-// import CountdownRewardScreen from './CountdownRewardScreen'
-// import CountdownFormScreen from './CountdownFormScreen'
+import CountdownRewardScreen from './CountdownRewardScreen'
+import CountdownFormScreen from './CountdownFormScreen'
 
 import crossIcon from '@/assets/icons/cross.svg'
 
-const CountdownAnnouncementWidget = () => {
+type CountdownWidgetVariant = 'countdown' | 'form' | 'reward'
+
+type CountdownWidgetProps = {
+  variant?: CountdownWidgetVariant
+}
+
+const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
   return (
     <div
       className={cn(
@@ -28,9 +34,9 @@ const CountdownAnnouncementWidget = () => {
         </div>
       </Button>
 
-      <CountdownScreen />
-      {/* <CountdownFormScreen /> */}
-      {/* <CountdownRewardScreen /> */}
+      {props.variant === 'countdown' && <CountdownScreen />}
+      {props.variant === 'form' && <CountdownFormScreen />}
+      {props.variant === 'reward' && <CountdownRewardScreen />}
 
       <div className='mt-auto mb-4 flex'>
         <FreePlanBrandingLink color='#FFFFFF' />
