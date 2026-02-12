@@ -315,3 +315,5 @@ export const IconEnum = z.enum([
   "Reload",
   "HeartDislike"
 ])
+
+export type Icon = z.infer<typeof IconEnum>

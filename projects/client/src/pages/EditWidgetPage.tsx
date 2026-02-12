@@ -135,7 +135,6 @@ const EditWidgetPage = () => {
     const res = useWidgetSettingsStore.getState().prepareForSave()
 
     if (!res.ok) {
-      console.warn(res.issues)
       alert('Исправьте ошибки перед сохранением')
       return
     }

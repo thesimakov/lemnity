@@ -19,18 +19,20 @@ export type Icon = z.infer<typeof IconEnum>
 
 const WidgetAppearenceSchema = z.object({
   format: FormatEnum,
+  companyLogoEnabled: z.boolean(),
   companyLogoUrl: z.string().optional(),
   // will use system colors if not set
   backgroundColor: z
     .string()
     .optional(),
   borderRadius: z.number(),
+
+  contentEnabled: z.boolean(),
   contentType: ContentEnum,
   contentAlignment: ContentAlignmentEnum.optional(),
   contentUrl: z
     .string()
     .optional(),
-  contentEnabled: z.boolean(),
 })
 
 export type WidgetAppearence = z.infer<typeof WidgetAppearenceSchema>
@@ -42,7 +44,7 @@ const InfoSettingsSchema = z.object({
   countdownDate: z.string(),
   countdownEnabled: z.boolean(),
   countdownBackgroundColor: z.string().optional(),
-  countdownDigitColor: z.string().optional(),
+  countdownFontColor: z.string().optional(),
 
   buttonText: z.string(),
   buttonFontColor: z.string(),
@@ -67,14 +69,16 @@ const FormSettingsSchema = z.object({
   phoneFieldEnabled: z.boolean(),
   phoneFieldRequired: z.boolean(),
 
+  agreementEnabled: z.boolean(),
   agreement: z.object({
     enabled: z.boolean(),
     policyUrl: z.string(),
     agreementUrl: z.string(),
     color: z.string()
   }),
+  adsInfoEnabled: z.boolean(),
   adsInfo: z.object({
-    enabled: z.boolean().optional(),
+    enabled: z.boolean(),
     policyUrl: z.string(),
     color: z.string()
   }),
@@ -107,15 +111,9 @@ const RewardMessageSettingsSchema = z.object({
     .nonnegative(),
   promoFontColor: z.string(),
 
-  colorSchemeEnabled: z.boolean(),
-  colorScheme: z
-    .object({
-      discountBackgroundColor: z.string(),
-      discountTextColor: z.string(),
-      promoBackgroundColor: z.string(),
-      promoTextColor: z.string(),
-    })
-    .optional()
+  customColorSchemeEnabled: z.boolean(),
+  customDiscountBackgroundColor: z.string().optional(),
+  customPromoBackgroundColor: z.string().optional(),
 })
 
 export type RewardMessageSettings = z.infer<typeof RewardMessageSettingsSchema>

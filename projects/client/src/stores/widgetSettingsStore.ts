@@ -69,7 +69,7 @@ export type WidgetSettingsStore = WidgetSettingsState &
   IntegrationSlice &
   WidgetSlice
 
-const computeIssues = (settings: WidgetSettings | null | undefined): Issue[] => {
+export const computeIssues = (settings: WidgetSettings | null | undefined): Issue[] => {
   if (!settings) return []
   const defaults = getStaticDefaults(settings.widgetType)
   const normalized = normalize(settings, defaults)
