@@ -1,5 +1,6 @@
-import { Radio, RadioGroup } from "@heroui/radio"
-import { cn } from "@heroui/theme"
+import { Radio, RadioGroup } from '@heroui/radio'
+import { cn } from '@heroui/theme'
+import React from 'react'
 
 type CustomRadio = {
   children: React.ReactNode
@@ -54,11 +55,13 @@ const CustomRadioGroup = (props: CustomRadioGroupProps) => {
     >
       {props.options.map((option) => {
         return (
-          <>
+          <React.Fragment key={option.value}>
             {option.value === 'custom'
               ? (
-                <div className="flex flex-1 flex-row gap-2.5">
-                  <CustomRadio key={option.value} value={option.value}>
+                <div
+                  className="flex flex-1 flex-row gap-2.5"
+                >
+                  <CustomRadio value={option.value}>
                     {option.label}
                   </CustomRadio>
                   {option.payloadNode}
@@ -70,7 +73,7 @@ const CustomRadioGroup = (props: CustomRadioGroupProps) => {
                 </CustomRadio>
               )
             }
-          </>
+          </React.Fragment>
         )
       })}
     </RadioGroup>

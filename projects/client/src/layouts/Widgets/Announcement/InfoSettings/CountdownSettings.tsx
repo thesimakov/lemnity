@@ -31,6 +31,7 @@ const CountdownSettings = () => {
             ),
             input: 'placeholder:text-[#AAAAAA] text-base'
           }}
+          aria-label="Дата окончания события"
         />
 
         <ColorPicker

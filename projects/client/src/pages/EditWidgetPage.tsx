@@ -19,7 +19,7 @@ import PreviewModal from '@/layouts/Widgets/Common/PreviewModal'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
 import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
-import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import { WidgetTypeEnum, type Widget } from '@lemnity/api-sdk'
 import { simulateWheelSpinResultFromSectors } from '@/layouts/Widgets/WheelOfFortune/actionHandlers'
 import type { WheelOfFortuneWidgetSettings } from '@/stores/widgetSettings/types'
 
@@ -149,27 +149,46 @@ const EditWidgetPage = () => {
       return
     }
 
+    if (!projectId) {
+      alert('Нет projectId')
+      return
+    }
+
+    let updated: Widget | undefined = undefined
     try {
-      if (!projectId) {
-        alert('Нет projectId')
-        return
-      }
       setSaving(true)
-      const updated = await useProjectsStore
+      updated = await useProjectsStore
         .getState()
         .saveWidgetConfig(projectId, widgetId, res.data)
-      // Re-init settings with server config
-      const base = useWidgetSettingsStore.getState().settings ?? buildDefaults(widgetId, widgetType)
-      const next = updated.config ? ({ ...base, ...updated.config } as typeof base) : undefined
-      useWidgetSettingsStore.getState().init(widgetId, widgetType, projectId, next)
-      alert('Сохранено')
-      useWidgetSettingsStore.getState().setValidationVisible(false)
     } catch (e) {
       console.error(e)
       alert('Ошибка сохранения')
-    } finally {
-      setSaving(false)
     }
+
+    if (!updated) {
+      alert('Ошибка сохранения')
+      setSaving(false)
+      return
+    }
+
+    // Re-init settings with server config
+    const base =
+      useWidgetSettingsStore.getState().settings
+      ?? buildDefaults(widgetId, widgetType)
+    const next = updated.config
+      ? ({ ...base, ...updated.config } as typeof base)
+      : undefined
+
+    useWidgetSettingsStore
+      .getState()
+      .init(widgetId, widgetType, projectId, next)
+
+    alert('Сохранено')
+    useWidgetSettingsStore
+      .getState()
+      .setValidationVisible(false)
+
+    setSaving(false)
   }
 
   const handleSubmit = useCallback(() => {

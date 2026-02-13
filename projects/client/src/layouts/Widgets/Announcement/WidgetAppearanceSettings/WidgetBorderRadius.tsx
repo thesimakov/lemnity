@@ -29,6 +29,7 @@ const WidgetBorderRadius = () => {
           maxValue={20}
           minValue={0}
           step={1}
+          aria-label="Скругление окна"
         />
       </div>
     </BorderedContainer>
