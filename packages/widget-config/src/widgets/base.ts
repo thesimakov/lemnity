@@ -13,7 +13,8 @@ export const IconImageSchema = z.object({
   url: z.string().optional()
 })
 
-export const ColorScheme = z.enum(['primary', 'custom'])
+export const ColorSchemeEnum = z.enum(['primary', 'custom'])
+export type ColorScheme = z.infer<typeof ColorSchemeEnum>
 export const ImagePositionSchema = z.enum(['center', 'left', 'right'])
 export const WindowFormatSchema = z.enum(['sidePanel', 'modalWindow'])
 
@@ -160,7 +161,7 @@ export const FieldsSchema = z
         promoSize: z.number().nonnegative().optional(),
         colorScheme: z.object({
           enabled: z.boolean(),
-          scheme: ColorScheme,
+          scheme: ColorSchemeEnum,
           discount: z
             .object({
               color: z.string(),

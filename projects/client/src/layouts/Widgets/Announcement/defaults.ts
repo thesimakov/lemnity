@@ -6,7 +6,7 @@ import type {
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type { AnnouncementWidget } from '@lemnity/widget-config/widgets/announcement'
 
-export const buildAnnouncementWidgetSettings = (): AnnouncementWidget => ({
+export const announcementWidgetDefaults: AnnouncementWidget = {
   type: WidgetTypeEnum.ANNOUNCEMENT,
   appearence: {
     format: 'announcement',
@@ -14,7 +14,8 @@ export const buildAnnouncementWidgetSettings = (): AnnouncementWidget => ({
     companyLogoEnabled: false,
     companyLogoUrl: undefined,
 
-    backgroundColor: undefined,
+    colorScheme: 'primary',
+    backgroundColor: '#FFC943',
     borderRadius: 15,
 
     contentEnabled: false,
@@ -88,7 +89,10 @@ export const buildAnnouncementWidgetSettings = (): AnnouncementWidget => ({
     customPromoBackgroundColor: undefined,
   },
   brandingEnabled: false,
-})
+}
+
+export const buildAnnouncementWidgetSettings = (): AnnouncementWidget =>
+  announcementWidgetDefaults
 
 export const buildAnnouncementFieldsSettings = (): FieldsSettings =>
   ({}) as FieldsSettings

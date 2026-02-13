@@ -1,29 +1,37 @@
-import { useState } from "react"
+import CustomRadioGroup from '@/components/CustomRadioGroup'
+import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import ColorPicker from '@/components/ColorPicker'
+import type { ColorScheme } from '@lemnity/widget-config/widgets/base'
 
-import CustomRadioGroup from "@/components/CustomRadioGroup"
-import BorderedContainer from "@/layouts/BorderedContainer/BorderedContainer"
-import ColorPicker from "@/components/ColorPicker"
+type WidgwtBackgroundColorProps = {
+  colorScheme: ColorScheme
+  backgroundColor: string
+  onBackgroundColorChange: (color: string) => void
+  onColorSchemeChange: (scheme: ColorScheme) => void
+}
 
-type WidgetBackgroundType = 'system' | 'custom'
+type WidgetBackgroundOption = {
+  label: string
+  value: ColorScheme
+  payloadNode?: React.ReactNode
+}
 
-const WidgetBackgroundColor = () => {
-  const [type, setWidgetType] = useState<WidgetBackgroundType>('system')
-
-  const options = [
-    { label: 'Основная', value: 'system' },
+const WidgetBackgroundColor = (props: WidgwtBackgroundColorProps) => {
+  const options: WidgetBackgroundOption[] = [
+    { label: 'Основная', value: 'primary' },
     {
       label: 'Пользовательская',
       value: 'custom',
       payloadNode: <ColorPicker
-        disabled={type !== 'custom'}
-        initialColor="#FFC943"
-        onColorChange={() => {}}
+        disabled={props.colorScheme !== 'custom'}
+        initialColor={props.backgroundColor}
+        onColorChange={(color) => props.onBackgroundColorChange(color)}
       />
     },
   ]
 
   const handleTypeChange = (value: string) => {
-    setWidgetType(value as WidgetBackgroundType)
+    props.onColorSchemeChange(value as ColorScheme)
   }
 
   return (
@@ -35,7 +43,7 @@ const WidgetBackgroundColor = () => {
           <div className="grow">
             <CustomRadioGroup
               options={options}
-              value={type}
+              value={props.colorScheme}
               onValueChange={handleTypeChange}
             />
           </div>

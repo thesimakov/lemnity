@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import {
   IconEnum,
+  ColorSchemeEnum,
   LooseSurfaceSchema,
   type WidgetTypeId,
   buildWidgetSettingsSchema
@@ -19,9 +20,11 @@ export type Icon = z.infer<typeof IconEnum>
 
 const WidgetAppearenceSchema = z.object({
   format: FormatEnum,
+
   companyLogoEnabled: z.boolean(),
   companyLogoUrl: z.string().optional(),
-  // will use system colors if not set
+
+  colorScheme: ColorSchemeEnum,
   backgroundColor: z
     .string()
     .optional(),

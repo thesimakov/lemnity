@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HeroUIProvider } from '@heroui/system'
+
 import useAuthStore, { type AuthState } from '@stores/authStore.ts'
 import YandexMetrika from './common/utils/yandexMetrika.ts'
 import { useProjectsStore } from '@/stores/projectsStore'

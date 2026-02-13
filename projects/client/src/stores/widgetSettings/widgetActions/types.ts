@@ -24,6 +24,7 @@ export type TypedWidgetUpdater<T extends WidgetSpecificSettings> = (
   mutator: (settings: T) => T
 ) => void
 
+// this is pure madness but here we are
 export type WidgetActions = {
   setWidgetType: (
     widgetType: WidgetTypeEnum,
@@ -71,6 +72,7 @@ export type WidgetActions = {
   setAnnouncementWidgetFormat: (format: Format) => void
   setAnnouncementCompanyLogoEnabled: (enabled: boolean) => void
   setAnnouncementCompanyLogoUrl: (url: string) => void
+  setAnnouncementColorScheme: (colorScheme: ColorScheme) => void
   setAnnouncementBackgroundColor: (color: string) => void
   setAnnouncementBorderRadius: (radius: number) => void
   setAnnouncementContentEnabled: (enabled: boolean) => void

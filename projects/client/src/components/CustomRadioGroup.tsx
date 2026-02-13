@@ -14,13 +14,14 @@ export const CustomRadio = (props: CustomRadio) => {
       classNames={{
         base: cn(
           'inline-flex m-0 h-12.75 bg-content1 hover:bg-content2',
-          'flex-row flex-1 grow min-w-53 max-w-none cursor-pointer rounded-[5px] gap-4 p-4',
-          'items-center border',
+          'flex-row flex-1 grow min-w-53 max-w-none rounded-[5px] gap-4 p-4',
+          'items-center cursor-pointer border',
           'border-[#E8E8E8]/60 data-[selected=true]:border-[#E8E8E8] px-2.5',
         ),
         control: 'bg-black w-3.5 h-3.5',
         wrapper: cn(
-          'border-[#E8E8E8] group-data-[selected=true]:border-black border-small',
+          'border-[#E8E8E8] border-small',
+          'group-data-[selected=true]:border-black',
         ),
         label: 'text-[#797979] group-data-[selected=true]:text-black',
         labelWrapper: '',

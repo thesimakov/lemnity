@@ -8,7 +8,7 @@ import {
   type Format,
 } from '@lemnity/widget-config/widgets/announcement'
 import { buildAnnouncementWidgetSettings } from './defaults'
-import type { Icon } from '@lemnity/widget-config/widgets/base'
+import type { ColorScheme, Icon } from '@lemnity/widget-config/widgets/base'
 
 export const createAnnouncementActions = (
   updateWidget: TypedWidgetUpdater<AnnouncementWidget>
@@ -36,6 +36,14 @@ export const createAnnouncementActions = (
       appearence: {
         ...widget.appearence,
         companyLogoUrl: url,
+      }
+    })),
+  setAnnouncementColorScheme: (colorScheme: ColorScheme) =>
+    updateWidget(widget => ({
+      ...widget,
+      appearence: {
+        ...widget.appearence,
+        colorScheme,
       }
     })),
   setAnnouncementBackgroundColor: (color: string) =>

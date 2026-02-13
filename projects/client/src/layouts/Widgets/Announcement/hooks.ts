@@ -19,6 +19,9 @@ export const useAnnouncementSettings = () => {
   const setCompanyLogoUrl = useWidgetSettingsStore(
     s => s.setAnnouncementCompanyLogoUrl
   )
+  const setColorScheme = useWidgetSettingsStore(
+    s => s.setAnnouncementColorScheme
+  )
   const setBackgroundColor = useWidgetSettingsStore(
     s => s.setAnnouncementBackgroundColor
   )
@@ -171,6 +174,7 @@ export const useAnnouncementSettings = () => {
         setWidgetFormat,
         setCompanyLogoEnabled,
         setCompanyLogoUrl,
+        setColorScheme,
         setBackgroundColor,
         setBorderRadius,
         setContentEnabled,
@@ -224,6 +228,7 @@ export const useAnnouncementSettings = () => {
         setWidgetFormat,
         setCompanyLogoEnabled,
         setCompanyLogoUrl,
+        setColorScheme,
         setBackgroundColor,
         setBorderRadius,
         setContentEnabled,

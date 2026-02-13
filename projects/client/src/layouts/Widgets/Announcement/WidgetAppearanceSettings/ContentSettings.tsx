@@ -1,23 +1,40 @@
-import CustomRadioGroup from "@/components/CustomRadioGroup"
-import ImageUploader from "@/components/ImageUploader"
-import SwitchableField from "@/components/SwitchableField"
-import { useState } from "react"
+import CustomRadioGroup from '@/components/CustomRadioGroup'
+import ImageUploader from '@/components/ImageUploader'
+import SwitchableField from '@/components/SwitchableField'
+import type {
+  Content,
+  ContentAlignment,
+} from '@lemnity/widget-config/widgets/announcement'
 
-type ContentType = 'imageOnTop' | 'background' | 'video'
-type ContentAlignment = 'top' | 'center' | 'bottom'
+type ContentSettingsProps = {
+  contentEnabled: boolean
+  contentType: Content
+  contentAlignment?: ContentAlignment
+  contentUrl?: string
+  onContentEnabledChange: (enabled: boolean) => void
+  onContentTypeChange: (contentType: Content) => void
+  onContentAlignmentChange: (alignment: ContentAlignment) => void
+  onContentUrlChange: (url: string) => void
+}
 
-const ContentSettings = () => {
-  const [enabled, setEnabled] = useState(true)
-  const [contentType, setContentType] = useState<ContentType>('imageOnTop')
-  const [alignment, setAlignment] = useState<ContentAlignment>('center')
+type ContentTypeOptions = {
+  label: string
+  value: Content
+}
 
-  const contentTypeOptions = [
+type ContentAlignmentOptions = {
+  label: string
+  value: ContentAlignment
+}
+
+const ContentSettings = (props: ContentSettingsProps) => {
+  const contentTypeOptions: ContentTypeOptions[] = [
     { label: 'Картинка сверху', value: 'imageOnTop' },
     { label: 'Фон всего окна', value: 'background' },
     { label: 'Видео', value: 'video' },
   ]
 
-  const contentAlignmentOptions = [
+  const contentAlignmentOptions: ContentAlignmentOptions[] = [
     { label: 'Сверху', value: 'top' },
     { label: 'По центру', value: 'center' },
     { label: 'Снизу', value: 'bottom' },
@@ -26,18 +43,18 @@ const ContentSettings = () => {
   const handleContentTypeChange = (value: string) => {
     // because generics are for loosers apparently
     // (looking at you, Hero UI)
-    setContentType(value as ContentType)
+    props.onContentTypeChange(value as Content)
   }
 
   const handleAlignmentChange = (value: string) => {
-    setAlignment(value as ContentAlignment)
+    props.onContentAlignmentChange(value as ContentAlignment)
   }
 
   return (
     <SwitchableField
       title="Контент"
-      enabled={enabled}
-      onToggle={setEnabled}
+      enabled={props.contentEnabled}
+      onToggle={props.onContentEnabledChange}
       classNames={{
         title: 'text-[16px] leading-4.75 font-normal',
       }}
@@ -45,7 +62,7 @@ const ContentSettings = () => {
       <div className="flex flex-col gap-2.5">
         <CustomRadioGroup
           options={contentTypeOptions}
-          value={contentType}
+          value={props.contentType}
           onValueChange={handleContentTypeChange}
         />
 
@@ -58,19 +75,21 @@ const ContentSettings = () => {
           recommendedResolution="600x600"
           fileSize="До 25 Mb"
           formats={['png', 'jpeg', 'jpg', 'webp']}
-          url={''}
+          url={props.contentUrl || ''}
           // onFileSelect={handleImageUpload}
           // isInvalid={!!imageUrlError}
           // errorMessage={imageUrlError?.message}
         />
 
-        <h2 className="text-[16px] leading-4.75">Выравнивание</h2>
-        {contentType !== 'video' && (
-          <CustomRadioGroup
-            options={contentAlignmentOptions}
-            value={alignment}
-            onValueChange={handleAlignmentChange}
-          />
+        {props.contentType !== 'video' && (
+          <>
+            <h2 className="text-[16px] leading-4.75">Выравнивание</h2>
+            <CustomRadioGroup
+              options={contentAlignmentOptions}
+              value={props.contentAlignment}
+              onValueChange={handleAlignmentChange}
+            />
+          </>
         )}
       </div>
     </SwitchableField>

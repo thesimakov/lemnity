@@ -1,20 +1,25 @@
-import { useState } from "react"
+import CustomRadioGroup from '@/components/CustomRadioGroup'
+import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import type { Format } from '@lemnity/widget-config/widgets/announcement'
 
-import CustomRadioGroup from "@/components/CustomRadioGroup"
-import BorderedContainer from "@/layouts/BorderedContainer/BorderedContainer"
+type WidgetTypeProps = {
+  format: Format
+  onWidgetFormatChange: (format: Format) => void
+}
 
-type AnnouncementWidgetType = 'announcement' | 'countdown'
+type WidgetTypeOption = {
+  label: string
+  value: Format
+}
 
-const WidgetType = () => {
-  const [type, setWidgetType] = useState<AnnouncementWidgetType>('announcement')
-
-  const options = [
+const WidgetType = (props: WidgetTypeProps) => {
+  const options: WidgetTypeOption[] = [
     { label: 'Анонс', value: 'announcement' },
     { label: 'Обратный отсчёт', value: 'countdown' },
   ]
 
   const handleTypeChange = (value: string) => {
-    setWidgetType(value as AnnouncementWidgetType)
+    props.onWidgetFormatChange(value as Format)
   }
 
   return (
@@ -24,7 +29,7 @@ const WidgetType = () => {
 
         <CustomRadioGroup
           options={options}
-          value={type}
+          value={props.format}
           onValueChange={handleTypeChange}
         />
       </div>
