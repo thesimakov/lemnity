@@ -87,8 +87,14 @@ export type WidgetActions = {
   setAnnouncementInfoScreenTitle: (
     title: string
   ) => void
+  setAnnouncementInfoScreenTitleColor: (
+    titleColor: string
+  ) => void
   setAnnouncementInfoScreenDescription: (
     description: string
+  ) => void
+  setAnnouncementInfoScreenDescriptionColor: (
+    descriptionColor: string
   ) => void
   setAnnouncementInfoScreenCountdownDate: (
     countdownDate: string

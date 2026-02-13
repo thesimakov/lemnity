@@ -42,7 +42,9 @@ export type WidgetAppearence = z.infer<typeof WidgetAppearenceSchema>
 
 const InfoSettingsSchema = z.object({
   title: z.string(),
+  titleColor: z.string(),
   description: z.string(),
+  descriptionColor: z.string(),
 
   countdownDate: z.string(),
   countdownEnabled: z.boolean(),

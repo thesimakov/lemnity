@@ -43,8 +43,14 @@ export const useAnnouncementSettings = () => {
   const setInfoScreenTitle = useWidgetSettingsStore(
     s => s.setAnnouncementInfoScreenTitle
   )
+  const setInfoScreenTitleColor = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenTitleColor
+  )
   const setInfoScreenDescription = useWidgetSettingsStore(
     s => s.setAnnouncementInfoScreenDescription
+  )
+  const setInfoScreenDescriptionColor = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenDescriptionColor
   )
   const setInfoScreenCountdownDate = useWidgetSettingsStore(
     s => s.setAnnouncementInfoScreenCountdownDate
@@ -182,7 +188,9 @@ export const useAnnouncementSettings = () => {
         setContentAlignment,
         setContentUrl,
         setInfoScreenTitle,
+        setInfoScreenTitleColor,
         setInfoScreenDescription,
+        setInfoScreenDescriptionColor,
         setInfoScreenCountdownDate,
         setInfoScreenCountdownEnabled,
         setInfoScreenCountdownBackgroundColor,
@@ -236,7 +244,9 @@ export const useAnnouncementSettings = () => {
         setContentAlignment,
         setContentUrl,
         setInfoScreenTitle,
+        setInfoScreenTitleColor,
         setInfoScreenDescription,
+        setInfoScreenDescriptionColor,
         setInfoScreenCountdownDate,
         setInfoScreenCountdownEnabled,
         setInfoScreenCountdownBackgroundColor,

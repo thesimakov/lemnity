@@ -1,24 +1,64 @@
+import { cn } from '@heroui/theme'
+import { Input } from '@heroui/input'
+import { useShallow } from 'zustand/react/shallow'
+
 import TextSettings from '@/components/TextSettings'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
-import CountdownSettings from './CountdownSettings'
 import ButtonAppearenceSettings from '@/layouts/WidgetSettings/DisplaySettingsTab/ButtonAppearenceSettings/ButtonAppearenceSettings'
-import { Input } from '@heroui/input'
-import { cn } from '@heroui/theme'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import type {
+  AnnouncementWidget,
+} from '@lemnity/widget-config/widgets/announcement'
+import { announcementWidgetDefaults } from '../defaults'
+
+import CountdownSettings from './CountdownSettings'
 
 const InfoSettings = () => {
+  const {
+    title,
+    titleColor,
+    description,
+    descriptionColor,
+  } = useWidgetSettingsStore(
+    useShallow(s => {
+      // a crutch because the store just works this way apparently
+      const settings = s.settings?.widget as AnnouncementWidget
+      return  {
+        title: settings.infoSettings?.title,
+        titleColor: settings.infoSettings?.titleColor,
+        description: settings.infoSettings?.description,
+        descriptionColor: settings.infoSettings?.descriptionColor,
+      }
+    })
+  )
+
+  const setInfoScreenTitle = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenTitle
+  )
+  const setInfoScreenTitleColor = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenTitleColor
+  )
+  const setInfoScreenDescription = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenDescription
+  )
+  const setInfoScreenDescriptionColor = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenDescriptionColor
+  )
+
   return (
     <div className="w-full min-w-85.5 flex flex-col gap-2.5">
       <h1 className="text-[25px] leading-7.5 font-normal text-[#060606]">
         Окно информации
       </h1>
 
-
       <BorderedContainer>
         <div className="w-full flex flex-col">
           <TextSettings
-            title="Заголовок"
+            title={title || announcementWidgetDefaults.infoSettings!.title}
             placeholder="Укажите заголовок"
             noFontSize
+            onTitleChange={setInfoScreenTitle}
+            onColorChange={setInfoScreenTitleColor}
           />
         </div>
       </BorderedContainer>
@@ -26,9 +66,14 @@ const InfoSettings = () => {
       <BorderedContainer>
         <div className="w-full flex flex-col">
           <TextSettings
-            title="Описание"
+            title={
+              description
+              || announcementWidgetDefaults.infoSettings!.description
+            }
             placeholder="Получите супер скидку до 30 % на покупку билета в АРТ КАФЕ."
             noFontSize
+            onTitleChange={setInfoScreenDescription}
+            onColorChange={setInfoScreenDescriptionColor}
           />
         </div>
       </BorderedContainer>

@@ -25,7 +25,9 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
   },
   infoSettings: {
     title: 'Заголовок виджета',
+    titleColor: '#FFFFFF',
     description: 'Описание виджета',
+    descriptionColor: '#FFFFFF',
 
     countdownDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     countdownEnabled: true,

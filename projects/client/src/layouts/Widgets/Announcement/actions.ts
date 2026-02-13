@@ -110,6 +110,21 @@ export const createAnnouncementActions = (
         }
       }
     }),
+  setAnnouncementInfoScreenTitleColor: (titleColor: string) =>
+    updateWidget(widget => {
+      const prevInfoSettings =
+        widget.infoSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().infoSettings!
+
+      return {
+        ...widget,
+        infoSettings: {
+          ...prevInfoSettings,
+          titleColor,
+        }
+      }
+    }),
   setAnnouncementInfoScreenDescription: (description: string) =>
     updateWidget(widget => {
       const prevInfoSettings =
@@ -122,6 +137,21 @@ export const createAnnouncementActions = (
         infoSettings: {
           ...prevInfoSettings,
           description,
+        }
+      }
+    }),
+  setAnnouncementInfoScreenDescriptionColor: (descriptionColor: string) =>
+    updateWidget(widget => {
+      const prevInfoSettings =
+        widget.infoSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().infoSettings!
+
+      return {
+        ...widget,
+        infoSettings: {
+          ...prevInfoSettings,
+          descriptionColor,
         }
       }
     }),

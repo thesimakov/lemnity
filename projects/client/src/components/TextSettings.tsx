@@ -49,10 +49,14 @@ type MessageSettingsProps = {
   title: string
   placeholder?: string
   noFontSize?: boolean
+  onTitleChange: (value: string) => void
+  onFontSizeChange?: (value: number) => void
+  onColorChange: (value: string) => void
 }
 
 const TextSettings = (props: MessageSettingsProps) => {
-  const [titleFontSize, setTitleFontSize] = useState<number>(16)
+  // const [titleFontSize, setTitleFontSize] = useState<number>(16)
+  const handleTitleChange = (value: string) => props.onTitleChange(value)
 
   return (
     <div className="@container min-w-76 flex flex-col gap-2.5">
@@ -63,6 +67,8 @@ const TextSettings = (props: MessageSettingsProps) => {
       <div className="flex flex-row flex-wrap gap-2.5">
         <Input
           placeholder={props.placeholder || "Введите текст"}
+          value={props.title}
+          onValueChange={handleTitleChange}
           classNames={{
             base: 'min-w-76 flex-1',
             inputWrapper: cn(
