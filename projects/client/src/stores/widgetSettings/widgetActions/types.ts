@@ -158,20 +158,24 @@ export type WidgetActions = {
     phoneFieldRequired: boolean
   ) => void
   setAnnouncementFormScreenAgreementEnabled: (
-    agreementEnabled: boolean
+    enabled: boolean
   ) => void
-  setAnnouncementFormScreenAgreement: (
-    enabled: boolean,
-    policyUrl: string,
-    agreementUrl: string,
+  setAnnouncementFormScreenAgreementPolicyUrl: (
+    policyUrl: string
+  ) => void
+  setAnnouncementFormScreenAgreementUrl: (
+    agreementUrl: string
+  ) => void
+  setAnnouncementFormScreenAgreementColor: (
     color: string
   ) => void
   setAnnouncementFormScreenAdsInfoEnabled: (
-    adsInfoEnabled: boolean
+    enabled: boolean
   ) => void
-  setAnnouncementFormScreenAdsInfo: (
-    enabled: boolean,
-    policyUrl: string,
+  setAnnouncementFormScreenAdsInfoPolicyUrl: (
+    policyUrl: string
+  ) => void
+  setAnnouncementFormScreenAdsInfoColor: (
     color: string
   ) => void
   // RewardMessageSettingsSchema

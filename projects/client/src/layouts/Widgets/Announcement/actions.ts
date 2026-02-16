@@ -202,7 +202,7 @@ export const createAnnouncementActions = (
         }
       }
     }),
-  setAnnouncementInfoScreenCountdownDigitColor: (countdownDigitColor: string) =>
+  setAnnouncementInfoScreenCountdownFontColor: (countdownFontColor: string) =>
     updateWidget(widget => {
       const prevInfoSettings =
         widget.infoSettings
@@ -213,7 +213,7 @@ export const createAnnouncementActions = (
         ...widget,
         infoSettings: {
           ...prevInfoSettings,
-          countdownDigitColor,
+          countdownFontColor,
         }
       }
     }),
@@ -464,27 +464,7 @@ export const createAnnouncementActions = (
         }
       }
     }),
-  setAnnouncementFormScreenAgreementEnabled: (agreementEnabled: boolean) =>
-    updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
-      return {
-        ...widget,
-        formSettings: {
-          ...prevFormSettings,
-          agreementEnabled,
-        }
-      }
-    }),
-  setAnnouncementFormScreenAgreement: (
-    enabled: boolean,
-    policyUrl: string,
-    agreementUrl: string,
-    color: string
-  ) =>
+  setAnnouncementFormScreenAgreementEnabled: (enabled: boolean) =>
     updateWidget(widget => {
       const prevFormSettings =
         widget.formSettings
@@ -497,15 +477,12 @@ export const createAnnouncementActions = (
           ...prevFormSettings,
           agreement: {
             ...prevFormSettings.agreement,
-            enabled,
-            policyUrl,
-            agreementUrl,
-            color,
+            enabled: enabled,
           }
         }
       }
     }),
-  setAnnouncementFormScreenAdsInfoEnabled: (adsInfoEnabled: boolean) =>
+  setAnnouncementFormScreenAgreementPolicyUrl: (policyUrl: string) =>
     updateWidget(widget => {
       const prevFormSettings =
         widget.formSettings
@@ -516,7 +493,100 @@ export const createAnnouncementActions = (
         ...widget,
         formSettings: {
           ...prevFormSettings,
-          adsInfoEnabled,
+          agreement: {
+            ...prevFormSettings.agreement,
+            policyUrl: policyUrl,
+          }
+        }
+      }
+    }),
+  setAnnouncementFormScreenAgreementUrl: (agreementUrl: string) =>
+    updateWidget(widget => {
+      const prevFormSettings =
+        widget.formSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().formSettings!
+
+      return {
+        ...widget,
+        formSettings: {
+          ...prevFormSettings,
+          agreement: {
+            ...prevFormSettings.agreement,
+            agreementUrl: agreementUrl,
+          }
+        }
+      }
+    }),
+  setAnnouncementFormScreenAgreementColor: (color: string) =>
+    updateWidget(widget => {
+      const prevFormSettings =
+        widget.formSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().formSettings!
+
+      return {
+        ...widget,
+        formSettings: {
+          ...prevFormSettings,
+          agreement: {
+            ...prevFormSettings.agreement,
+            color: color,
+          }
+        }
+      }
+    }),
+  setAnnouncementFormScreenAdsInfoEnabled: (enabled: boolean) =>
+    updateWidget(widget => {
+      const prevFormSettings =
+        widget.formSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().formSettings!
+
+      return {
+        ...widget,
+        formSettings: {
+          ...prevFormSettings,
+          adsInfo: {
+            ...prevFormSettings.adsInfo,
+            enabled: enabled,
+          }
+        }
+      }
+    }),
+  setAnnouncementFormScreenAdsInfoPolicyUrl: (policyUrl: string) =>
+    updateWidget(widget => {
+      const prevFormSettings =
+        widget.formSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().formSettings!
+
+      return {
+        ...widget,
+        formSettings: {
+          ...prevFormSettings,
+          adsInfo: {
+            ...prevFormSettings.adsInfo,
+            policyUrl: policyUrl,
+          }
+        }
+      }
+    }),
+  setAnnouncementFormScreenAdsInfoColor: (color: string) =>
+    updateWidget(widget => {
+      const prevFormSettings =
+        widget.formSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().formSettings!
+
+      return {
+        ...widget,
+        formSettings: {
+          ...prevFormSettings,
+          adsInfo: {
+            ...prevFormSettings.adsInfo,
+            color: color,
+          }
         }
       }
     }),

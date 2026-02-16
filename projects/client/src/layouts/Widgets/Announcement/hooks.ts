@@ -115,15 +115,15 @@ export const useAnnouncementSettings = () => {
   const setFormScreenAgreementEnabled = useWidgetSettingsStore(
     s => s.setAnnouncementFormScreenAgreementEnabled
   )
-  const setFormScreenAgreement = useWidgetSettingsStore(
-    s => s.setAnnouncementFormScreenAgreement
-  )
+  // const setFormScreenAgreement = useWidgetSettingsStore(
+  //   s => s.setAnnouncementFormScreenAgreement
+  // )
   const setFormScreenAdsInfoEnabled = useWidgetSettingsStore(
     s => s.setAnnouncementFormScreenAdsInfoEnabled
   )
-  const setFormScreenAdsInfo = useWidgetSettingsStore(
-    s => s.setAnnouncementFormScreenAdsInfo
-  )
+  // const setFormScreenAdsInfo = useWidgetSettingsStore(
+  //   s => s.setAnnouncementFormScreenAdsInfo
+  // )
   const setRewardScreenTitle = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenTitle
   )
@@ -212,9 +212,9 @@ export const useAnnouncementSettings = () => {
         setFormScreenPhoneFieldEnabled,
         setFormScreenPhoneFieldRequired,
         setFormScreenAgreementEnabled,
-        setFormScreenAgreement,
+        // setFormScreenAgreement,
         setFormScreenAdsInfoEnabled,
-        setFormScreenAdsInfo,
+        // setFormScreenAdsInfo,
         setRewardScreenTitle,
         setRewardScreentitleFontSize,
         setRewardScreenTitleFontColor,
@@ -268,9 +268,9 @@ export const useAnnouncementSettings = () => {
         setFormScreenPhoneFieldEnabled,
         setFormScreenPhoneFieldRequired,
         setFormScreenAgreementEnabled,
-        setFormScreenAgreement,
+        // setFormScreenAgreement,
         setFormScreenAdsInfoEnabled,
-        setFormScreenAdsInfo,
+        // setFormScreenAdsInfo,
         setRewardScreenTitle,
         setRewardScreentitleFontSize,
         setRewardScreenTitleFontColor,

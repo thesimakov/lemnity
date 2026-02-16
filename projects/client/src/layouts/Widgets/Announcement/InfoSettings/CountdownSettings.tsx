@@ -1,20 +1,27 @@
-import { useState } from 'react'
 import { DateInput } from '@heroui/date-input'
 import { cn } from '@heroui/theme'
-import { parseAbsoluteToLocal } from '@internationalized/date'
+import { type ZonedDateTime } from '@internationalized/date'
 
 import SwitchableField from '@/components/SwitchableField'
 import ColorPicker from '@/components/ColorPicker'
 
+type CountdownSettingsProps = {
+  enabled: boolean
+  date: ZonedDateTime
+  backgroundColor: string
+  fontColor: string
+  onToggle: (nextEnabled: boolean) => void
+  onDateChange: (value: ZonedDateTime | null) => void
+  onBackgroundColorChange: (value: string) => void
+  onFontColorChange: (value: string) => void
+}
 
-const CountdownSettings = () => {
-  const [enabled, setEnabled] = useState(true)
-
+const CountdownSettings = (props: CountdownSettingsProps) => {
   return (
     <SwitchableField
       title="Обратный отсчёт"
-      enabled={enabled}
-      onToggle={setEnabled}
+      enabled={props.enabled}
+      onToggle={props.onToggle}
       classNames={{
         title: 'text-[16px] leading-4.75 font-normal',
       }}
@@ -22,7 +29,8 @@ const CountdownSettings = () => {
       <div className="w-full flex flex-row flex-wrap gap-2.5">
         <DateInput
           hourCycle={24}
-          defaultValue={parseAbsoluteToLocal(new Date().toISOString())}
+          defaultValue={props.date}
+          onChange={props.onDateChange}
           classNames={{
             base: 'min-w-76 flex-1',
             inputWrapper: cn(
@@ -35,12 +43,12 @@ const CountdownSettings = () => {
         />
 
         <ColorPicker
-          initialColor="#000000"
-          onColorChange={() => {}}
+          initialColor={props.fontColor}
+          onColorChange={props.onFontColorChange}
         />
         <ColorPicker
-          initialColor="#FFFFFF"
-          onColorChange={() => {}}
+          initialColor={props.backgroundColor}
+          onColorChange={props.onBackgroundColorChange}
         />
       </div>
     </SwitchableField>

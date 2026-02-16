@@ -1,16 +1,29 @@
-import { useState } from 'react'
-
 import SwitchableField from '@/components/SwitchableField'
 import CheckboxField from '@/components/CheckboxField'
 
-const ContactAcquisitionSettings = () => {
-  const [enabled, setEnabled] = useState(true)
+type ContactAcquisitionSettings = {
+  contactAcquisitionEnabled: boolean
+  nameFieldEnabled: boolean
+  nameFieldRequired: boolean
+  emailFieldEnabled: boolean
+  emailFieldRequired: boolean
+  phoneFieldEnabled: boolean
+  phoneFieldRequired: boolean
+  onContactAcquisitionToggle: (nextEnabled: boolean) => void
+  onNameFieldEnabledChange: (value: boolean) => void
+  onNameFieldRequiredChange: (value: boolean) => void
+  onEmailFieldEnabledChange: (value: boolean) => void
+  onEmailFieldRequiredChange: (value: boolean) => void
+  onPhoneFieldEnabledChange: (value: boolean) => void
+  onPhoneFieldRequiredChange: (value: boolean) => void
+}
 
+const ContactAcquisitionSettings = (props: ContactAcquisitionSettings) => {
   return (
     <SwitchableField
       title="Контакты"
-      enabled={enabled}
-      onToggle={setEnabled}
+      enabled={props.contactAcquisitionEnabled}
+      onToggle={props.onContactAcquisitionToggle}
       classNames={{
         title: 'text-[16px] leading-4.75 font-normal',
       }}
@@ -19,27 +32,26 @@ const ContactAcquisitionSettings = () => {
         <CheckboxField
           label="Имя"
           showRequired
-          checked={true}
-          onChange={() => {}}
-          // required={nameRequired}
-          // onRequiredChange={required => setContactField('name', nameEnabled, required)}
+          checked={props.nameFieldEnabled}
+          onChange={props.onNameFieldEnabledChange}
+          required={props.nameFieldRequired}
+          onRequiredChange={props.onNameFieldRequiredChange}
         />
         <CheckboxField
           label="Телефон"
           showRequired
-          checked={false}
-          onChange={() => {}}
-          // required={phoneRequired}
-          // onRequiredChange={required => setContactField('phone', phoneEnabled, required)}
+          checked={props.phoneFieldEnabled}
+          onChange={props.onPhoneFieldEnabledChange}
+          required={props.phoneFieldRequired}
+          onRequiredChange={props.onPhoneFieldRequiredChange}
         />
         <CheckboxField
           label="Email"
           showRequired
-          checked={true}
-          onChange={() => {}}
-          // onChange={enabled => setContactField('email', enabled, emailRequired)}
-          // required={emailRequired}
-          // onRequiredChange={required => setContactField('email', emailEnabled, required)}
+          checked={props.emailFieldEnabled}
+          onChange={props.onEmailFieldEnabledChange}
+          required={props.emailFieldRequired}
+          onRequiredChange={props.onEmailFieldRequiredChange}
         />
       </div>
     </SwitchableField>

@@ -1,6 +1,5 @@
-import { useState } from "react"
-import { Input } from "@heroui/input"
-import { cn } from "@heroui/theme"
+import { Input } from '@heroui/input'
+import { cn } from '@heroui/theme'
 
 import ColorPicker from "@/components/ColorPicker"
 
@@ -10,6 +9,10 @@ type FontSizeSettingsProps = {
 }
 
 const FontSizeSettings = (props: FontSizeSettingsProps) => {
+  const handleInputChange = (value: string) => {
+    return props.onChange && props.onChange(Number(value))
+  }
+
   return (
     <div
       className={cn(
@@ -25,7 +28,7 @@ const FontSizeSettings = (props: FontSizeSettingsProps) => {
       <Input
         type="number"
         value={props.value.toString()}
-        onValueChange={value => props.onChange && props.onChange(Number(value))}
+        onValueChange={handleInputChange}
         min={10}
         classNames={{
           base: 'max-w-11.75',
@@ -47,16 +50,18 @@ const FontSizeSettings = (props: FontSizeSettingsProps) => {
 
 type MessageSettingsProps = {
   title: string
+  text: string
+  textFontSize?: number
+  textColor: string
   placeholder?: string
-  noFontSize?: boolean
-  onTitleChange: (value: string) => void
+  onTextChange: (value: string) => void
   onFontSizeChange?: (value: number) => void
   onColorChange: (value: string) => void
 }
 
 const TextSettings = (props: MessageSettingsProps) => {
   // const [titleFontSize, setTitleFontSize] = useState<number>(16)
-  const handleTitleChange = (value: string) => props.onTitleChange(value)
+  // const handleTitleChange = (value: string) => props.onTitleChange(value)
 
   return (
     <div className="@container min-w-76 flex flex-col gap-2.5">
@@ -67,8 +72,8 @@ const TextSettings = (props: MessageSettingsProps) => {
       <div className="flex flex-row flex-wrap gap-2.5">
         <Input
           placeholder={props.placeholder || "Введите текст"}
-          value={props.title}
-          onValueChange={handleTitleChange}
+          value={props.text}
+          onValueChange={props.onTextChange}
           classNames={{
             base: 'min-w-76 flex-1',
             inputWrapper: cn(
@@ -81,18 +86,19 @@ const TextSettings = (props: MessageSettingsProps) => {
         <div
           className={cn(
             'w-full flex flex-row justify-between',
-            '@min-[600px]:w-fit @min-[600px]:justify-normal @min-[600px]:gap-2.5'
+            '@min-[600px]:w-fit @min-[600px]:justify-normal',
+            '@min-[600px]:gap-2.5',
           )}
         >
-          {!props.noFontSize && (
+          {props.textFontSize && (
             <FontSizeSettings
-              value={titleFontSize}
-              onChange={setTitleFontSize}
+              value={props.textFontSize}
+              onChange={props.onFontSizeChange}
             />
           )}
           <ColorPicker
-            initialColor="#757575"
-            onColorChange={() => {}}
+            initialColor={props.textColor}
+            onColorChange={props.onColorChange}
           />
         </div>
       </div>

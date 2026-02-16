@@ -24,18 +24,42 @@ const RewardMessageSettings = () => {
         <div className="w-full flex flex-col gap-2.5">
           <TextSettings
             title="Заголовок"
+            text=''
+            textColor=''
+            textFontSize={1}
+            onColorChange={() => {}}
+            onTextChange={() => {}}
+            onFontSizeChange={() => {}}
             placeholder="Ура! Вы выиграли"
           />
           <TextSettings
             title="Описание"
+            text=''
+            textColor=''
+            textFontSize={1}
+            onColorChange={() => {}}
+            onTextChange={() => {}}
+            onFontSizeChange={() => {}}
             placeholder="Поздравляем! Вы выиграли, заберите Ваш приз!"
           />
           <TextSettings
             title="Скидка"
+            text=''
+            textColor=''
+            textFontSize={1}
+            onColorChange={() => {}}
+            onTextChange={() => {}}
+            onFontSizeChange={() => {}}
             placeholder="Ваша скидка 10%"
           />
           <TextSettings
             title="Промокод"
+            text=''
+            textColor=''
+            textFontSize={1}
+            onColorChange={() => {}}
+            onTextChange={() => {}}
+            onFontSizeChange={() => {}}
             placeholder="TNF2026"
           />
           

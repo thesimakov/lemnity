@@ -48,8 +48,8 @@ const InfoSettingsSchema = z.object({
 
   countdownDate: z.string(),
   countdownEnabled: z.boolean(),
-  countdownBackgroundColor: z.string().optional(),
-  countdownFontColor: z.string().optional(),
+  countdownBackgroundColor: z.string(),
+  countdownFontColor: z.string(),
 
   buttonText: z.string(),
   buttonFontColor: z.string(),
@@ -74,14 +74,12 @@ const FormSettingsSchema = z.object({
   phoneFieldEnabled: z.boolean(),
   phoneFieldRequired: z.boolean(),
 
-  agreementEnabled: z.boolean(),
   agreement: z.object({
     enabled: z.boolean(),
     policyUrl: z.string(),
     agreementUrl: z.string(),
     color: z.string()
   }),
-  adsInfoEnabled: z.boolean(),
   adsInfo: z.object({
     enabled: z.boolean(),
     policyUrl: z.string(),

@@ -1,10 +1,12 @@
 import type {
   DisplaySettings,
   FieldsSettings,
-  IntegrationSettings
+  IntegrationSettings,
 } from '@/stores/widgetSettings/types'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
-import type { AnnouncementWidget } from '@lemnity/widget-config/widgets/announcement'
+import type {
+  AnnouncementWidget,
+} from '@lemnity/widget-config/widgets/announcement'
 
 export const announcementWidgetDefaults: AnnouncementWidget = {
   type: WidgetTypeEnum.ANNOUNCEMENT,
@@ -31,8 +33,8 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
 
     countdownDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     countdownEnabled: true,
-    countdownBackgroundColor: undefined,
-    countdownFontColor: undefined,
+    countdownBackgroundColor: '#FFFFFF',
+    countdownFontColor: '#000000',
 
     buttonText: 'Нажми меня',
     buttonFontColor: '#000000',
@@ -54,7 +56,6 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
     phoneFieldEnabled: false,
     phoneFieldRequired: false,
 
-    agreementEnabled: true,
     agreement: {
       enabled: true,
       policyUrl: 'https://google.com',
@@ -62,7 +63,6 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
       color: '#000000'
     },
 
-    adsInfoEnabled: true,
     adsInfo: {
       enabled: false,
       policyUrl: 'https://google.com',
