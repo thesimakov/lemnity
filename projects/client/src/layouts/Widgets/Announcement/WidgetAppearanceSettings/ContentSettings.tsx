@@ -4,6 +4,7 @@ import SwitchableField from '@/components/SwitchableField'
 import type {
   Content,
   ContentAlignment,
+  Format,
 } from '@lemnity/widget-config/widgets/announcement'
 
 type ContentSettingsProps = {
@@ -11,6 +12,7 @@ type ContentSettingsProps = {
   contentType: Content
   contentAlignment?: ContentAlignment
   contentUrl?: string
+  format: Format
   onContentEnabledChange: (enabled: boolean) => void
   onContentTypeChange: (contentType: Content) => void
   onContentAlignmentChange: (alignment: ContentAlignment) => void
@@ -60,11 +62,13 @@ const ContentSettings = (props: ContentSettingsProps) => {
       }}
     >
       <div className="flex flex-col gap-2.5">
-        <CustomRadioGroup
-          options={contentTypeOptions}
-          value={props.contentType}
-          onValueChange={handleContentTypeChange}
-        />
+        {props.format === 'announcement' && <>
+          <CustomRadioGroup
+            options={contentTypeOptions}
+            value={props.contentType}
+            onValueChange={handleContentTypeChange}
+          />
+        </>}
 
         <ImageUploader
           classNames={{ container: 'w-full' }}
@@ -81,7 +85,7 @@ const ContentSettings = (props: ContentSettingsProps) => {
           // errorMessage={imageUrlError?.message}
         />
 
-        {props.contentType !== 'video' && (
+        {props.contentType !== 'video' && props.format === 'announcement' && (
           <>
             <h2 className="text-[16px] leading-4.75">Выравнивание</h2>
             <CustomRadioGroup
