@@ -32,24 +32,23 @@ const FormSettings = () => {
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
-      const settings = s.settings?.widget as AnnouncementWidget
+      const settings = (s.settings?.widget as AnnouncementWidget).formSettings
       return {
-        title: settings.formSettings?.title,
-        titleFontColor: settings.formSettings?.titleFontColor,
-        description: settings.formSettings?.description,
-        descriptionFontColor: settings.formSettings?.descriptionFontColor,
+        title: settings?.title,
+        titleFontColor: settings?.titleFontColor,
+        description: settings?.description,
+        descriptionFontColor: settings?.descriptionFontColor,
 
-        contactAcquisitionEnabled:
-          settings.formSettings?.contactAcquisitionEnabled,
-        nameFieldEnabled: settings.formSettings?.nameFieldEnabled,
-        nameFieldRequired: settings.formSettings?.nameFieldRequired,
-        emailFieldEnabled: settings.formSettings?.emailFieldEnabled,
-        emailFieldRequired: settings.formSettings?.emailFieldRequired,
-        phoneFieldEnabled: settings.formSettings?.phoneFieldEnabled,
-        phoneFieldRequired: settings.formSettings?.phoneFieldRequired,
+        contactAcquisitionEnabled: settings?.contactAcquisitionEnabled,
+        nameFieldEnabled: settings?.nameFieldEnabled,
+        nameFieldRequired: settings?.nameFieldRequired,
+        emailFieldEnabled: settings?.emailFieldEnabled,
+        emailFieldRequired: settings?.emailFieldRequired,
+        phoneFieldEnabled: settings?.phoneFieldEnabled,
+        phoneFieldRequired: settings?.phoneFieldRequired,
 
-        agreement: settings.formSettings?.agreement,
-        adsInfo: settings.formSettings?.adsInfo,
+        agreement: settings?.agreement,
+        adsInfo: settings?.adsInfo,
       }
     })
   )

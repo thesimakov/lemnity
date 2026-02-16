@@ -615,6 +615,21 @@ export const createAnnouncementActions = (
       }
     }),
   // RewardMessageSettingsSchema
+  setAnnouncementRewardScreenEnabled: (enabled: boolean) =>
+    updateWidget(widget => {
+      const prevRewardMessageSettings =
+        widget.rewardMessageSettings
+        // This function builds the defaults so every field is present
+        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
+
+      return {
+        ...widget,
+        rewardMessageSettings: {
+          ...prevRewardMessageSettings,
+          rewardScreenEnabled: enabled,
+        }
+      }
+    }),
   setAnnouncementRewardScreenTitle: (title: string) =>
     updateWidget(widget => {
       const prevRewardMessageSettings =

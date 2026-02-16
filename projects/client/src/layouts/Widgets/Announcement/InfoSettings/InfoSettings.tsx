@@ -37,24 +37,23 @@ const InfoSettings = () => {
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
-      const settings = s.settings?.widget as AnnouncementWidget
+      const settings = (s.settings?.widget as AnnouncementWidget).infoSettings
       return {
-        title: settings.infoSettings?.title,
-        titleColor: settings.infoSettings?.titleColor,
-        description: settings.infoSettings?.description,
-        descriptionColor: settings.infoSettings?.descriptionColor,
+        title: settings?.title,
+        titleColor: settings?.titleColor,
+        description: settings?.description,
+        descriptionColor: settings?.descriptionColor,
 
-        countdownEnabled: settings.infoSettings?.countdownEnabled,
-        countdownDate: settings.infoSettings?.countdownDate,
-        countdownFontColor: settings.infoSettings?.countdownFontColor,
-        countdownBackgroundColor:
-          settings.infoSettings?.countdownBackgroundColor,
+        countdownEnabled: settings?.countdownEnabled,
+        countdownDate: settings?.countdownDate,
+        countdownFontColor: settings?.countdownFontColor,
+        countdownBackgroundColor: settings?.countdownBackgroundColor,
         
-        buttonText: settings.infoSettings?.buttonText,
-        buttonFontColor: settings.infoSettings?.buttonFontColor,
-        buttonBackgroundColor: settings.infoSettings?.buttonBackgroundColor,
-        icon: settings.infoSettings?.icon,
-        link: settings.infoSettings?.link,
+        buttonText: settings?.buttonText,
+        buttonFontColor: settings?.buttonFontColor,
+        buttonBackgroundColor: settings?.buttonBackgroundColor,
+        icon: settings?.icon,
+        link: settings?.link,
       }
     })
   )

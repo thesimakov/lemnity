@@ -29,7 +29,7 @@ const FontSizeSettings = (props: FontSizeSettingsProps) => {
         type="number"
         value={props.value.toString()}
         onValueChange={handleInputChange}
-        min={10}
+        min={0}
         classNames={{
           base: 'max-w-11.75',
           inputWrapper: cn(
@@ -51,7 +51,7 @@ const FontSizeSettings = (props: FontSizeSettingsProps) => {
 type MessageSettingsProps = {
   title: string
   text: string
-  textFontSize?: number
+  fontSize?: number
   textColor: string
   placeholder?: string
   onTextChange: (value: string) => void
@@ -60,9 +60,6 @@ type MessageSettingsProps = {
 }
 
 const TextSettings = (props: MessageSettingsProps) => {
-  // const [titleFontSize, setTitleFontSize] = useState<number>(16)
-  // const handleTitleChange = (value: string) => props.onTitleChange(value)
-
   return (
     <div className="@container min-w-76 flex flex-col gap-2.5">
       <h3 className="text-[16px] leading-4.75 text-[#060606]">
@@ -90,9 +87,10 @@ const TextSettings = (props: MessageSettingsProps) => {
             '@min-[600px]:gap-2.5',
           )}
         >
-          {props.textFontSize && (
+          {/* typeof props.fontSize === 'number */}
+          {(props.fontSize || props.fontSize === 0) && (
             <FontSizeSettings
-              value={props.textFontSize}
+              value={props.fontSize}
               onChange={props.onFontSizeChange}
             />
           )}

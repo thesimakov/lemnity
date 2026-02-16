@@ -70,6 +70,8 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
     }
   },
   rewardMessageSettings: {
+    rewardScreenEnabled: true,
+
     title: 'Заголовок сообщения о награде',
     titleFontSize: 40,
     titleFontColor: '#FFFFFF',
@@ -87,8 +89,8 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
     promoFontColor: '#FFFFFF',
 
     customColorSchemeEnabled: false,
-    customDiscountBackgroundColor: undefined,
-    customPromoBackgroundColor: undefined,
+    customDiscountBackgroundColor: '#FFF57F',
+    customPromoBackgroundColor: '#0F3095',
   },
   brandingEnabled: false,
 }

@@ -90,6 +90,8 @@ const FormSettingsSchema = z.object({
 export type FormSettings = z.infer<typeof FormSettingsSchema>
 
 const RewardMessageSettingsSchema = z.object({
+  rewardScreenEnabled: z.boolean(),
+
   title: z.string(),
   titleFontSize: z
     .number()
@@ -115,8 +117,8 @@ const RewardMessageSettingsSchema = z.object({
   promoFontColor: z.string(),
 
   customColorSchemeEnabled: z.boolean(),
-  customDiscountBackgroundColor: z.string().optional(),
-  customPromoBackgroundColor: z.string().optional(),
+  customDiscountBackgroundColor: z.string(),
+  customPromoBackgroundColor: z.string(),
 })
 
 export type RewardMessageSettings = z.infer<typeof RewardMessageSettingsSchema>
@@ -126,7 +128,7 @@ const AnnouncementWidgetSchema = z.object({
   appearence: WidgetAppearenceSchema,
   infoSettings: InfoSettingsSchema.optional(),
   formSettings: FormSettingsSchema.optional(),
-  rewardMessageSettings: RewardMessageSettingsSchema.optional(),
+  rewardMessageSettings: RewardMessageSettingsSchema,
   brandingEnabled: z.boolean(),
 })
 

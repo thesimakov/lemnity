@@ -179,6 +179,9 @@ export type WidgetActions = {
     color: string
   ) => void
   // RewardMessageSettingsSchema
+  setAnnouncementRewardScreenEnabled: (
+    enabled: boolean
+  ) => void
   setAnnouncementRewardScreenTitle: (
     title: string
   ) => void

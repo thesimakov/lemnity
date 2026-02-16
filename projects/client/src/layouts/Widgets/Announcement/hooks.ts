@@ -143,7 +143,7 @@ export const useAnnouncementSettings = () => {
     s => s.setAnnouncementRewardScreenDescriptionFontColor
   )
   const setRewardScreenDiscount = useWidgetSettingsStore(
-  s => s.setAnnouncementRewardScreenDiscount
+    s => s.setAnnouncementRewardScreenDiscount
   )
   const setRewardScreenDiscountFontSize = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenDiscountFontSize
