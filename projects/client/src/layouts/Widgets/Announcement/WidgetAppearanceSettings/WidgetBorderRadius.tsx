@@ -32,7 +32,7 @@ const WidgetBorderRadius = (props: WidgetBorderRadiusProps) => {
           className=""
           size="sm"
           defaultValue={12}
-          maxValue={20}
+          maxValue={25}
           minValue={0}
           step={1}
           aria-label="Скругление окна"

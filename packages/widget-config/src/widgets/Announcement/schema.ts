@@ -29,18 +29,17 @@ const WidgetAppearenceSchema = z.object({
     .string()
     .optional(),
   borderRadius: z.number(),
-
-  contentEnabled: z.boolean(),
-  contentType: ContentEnum,
-  contentAlignment: ContentAlignmentEnum.optional(),
-  contentUrl: z
-    .string()
-    .optional(),
 })
 
 export type WidgetAppearence = z.infer<typeof WidgetAppearenceSchema>
 
 const InfoSettingsSchema = z.object({
+  contentType: ContentEnum,
+  contentAlignment: ContentAlignmentEnum.optional(),
+  contentUrl: z
+    .string()
+    .optional(),
+
   title: z.string(),
   titleColor: z.string(),
   description: z.string(),
@@ -126,13 +125,13 @@ export type RewardMessageSettings = z.infer<typeof RewardMessageSettingsSchema>
 const AnnouncementWidgetSchema = z.object({
   type: z.literal(WidgetType),
   appearence: WidgetAppearenceSchema,
-  infoSettings: InfoSettingsSchema.optional(),
+  infoSettings: InfoSettingsSchema,
   formSettings: FormSettingsSchema.optional(),
   rewardMessageSettings: RewardMessageSettingsSchema,
   brandingEnabled: z.boolean(),
 })
 
-export type AnnouncementWidget =
+export type AnnouncementWidgetType =
   z.infer<typeof AnnouncementWidgetSchema>
 
 const customSurfaces = {

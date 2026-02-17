@@ -2,7 +2,7 @@
   TypedWidgetUpdater,
 } from '@/stores/widgetSettings/widgetActions/types'
 import {
-  type AnnouncementWidget,
+  type AnnouncementWidgetType,
   type Content,
   type ContentAlignment,
   type Format,
@@ -11,7 +11,7 @@ import { buildAnnouncementWidgetSettings } from './defaults'
 import type { ColorScheme, Icon } from '@lemnity/widget-config/widgets/base'
 
 export const createAnnouncementActions = (
-  updateWidget: TypedWidgetUpdater<AnnouncementWidget>
+  updateWidget: TypedWidgetUpdater<AnnouncementWidgetType>
 ) => ({
   // WidgetAppearenceSchema
   setAnnouncementWidgetFormat: (format: Format) =>
@@ -62,125 +62,87 @@ export const createAnnouncementActions = (
         borderRadius: radius,
       }
     })),
-  setAnnouncementContentEnabled: (enabled: boolean) =>
-    updateWidget(widget => ({
-      ...widget,
-      appearence: {
-        ...widget.appearence,
-        contentEnabled: enabled,
-      }
-    })),
-  setAnnouncementContentType: (contentType: Content) =>
-    updateWidget(widget => ({
-      ...widget,
-      appearence: {
-        ...widget.appearence,
-        contentType,
-      }
-    })),
-  setAnnouncementContentAlignment: (alignment: ContentAlignment) =>
-    updateWidget(widget => ({
-      ...widget,
-      appearence: {
-        ...widget.appearence,
-        contentAlignment: alignment,
-      }
-    })),
-  setAnnouncementContentUrl: (url: string) =>
-    updateWidget(widget => ({
-      ...widget,
-      appearence: {
-        ...widget.appearence,
-        contentUrl: url,
-      }
-    })),
-  // InfoSettingsSchema
+    // InfoSettingsSchema
+    setAnnouncementContentType: (contentType: Content) =>
+      updateWidget(widget => ({
+        ...widget,
+        infoSettings: {
+          ...widget.infoSettings,
+          contentType,
+        }
+      })),
+    setAnnouncementContentAlignment: (alignment: ContentAlignment) =>
+      updateWidget(widget => ({
+        ...widget,
+        infoSettings: {
+          ...widget.infoSettings,
+          contentAlignment: alignment,
+        }
+      })),
+    setAnnouncementContentUrl: (url: string | undefined) =>
+      updateWidget(widget => ({
+        ...widget,
+        infoSettings: {
+          ...widget.infoSettings,
+          contentUrl: url,
+        }
+      })),
   setAnnouncementInfoScreenTitle: (title: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           title,
         }
       }
     }),
   setAnnouncementInfoScreenTitleColor: (titleColor: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           titleColor,
         }
       }
     }),
   setAnnouncementInfoScreenDescription: (description: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           description,
         }
       }
     }),
   setAnnouncementInfoScreenDescriptionColor: (descriptionColor: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           descriptionColor,
         }
       }
     }),
   setAnnouncementInfoScreenCountdownDate: (countdownDate: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           countdownDate,
         }
       }
     }),
   setAnnouncementInfoScreenCountdownEnabled: (countdownEnabled: boolean) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           countdownEnabled,
         }
       }
@@ -189,60 +151,40 @@ export const createAnnouncementActions = (
     countdownBackgroundColor: string
   ) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-        
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           countdownBackgroundColor,
         }
       }
     }),
   setAnnouncementInfoScreenCountdownFontColor: (countdownFontColor: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-        
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           countdownFontColor,
         }
       }
     }),
   setAnnouncementInfoScreenButtonText: (buttonText: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           buttonText,
         }
       }
     }),
   setAnnouncementInfoScreenButtonFontColor: (buttonFontColor: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           buttonFontColor,
         }
       }
@@ -251,45 +193,30 @@ export const createAnnouncementActions = (
     buttonBackgroundColor: string
   ) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-      
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           buttonBackgroundColor,
         }
       }
     }),
   setAnnouncementInfoScreenIcon: (icon: Icon) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           icon,
         }
       }
     }),
   setAnnouncementInfoScreenLink: (link: string) =>
     updateWidget(widget => {
-      const prevInfoSettings =
-        widget.infoSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().infoSettings!
-
       return {
         ...widget,
         infoSettings: {
-          ...prevInfoSettings,
+          ...widget.infoSettings,
           link,
         }
       }

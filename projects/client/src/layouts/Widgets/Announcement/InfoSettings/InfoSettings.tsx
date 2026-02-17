@@ -2,12 +2,13 @@ import { cn } from '@heroui/theme'
 import { Input } from '@heroui/input'
 import { useShallow } from 'zustand/react/shallow'
 
+import ContentSettings from '../WidgetAppearanceSettings/ContentSettings'
 import TextSettings from '@/components/TextSettings'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
 import ButtonAppearenceSettings from '@/layouts/WidgetSettings/DisplaySettingsTab/ButtonAppearenceSettings/ButtonAppearenceSettings'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type {
-  AnnouncementWidget,
+  AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
 import { announcementWidgetDefaults } from '../defaults'
 
@@ -19,6 +20,12 @@ import {
 
 const InfoSettings = () => {
   const {
+    format,
+
+    contentType,
+    contentAlignment,
+    contentUrl,
+
     title,
     titleColor,
     description,
@@ -37,8 +44,16 @@ const InfoSettings = () => {
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
-      const settings = (s.settings?.widget as AnnouncementWidget).infoSettings
+      const widget = (s.settings?.widget as AnnouncementWidgetType)
+      const settings = widget.infoSettings
+
       return {
+        format: widget.appearence.format,
+
+        contentType: settings.contentType,
+        contentAlignment: settings.contentAlignment,
+        contentUrl: settings.contentUrl,
+
         title: settings?.title,
         titleColor: settings?.titleColor,
         description: settings?.description,
@@ -56,6 +71,16 @@ const InfoSettings = () => {
         link: settings?.link,
       }
     })
+  )
+
+  const setContentType = useWidgetSettingsStore(
+    s => s.setAnnouncementContentType
+  )
+  const setContentAlignment = useWidgetSettingsStore(
+    s => s.setAnnouncementContentAlignment
+  )
+  const setContentUrl = useWidgetSettingsStore(
+    s => s.setAnnouncementContentUrl
   )
 
   const setInfoScreenTitle = useWidgetSettingsStore(
@@ -112,6 +137,16 @@ const InfoSettings = () => {
       <h1 className="text-[25px] leading-7.5 font-normal text-[#060606]">
         Окно информации
       </h1>
+      
+      <ContentSettings
+        format={format}
+        contentType={contentType}
+        contentAlignment={contentAlignment}
+        contentUrl={contentUrl}
+        onContentTypeChange={setContentType}
+        onContentAlignmentChange={setContentAlignment}
+        onContentUrlChange={setContentUrl}
+      />
 
       <BorderedContainer>
         <div className="w-full flex flex-col">
@@ -153,7 +188,7 @@ const InfoSettings = () => {
         </div>
       </BorderedContainer>
 
-      <CountdownSettings
+      {format === 'countdown' &&  <CountdownSettings
         enabled={
           countdownEnabled
           ?? announcementWidgetDefaults.infoSettings!.countdownEnabled
@@ -175,7 +210,7 @@ const InfoSettings = () => {
           ?? announcementWidgetDefaults.infoSettings!.countdownFontColor
         }
         onFontColorChange={setInfoScreenCountdownFontColor}
-      />
+      />}
 
       <BorderedContainer>
         <div className="w-full flex flex-col gap-2.5">

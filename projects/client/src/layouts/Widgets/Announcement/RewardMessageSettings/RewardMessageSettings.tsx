@@ -6,7 +6,7 @@ import RewardScreenColors from './RewardScreenColors'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 import type {
-  AnnouncementWidget,
+  AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
 
 const RewardMessageSettings = () => {
@@ -35,7 +35,7 @@ const RewardMessageSettings = () => {
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
-      const settings = (s.settings?.widget as AnnouncementWidget)
+      const settings = (s.settings?.widget as AnnouncementWidgetType)
         .rewardMessageSettings
       
       return {

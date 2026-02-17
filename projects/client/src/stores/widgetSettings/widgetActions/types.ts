@@ -75,15 +75,16 @@ export type WidgetActions = {
   setAnnouncementColorScheme: (colorScheme: ColorScheme) => void
   setAnnouncementBackgroundColor: (color: string) => void
   setAnnouncementBorderRadius: (radius: number) => void
-  setAnnouncementContentEnabled: (enabled: boolean) => void
-  setAnnouncementContentType: (contentType: Content) => void
+  // InfoSettingsSchema
+  setAnnouncementContentType: (
+    contentType: Content
+  ) => void
   setAnnouncementContentAlignment: (
     alignment: ContentAlignment
   ) => void
   setAnnouncementContentUrl: (
-    url: string
+    url: string | undefined
   ) => void
-  // InfoSettingsSchema
   setAnnouncementInfoScreenTitle: (
     title: string
   ) => void

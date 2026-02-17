@@ -5,10 +5,10 @@ import type {
 } from '@/stores/widgetSettings/types'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import type {
-  AnnouncementWidget,
+  AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
 
-export const announcementWidgetDefaults: AnnouncementWidget = {
+export const announcementWidgetDefaults: AnnouncementWidgetType = {
   type: WidgetTypeEnum.ANNOUNCEMENT,
   appearence: {
     format: 'announcement',
@@ -19,17 +19,16 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
     colorScheme: 'primary',
     backgroundColor: '#FFC943',
     borderRadius: 15,
-
-    contentEnabled: false,
+  },
+  infoSettings: {
     contentType: 'imageOnTop',
     contentAlignment: 'center',
     contentUrl: undefined,
-  },
-  infoSettings: {
+
     title: 'Заголовок виджета',
-    titleColor: '#FFFFFF',
+    titleColor: '#000000',
     description: 'Описание виджета',
-    descriptionColor: '#FFFFFF',
+    descriptionColor: '#000000',
 
     countdownDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     countdownEnabled: true,
@@ -72,19 +71,20 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
   rewardMessageSettings: {
     rewardScreenEnabled: true,
 
-    title: 'Заголовок сообщения о награде',
+    title: 'Ваша скидка:',
     titleFontSize: 40,
-    titleFontColor: '#FFFFFF',
+    titleFontColor: '#000000',
 
-    description: 'Описание сообщения о награде',
+    description:
+      'Не забудьте использовать промокод во время оформления заказа!',
     descriptionFontSize: 16,
-    descriptionFontColor: '#FFFFFF',
+    descriptionFontColor: '#000000',
 
-    discount: 'Скидка',
+    discount: 'Скидка 10%',
     discountFontSize: 20,
     discountFontColor: '#000000',
 
-    promo: 'Промо-акция',
+    promo: 'PROMO2079',
     promoFontSize: 25,
     promoFontColor: '#FFFFFF',
 
@@ -95,7 +95,7 @@ export const announcementWidgetDefaults: AnnouncementWidget = {
   brandingEnabled: false,
 }
 
-export const buildAnnouncementWidgetSettings = (): AnnouncementWidget =>
+export const buildAnnouncementWidgetSettings = (): AnnouncementWidgetType =>
   announcementWidgetDefaults
 
 export const buildAnnouncementFieldsSettings = (): FieldsSettings =>

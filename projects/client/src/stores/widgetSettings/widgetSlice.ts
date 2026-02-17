@@ -31,7 +31,7 @@ import type {
   FABMenuWidgetSettings,
 } from '@/layouts/Widgets/FABMenu/types'
 import type {
-  AnnouncementWidget,
+  AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
 
 export const createWidgetSlice = (updateWidget: WidgetUpdater): WidgetSlice => {
@@ -65,9 +65,9 @@ export const createWidgetSlice = (updateWidget: WidgetUpdater): WidgetSlice => {
         widget.type === WidgetTypeEnum.FAB_MENU
     )
 
-  const announcementUpdater: TypedWidgetUpdater<AnnouncementWidget> =
+  const announcementUpdater: TypedWidgetUpdater<AnnouncementWidgetType> =
     createTypedUpdater(
-      (widget): widget is AnnouncementWidget =>
+      (widget): widget is AnnouncementWidgetType =>
           widget.type === WidgetTypeEnum.ANNOUNCEMENT
     )
 

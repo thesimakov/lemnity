@@ -5,6 +5,7 @@ import React from 'react'
 type CustomRadio = {
   children: React.ReactNode
   value: string
+  disabled?: boolean
 }
 
 export const CustomRadio = (props: CustomRadio) => {
@@ -26,15 +27,17 @@ export const CustomRadio = (props: CustomRadio) => {
         label: 'text-[#797979] group-data-[selected=true]:text-black',
         labelWrapper: '',
       }}
+      isDisabled={props.disabled}
     >
       {props.children}
     </Radio>
   )
 }
 
-type CustomRadioGroupOption = {
+export type CustomRadioGroupOption = {
   label: string
   value: string
+  disabled?: boolean
   payloadNode?: React.ReactNode
 }
 
@@ -62,14 +65,18 @@ const CustomRadioGroup = (props: CustomRadioGroupProps) => {
                 <div
                   className="flex flex-1 flex-row gap-2.5"
                 >
-                  <CustomRadio value={option.value}>
+                  <CustomRadio value={option.value} disabled={option.disabled}>
                     {option.label}
                   </CustomRadio>
                   {option.payloadNode}
                 </div>
               )
               : (
-                <CustomRadio key={option.value} value={option.value}>
+                <CustomRadio
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                >
                   {option.label}
                 </CustomRadio>
               )

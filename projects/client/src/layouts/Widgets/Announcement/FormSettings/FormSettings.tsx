@@ -8,7 +8,7 @@ import ContactAcquisitionSettings from './ContactAcquisitionSettings'
 import AgreementAndPolicy from '@/components/AgreementAndPolicy'
 
 import type {
-  AnnouncementWidget,
+  AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
 import { announcementWidgetDefaults } from '../defaults'
 
@@ -32,7 +32,9 @@ const FormSettings = () => {
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
-      const settings = (s.settings?.widget as AnnouncementWidget).formSettings
+      const settings = (s.settings?.widget as AnnouncementWidgetType)
+        .formSettings
+
       return {
         title: settings?.title,
         titleFontColor: settings?.titleFontColor,

@@ -1,23 +1,52 @@
-import {
-  // useEffect,
-  useState,
-} from "react"
-import AnnouncementWidget from "./AnnouncementWidget"
-import CountdownAnnouncementWidget from "./CountdownAnnouncementWidget"
-// import { useAnnouncementSettings } from "./hooks"
-// import useWidgetSettingsStore, { computeIssues } from "@/stores/widgetSettingsStore"
+import { useShallow } from 'zustand/react/shallow'
 
-type PreviewVariant = 'countdown' | 'announcement'
+import AnnouncementWidget from './AnnouncementWidget'
+import CountdownAnnouncementWidget from './CountdownAnnouncementWidget'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+
+import type {
+  AnnouncementWidgetType,
+} from '@lemnity/widget-config/widgets/announcement'
 
 const AnnouncementPreview = () => {
-  // @ts-expect-error unused var
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [variant, setVariant] = useState<PreviewVariant>('countdown')
+  const { format, rewardScreenEnabled } = useWidgetSettingsStore(
+    useShallow(s => {
+      const widget = (s.settings?.widget as AnnouncementWidgetType)
+      const settings = widget.appearence
+      const rewardMessageSettings = widget.rewardMessageSettings
+
+      return {
+        format: settings.format,
+        rewardScreenEnabled: rewardMessageSettings.rewardScreenEnabled,
+      }
+    })
+  )
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      {variant === 'announcement' && <AnnouncementWidget />}
-      {variant === 'countdown' && (
+      {format === 'announcement' && (
+        <>
+          <span className="text-xs py-3.75">
+            Главный экран
+          </span>
+          <div className="w-fit h-fit scale-40 -translate-y-[31%]">
+            <AnnouncementWidget variant='announcement' />
+          </div>
+
+          {rewardScreenEnabled && (
+            <>
+              <span className="text-xs py-3.75 -translate-y-79.5">
+                Экран выигрыша
+              </span>
+              <div className="w-fit h-fit scale-40 -translate-y-[92%]">
+                <AnnouncementWidget variant='reward' />
+              </div>
+            </>
+          )}
+        </>
+      )}
+
+      {format === 'countdown' && (
         <>
           <span className="text-xs py-3.75">
             Главный экран
