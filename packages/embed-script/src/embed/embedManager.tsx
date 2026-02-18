@@ -12,6 +12,7 @@ import { ensureContainer, ensureElement, fetchPublicWidget } from './utils'
 import { HeroUIProvider } from '@heroui/system'
 import { ModalPortalProvider } from '@/components/Modal/Modal'
 import { UNSAFE_PortalProvider } from '@react-aria/overlays'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const EmbedRuntime = ({ widgetType }: { widgetType: WidgetTypeEnum }) => {
   switch (widgetType) {
@@ -47,6 +48,7 @@ class EmbedManager {
   private lastClipPath: string | null = null
   private hasVisualViewportListeners = false
   private resizeRaf = 0
+  private queryClient = new QueryClient()
   
   private getViewportMetrics() {
     const vv = window.visualViewport
@@ -455,7 +457,9 @@ class EmbedManager {
           <UNSAFE_PortalProvider getContainer={() => modalPortalRoot}>
             <ModalPortalProvider value={modalPortalRoot}>
               <HeroUIProvider>
-                <EmbedRuntime widgetType={widgetType} />
+                <QueryClientProvider client={this.queryClient}>
+                  <EmbedRuntime widgetType={widgetType} />
+                </QueryClientProvider>
               </HeroUIProvider>
             </ModalPortalProvider>
           </UNSAFE_PortalProvider>
