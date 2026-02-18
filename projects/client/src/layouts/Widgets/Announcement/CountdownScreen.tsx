@@ -17,6 +17,7 @@ import type {
 type CountdownScreenProps = {
   companyLogoEnabled: boolean
   companyLogo?: string
+  onCountdownScreenButtonPress?: () => void
 }
 
 const CountdownScreen = (props: CountdownScreenProps) => {
@@ -85,6 +86,8 @@ const CountdownScreen = (props: CountdownScreenProps) => {
 
   const IconComponent = Icons[icon]
 
+  const handleButtonPress = () => props.onCountdownScreenButtonPress?.()
+
   return (
     <>
       <div className='w-42 h-9.5 mt-14'>
@@ -136,6 +139,7 @@ const CountdownScreen = (props: CountdownScreenProps) => {
             'transition-colors duration-250',
           )}
           style={buttonStyle}
+          onPress={handleButtonPress}
         >
           {/* Хочу скидку! */}
           {icon !== 'HeartDislike' && (

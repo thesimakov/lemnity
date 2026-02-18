@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
@@ -16,11 +16,13 @@ import type {
 } from '@lemnity/widget-config/widgets/announcement'
 import useUrlImageOrDefault from './utils/useUrlImage'
 
-type CountdownWidgetVariant = 'countdown' | 'form' | 'reward'
+export type CountdownWidgetVariant = 'countdown' | 'form' | 'reward'
 
 type CountdownWidgetProps = {
   variant?: CountdownWidgetVariant
   containerStyle: CSSProperties
+  onCountdownScreenButtonPress?: () => void
+  onFormScreenButtonPress?: () => void
 }
 
 const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
@@ -53,6 +55,8 @@ const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
   const companyLogo = companyLogoUrl && !isLoading
     ? companyBase64Logo as string
     : undefined
+  
+  const [hidden, setHidden] = useState(false)
 
   return (
     <div
@@ -60,6 +64,7 @@ const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
         'w-99.5 min-h-129.5 px-9 rounded-2xl',
         'flex flex-col items-center relative',
         'bg-[#725DFF] transition-colors duration-150',
+        hidden && 'hidden',
       )}
       style={props.containerStyle}
     >
@@ -67,7 +72,10 @@ const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
         className={cn(
           'min-w-11.25 w-11.25 h-7.5 top-4.5 right-4.5 rounded-[5px]',
           'bg-white px-0 absolute flex justify-center items-center',
-        )}>
+          'pointer-events-auto',
+        )}
+        onPress={() => setHidden(true)}
+      >
         <div className="w-4 h-4 fill-black">
           <SvgIcon src={crossIcon} alt="Close" />
         </div>
@@ -77,12 +85,14 @@ const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
         <CountdownScreen
           companyLogoEnabled={companyLogoEnabled}
           companyLogo={companyLogo}
+          onCountdownScreenButtonPress={props.onCountdownScreenButtonPress}
         />
       )}
       {props.variant === 'form' && (
         <CountdownFormScreen
           companyLogoEnabled={companyLogoEnabled}
           companyLogo={companyLogo}
+          onFormScreenButtonPress={props.onFormScreenButtonPress}
         />
       )}
       {props.variant === 'reward' && (

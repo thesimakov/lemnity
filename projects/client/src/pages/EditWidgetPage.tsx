@@ -173,7 +173,6 @@ const EditWidgetPage = () => {
 
     // Re-init settings with server config
     // 
-    // done by Albert
     // i do not know why he implemented it this way and honestly i have no
     // desire to
     // would be great to obliterate it altogether since it is very much

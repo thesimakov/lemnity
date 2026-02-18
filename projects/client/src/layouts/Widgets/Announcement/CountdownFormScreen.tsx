@@ -19,6 +19,7 @@ type FormScreenButtonProps = {
   buttonStyle: CSSProperties
   icon: Icon
   buttonText: string
+  onFormScreenButtonPress?: () => void
 }
 
 const FormScreenButton = (props: FormScreenButtonProps) => {
@@ -31,6 +32,7 @@ const FormScreenButton = (props: FormScreenButtonProps) => {
         'gap-2.25 transition-colors duration-250',
       )}
       style={props.buttonStyle}
+      onPress={props.onFormScreenButtonPress}
     >
       {/* Получить скидку */}
       {props.icon !== 'HeartDislike' && (
@@ -46,6 +48,7 @@ const FormScreenButton = (props: FormScreenButtonProps) => {
 type CountdownformScreenProps = {
   companyLogoEnabled: boolean
   companyLogo?: string
+  onFormScreenButtonPress?: () => void
 }
 
 const CountdownFormScreen = (props: CountdownformScreenProps) => {
@@ -193,6 +196,7 @@ const CountdownFormScreen = (props: CountdownformScreenProps) => {
               buttonStyle={buttonStyle}
               buttonText={buttonText}
               icon={icon}
+              onFormScreenButtonPress={props.onFormScreenButtonPress}
             />
           : <a
               href={link ?? 'about:blank'}

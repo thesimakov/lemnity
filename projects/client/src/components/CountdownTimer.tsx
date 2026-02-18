@@ -53,7 +53,7 @@ const CountdownSection = (props: CountdownSectionProps) => {
 
 
 const CountdownDelimiter = () => (
-  <div className='w-7.25 h-full flex items-center justify-center pb-6'>
+  <div className='w-7.25 h-18.5 flex items-center justify-center pb-1'>
     <span className={cn(
       'font-roboto font-bold text-[30px] leading-8.75 text-white',
       'animate-clock',
