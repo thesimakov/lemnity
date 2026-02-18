@@ -9,6 +9,7 @@ import type {
 } from '@lemnity/widget-config/widgets/announcement'
 import { announcementWidgetDefaults } from '../defaults'
 import CompanyLogo from './CompanyLogo'
+import type { ColorScheme } from '@lemnity/widget-config/widgets/base'
 
 const WidgetAppearanceSettings = () => {
   const {
@@ -46,12 +47,23 @@ const WidgetAppearanceSettings = () => {
   const setWidgetColorScheme = useWidgetSettingsStore(
     s => s.setAnnouncementColorScheme
   )
+  const setContentType = useWidgetSettingsStore(
+    s => s.setAnnouncementContentType
+  )
   const setWidgetBackgroundColor = useWidgetSettingsStore(
     s => s.setAnnouncementBackgroundColor
   )
   const setBorderRadius = useWidgetSettingsStore(
     s => s.setAnnouncementBorderRadius
   )
+
+  const handleColorSchemeChange = (colorScheme: ColorScheme) => {
+    setWidgetColorScheme(colorScheme)
+
+    if (colorScheme === 'custom') {
+      setContentType('imageOnTop')
+    }
+  }
   
   return (
     <div className="w-full min-w-85.5 flex flex-col gap-2.5">
@@ -63,14 +75,12 @@ const WidgetAppearanceSettings = () => {
         format={format}
         onWidgetFormatChange={setWidgetFormat}
       />
-      {format === 'countdown' && (
-        <CompanyLogo
-          enabled={companyLogoEnabled}
-          logoUrl={companyLogoUrl}
-          onToggle={setCompanyLogoEnabled}
-          onLogoUrlChange={setCompanyLogoUrl}
-        />
-      )}
+      <CompanyLogo
+        enabled={companyLogoEnabled}
+        logoUrl={companyLogoUrl}
+        onToggle={setCompanyLogoEnabled}
+        onLogoUrlChange={setCompanyLogoUrl}
+      />
       <WidgetBackgroundColor 
         colorScheme={colorScheme}
         backgroundColor={
@@ -80,7 +90,7 @@ const WidgetAppearanceSettings = () => {
           || announcementWidgetDefaults.appearence.backgroundColor!
         }
         onBackgroundColorChange={setWidgetBackgroundColor}
-        onColorSchemeChange={setWidgetColorScheme}
+        onColorSchemeChange={handleColorSchemeChange}
       />
       <WidgetBorderRadius
         widgetBorderRadius={borderRadius}

@@ -1,26 +1,78 @@
+import type { CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import AnnouncementWidget from './AnnouncementWidget'
 import CountdownAnnouncementWidget from './CountdownAnnouncementWidget'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import useUrlImageOrDefault from './utils/useUrlImage'
 
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
+import { announcementWidgetDefaults } from './defaults'
+
+const noBackgroundImageUrl = 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp'
 
 const AnnouncementPreview = () => {
-  const { format, rewardScreenEnabled } = useWidgetSettingsStore(
+  const {
+    format,
+    colorScheme,
+    backgroundColor,
+    borderRadius,
+
+    contentType,
+    contentAlignment,
+    contentUrl,
+
+    rewardScreenEnabled,
+  } = useWidgetSettingsStore(
     useShallow(s => {
-      const widget = (s.settings?.widget as AnnouncementWidgetType)
-      const settings = widget.appearence
+      const widget = s.settings?.widget as AnnouncementWidgetType
+      const appearence = widget.appearence
       const rewardMessageSettings = widget.rewardMessageSettings
+      const infoSettings = widget.infoSettings
 
       return {
-        format: settings.format,
+        format: appearence.format,
+        colorScheme: appearence.colorScheme,
+        backgroundColor: appearence.backgroundColor,
+        borderRadius: appearence.borderRadius,
+
+        contentType: infoSettings.contentType,
+        contentAlignment: infoSettings.contentAlignment,
+        contentUrl: infoSettings.contentUrl,
+
         rewardScreenEnabled: rewardMessageSettings.rewardScreenEnabled,
       }
     })
   )
+
+
+  const {
+    base64Image: contentBase64Image,
+    // error,
+    isLoading,
+  } = useUrlImageOrDefault(contentUrl)
+
+  const containerStyle: CSSProperties = {
+    backgroundColor: colorScheme === 'primary'
+      ? format === 'announcement' ? '#FFFFFF' : '#725DFF'
+      : backgroundColor && backgroundColor.length !== 0
+          ? backgroundColor
+          : announcementWidgetDefaults.appearence.backgroundColor,
+    borderRadius: borderRadius
+      ?? announcementWidgetDefaults.appearence.borderRadius,
+  }
+
+  const backgroundImage = contentUrl && !isLoading
+    ? contentBase64Image as string
+    : noBackgroundImageUrl
+
+  if (contentType === 'background') {
+    containerStyle.backgroundImage = `url('${backgroundImage}')`
+    containerStyle.backgroundSize = 'cover'
+    containerStyle.backgroundPosition = contentAlignment
+  }
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
@@ -52,21 +104,30 @@ const AnnouncementPreview = () => {
             Главный экран
           </span>
           <div className="w-fit h-fit scale-40 -translate-y-[31%]">
-            <CountdownAnnouncementWidget variant="countdown" />
+            <CountdownAnnouncementWidget
+              variant="countdown"
+              containerStyle={containerStyle}
+            />
           </div>
 
           <span className="text-xs py-3.75 -translate-y-79.5">
             Экран формы
           </span>
           <div className="w-fit h-fit scale-40 -translate-y-[92%]">
-            <CountdownAnnouncementWidget variant="form" />
+            <CountdownAnnouncementWidget
+              variant="form"
+              containerStyle={containerStyle}
+            />
           </div>
 
           <span className="text-xs py-3.75 -translate-y-159">
             Экран выигрыша
           </span>
           <div className="w-fit h-fit scale-40 -translate-y-[153%]">
-            <CountdownAnnouncementWidget variant="reward" />
+            <CountdownAnnouncementWidget
+              variant="reward"
+              containerStyle={containerStyle}
+            />
           </div>
         </>
       )}

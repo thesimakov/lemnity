@@ -71,7 +71,7 @@ export type WidgetActions = {
   // Announcement actions
   setAnnouncementWidgetFormat: (format: Format) => void
   setAnnouncementCompanyLogoEnabled: (enabled: boolean) => void
-  setAnnouncementCompanyLogoUrl: (url: string) => void
+  setAnnouncementCompanyLogoUrl: (url: string | undefined) => void
   setAnnouncementColorScheme: (colorScheme: ColorScheme) => void
   setAnnouncementBackgroundColor: (color: string) => void
   setAnnouncementBorderRadius: (radius: number) => void
@@ -227,6 +227,9 @@ export type WidgetActions = {
   ) => void
   setAnnouncementRewardScreenPromoBackgroundColor: (
     customPromoBackgroundColor: string
+  ) => void
+  setAnnouncementBrandingEnabled: (
+    brandingEnabled: boolean
   ) => void
 }
 

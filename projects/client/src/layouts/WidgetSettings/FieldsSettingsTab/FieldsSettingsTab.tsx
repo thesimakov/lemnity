@@ -17,7 +17,7 @@ import { uploadImage } from '@/api/upload'
 import { getWidgetDefinition, type WidgetSettingsSection } from '@/layouts/Widgets/registry'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import MessagesSettings from './MessagesSettings/MessagesSettings'
-import type { FieldsSettings as FieldsSettingsType } from '@/stores/widgetSettings/types'
+import type { FieldsSettings as FieldsSettingsType, WidgetSettings } from '@/stores/widgetSettings/types'
 import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import SurfaceNotice from '@/layouts/WidgetSettings/Common/SurfaceNotice'
 import DisableBranding from './DisableBranding/DisableBranding'
@@ -33,7 +33,19 @@ const templateOptions = [
 ]
 
 const FieldsSettingsTab = () => {
-  const widgetType = useWidgetSettingsStore(s => s?.settings?.widgetType)
+  const {
+    widgetType,
+    brandingEnabled,
+  } = useWidgetSettingsStore(
+    useShallow(s => {
+      return {
+        widgetType: s?.settings?.widgetType,
+        brandingEnabled: (s.settings as WidgetSettings).display.brandingEnabled,
+      }
+    })
+  )
+
+  const { setBrandingEnabled } = useWidgetSettingsStore()
   const widgetDefinition = widgetType && getWidgetDefinition(widgetType)
   const isStandardSurface = widgetType ? usesStandardSurface(widgetType, 'fields') : true
   const {
@@ -45,7 +57,7 @@ const FieldsSettingsTab = () => {
     setTemplateImageEnabled,
     setContentPosition,
     setColorScheme,
-    setCustomColor
+    setCustomColor,
   } = useFieldsSettings()
   const staticDefaults = useWidgetStaticDefaults()
 
@@ -150,7 +162,10 @@ const FieldsSettingsTab = () => {
             <AgreementPoliciesField />
             <AdsInfoField />
             <MessagesSettings />
-            <DisableBranding />
+            <DisableBranding
+              enabled={brandingEnabled}
+              onBrandingEnabledToggle={setBrandingEnabled}
+            />
           </>
         )}
 

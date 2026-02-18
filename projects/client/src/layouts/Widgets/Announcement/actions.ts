@@ -30,7 +30,7 @@ export const createAnnouncementActions = (
         companyLogoEnabled: enabled,
       }
     })),
-  setAnnouncementCompanyLogoUrl: (url: string) =>
+  setAnnouncementCompanyLogoUrl: (url: string | undefined) =>
     updateWidget(widget => ({
       ...widget,
       appearence: {
@@ -791,5 +791,14 @@ export const createAnnouncementActions = (
           customPromoBackgroundColor,
         }
       }
-    })
+    }),
+  setAnnouncementBrandingEnabled: (
+    brandingEnabled: boolean
+  ) => 
+    updateWidget(widget => {
+      return {
+        ...widget,
+        brandingEnabled,
+      }
+    }),
 })

@@ -1,13 +1,20 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, type CSSProperties } from 'react'
 import { Duration } from "luxon"
 import { cn } from '@heroui/theme'
 
 type CountdownSectionProps = {
   value: [string, string]
   label: string
+  backgroundColor?: string
+  fontColor?: string
 }
 
 const CountdownSection = (props: CountdownSectionProps) => {
+  const style: CSSProperties = {
+    backgroundColor: props.backgroundColor,
+    color: props.fontColor,
+  }
+
   return (
     <div className='flex flex-col gap-1'>
       <div className='flex flex-row gap-1'>
@@ -17,7 +24,9 @@ const CountdownSection = (props: CountdownSectionProps) => {
             className={cn(
               'w-11.5 h-18.5 flex items-center justify-center',
               'rounded-[5px] bg-white',
+              'transition-colors duration-250',
             )}
+            style={style}
           >
             <span className='font-medium text-[30px] leading-9'>
               {displayValue}
@@ -29,8 +38,10 @@ const CountdownSection = (props: CountdownSectionProps) => {
       <div
         className={cn(
           'w-full h-5 flex items-center justify-center',
-          'rounded-[5px] bg-white'
+          'rounded-[5px] bg-white',
+          'transition-colors duration-250',
         )}
+        style={style}
       >
         <span className='font-medium text-[12px] leading-3.5'>
           {props.label}
@@ -45,7 +56,7 @@ const CountdownDelimiter = () => (
   <div className='w-7.25 h-full flex items-center justify-center pb-6'>
     <span className={cn(
       'font-roboto font-bold text-[30px] leading-8.75 text-white',
-      'animate-clock'
+      'animate-clock',
     )}>
       :
     </span>
@@ -55,16 +66,20 @@ const CountdownDelimiter = () => (
 
 type CountdownTimerProps = {
   initialTime: number
+  isPaused?: boolean
+  backgroundColor?: string
+  fontColor?: string
   onComplete?: () => void
   onTick?: (currentTime: number) => void
-  isPaused?: boolean
 }
 
 const CountdownTimer = ({
   initialTime,
   onComplete,
   onTick,
-  isPaused = false
+  isPaused = false,
+  backgroundColor,
+  fontColor,
 }: CountdownTimerProps) => {
   const [timeRemaining, setTimeRemaining] = useState(initialTime)
   const intervalRef = useRef<null | ReturnType<typeof setInterval>>(null)
@@ -125,23 +140,29 @@ const CountdownTimer = ({
       <CountdownSection
         value={[days.charAt(0), days.charAt(1)]}
         label="дней"
+        backgroundColor={backgroundColor}
+        fontColor={fontColor}
       />
       <CountdownDelimiter />
       <CountdownSection
         value={[hours.charAt(0), hours.charAt(1)]}
         label="часов"
+        backgroundColor={backgroundColor}
+        fontColor={fontColor}
       />
       <CountdownDelimiter />
       <CountdownSection
         value={[minutes.charAt(0), minutes.charAt(1)]}
         label="минут"
+        backgroundColor={backgroundColor}
+        fontColor={fontColor}
       />
     </div>
   )
 }
 
 const convertDurationUnitToString = (unit: number | undefined) => {
-  const value = unit ?? 0
+  const value = unit ? Math.floor(unit) : 0
   return value
     .toString()
     .padStart(2, '0')

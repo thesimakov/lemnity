@@ -12,6 +12,8 @@ import { announcementWidgetDefaults } from './defaults'
 
 type CountdownRewardScreenProps = {
   isAnnouncement?: boolean
+  companyLogoEnabled?: boolean
+  companyLogo?: string
 }
 
 const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
@@ -99,8 +101,13 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
 
   return (
     <>
-      <div className='mt-20.75'>
-        <CompanyLogo black={props.isAnnouncement} />
+      <div className='w-42 h-9.5 mt-20.75'>
+        {props.companyLogoEnabled && (
+          <CompanyLogo
+            black={props.isAnnouncement}
+            companyLogo={props.companyLogo}
+          />
+        )}
       </div>
 
       <div
@@ -112,7 +119,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
           className={cn(
             'font-semibold text-[40px] leading-11.75 ',
             'transition-colors duration-250',
-            props.isAnnouncement ? 'text-black' : 'text-white'
+            props.isAnnouncement ? 'text-black' : 'text-white',
           )}
           style={titleStyle}
         >
@@ -123,7 +130,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
         <div
           className={cn(
             'h-11 bg-[#FFF57F] rounded-full py-0.75 min-w-62.25 max-w-full',
-            'flex items-center justify-center transition-colors duration-250'
+            'flex items-center justify-center transition-colors duration-250',
           )}
           style={{
             backgroundColor: customColorSchemeEnabled
@@ -147,7 +154,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
           className={cn(
             'text-[16px] leading-4.75 text-center',
             'transition-colors duration-250',
-            props.isAnnouncement ? 'text-black' : 'text-white'
+            props.isAnnouncement ? 'text-black' : 'text-white',
           )}
           style={descriptionStyle}
         >
@@ -160,7 +167,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
             'w-full p-4 flex flex-col items-center justify-center gap-1',
             'rounded-[3px] border border-dashed bg-[#0069FF]/59',
             'transition-colors duration-250',
-            props.isAnnouncement ? 'border-black' : 'border-white'
+            props.isAnnouncement ? 'border-black' : 'border-white',
           )}
           style={{
             backgroundColor: customColorSchemeEnabled
@@ -172,7 +179,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
             className={cn(
               'text-[12px] leading-3.5',
               'transition-colors duration-250',
-              props.isAnnouncement ? 'text-black' : 'text-white'
+              props.isAnnouncement ? 'text-black' : 'text-white',
             )}
           >
             Промокод
@@ -181,7 +188,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
             className={cn(
               'font-semibold text-[25px] leading-7.5',
               'transition-colors duration-250',
-              props.isAnnouncement ? 'text-black' : 'text-white'
+              props.isAnnouncement ? 'text-black' : 'text-white',
             )}
             style={promoStyle}
           >

@@ -2,8 +2,9 @@ import useWidgetSettingsStore, { type ButtonPosition } from '@/stores/widgetSett
 import FabMenuWidget from './FabMenuWidget'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+const queryClient = new QueryClient()
+
 export const FABMenuEmbedRuntime = () => {
-  const queryClient = new QueryClient()
   const buttonPosition = useWidgetSettingsStore(
     s => (s.settings?.display?.icon?.position as ButtonPosition | undefined) ?? 'bottom-right'
   )

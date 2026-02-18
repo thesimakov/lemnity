@@ -1,14 +1,26 @@
+import { uploadImage } from '@/api/upload'
 import ImageUploader from '@/components/ImageUploader'
 import SwitchableField from '@/components/SwitchableField'
 
 type CompanyLogoProps = {
   enabled: boolean
   logoUrl?: string
-  onLogoUrlChange: (value: string) => void
+  onLogoUrlChange: (value: string | undefined) => void
   onToggle: (nextEnabled: boolean) => void
 }
 
 const CompanyLogo = (props: CompanyLogoProps) => {
+  const handleImageUpload = (file: File | null) => {
+    if (!file) {
+      props.onLogoUrlChange(undefined)
+      return
+    }
+
+    uploadImage(file).then(({ url }) => {
+      props.onLogoUrlChange(url)
+    })
+  }
+
   return (
     <SwitchableField
       title="Логотип компании"
@@ -28,7 +40,7 @@ const CompanyLogo = (props: CompanyLogoProps) => {
         fileSize="До 25 Mb"
         formats={['png', 'jpeg', 'jpg', 'webp']}
         url={props.logoUrl || ''}
-        // onFileSelect={handleImageUpload}
+        onFileSelect={handleImageUpload}
         // isInvalid={!!imageUrlError}
         // errorMessage={imageUrlError?.message}
       />

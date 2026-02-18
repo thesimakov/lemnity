@@ -45,8 +45,8 @@ const InfoSettingsSchema = z.object({
   description: z.string(),
   descriptionColor: z.string(),
 
-  countdownDate: z.string(),
   countdownEnabled: z.boolean(),
+  countdownDate: z.string(),
   countdownBackgroundColor: z.string(),
   countdownFontColor: z.string(),
 
@@ -64,7 +64,7 @@ const FormSettingsSchema = z.object({
   titleFontColor: z.string(),
   description: z.string(),
   descriptionFontColor: z.string(),
-  
+
   contactAcquisitionEnabled: z.boolean(),
   nameFieldEnabled: z.boolean(),
   nameFieldRequired: z.boolean(),
@@ -126,7 +126,7 @@ const AnnouncementWidgetSchema = z.object({
   type: z.literal(WidgetType),
   appearence: WidgetAppearenceSchema,
   infoSettings: InfoSettingsSchema,
-  formSettings: FormSettingsSchema.optional(),
+  formSettings: FormSettingsSchema,
   rewardMessageSettings: RewardMessageSettingsSchema,
   brandingEnabled: z.boolean(),
 })

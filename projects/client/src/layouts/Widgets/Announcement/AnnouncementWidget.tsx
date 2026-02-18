@@ -1,6 +1,5 @@
 import { type CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useQuery } from '@tanstack/react-query'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
 
@@ -9,6 +8,8 @@ import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import useUrlImageOrDefault from './utils/useUrlImage'
+
 import type {
   AnnouncementWidgetType,
   Content,
@@ -124,75 +125,53 @@ type AnnouncementWidgetProps = {
   variant: 'announcement' | 'reward'
 }
 
-const convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
-  const reader = new FileReader
-  reader.onerror = reject
-  reader.onload = () => {
-      resolve(reader.result)
-  }
-  reader.readAsDataURL(blob)
-})
-
 const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
   const {
     colorScheme,
     backgroundColor,
     borderRadius,
+    companyLogoEnabled,
+    companyLogoUrl,
 
     contentType,
     contentAlignment,
     contentUrl,
 
-    // title,
-    // titleColor,
-    // description,
-    // descriptionColor,
-
     rewardScreenEnabled,
+    
+    brandingEnabled,
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
-      const widget = (s.settings?.widget as AnnouncementWidgetType)
+      const widget = s.settings?.widget as AnnouncementWidgetType
       const appearence = widget.appearence
       const infoSettings = widget.infoSettings
       const rewardMessageSettings = widget.rewardMessageSettings
 
       return  {
-        // format: appearence.format,
-        // companyLogoEnabled: appearence.companyLogoEnabled,
-        // companyLogoUrl: appearence.companyLogoUrl,
-
         colorScheme: appearence.colorScheme,
         backgroundColor: appearence.backgroundColor,
         borderRadius: appearence.borderRadius,
+
+        companyLogoEnabled: appearence.companyLogoEnabled,
+        companyLogoUrl: appearence.companyLogoUrl,
 
         contentType: infoSettings.contentType,
         contentAlignment: infoSettings.contentAlignment,
         contentUrl: infoSettings.contentUrl,
 
-        title: infoSettings.title,
-        titleColor: infoSettings.titleColor,
-        description: infoSettings.description,
-        descriptionColor: infoSettings.descriptionColor,
-
         rewardScreenEnabled: rewardMessageSettings.rewardScreenEnabled,
+        
+        brandingEnabled: widget.brandingEnabled,
       }
     })
   )
 
   const {
-    data: contentBase64Image,
+    base64Image: contentBase64Image,
     // error,
     isLoading,
-  } = useQuery({
-    queryKey: [contentUrl],
-    queryFn: () =>
-      fetch(
-        contentUrl ?? announcementWidgetDefaults.infoSettings.contentUrl!
-      )
-      .then((result) => result.blob())
-      .then(convertBlobToBase64)
-  })
+  } = useUrlImageOrDefault(contentUrl)
 
   const containerStyle: CSSProperties = {
     backgroundColor: colorScheme === 'primary'
@@ -214,6 +193,16 @@ const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
     containerStyle.backgroundPosition = contentAlignment
   }
 
+  const {
+    base64Image: companyBase64Logo,
+    // error,
+    isLoading: isCompanyLogoLoading,
+  } = useUrlImageOrDefault(companyLogoUrl)
+
+  const companyLogo = companyLogoUrl && !isCompanyLogoLoading
+    ? companyBase64Logo as string
+    : undefined
+
   return (
     <div
       className={cn(
@@ -231,12 +220,20 @@ const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
             }
             contentUrl={backgroundImage}
           />
-        : (rewardScreenEnabled && <CountdownRewardScreen isAnnouncement />)
+        : (rewardScreenEnabled && (
+            <CountdownRewardScreen
+              isAnnouncement
+              companyLogoEnabled={companyLogoEnabled}
+              companyLogo={companyLogo}
+            />
+          ))
       }
       
-      <div className="flex justify-center py-2 mt-auto mb-0">
-        <FreePlanBrandingLink />
-      </div>
+      {brandingEnabled
+        ? <div className="flex justify-center py-2 mt-auto mb-0">
+            <FreePlanBrandingLink />
+          </div>
+        : <div className="h-3 py-2 mt-auto mb-0 bg-transparent" />}
     </div>
   )
 }
