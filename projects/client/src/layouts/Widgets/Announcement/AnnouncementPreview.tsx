@@ -1,5 +1,7 @@
 import type { CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '@heroui/theme'
 
 import AnnouncementWidget from './AnnouncementWidget'
 import CountdownAnnouncementWidget from './CountdownAnnouncementWidget'
@@ -12,6 +14,29 @@ import type {
 import { announcementWidgetDefaults } from './defaults'
 
 const noBackgroundImageUrl = 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp'
+
+type FadeInOutProps = {
+  visible: boolean
+  children: React.ReactNode[]
+}
+
+const FadeInOut = (props: FadeInOutProps) => {
+  return (
+    <AnimatePresence initial={false}>
+      {props.visible && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.16 }}
+          className="flex flex-col gap-2"
+        >
+          {props.children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
 
 const AnnouncementPreview = () => {
   const {
@@ -47,7 +72,6 @@ const AnnouncementPreview = () => {
     })
   )
 
-
   const {
     base64Image: contentBase64Image,
     // error,
@@ -74,61 +98,66 @@ const AnnouncementPreview = () => {
     containerStyle.backgroundPosition = contentAlignment
   }
 
+  const previewWidgetCardStyle = cn(
+    'w-fit h-52.5 scale-40 origin-top-left ml-32.5',
+    'pointer-events-none',
+  )
+
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
       {format === 'announcement' && (
-        <>
-          <span className="text-xs py-3.75">
+        <div className="flex flex-col gap-2 h-full">
+          <span className="text-xs self-center">
             Главный экран
           </span>
-          <div className="w-fit h-fit scale-40 -translate-y-[31%]">
+          <div className={previewWidgetCardStyle}>
             <AnnouncementWidget variant='announcement' />
           </div>
 
-          {rewardScreenEnabled && (
-            <>
-              <span className="text-xs py-3.75 -translate-y-79.5">
-                Экран выигрыша
-              </span>
-              <div className="w-fit h-fit scale-40 -translate-y-[92%]">
-                <AnnouncementWidget variant='reward' />
-              </div>
-            </>
-          )}
-        </>
+          <FadeInOut visible={rewardScreenEnabled}>
+            <span className="text-xs self-center">
+              Экран выигрыша
+            </span>
+            <div className={previewWidgetCardStyle}>
+              <AnnouncementWidget variant="reward" />
+            </div>
+          </FadeInOut>
+        </div>
       )}
 
       {format === 'countdown' && (
         <div className="flex flex-col gap-2 h-full">
-          <span className="text-xs">
+          <span className="text-xs self-center">
             Главный экран
           </span>
-          <div className="w-fit scale-40 origin-top-left" style={{height: '210px'}}>
+          <div className={previewWidgetCardStyle}>
             <CountdownAnnouncementWidget
               variant="countdown"
               containerStyle={containerStyle}
             />
           </div>
 
-          <span className="text-xs">
+          <span className="text-xs self-center">
             Экран формы
           </span>
-          <div className="w-fit scale-40 origin-top-left" style={{height: '210px'}}>
+          <div className={previewWidgetCardStyle}>
             <CountdownAnnouncementWidget
               variant="form"
               containerStyle={containerStyle}
             />
           </div>
 
-          <span className="text-xs">
-            Экран выигрыша
-          </span>
-          <div className="w-fit scale-40 origin-top-left" style={{height: '51.8px'}}>
-            <CountdownAnnouncementWidget
-              variant="reward"
-              containerStyle={containerStyle}
-            />
-          </div>
+          <FadeInOut visible={rewardScreenEnabled}>
+            <span className="text-xs self-center">
+              Экран выигрыша
+            </span>
+            <div className={previewWidgetCardStyle}>
+              <CountdownAnnouncementWidget
+                variant="reward"
+                containerStyle={containerStyle}
+              />
+            </div>
+          </FadeInOut>
         </div>
       )}
     </div>
