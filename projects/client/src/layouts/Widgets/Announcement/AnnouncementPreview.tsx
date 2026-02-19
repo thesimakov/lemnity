@@ -104,14 +104,14 @@ const AnnouncementPreview = () => {
   )
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden">
+    <div className="w-full h-full flex flex-col overflow-hidden select-none">
       {format === 'announcement' && (
         <div className="flex flex-col gap-2 h-full">
           <span className="text-xs self-center">
             Главный экран
           </span>
           <div className={previewWidgetCardStyle}>
-            <AnnouncementWidget variant='announcement' />
+            <AnnouncementWidget variant='announcement' focused />
           </div>
 
           <FadeInOut visible={rewardScreenEnabled}>
@@ -119,7 +119,7 @@ const AnnouncementPreview = () => {
               Экран выигрыша
             </span>
             <div className={previewWidgetCardStyle}>
-              <AnnouncementWidget variant="reward" />
+              <AnnouncementWidget variant="reward" focused />
             </div>
           </FadeInOut>
         </div>
@@ -133,6 +133,7 @@ const AnnouncementPreview = () => {
           <div className={previewWidgetCardStyle}>
             <CountdownAnnouncementWidget
               variant="countdown"
+              focused
               containerStyle={containerStyle}
             />
           </div>
@@ -143,6 +144,7 @@ const AnnouncementPreview = () => {
           <div className={previewWidgetCardStyle}>
             <CountdownAnnouncementWidget
               variant="form"
+              focused
               containerStyle={containerStyle}
             />
           </div>
@@ -154,6 +156,7 @@ const AnnouncementPreview = () => {
             <div className={previewWidgetCardStyle}>
               <CountdownAnnouncementWidget
                 variant="reward"
+                focused
                 containerStyle={containerStyle}
               />
             </div>

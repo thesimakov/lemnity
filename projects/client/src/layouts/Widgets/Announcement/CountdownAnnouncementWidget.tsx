@@ -20,6 +20,7 @@ export type CountdownWidgetVariant = 'countdown' | 'form' | 'reward'
 
 type CountdownWidgetProps = {
   variant?: CountdownWidgetVariant
+  focused?: boolean
   containerStyle: CSSProperties
   onCountdownScreenButtonPress?: () => void
   onFormScreenButtonPress?: () => void
@@ -70,9 +71,10 @@ const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
     >
       <Button
         className={cn(
-          'min-w-11.25 w-11.25 h-7.5 top-4.5 right-4.5 rounded-[5px]',
-          'bg-white px-0 absolute flex justify-center items-center',
+          'min-w-12 w-12 h-8.5 top-4.5 right-4.5 rounded-[5px]',
+          'bg-white px-0 absolute justify-center items-center',
           'pointer-events-auto',
+          props.focused ? 'flex' : 'hidden group-hover:flex',
         )}
         onPress={() => setHidden(true)}
       >

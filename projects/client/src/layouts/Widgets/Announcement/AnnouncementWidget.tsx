@@ -1,10 +1,11 @@
-import { type CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
 
 import CountdownRewardScreen from './CountdownRewardScreen'
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
+import SvgIcon from '@/components/SvgIcon'
 import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
@@ -15,14 +16,47 @@ import type {
   Content,
   ContentAlignment,
 } from '@lemnity/widget-config/widgets/announcement'
+import type { Icon } from '@lemnity/widget-config/widgets/base'
 import { announcementWidgetDefaults } from './defaults'
+import crossIcon from '@/assets/icons/cross.svg'
 
 const noBackgroundImageUrl = 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp'
+
+type AnnouncementWidgetButtonProps = {
+  buttonStyle: CSSProperties
+  icon: Icon
+  buttonText: string
+  onButtonPress?: () => void
+}
+
+const AnnouncementWidgetButton = (props: AnnouncementWidgetButtonProps) => {
+  const IconComponent = Icons[props.icon]
+
+  return (
+    <Button
+      className={cn(
+        'w-full h-13.5 rounded-[13px] bg-[#FFB400]',
+        'text-black text-[20px] transition-colors duration-150'
+      )}
+      style={props.buttonStyle}
+      onPress={props.onButtonPress}
+    >
+      {/* Билеты */}
+      {props.icon !== 'HeartDislike' && (
+        <div className='w-3.75 h-3.75'>
+          <IconComponent />
+        </div>
+      )}
+      {props.buttonText}
+    </Button>
+  )
+}
 
 type AnnouncementWidgetContentProps = {
   contentType: Content
   contentAlignment: ContentAlignment
   contentUrl?: string
+  onButtonPress?: () => void
 }
 
 const AnnouncementWidgetContent = (
@@ -39,11 +73,14 @@ const AnnouncementWidgetContent = (
     buttonBackgroundColor,
     icon,
     link,
+
+    rewardScreenEnabled,
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
       const widget = (s.settings?.widget as AnnouncementWidgetType)
       const infoSettings = widget.infoSettings
+      const rewardMessageSettings = widget.rewardMessageSettings
 
       return  {
         title: infoSettings.title,
@@ -56,6 +93,8 @@ const AnnouncementWidgetContent = (
         buttonBackgroundColor: infoSettings.buttonBackgroundColor,
         icon: infoSettings.icon,
         link: infoSettings.link,
+
+        rewardScreenEnabled: rewardMessageSettings.rewardScreenEnabled,
       }
     })
   )
@@ -64,8 +103,6 @@ const AnnouncementWidgetContent = (
     color: buttonFontColor,
     backgroundColor: buttonBackgroundColor,
   }
-
-  const IconComponent = Icons[icon]
 
   return (
     <>
@@ -96,33 +133,35 @@ const AnnouncementWidgetContent = (
       </span>
 
       <div className='w-full mt-auto mb-0'>
-        <a
-          href={link ?? 'about:blank'}
-          target="_blank"
-        >
-          <Button
-            className={cn(
-              'w-full h-13.5 rounded-[13px] bg-[#FFB400]',
-              'text-black text-[20px] transition-colors duration-150'
-            )}
-            style={buttonStyle}
-          >
-            {/* Билеты */}
-            {icon !== 'HeartDislike' && (
-              <div className='w-3.75 h-3.75'>
-                <IconComponent />
-              </div>
-            )}
-            {buttonText}
-          </Button>
-        </a>
+        {rewardScreenEnabled
+          ? <AnnouncementWidgetButton
+              buttonStyle={buttonStyle}
+              buttonText={buttonText}
+              icon={icon}
+              onButtonPress={props.onButtonPress}
+            />
+          : <a
+              href={link ?? 'about:blank'}
+              target="_blank"
+            >
+              <AnnouncementWidgetButton
+                buttonStyle={buttonStyle}
+                buttonText={buttonText}
+                icon={icon}
+              />
+            </a>
+        }
       </div>
     </>
   )
 }
 
+export type AnnouncementWidgetVariant = 'announcement' | 'reward'
+
 type AnnouncementWidgetProps = {
-  variant: 'announcement' | 'reward'
+  variant: AnnouncementWidgetVariant
+  focused?: boolean
+  onButtonPress?: () => void
 }
 
 const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
@@ -202,32 +241,55 @@ const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
   const companyLogo = companyLogoUrl && !isCompanyLogoLoading
     ? companyBase64Logo as string
     : undefined
+  
+  const [hidden, setHidden] = useState(false)
 
   return (
     <div
       className={cn(
-        'w-99.5 h-129.5 p-3.75 pb-0 border border-black',
+        'w-99.5 h-129.5 p-3.75 pb-0 border border-black relative',
         'flex flex-col items-center text-center transition-colors duration-150',
+        hidden && 'hidden',
       )}
       style={containerStyle}
     >
-      {props.variant === 'announcement'
-        ? <AnnouncementWidgetContent
-            contentType={contentType}
-            contentAlignment={
-              contentAlignment
-                ?? announcementWidgetDefaults.infoSettings.contentAlignment!
-            }
-            contentUrl={backgroundImage}
-          />
-        : (rewardScreenEnabled && (
-            <CountdownRewardScreen
-              isAnnouncement
-              companyLogoEnabled={companyLogoEnabled}
-              companyLogo={companyLogo}
-            />
-          ))
-      }
+      <Button
+        className={cn(
+          'min-w-12 w-12 h-8.5 top-0 right-0 rounded-none',
+          'bg-white px-0 absolute justify-center items-center',
+          'pointer-events-auto',
+          props.focused ? 'flex' : 'hidden group-hover:flex',
+        )}
+        style={{
+          borderTopRightRadius: borderRadius,
+          borderBottomLeftRadius: borderRadius,
+        }}
+        onPress={() => setHidden(true)}
+      >
+        <div className="w-4 h-4 fill-black">
+          <SvgIcon src={crossIcon} alt="Close" />
+        </div>
+      </Button>
+
+      {props.variant === 'announcement' && (
+        <AnnouncementWidgetContent
+          contentType={contentType}
+          contentAlignment={
+            contentAlignment
+              ?? announcementWidgetDefaults.infoSettings.contentAlignment!
+          }
+          contentUrl={backgroundImage}
+          onButtonPress={props.onButtonPress}
+        />
+      )}
+
+      {props.variant === 'reward' && rewardScreenEnabled && (
+        <CountdownRewardScreen
+          isAnnouncement
+          companyLogoEnabled={companyLogoEnabled}
+          companyLogo={companyLogo}
+        />
+      )}
       
       {brandingEnabled
         ? <div className="flex justify-center py-2 mt-auto mb-0">

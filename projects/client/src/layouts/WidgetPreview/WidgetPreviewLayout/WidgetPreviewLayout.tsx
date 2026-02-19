@@ -43,7 +43,11 @@ const WidgetPreviewLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex flex-col gap-3.75 h-full">
       <span className="text-[22px] leading-6.5 font-normal text-[#060606]">Предпросмотр</span>
-      {widgetType === WidgetTypeEnum.ACTION_TIMER ? null : tabs()}
+      {widgetType === WidgetTypeEnum.ACTION_TIMER
+       || widgetType === WidgetTypeEnum.ANNOUNCEMENT
+         ? null
+         : tabs()
+      }
       {children}
     </div>
   )

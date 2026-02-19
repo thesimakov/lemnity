@@ -2,7 +2,9 @@ import { useRef, useState, type CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { cn } from '@heroui/theme'
 
-import AnnouncementWidget from './AnnouncementWidget'
+import AnnouncementWidget, {
+  type AnnouncementWidgetVariant,
+} from './AnnouncementWidget'
 import CountdownAnnouncementWidget, {
   type CountdownWidgetVariant,
 } from './CountdownAnnouncementWidget'
@@ -87,26 +89,19 @@ export const CountdownAnnouncementEmbedRuntime = () => {
   const handleCountdownScreenButtonPress = () => setCountdownVariant('form')
   const handleFormScreenButtonPress = () => setCountdownVariant('reward')
 
+  const [announementVariant, setAnnouncementVariant] =
+    useState<AnnouncementWidgetVariant>('announcement')
+  
+  const handleAnnouncementButtonPress = () => setAnnouncementVariant('reward')
+
   return (
     <div className="fixed bottom-6 right-6">
-      {/* TODO: should i replace this with aswitch statement? */}
-      {format === 'announcement' && (
-        <>
-          <span className="text-xs py-3.75">
-            Главный экран
-          </span>
-          <div className="w-fit h-fit scale-40">
-            <AnnouncementWidget variant='announcement' />
-          </div>
-        </>
-      )}
-
-      {format === 'countdown' && (
+      {/* TODO: should i replace this with a switch statement? */}
         <>
           <div
             ref={containerRef}
             className={cn(
-              'w-fit h-fit',
+              'w-fit h-fit group',
               // 'origin-bottom-right',
 
               !focused && 'scale-40',
@@ -121,15 +116,24 @@ export const CountdownAnnouncementEmbedRuntime = () => {
             style={{ willChange: 'transform' }}
             onClick={() => setFocused(true)}
           >
-            <CountdownAnnouncementWidget
-              variant={countdownVariant}
-              containerStyle={containerStyle}
-              onCountdownScreenButtonPress={handleCountdownScreenButtonPress}
-              onFormScreenButtonPress={handleFormScreenButtonPress}
-            />
+            {format === 'countdown' && (
+              <CountdownAnnouncementWidget
+                variant={countdownVariant}
+                focused={focused}
+                containerStyle={containerStyle}
+                onCountdownScreenButtonPress={handleCountdownScreenButtonPress}
+                onFormScreenButtonPress={handleFormScreenButtonPress}
+              />
+            )}
+            {format === 'announcement' && (
+              <AnnouncementWidget
+                variant={announementVariant}
+                focused={focused}
+                onButtonPress={handleAnnouncementButtonPress}
+              />
+            )}
           </div>
         </>
-      )}
     </div>
   )
 }
