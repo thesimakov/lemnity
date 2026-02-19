@@ -99,37 +99,37 @@ const AnnouncementPreview = () => {
       )}
 
       {format === 'countdown' && (
-        <>
-          <span className="text-xs py-3.75">
+        <div className="flex flex-col gap-2 h-full">
+          <span className="text-xs">
             Главный экран
           </span>
-          <div className="w-fit h-fit scale-40 -translate-y-[31%]">
+          <div className="w-fit scale-40 origin-top-left" style={{height: '210px'}}>
             <CountdownAnnouncementWidget
               variant="countdown"
               containerStyle={containerStyle}
             />
           </div>
 
-          <span className="text-xs py-3.75 -translate-y-79.5">
+          <span className="text-xs">
             Экран формы
           </span>
-          <div className="w-fit h-fit scale-40 -translate-y-[92%]">
+          <div className="w-fit scale-40 origin-top-left" style={{height: '210px'}}>
             <CountdownAnnouncementWidget
               variant="form"
               containerStyle={containerStyle}
             />
           </div>
 
-          <span className="text-xs py-3.75 -translate-y-159">
+          <span className="text-xs">
             Экран выигрыша
           </span>
-          <div className="w-fit h-fit scale-40 -translate-y-[153%]">
+          <div className="w-fit scale-40 origin-top-left" style={{height: '51.8px'}}>
             <CountdownAnnouncementWidget
               variant="reward"
               containerStyle={containerStyle}
             />
           </div>
-        </>
+        </div>
       )}
     </div>
   )
