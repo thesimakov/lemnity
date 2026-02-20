@@ -26,6 +26,7 @@ export type CountdownForm = {
 
 // This one came straight from the developer of Zod so it should be fine
 // https://colinhacks.com/essays/reasonable-email-regex
+// eslint-disable-next-line no-useless-escape
 const emailRegexp = /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_'+\-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i
 
 type CountdownFormScreenProps = {
