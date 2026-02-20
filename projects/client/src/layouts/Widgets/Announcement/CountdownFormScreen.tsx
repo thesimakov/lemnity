@@ -15,7 +15,7 @@ import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
 
-type CountdownForm = {
+export type CountdownForm = {
   name: string
   phone: string
   email: string
@@ -30,7 +30,7 @@ const emailRegexp = /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_'+\-]@([a-z0-9][
 type CountdownFormScreenProps = {
   companyLogoEnabled: boolean
   companyLogo?: string
-  onFormScreenButtonPress?: () => void
+  onFormScreenButtonPress?: (formData: CountdownForm) => void
 }
 
 const CountdownFormScreen = (props: CountdownFormScreenProps) => {
@@ -39,7 +39,6 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
     buttonFontColor,
     buttonBackgroundColor,
     icon,
-    link,
 
     title,
     titleFontColor,
@@ -56,22 +55,18 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
 
     agreement,
     adsInfo,
-
-    rewardScreenEnabled
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
       const widget = s.settings?.widget as AnnouncementWidgetType
       const infoSettings = widget.infoSettings
       const formSettings = widget.formSettings
-      const rewardSettings = widget.rewardMessageSettings
 
       return {
         buttonText: infoSettings.buttonText,
         buttonFontColor: infoSettings.buttonFontColor,
         buttonBackgroundColor: infoSettings.buttonBackgroundColor,
         icon: infoSettings.icon,
-        link: infoSettings.link,
 
         title: formSettings?.title,
         titleFontColor: formSettings.titleFontColor,
@@ -88,8 +83,6 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
 
         agreement: formSettings.agreement,
         adsInfo: formSettings.adsInfo,
-
-        rewardScreenEnabled: rewardSettings.rewardScreenEnabled,
       }
     })
   )
@@ -132,12 +125,7 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
 
   const onSubmit: SubmitHandler<CountdownForm> = data => {
     console.log('form data', data)
-    if (rewardScreenEnabled && props.onFormScreenButtonPress) {
-      props.onFormScreenButtonPress()
-    }
-    else if (link) {
-      window.open(link, '_blank')
-    }
+    props.onFormScreenButtonPress?.(data)
   }
 
   return (

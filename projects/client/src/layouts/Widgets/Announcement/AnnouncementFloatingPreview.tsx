@@ -31,7 +31,7 @@ const AnnouncementFloatingPreview = ({ onClose }: FloatingPreviewProps) => {
       >
         Закрыть
       </button>
-      <CountdownAnnouncementEmbedRuntime />
+      <CountdownAnnouncementEmbedRuntime isPreview />
     </div>,
     document.body
   )

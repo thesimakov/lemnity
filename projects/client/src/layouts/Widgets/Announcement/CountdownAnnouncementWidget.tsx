@@ -7,7 +7,7 @@ import SvgIcon from '@/components/SvgIcon'
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 import CountdownScreen from './CountdownScreen'
 import CountdownRewardScreen from './CountdownRewardScreen'
-import CountdownFormScreen from './CountdownFormScreen'
+import CountdownFormScreen, { type CountdownForm } from './CountdownFormScreen'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import crossIcon from '@/assets/icons/cross.svg'
@@ -23,7 +23,7 @@ type CountdownWidgetProps = {
   focused?: boolean
   containerStyle: CSSProperties
   onCountdownScreenButtonPress?: () => void
-  onFormScreenButtonPress?: () => void
+  onFormScreenButtonPress?: (formData: CountdownForm) => void
 }
 
 const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {

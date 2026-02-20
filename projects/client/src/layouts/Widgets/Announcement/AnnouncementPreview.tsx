@@ -126,8 +126,8 @@ const AnnouncementPreview = () => {
       )}
 
       {format === 'countdown' && (
-        <div className="flex flex-col gap-2 h-full">
-          <span className="text-xs self-center">
+        <div className="flex flex-col h-full">
+          <span className="text-xs self-center mb-2">
             Главный экран
           </span>
           <div className={previewWidgetCardStyle}>
@@ -138,19 +138,19 @@ const AnnouncementPreview = () => {
             />
           </div>
 
-          <span className="text-xs self-center">
-            Экран формы
-          </span>
-          <div className={previewWidgetCardStyle}>
-            <CountdownAnnouncementWidget
-              variant="form"
-              focused
-              containerStyle={containerStyle}
-            />
-          </div>
-
           <FadeInOut visible={rewardScreenEnabled}>
             <span className="text-xs self-center">
+              Экран формы
+            </span>
+            <div className={previewWidgetCardStyle}>
+              <CountdownAnnouncementWidget
+                variant="form"
+                focused
+                containerStyle={containerStyle}
+              />
+            </div>
+
+            <span className="text-xs self-center mt-2">
               Экран выигрыша
             </span>
             <div className={previewWidgetCardStyle}>

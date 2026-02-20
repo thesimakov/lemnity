@@ -104,6 +104,16 @@ const AnnouncementWidgetContent = (
     backgroundColor: buttonBackgroundColor,
   }
 
+  const handleButtonPress = () => {
+    if (rewardScreenEnabled) {
+      props.onButtonPress?.()
+    }
+    else {
+      window.open(link, '_blank')
+      props.onButtonPress?.()
+    }
+  }
+
   return (
     <>
       {props.contentType === 'imageOnTop'
@@ -133,24 +143,12 @@ const AnnouncementWidgetContent = (
       </span>
 
       <div className='w-full mt-auto mb-0'>
-        {rewardScreenEnabled
-          ? <AnnouncementWidgetButton
-              buttonStyle={buttonStyle}
-              buttonText={buttonText}
-              icon={icon}
-              onButtonPress={props.onButtonPress}
-            />
-          : <a
-              href={link ?? 'about:blank'}
-              target="_blank"
-            >
-              <AnnouncementWidgetButton
-                buttonStyle={buttonStyle}
-                buttonText={buttonText}
-                icon={icon}
-              />
-            </a>
-        }
+        <AnnouncementWidgetButton
+          buttonStyle={buttonStyle}
+          buttonText={buttonText}
+          icon={icon}
+          onButtonPress={handleButtonPress}
+        />
       </div>
     </>
   )

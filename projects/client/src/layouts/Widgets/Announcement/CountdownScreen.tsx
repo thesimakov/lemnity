@@ -36,11 +36,15 @@ const CountdownScreen = (props: CountdownScreenProps) => {
     buttonFontColor,
     buttonBackgroundColor,
     icon,
+    link,
+
+    rewardScreenEnabled,
   } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
       const widget = s.settings?.widget as AnnouncementWidgetType
       const infoSettings = widget.infoSettings
+      const rewardSettings = widget.rewardMessageSettings
 
       return {
         title: infoSettings.title,
@@ -57,6 +61,9 @@ const CountdownScreen = (props: CountdownScreenProps) => {
         buttonFontColor: infoSettings.buttonFontColor,
         buttonBackgroundColor: infoSettings.buttonBackgroundColor,
         icon: infoSettings.icon,
+        link: infoSettings.link,
+
+        rewardScreenEnabled: rewardSettings.rewardScreenEnabled,
       }
     })
   )
@@ -86,7 +93,12 @@ const CountdownScreen = (props: CountdownScreenProps) => {
 
   const IconComponent = Icons[icon]
 
-  const handleButtonPress = () => props.onCountdownScreenButtonPress?.()
+  const handleButtonPress = () => {
+    if (!rewardScreenEnabled) {
+      window.open(link, '_blank')
+    }
+    props.onCountdownScreenButtonPress?.()
+  }
 
   return (
     <>

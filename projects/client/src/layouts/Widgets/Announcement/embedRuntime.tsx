@@ -12,16 +12,27 @@ import CountdownAnnouncementWidget, {
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import useUrlImageOrDefault from './utils/useUrlImage'
 import useClickOutside from '@/hooks/useClickOutside'
+import { sendEvent, sendPublicRequest } from '@/common/api/publicApi'
 
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
+import type { CountdownForm } from './CountdownFormScreen'
 import { announcementWidgetDefaults } from './defaults'
 
 const noBackgroundImageUrl = 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp'
 
-export const CountdownAnnouncementEmbedRuntime = () => {
+type EmbedRuntimeProps = {
+  isPreview?: boolean
+}
+
+export const CountdownAnnouncementEmbedRuntime = (
+  props: EmbedRuntimeProps
+) => {
   const {
+    widgetId,
+    projectId,
+
     format,
     colorScheme,
     backgroundColor,
@@ -30,6 +41,8 @@ export const CountdownAnnouncementEmbedRuntime = () => {
     contentType,
     contentAlignment,
     contentUrl,
+
+    rewardScreenEnabled,
   } = useWidgetSettingsStore(
     useShallow(s => {
       const widget = s.settings?.widget as AnnouncementWidgetType
@@ -38,6 +51,9 @@ export const CountdownAnnouncementEmbedRuntime = () => {
       const infoSettings = widget.infoSettings
 
       return {
+        widgetId: s.settings?.id,
+        projectId: s.projectId,
+
         format: appearence.format,
         colorScheme: appearence.colorScheme,
         backgroundColor: appearence.backgroundColor,
@@ -81,18 +97,110 @@ export const CountdownAnnouncementEmbedRuntime = () => {
   const [focused, setFocused] = useState(false)
   const containerRef = useRef(null)
 
-  useClickOutside(containerRef, () => setFocused(false))
+  useClickOutside(containerRef, () => {
+    setFocused(false)
+
+    if (!widgetId || !projectId || props.isPreview) {
+      return
+    }
+
+    void sendEvent({
+      event_name: format === 'countdown'
+        ? 'countdown.close'
+        : 'announcement.close',
+      widget_id: widgetId,
+      project_id: projectId,
+    })
+  })
+
+  /** Sets the widget to "focused" state on click while minified */
+  const handleFocusClick = () => {
+    setFocused(true)
+
+    if (!widgetId || !projectId || focused || props.isPreview) {
+      return
+    }
+
+    void sendEvent({
+      event_name: format === 'countdown'
+        ? 'countdown.open'
+        : 'announcement.open',
+      widget_id: widgetId,
+      project_id: projectId,
+    })
+  }
 
   const [countdownVariant, setCountdownVariant] =
     useState<CountdownWidgetVariant>('countdown')
 
-  const handleCountdownScreenButtonPress = () => setCountdownVariant('form')
-  const handleFormScreenButtonPress = () => setCountdownVariant('reward')
+  const handleCountdownScreenButtonPress = () => {
+    if (rewardScreenEnabled) {
+      setCountdownVariant('form')
+    }
+    
+    if (!widgetId || !projectId || format !== 'countdown' || props.isPreview) {
+      return
+    }
+
+    void sendEvent({
+      event_name: rewardScreenEnabled
+        ? 'countdown.transition_to_form'
+        : 'countdown.link_opened',
+      widget_id: widgetId,
+      project_id: projectId,
+    })
+  }
+  const handleFormScreenButtonPress = (formData: CountdownForm) => {
+    setCountdownVariant('reward')
+  
+
+    if (!widgetId || !projectId || format !== 'countdown' || props.isPreview) {
+      return
+    }
+
+    void sendEvent({
+      event_name: 'countdown.transition_to_reward',
+      widget_id: widgetId,
+      project_id: projectId,
+      payload: formData,
+    })
+
+    void sendPublicRequest({
+      widgetId: widgetId,
+      fullName: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      url: window.location.href,
+      referrer: document.referrer || undefined,
+      userAgent: navigator.userAgent,
+    })
+  }
 
   const [announementVariant, setAnnouncementVariant] =
     useState<AnnouncementWidgetVariant>('announcement')
   
-  const handleAnnouncementButtonPress = () => setAnnouncementVariant('reward')
+  const handleAnnouncementButtonPress = () => {
+    if (rewardScreenEnabled) {
+      setAnnouncementVariant('reward')
+    }
+
+    if (
+      !widgetId
+      || !projectId
+      || format !== 'announcement'
+      || props.isPreview
+    ) {
+      return
+    }
+
+    void sendEvent({
+      event_name: rewardScreenEnabled
+        ? 'announcement.transition_to_reward'
+        : 'announcement.link_opened',
+      widget_id: widgetId,
+      project_id: projectId,
+    })
+  }
 
   return (
     <div
@@ -117,7 +225,7 @@ export const CountdownAnnouncementEmbedRuntime = () => {
             )}
             // ✨ Magic ✨
             style={{ willChange: 'transform' }}
-            onClick={() => setFocused(true)}
+            onClick={handleFocusClick}
           >
             {format === 'countdown' && (
               <CountdownAnnouncementWidget
