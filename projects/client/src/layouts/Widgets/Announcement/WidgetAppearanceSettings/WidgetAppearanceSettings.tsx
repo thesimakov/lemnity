@@ -56,13 +56,19 @@ const WidgetAppearanceSettings = () => {
   const setBorderRadius = useWidgetSettingsStore(
     s => s.setAnnouncementBorderRadius
   )
+  const resetColors = useWidgetSettingsStore(
+    s => s.resetAnnouncementColors
+  )
 
   const handleColorSchemeChange = (colorScheme: ColorScheme) => {
     setWidgetColorScheme(colorScheme)
 
     if (colorScheme === 'custom') {
       setContentType('imageOnTop')
+      return
     }
+
+    resetColors()
   }
   
   return (

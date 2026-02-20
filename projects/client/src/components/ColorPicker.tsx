@@ -1,9 +1,9 @@
+import { useEffect, useState } from 'react'
+import { useMask } from '@react-input/mask'
 import { cn } from '@heroui/theme'
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { Input } from '@heroui/input'
-import { useState } from 'react'
 import { Button } from '@heroui/button'
-import { useMask } from '@react-input/mask'
 import useDebouncedCallback from '@/hooks/useDebouncedCallback'
 
 type ColorCircleProps = {
@@ -87,6 +87,13 @@ const defaultColors: ColorPickerItem[] = [
 const ColorPicker = (props: ColorPickerProps) => {
   const [selectedColor, setSelectedColor] = useState(() => props.initialColor)
   const [inputValue, setInputValue] = useState(() => props.initialColor)
+
+  // for now - a crutch
+  // the color was supposed to be *inital* for the fabmenu
+  // i do not remember why
+  useEffect(() => {
+    setSelectedColor(props.initialColor)
+  }, [props.initialColor])
 
   const inputRef = useMask({
     mask: '#______',

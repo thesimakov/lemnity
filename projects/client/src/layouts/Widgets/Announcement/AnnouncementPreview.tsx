@@ -29,7 +29,7 @@ const FadeInOut = (props: FadeInOutProps) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.16 }}
-          className="flex flex-col gap-2"
+          className="flex flex-col gap-1"
         >
           {props.children}
         </motion.div>
@@ -104,9 +104,11 @@ const AnnouncementPreview = () => {
   )
 
   return (
+    // don't look at vertical margins =w=
+    // i was fed the fuck up with how much gaps were bitching at me
     <div className="w-full h-full flex flex-col overflow-hidden select-none">
       {format === 'announcement' && (
-        <div className="flex flex-col gap-2 h-full">
+        <div className="flex flex-col gap-1 h-full">
           <span className="text-xs self-center">
             Главный экран
           </span>
@@ -115,7 +117,7 @@ const AnnouncementPreview = () => {
           </div>
 
           <FadeInOut visible={rewardScreenEnabled}>
-            <span className="text-xs self-center">
+            <span className="text-xs self-center mb-1">
               Экран выигрыша
             </span>
             <div className={previewWidgetCardStyle}>
@@ -139,7 +141,7 @@ const AnnouncementPreview = () => {
           </div>
 
           <FadeInOut visible={rewardScreenEnabled}>
-            <span className="text-xs self-center">
+            <span className="text-xs self-center mt-1 mb-1">
               Экран формы
             </span>
             <div className={previewWidgetCardStyle}>
@@ -150,7 +152,7 @@ const AnnouncementPreview = () => {
               />
             </div>
 
-            <span className="text-xs self-center mt-2">
+            <span className="text-xs self-center mb-1">
               Экран выигрыша
             </span>
             <div className={previewWidgetCardStyle}>

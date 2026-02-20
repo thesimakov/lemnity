@@ -231,6 +231,7 @@ export type WidgetActions = {
   setAnnouncementBrandingEnabled: (
     brandingEnabled: boolean
   ) => void
+  resetAnnouncementColors: () => void
 }
 
 export type WidgetSlice = {

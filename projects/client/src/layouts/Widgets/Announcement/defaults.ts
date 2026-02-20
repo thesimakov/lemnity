@@ -13,7 +13,7 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
   appearence: {
     format: 'announcement',
 
-    companyLogoEnabled: false,
+    companyLogoEnabled: true,
     companyLogoUrl: undefined,
 
     colorScheme: 'primary',
@@ -25,9 +25,9 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
     contentAlignment: 'center',
     contentUrl: undefined,
 
-    title: 'Заголовок виджета',
+    title: 'Укажите заголовок',
     titleColor: '#000000',
-    description: 'Описание виджета',
+    description: 'Напишите описание к действию или какое нибудь предложение',
     descriptionColor: '#000000',
 
     countdownDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -35,16 +35,16 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
     countdownBackgroundColor: '#FFFFFF',
     countdownFontColor: '#000000',
 
-    buttonText: 'Нажми меня',
+    buttonText: 'Действие',
     buttonFontColor: '#000000',
     buttonBackgroundColor: '#FFB400',
-    icon: 'Sparkles',
-    link: 'https://google.com',
+    icon: 'Reload',
+    link: 'https://lemnity.ru',
   },
   formSettings: {
-    title: 'Заголовок формы',
+    title: 'Получите скидку',
     titleFontColor: '#000000',
-    description: 'Описание формы',
+    description: 'Укажите свой email и получите купон, который можно использовать при покупке',
     descriptionFontColor: '#000000',
 
     contactAcquisitionEnabled: true,
@@ -57,14 +57,14 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
 
     agreement: {
       enabled: true,
-      policyUrl: 'https://google.com',
-      agreementUrl: 'https://google.com',
+      policyUrl: '',
+      agreementUrl: '',
       color: '#000000'
     },
 
     adsInfo: {
-      enabled: false,
-      policyUrl: 'https://google.com',
+      enabled: true,
+      policyUrl: '',
       color: '#000000'
     }
   },
@@ -84,7 +84,7 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
     discountFontSize: 20,
     discountFontColor: '#000000',
 
-    promo: 'PROMO2079',
+    promo: 'PROMO-10P',
     promoFontSize: 25,
     promoFontColor: '#FFFFFF',
 
@@ -92,7 +92,7 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
     customDiscountBackgroundColor: '#FFF57F',
     customPromoBackgroundColor: '#0F3095',
   },
-  brandingEnabled: false,
+  brandingEnabled: true,
 }
 
 export const buildAnnouncementWidgetSettings = (): AnnouncementWidgetType =>

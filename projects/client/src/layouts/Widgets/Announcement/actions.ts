@@ -801,4 +801,69 @@ export const createAnnouncementActions = (
         brandingEnabled,
       }
     }),
+  resetAnnouncementColors: () =>
+    updateWidget(widget => {
+      const defaults = buildAnnouncementWidgetSettings()
+      return {
+        ...widget,
+        appearence: {
+          ...widget.appearence,
+          backgroundColor:
+            defaults.appearence.backgroundColor,
+        },
+        infoSettings: {
+          ...widget.infoSettings,
+          titleColor:
+            defaults.infoSettings.titleColor,
+          descriptionColor:
+            defaults.infoSettings.descriptionColor,
+          countdownBackgroundColor:
+            defaults.infoSettings.countdownBackgroundColor,
+          countdownFontColor:
+            defaults.infoSettings.countdownFontColor,
+          buttonFontColor:
+            defaults.infoSettings.buttonFontColor,
+          buttonBackgroundColor:
+            defaults.infoSettings.buttonBackgroundColor,
+        },
+        formSettings: {
+          ...widget.formSettings,
+          titleFontColor:
+            defaults.formSettings.titleFontColor,
+          descriptionFontColor:
+            defaults.formSettings.descriptionFontColor,
+          agreement: {
+            ...widget.formSettings.agreement,
+            color:
+              defaults.formSettings.agreement.color,
+          },
+          adsInfo: {
+            ...widget.formSettings.adsInfo,
+            color:
+              defaults.formSettings.adsInfo.color,
+          },
+        },
+        rewardMessageSettings: {
+          ...widget.rewardMessageSettings,
+          titleFontColor:
+            defaults.rewardMessageSettings.titleFontColor,
+          descriptionFontColor:
+            defaults
+              .rewardMessageSettings
+              .descriptionFontColor,
+          discountFontColor:
+            defaults.rewardMessageSettings.discountFontColor,
+          promoFontColor:
+            defaults.rewardMessageSettings.promoFontColor,
+          customDiscountBackgroundColor:
+            defaults
+              .rewardMessageSettings
+              .customDiscountBackgroundColor,
+          customPromoBackgroundColor:
+            defaults
+              .rewardMessageSettings
+              .customPromoBackgroundColor,
+        },
+      }
+    })
 })

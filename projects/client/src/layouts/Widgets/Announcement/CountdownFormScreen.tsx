@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
+import { PatternFormat } from 'react-number-format'
 import { Button } from '@heroui/button'
 import { Checkbox } from '@heroui/checkbox'
 import { Input } from '@heroui/input'
@@ -124,7 +125,6 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
   })
 
   const onSubmit: SubmitHandler<CountdownForm> = data => {
-    console.log('form data', data)
     props.onFormScreenButtonPress?.(data)
   }
 
@@ -192,17 +192,43 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
                   control={control}
                   rules={{
                     required: phoneFieldRequired && 'Телефон обязателен',
+                    pattern: {
+                      value: /^\+7\d{10}$/,
+                      message: 'Некорректный номер телефона',
+                    }
                   }}
-                  render={({ field, fieldState }) => (
-                    <Input
-                      {...field}
-                      placeholder="Ваш телефон"
-                      classNames={inputStyles}
-                      isRequired={phoneFieldRequired}
-                      isInvalid={fieldState.invalid}
-                      errorMessage={fieldState.error?.message}
-                    />
-                  )}
+                  render={
+                    ({
+                      field: { ref, value, onChange, onBlur },
+                      fieldState,
+                    }) => (
+                      <PatternFormat
+                        customInput={Input}
+                        getInputRef={ref}
+                        format="+7 (###) ###-##-##"
+                        mask="_"
+                        value={
+                          value?.startsWith('+7')
+                            ? value.substring(2)
+                            : value
+                        }
+                        onValueChange={values => {
+                          const cleanValue = values.value
+                            ? `+7${values.value}`
+                            : ''
+                          onChange(cleanValue)
+                        }}
+                        onBlur={onBlur}
+                        // Hero UI Input props
+                        type="tel"
+                        inputMode="numeric"
+                        placeholder="+7 (000) 000-00-00"
+                        isInvalid={fieldState.invalid}
+                        errorMessage={fieldState.error?.message}
+                        classNames={inputStyles}
+                      />
+                    )
+                  }
                 />}
               {emailFieldEnabled &&
                 <Controller
