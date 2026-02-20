@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import {
+  IconEnum,
   LooseSurfaceSchema,
   type WidgetTypeId,
   buildWidgetSettingsSchema
@@ -20,30 +21,6 @@ const FABMenuIconEnum = z.enum([
   'youtube',
   'ok',
   'custom'
-])
-
-const FABMenuTriggerIconEnum = z.enum([
-  "Balloon",
-  "Basket",
-  "Fish",
-  "Flame",
-  "Flower",
-  "GameController",
-  "Hammer",
-  "Heart",
-  "Key",
-  "Moon",
-  "Nuclear",
-  "Paw",
-  "Pizza",
-  "Restaurant",
-  "Rocket",
-  "Send",
-  "Sparkles",
-  "Star",
-  "Sunny",
-  "Reload",
-  "HeartDislike"
 ])
 
 const FABMenuPayloadTypeEnum = z.enum([
@@ -90,7 +67,7 @@ const FABMenuWidgetSchema = z.object({
   triggerText: z
     .string()
     .max(20, 'Текст должен быть не длиннее 20 символов'),
-  triggerIcon: FABMenuTriggerIconEnum
+  triggerIcon: IconEnum
 })
 
 const customSurfaces = {
@@ -104,4 +81,3 @@ export const fabMenuSchema = buildWidgetSettingsSchema(
   FABMenuWidgetSchema,
   customSurfaces
 )
-

@@ -17,6 +17,7 @@ type ImageUploaderProps = {
     label?: string
   }
   hideSwitch?: boolean
+  hidePreview?: boolean
   filename?: string
   url?: string
   onFileSelect?: (file: File | null) => void
@@ -51,6 +52,7 @@ const ImageUploader = ({
     label: ''
   },
   hideSwitch,
+  hidePreview,
   filename,
   url,
   onFileSelect,
@@ -66,7 +68,7 @@ const ImageUploader = ({
 
   const previewUrl = useMemo<string | null>(() => blobUrl ?? url ?? null, [blobUrl, url])
   const displayName = useMemo(
-    () => shortenFileName(localFile?.name ?? filename ?? 'Нажмите чтобы выбрать файл'),
+    () => shortenFileName(localFile?.name ?? filename ?? 'Выбрать файл'),
     [localFile?.name, filename]
   )
   const inputId = useId()
@@ -92,7 +94,7 @@ const ImageUploader = ({
     <div
       className={`flex flex-col gap-2 rounded-lg ${noPadding ? '' : 'p-3'} ${noBorder ? '' : 'border border-gray-200'} ${classNames.container}`}
     >
-      <div className="flex flex-row gap-2">
+      {(title || !hideSwitch) && <div className="flex flex-row gap-2">
         {title ? <span className="text-black">{title}</span> : null}
         {hideSwitch ? null : (
           <CustomSwitch
@@ -103,20 +105,20 @@ const ImageUploader = ({
             size="sm"
           />
         )}
-      </div>
-      <div className="flex flex-row gap-3 w-full min-w-0">
-        <img
+      </div>}
+      <div className="flex flex-row gap-3 w-full min-w-0 items-center">
+        {!hidePreview && <img
           src={previewUrl || imageUpload}
           alt="image"
           className="w-14 h-14 object-cover rounded-md"
-        />
+        />}
         <label
           htmlFor={inputId}
-          className={`flex-1 min-w-0 h-14 flex items-center gap-3 px-3 py-2 bg-[#F4F4F5] hover:bg-[#E4E4E7] border-2 border-[#E4E4E7] rounded-md cursor-pointer transition-colors overflow-hidden ${classNames.label}`}
+          className={`@container flex-1 min-w-0 h-14 flex items-center justify-center gap-3 px-3 py-2 bg-[#D7DBFF]/24 hover:bg-[#E4E4E7] border border-[#E8E8E8] rounded-md cursor-pointer transition-colors overflow-hidden ${classNames.label}`}
         >
           <SvgIcon src={iconUpload} size={20} className="text-black w-min" />
-          <div className="min-w-0 flex-1 overflow-hidden">
-            <span className="block truncate text-sm text-gray-700">{displayName}</span>
+          <div className="min-w-0 flex-1 overflow-hidden hidden @min-[130px]:block">
+            <span className="truncate text-sm text-gray-700">{displayName}</span>
           </div>
           <input
             id={inputId}

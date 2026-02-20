@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export type WidgetTypeId = 'WHEEL_OF_FORTUNE' | 'ACTION_TIMER' | 'FAB_MENU'
+export type WidgetTypeId = 'WHEEL_OF_FORTUNE' | 'ACTION_TIMER' | 'FAB_MENU' | 'ANNOUNCEMENT'
 
 export const IconButtonSchema = z.object({
   text: z.string().min(1, 'Текст обязателен'),
@@ -13,7 +13,8 @@ export const IconImageSchema = z.object({
   url: z.string().optional()
 })
 
-export const ColorScheme = z.enum(['primary', 'custom'])
+export const ColorSchemeEnum = z.enum(['primary', 'custom'])
+export type ColorScheme = z.infer<typeof ColorSchemeEnum>
 export const ImagePositionSchema = z.enum(['center', 'left', 'right'])
 export const WindowFormatSchema = z.enum(['sidePanel', 'modalWindow'])
 
@@ -160,7 +161,7 @@ export const FieldsSchema = z
         promoSize: z.number().nonnegative().optional(),
         colorScheme: z.object({
           enabled: z.boolean(),
-          scheme: ColorScheme,
+          scheme: ColorSchemeEnum,
           discount: z
             .object({
               color: z.string(),
@@ -291,3 +292,29 @@ export const buildWidgetSettingsSchema = (
     integration: resolveSurface(surfaces, 'integration')
   })
 
+
+export const IconEnum = z.enum([
+  "Balloon",
+  "Basket",
+  "Fish",
+  "Flame",
+  "Flower",
+  "GameController",
+  "Hammer",
+  "Heart",
+  "Key",
+  "Moon",
+  "Nuclear",
+  "Paw",
+  "Pizza",
+  "Restaurant",
+  "Rocket",
+  "Send",
+  "Sparkles",
+  "Star",
+  "Sunny",
+  "Reload",
+  "HeartDislike"
+])
+
+export type Icon = z.infer<typeof IconEnum>

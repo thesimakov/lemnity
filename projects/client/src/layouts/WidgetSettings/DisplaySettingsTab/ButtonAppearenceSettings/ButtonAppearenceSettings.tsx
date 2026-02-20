@@ -5,46 +5,19 @@ import { cn } from '@heroui/theme'
 import ColorPicker from '@/components/ColorPicker'
 import IconPicker, { type IconName } from '@/components/IconPicker'
 
-import { useFABMenuSettings } from '@/layouts/Widgets/FABMenu/hooks'
-import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
-import type { FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
-
-type ButtonAppearance = {
-  text?: string
-  textColor?: string
-  backgroundColor: string
-  icon: string
-}
-
 type ButtonAppearenceSettingsProps = {
-  onChange: (value: ButtonAppearance) => void
+  onTriggerTextChange: (value: string) => void
+  onTriggerIconChange: (icon: IconName) => void
+  onFontColorChange: (color: string) => void
+  onBackgroundColorChange: (color: string) => void
+  buttonText?: string
+  buttonTextColor: string
+  buttonBackgroundColor: string
+  buttonIcon?: IconName
 }
 
-// @ts-expect-error: emnrorr
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
   const [isInputInvalid, setIsInputInvalid] = useState(false)
-
-  const defaults = useWidgetStaticDefaults()
-  const {
-    settings,
-    setFABMenuButtonTextColor,
-    setFABMenuButtonBackgroundColor,
-    setFABMenuTriggerText,
-    setFABMenuTriggerIcon
-  } = useFABMenuSettings()
-
-  if (!settings || !defaults) {
-    // TODO: Сообщение пользователю с просьбой обновить страницу
-    return
-  }
-
-  const initialFABMenuTextColor =
-    settings.triggerTextColor ?? (defaults.widget as FABMenuWidgetSettings).triggerTextColor
-
-  const initialFABMenuBackgroundColor =
-    settings.triggerBackgroundColor ??
-    (defaults.widget as FABMenuWidgetSettings).triggerBackgroundColor
 
   const handleTriggerTextChange = (value: string) => {
     if (value.length > 20) {
@@ -54,20 +27,17 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
     }
 
     setIsInputInvalid(false)
-    setFABMenuTriggerText(value)
+    props.onTriggerTextChange(value)
   }
 
-  const initialFABMenuTriggerIcon =
-    settings.triggerIcon ?? (defaults.widget as FABMenuWidgetSettings).triggerIcon
-
   const handleTriggerIconChange = (icon: IconName) => {
-    setFABMenuTriggerIcon(icon)
+    props.onTriggerIconChange(icon)
   }
 
   return (
     <div className="flex flex-row flex-wrap gap-2.5 @container">
       <Input
-        value={settings.triggerText}
+        value={props.buttonText}
         onValueChange={handleTriggerTextChange}
         isInvalid={isInputInvalid}
         placeholder="Супер кнопка"
@@ -82,16 +52,19 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
       />
 
       <ColorPicker
-        initialColor={initialFABMenuTextColor}
-        onColorChange={setFABMenuButtonTextColor}
+        initialColor={props.buttonTextColor}
+        onColorChange={props.onFontColorChange}
         triggerText="Цвет шрифта"
       />
 
-      <IconPicker initialIcon={initialFABMenuTriggerIcon} onIconChange={handleTriggerIconChange} />
+      <IconPicker
+        initialIcon={props.buttonIcon}
+        onIconChange={handleTriggerIconChange}
+      />
 
       <ColorPicker
-        initialColor={initialFABMenuBackgroundColor}
-        onColorChange={setFABMenuButtonBackgroundColor}
+        initialColor={props.buttonBackgroundColor}
+        onColorChange={props.onBackgroundColorChange}
         triggerText="Цвет кнопки"
       />
     </div>

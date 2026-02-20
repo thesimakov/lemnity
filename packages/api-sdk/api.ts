@@ -16,8 +16,13 @@
 
 export * from './apis/app-api';
 export * from './apis/auth-api';
+export * from './apis/collector-api';
 export * from './apis/files-api';
 export * from './apis/password-reset-api';
 export * from './apis/project-api';
+export * from './apis/public-requests-api';
+export * from './apis/public-widgets-api';
+export * from './apis/requests-api';
+export * from './apis/stats-api';
 export * from './apis/widgets-api';
 

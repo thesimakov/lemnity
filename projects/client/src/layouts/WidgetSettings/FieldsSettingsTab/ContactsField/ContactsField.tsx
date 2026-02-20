@@ -40,24 +40,53 @@ const ContactsField = () => {
       <div className="flex flex-col gap-2">
         <CheckboxField
           label="Имя"
+          showRequired
           checked={nameEnabled}
-          onChange={enabled => setContactField('name', enabled, nameRequired)}
+          onChange={enabled => setContactField(
+            'name',
+            enabled,
+            nameRequired
+          )}
           required={nameRequired}
-          onRequiredChange={required => setContactField('name', nameEnabled, required)}
+          onRequiredChange={required => setContactField(
+            'name',
+            nameEnabled,
+            required
+          )}
         />
+
         <CheckboxField
           label="Телефон"
+          showRequired
           checked={phoneEnabled}
-          onChange={enabled => setContactField('phone', enabled, phoneRequired)}
+          onChange={enabled => setContactField(
+            'phone',
+            enabled,
+            phoneRequired
+          )}
           required={phoneRequired}
-          onRequiredChange={required => setContactField('phone', phoneEnabled, required)}
+          onRequiredChange={required => setContactField(
+            'phone',
+            phoneEnabled,
+            required
+          )}
         />
+
         <CheckboxField
           label="Email"
+          showRequired
           checked={emailEnabled}
-          onChange={enabled => setContactField('email', enabled, emailRequired)}
+          onChange={enabled => setContactField(
+            'email',
+            enabled,
+            emailRequired
+          )}
           required={emailRequired}
-          onRequiredChange={required => setContactField('email', emailEnabled, required)}
+          onRequiredChange={required => setContactField(
+            'email',
+            emailEnabled,
+            required
+          )}
         />
       </div>
     </div>

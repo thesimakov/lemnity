@@ -1,65 +1,56 @@
-import SwitchableField from '@/components/SwitchableField'
-import { Input, Textarea } from '@heroui/input'
-import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import useWidgetSettingsStore, {
+  useWidgetStaticDefaults,
+} from '@/stores/widgetSettingsStore'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import { withDefaultsPath } from '@/stores/widgetSettings/utils'
-import ColorAccessory from '@/components/ColorAccessory'
+
+import AgreementAndPolicy from '@/components/AgreementAndPolicy'
 
 const AdsInfoField = () => {
-  const { setAdsInfo } = useFieldsSettings()
   const staticDefaults = useWidgetStaticDefaults()
+
   const adsInfo = useWidgetSettingsStore(s =>
-    withDefaultsPath(s.settings?.fields, 'adsInfo', staticDefaults!.fields.adsInfo)
+    withDefaultsPath(
+      s.settings?.fields,
+      'adsInfo',
+      // let's shoot in the foot and assume that staticDefaults is always
+      // defined, because why the hell not, ALBERT
+      // TO FIX THIS PROPERLY WE NEED TO REWORK THE WHOLE SETTINGS STRUCTURE
+      staticDefaults!.fields.adsInfo
+    )
   )
   const { enabled, text, policyUrl, color } = adsInfo
-  const getErrors = useWidgetSettingsStore(s => s.getErrors)
-  const showValidation = useWidgetSettingsStore(s => s.validationVisible)
-  const errors = showValidation ? getErrors('fields.adsInfo') : []
+  const { setAdsInfo } = useFieldsSettings()
 
-  const handleToggle = (nextEnabled: boolean) => {
-    setAdsInfo(nextEnabled, text ?? '', policyUrl ?? '', color ?? '#000000')
-  }
+  const handleToggle = (nextEnabled: boolean) => setAdsInfo(
+    nextEnabled,
+    text ?? '',
+    policyUrl ?? '',
+    color ?? '#000000'
+  )
+
+  const handleColorChange = (color: string) => setAdsInfo(
+    enabled,
+    text ?? '',
+    policyUrl ?? '',
+    color
+  )
+
+  const handlePolicyUrlChange = (url: string) => setAdsInfo(
+    enabled,
+    text ?? '',
+    url,
+    color ?? '#000000'
+  )
 
   return (
-    <SwitchableField title="Рекламная информация" enabled={enabled} onToggle={handleToggle}>
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-row gap-2">
-          <Textarea
-            isDisabled
-            radius="sm"
-            variant="bordered"
-            minRows={2}
-            placeholder="Нажимая на кнопку, вы даёте своё согласие на получение рекламно-информационной рассылки."
-            className="max-w-full"
-            classNames={{
-              input: 'placeholder:text-[#AFAFAF]'
-            }}
-            value={text ?? ''}
-            isInvalid={enabled && errors.some(e => e.path.endsWith('text'))}
-            errorMessage={errors.find(e => e.path.endsWith('text'))?.message}
-            onValueChange={text => setAdsInfo(enabled, text, policyUrl ?? '', color ?? '#000000')}
-          />
-          <ColorAccessory
-            color={color ?? '#000000'}
-            onChange={color => setAdsInfo(enabled, text ?? '', policyUrl ?? '', color)}
-          />
-        </div>
-        <span className="text-lg font-normal">URL на политику получения рекламной информации</span>
-      </div>
-      <Input
-        radius="sm"
-        variant="bordered"
-        placeholder="lemnity.ru/ads"
-        className="max-w-full"
-        classNames={{
-          input: 'placeholder:text-[#AFAFAF]'
-        }}
-        value={policyUrl ?? ''}
-        isInvalid={enabled && errors.some(e => e.path.endsWith('policyUrl'))}
-        errorMessage={errors.find(e => e.path.endsWith('policyUrl'))?.message}
-        onValueChange={url => setAdsInfo(enabled, text ?? '', url, color ?? '#000000')}
-      />
-    </SwitchableField>
+    <AgreementAndPolicy
+      errorPath="fields.adsInfo"
+      agreement={adsInfo}
+      onToggle={handleToggle}
+      onFontColorChange={handleColorChange}
+      onPolicyUrlChange={handlePolicyUrlChange}
+    />
   )
 }
 

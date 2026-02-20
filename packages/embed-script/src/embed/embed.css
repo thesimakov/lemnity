@@ -18,6 +18,27 @@
   }
 }
 
+@theme {
+  --font-roboto: 'Roboto', sans-serif;
+}
+
+@theme {
+  --animate-clock: clock 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  @keyframes clock {
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+/* ensure the utility class is always generated in embed build */
+@layer utilities {
+  .animate-clock {
+    animation: var(--animate-clock);
+  }
+}
+
 /* Минимальные стили для встраиваемого виджета */
 html, body {
   font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;

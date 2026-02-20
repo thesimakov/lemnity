@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import EditableList, { type EditableListItem } from '@/components/EditableList'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
-import { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
+import useWidgetSettingsStore, { useWidgetStaticDefaults } from '@/stores/widgetSettingsStore'
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 import { useFABMenuSettings } from './hooks'
 import type { FABMenuSectorItem, FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
@@ -10,6 +10,8 @@ import FABMenuButtonPicker from './FABMenuButtonPicker'
 import { createPlaceholderFABMenuSector } from './defaults'
 import { type FABMenuButtonDefinition } from './buttonLibrary'
 import DisableBranding from '@/layouts/WidgetSettings/FieldsSettingsTab/DisableBranding/DisableBranding'
+import { useShallow } from 'zustand/react/shallow'
+import type { WidgetSettings } from '@/stores/widgetSettings/types'
 
 const FABMenuField = () => {
   const defaults = useWidgetStaticDefaults()
@@ -20,6 +22,17 @@ const FABMenuField = () => {
     addFABMenuSector,
     deleteFABMenuSector
   } = useFABMenuSettings()
+
+  const { brandingEnabled } = useWidgetSettingsStore(
+    useShallow(s => {
+      return {
+        widgetType: s?.settings?.widgetType,
+        brandingEnabled: (s.settings as WidgetSettings).display.brandingEnabled,
+      }
+    })
+  )
+
+  const { setBrandingEnabled } = useWidgetSettingsStore()
 
   const [pendingSectorId, setPendingSectorId] = useState<string | null>(null)
 
@@ -129,7 +142,10 @@ const FABMenuField = () => {
         </span>
       </BorderedContainer>
 
-      <DisableBranding />
+      <DisableBranding
+        enabled={brandingEnabled}
+        onBrandingEnabledToggle={setBrandingEnabled}
+      />
     </div>
   )
 }

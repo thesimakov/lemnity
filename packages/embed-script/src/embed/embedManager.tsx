@@ -6,12 +6,14 @@ import { getWidgetDefinition } from '@/layouts/Widgets/registry'
 import { FABMenuEmbedRuntime } from '@/layouts/Widgets/FABMenu/embedRuntime'
 import { WheelEmbedRuntime } from '@/layouts/Widgets/WheelOfFortune/embedRuntime'
 import { ActionTimerEmbedRuntime } from '@/layouts/Widgets/CountDown/embedRuntime'
+import { CountdownAnnouncementEmbedRuntime } from '@/layouts/Widgets/Announcement/embedRuntime'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type { InitOptions } from './types'
 import { ensureContainer, ensureElement, fetchPublicWidget } from './utils'
 import { HeroUIProvider } from '@heroui/system'
 import { ModalPortalProvider } from '@/components/Modal/Modal'
 import { UNSAFE_PortalProvider } from '@react-aria/overlays'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const EmbedRuntime = ({ widgetType }: { widgetType: WidgetTypeEnum }) => {
   switch (widgetType) {
@@ -21,6 +23,8 @@ const EmbedRuntime = ({ widgetType }: { widgetType: WidgetTypeEnum }) => {
       return <WheelEmbedRuntime />
     case WidgetTypeEnum.ACTION_TIMER:
       return <ActionTimerEmbedRuntime />
+    case WidgetTypeEnum.ANNOUNCEMENT:
+      return <CountdownAnnouncementEmbedRuntime />
     default:
       return <EmbeddedWidget widgetType={widgetType} />
   }
@@ -47,6 +51,7 @@ class EmbedManager {
   private lastClipPath: string | null = null
   private hasVisualViewportListeners = false
   private resizeRaf = 0
+  private queryClient = new QueryClient()
   
   private getViewportMetrics() {
     const vv = window.visualViewport
@@ -455,7 +460,9 @@ class EmbedManager {
           <UNSAFE_PortalProvider getContainer={() => modalPortalRoot}>
             <ModalPortalProvider value={modalPortalRoot}>
               <HeroUIProvider>
-                <EmbedRuntime widgetType={widgetType} />
+                <QueryClientProvider client={this.queryClient}>
+                  <EmbedRuntime widgetType={widgetType} />
+                </QueryClientProvider>
               </HeroUIProvider>
             </ModalPortalProvider>
           </UNSAFE_PortalProvider>

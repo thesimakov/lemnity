@@ -1,9 +1,9 @@
+import { useEffect, useState } from 'react'
+import { useMask } from '@react-input/mask'
 import { cn } from '@heroui/theme'
 import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { Input } from '@heroui/input'
-import { useState } from 'react'
 import { Button } from '@heroui/button'
-import { useMask } from '@react-input/mask'
 import useDebouncedCallback from '@/hooks/useDebouncedCallback'
 
 type ColorCircleProps = {
@@ -53,6 +53,10 @@ type ColorPickerItem = {
 type ColorPickerProps = {
   initialColor: string
   triggerText?: string
+  disabled?: boolean
+  classNames?: {
+    triggerButton?: string
+  }
   onColorChange: (color: string) => void
 }
 
@@ -80,9 +84,16 @@ const defaultColors: ColorPickerItem[] = [
   { color: '#DDD3F4' }
 ]
 
-const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerProps) => {
-  const [selectedColor, setSelectedColor] = useState(() => initialColor)
-  const [inputValue, setInputValue] = useState(() => initialColor)
+const ColorPicker = (props: ColorPickerProps) => {
+  const [selectedColor, setSelectedColor] = useState(() => props.initialColor)
+  const [inputValue, setInputValue] = useState(() => props.initialColor)
+
+  // for now - a crutch
+  // the color was supposed to be *inital* for the fabmenu
+  // i do not remember why
+  useEffect(() => {
+    setSelectedColor(props.initialColor)
+  }, [props.initialColor])
 
   const inputRef = useMask({
     mask: '#______',
@@ -100,10 +111,10 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
   const handleColorChange = (color: string) => {
     setSelectedColor(color)
     setInputValue(color)
-    onColorChange(color)
+    props.onColorChange(color)
   }
 
-  const debouncedOnColorChange = useDebouncedCallback(onColorChange, 300)
+  const debouncedOnColorChange = useDebouncedCallback(props.onColorChange, 300)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase()
@@ -116,8 +127,13 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
     <Popover
       placement="bottom-start"
       classNames={{
-        base: cn('bg-white rounded-[10px]', 'shadow-[0px_8px_15px_6px_rgba(0,0,0,0.15)]'),
-        content: cn('w-149.5 h-30.5 flex-row flex-wrap gap-0.75 p-4 justify-start')
+        base: cn(
+          'bg-white rounded-[10px]',
+          'shadow-[0px_8px_15px_6px_rgba(0,0,0,0.15)]',
+        ),
+        content: cn(
+          'w-149.5 h-30.5 flex-row flex-wrap gap-0.75 p-4 justify-start',
+        )
       }}
     >
       <PopoverTrigger>
@@ -126,10 +142,17 @@ const ColorPicker = ({ initialColor, triggerText, onColorChange }: ColorPickerPr
             'rounded-[5px] h-12.75 bg-white',
             'border border-[#E4E4E7] p-3.75',
             'flex items-center justify-center gap-1.25',
-            triggerText ? 'min-w-45 flex-1' : 'w-18 shrink-0'
+            props.triggerText
+              ? cn('min-w-45 flex-1', props.classNames?.triggerButton)
+              : 'w-18 shrink-0',
           )}
+          isDisabled={props.disabled}
         >
-          {triggerText && <span className="text-base text-[#797979]">{triggerText}</span>}
+          {props.triggerText && (
+            <span className="text-base text-[#797979]">
+              {props.triggerText}
+            </span>
+          )}
           <TriggerColorCircle fill={selectedColor} />
           <svg
             aria-hidden="true"

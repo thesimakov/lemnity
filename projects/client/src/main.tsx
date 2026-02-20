@@ -1,25 +1,27 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { StrictMode, useEffect } from 'react'
 import { BrowserRouter } from 'react-router-dom'
-import './index.css'
-import App from './App.tsx'
-import { HeroUIProvider } from '@heroui/system'
-import useAuthStore from '@stores/authStore.ts'
-import { useEffect } from 'react'
-import { useProjectsStore } from '@/stores/projectsStore'
-import YandexMetrika from './common/utils/yandexMetrika.ts'
+import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { HeroUIProvider } from '@heroui/system'
+
+import useAuthStore, { type AuthState } from '@stores/authStore.ts'
+import YandexMetrika from './common/utils/yandexMetrika.ts'
+import { useProjectsStore } from '@/stores/projectsStore'
+
+import App from './App.tsx'
+import './index.css'
+
+const selectBootstrap = (s: AuthState) => s.bootstrap
+const queryClient = new QueryClient()
 
 export const Root = () => {
-  const bootstrap = useAuthStore(s => s.bootstrap)
+  const bootstrap = useAuthStore(selectBootstrap)
   const sessionStatus = useAuthStore(s => s.sessionStatus)
   const ensureProjectsLoaded = useProjectsStore(s => s.ensureLoaded)
-  const queryClient = new QueryClient()
 
   useEffect(() => {
     bootstrap().catch(() => undefined)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [bootstrap])
 
   useEffect(() => {
     if (sessionStatus === 'authenticated') {
@@ -30,7 +32,14 @@ export const Root = () => {
   return (
     <StrictMode>
       <HeroUIProvider>
-        <BrowserRouter>
+        <BrowserRouter
+          // done to silence the warning about the opt-in features
+          // might need to remove once v7 releases
+          future={{
+            v7_startTransition: false,
+            v7_relativeSplatPath: false,
+          }}
+        >
           <YandexMetrika />
           <QueryClientProvider client={queryClient}>
             <App />

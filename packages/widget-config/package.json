@@ -21,6 +21,10 @@
       "types": "./dist/migrations.d.ts",
       "default": "./dist/migrations.js"
     },
+    "./widgets/base": {
+      "types": "./dist/widgets/base.d.ts",
+      "default": "./dist/widgets/base.js"
+    },
     "./widgets/wheel-of-fortune": {
       "types": "./dist/widgets/WheelOfFortune/schema.d.ts",
       "default": "./dist/widgets/WheelOfFortune/schema.js"
@@ -32,6 +36,10 @@
     "./widgets/fab-menu": {
       "types": "./dist/widgets/FABMenu/schema.d.ts",
       "default": "./dist/widgets/FABMenu/schema.js"
+    },
+    "./widgets/announcement": {
+      "types": "./dist/widgets/Announcement/schema.d.ts",
+      "default": "./dist/widgets/Announcement/schema.js"
     }
   },
   "dependencies": {

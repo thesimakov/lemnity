@@ -1,4 +1,5 @@
 import { Checkbox } from '@heroui/checkbox'
+import { cn } from '@heroui/theme'
 
 export type CheckboxFieldProps = {
   label: string
@@ -10,42 +11,49 @@ export type CheckboxFieldProps = {
   showRequired?: boolean
 }
 
-const CheckboxField = ({
-  label,
-  checked,
-  onChange,
-  required = false,
-  onRequiredChange,
-  disabled = false,
-  showRequired = true
-}: CheckboxFieldProps) => {
+const CheckboxField = (props: CheckboxFieldProps) => {
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-lg">
+    <div
+      className={cn(
+        'flex flex-col flex-wrap items-center justify-between gap-2.5',
+        'min-[438px]:flex-row px-4 py-3',
+        'bg-white border border-[#E8E8E8] rounded-[5px] @container',
+      )}
+    >
       <Checkbox
-        isSelected={checked}
-        onValueChange={onChange}
-        isDisabled={disabled}
+        isSelected={props.checked}
+        onValueChange={props.onChange}
+        isDisabled={props.disabled}
         classNames={{
-          wrapper:
-            'before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
-          base: 'max-w-full',
-          label: 'text-gray-700 text-base'
+          wrapper: cn(
+            'before:border-[#373737] rounded-[4px] before:rounded-[4px]',
+            'after:rounded-[4px] after:bg-[#373737]',
+          ),
+          base: 'max-w-full min-w-40',
+          label: 'text-[#797979] text-base',
         }}
       >
-        {label}
+        {props.label}
       </Checkbox>
-      {showRequired && (
+      {props.showRequired && (
         <>
-          <div className="h-5 w-px bg-gray-900 mx-2 ml-auto" />
+          <div
+            className={cn(
+              'h-5 w-px bg-gray-900 mx-2 ml-auto',
+              'hidden @min-[440px]:block',
+            )}
+          />
           <Checkbox
-            isSelected={required}
-            onValueChange={onRequiredChange}
-            isDisabled={disabled || !checked}
+            isSelected={props.required}
+            onValueChange={props.onRequiredChange}
+            isDisabled={props.disabled || !props.checked}
             classNames={{
-              wrapper:
-                'before:border-[#373737] rounded-[4px] before:rounded-[4px] after:rounded-[4px] after:bg-[#373737]',
+              wrapper: cn(
+                'before:border-[#373737] rounded-[4px] before:rounded-[4px]',
+                'after:rounded-[4px] after:bg-[#373737]',
+              ),
               base: 'max-w-full',
-              label: 'text-gray-500 text-sm'
+              label: 'text-[#797979] text-base',
             }}
           >
             Обязательно для заполнения
