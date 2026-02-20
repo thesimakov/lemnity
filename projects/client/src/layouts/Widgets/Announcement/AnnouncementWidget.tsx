@@ -245,7 +245,7 @@ const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
   return (
     <div
       className={cn(
-        'w-99.5 h-129.5 p-3.75 pb-0 border border-black relative',
+        'w-99.5 h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
         'flex flex-col items-center text-center transition-colors duration-150',
         hidden && 'hidden',
       )}
