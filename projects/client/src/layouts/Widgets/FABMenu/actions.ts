@@ -2,7 +2,9 @@ import type { IconName } from '@/components/IconPicker'
 import type { FABMenuSectorItem, FABMenuWidgetSettings } from '@/layouts/Widgets/FABMenu/types'
 import type { TypedWidgetUpdater } from '@/stores/widgetSettings/widgetActions/types'
 
-export const createFABMenuActions = (updateWidget: TypedWidgetUpdater<FABMenuWidgetSettings>) => ({
+export const createFABMenuActions = (
+  updateWidget: TypedWidgetUpdater<FABMenuWidgetSettings>
+) => ({
   setFABMenuSectors: (items: FABMenuSectorItem[]) =>
     updateWidget(widget => ({
       ...widget,

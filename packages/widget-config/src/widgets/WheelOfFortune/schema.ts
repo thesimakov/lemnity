@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import {
-  ColorScheme,
+  ColorSchemeEnum,
   type WidgetTypeId,
   buildWidgetSettingsSchema
 } from '../base.js'
@@ -75,7 +75,7 @@ const WheelWidgetSchema = z
           descriptionSize: z.number().nonnegative(),
           colorScheme: z.object({
             enabled: z.boolean(),
-            scheme: ColorScheme,
+            scheme: ColorSchemeEnum,
             discount: z.object({ color: z.string(), bgColor: z.string() }),
             promo: z.object({ color: z.string(), bgColor: z.string() })
           })

@@ -17,7 +17,6 @@ import RewardContent from '../Common/RewardContent/RewardContent'
 import { useFieldsSettings } from '@/stores/widgetSettings/fieldsHooks'
 import CloseButton from '../Common/CloseButton/CloseButton'
 import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const useVisualViewportOverlayStyle = (enabled: boolean): CSSProperties => {
   const [style, setStyle] = useState<CSSProperties>({})
@@ -183,7 +182,6 @@ export const ActionTimerModalContent = ({
 }
 
 export const ActionTimerEmbedRuntime = () => {
-  const queryClient = new QueryClient()
   const staticDefaults = useWidgetStaticDefaults()
   const staticIcon = staticDefaults?.display?.icon
   const defaultIcon: NonNullable<DisplaySettings['icon']> = {
@@ -322,7 +320,7 @@ export const ActionTimerEmbedRuntime = () => {
   const overlayStyle = useVisualViewportOverlayStyle(Boolean(open && isMobile))
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <div style={anchorStyle}>{Trigger}</div>
       {isMobile ? (
         open ? (
@@ -358,6 +356,6 @@ export const ActionTimerEmbedRuntime = () => {
           />
         </Modal>
       )}
-    </QueryClientProvider>
+    </>
   )
 }

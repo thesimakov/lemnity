@@ -8,7 +8,8 @@ export const WidgetTypes = {
   POSTCARD: WidgetTypeEnum.POSTCARD,
   CHEST_WITH_ACTION: WidgetTypeEnum.CHEST_WITH_ACTION,
   ADVENT_CALENDAR: WidgetTypeEnum.ADVENT_CALENDAR,
-  TEASER: WidgetTypeEnum.TEASER
+  TEASER: WidgetTypeEnum.TEASER,
+  ANNOUNCEMENT: WidgetTypeEnum.ANNOUNCEMENT
 } as const
 
 export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
@@ -39,6 +40,13 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
   {
     type: WidgetTypes.FAB_MENU,
     title: 'Мультикнопка',
+    description: 'Лиды, вовлечение, вознаграждение',
+    isAvailable: true,
+    badge: 'new'
+  },
+  {
+    type: WidgetTypes.ANNOUNCEMENT,
+    title: 'Анонс',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'

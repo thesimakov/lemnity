@@ -15,6 +15,8 @@ export type FrequencyMode = 'everyPage' | 'periodically'
 export type FrequencyUnit = 'sec' | 'min'
 export type ContactField = 'phone' | 'email' | 'name'
 export type MessageKey = 'onWin' | 'limitShows' | 'limitWins' | 'allPrizesGiven'
+// z.infer was nowhere to be seen on the radar so all the types are redefined
+// endlessly. will need to comb through it all
 export type ColorScheme = 'primary' | 'custom'
 export type ContentPosition = 'left' | 'right'
 export type WindowFormat = 'sidePanel' | 'modalWindow'

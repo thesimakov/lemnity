@@ -1,24 +1,18 @@
-import SwitchableField from '@/components/SwitchableField'
-import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { cn } from '@heroui/theme'
+import SwitchableField from '@/components/SwitchableField'
 
-const DisableBranding = () => {
-  const { settings, setBrandingEnabled } = useWidgetSettingsStore()
+type DisableBrandingProps = {
+  enabled: boolean
+  onBrandingEnabledToggle: (enabled: boolean) => void
+}
 
-  if (!settings) {
-    return
-  }
-
-  const handeToggle = () => {
-    setBrandingEnabled(!settings.display.brandingEnabled)
-  }
-
+const DisableBranding = (props: DisableBrandingProps) => {
   return (
     <SwitchableField
       title="Брендинг"
       switchLabel="Функция доступна для бизнес тарифа. Оплатить"
-      enabled={settings.display.brandingEnabled}
-      onToggle={handeToggle}
+      enabled={props.enabled}
+      onToggle={props.onBrandingEnabledToggle}
     >
       <div
         className={cn(
@@ -26,7 +20,9 @@ const DisableBranding = () => {
           'flex flex-row items-center text-left h-7.5'
         )}
       >
-        <span className="text-[#AAAAAA] text-[16px] leading-4.75">Сделано на Lemnity</span>
+        <span className="text-[#AAAAAA] text-[16px] leading-4.75">
+          Сделано на Lemnity
+        </span>
       </div>
     </SwitchableField>
   )

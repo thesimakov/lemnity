@@ -179,7 +179,7 @@ const NavigationSidebar = () => {
             <ListboxItem
               key={item.key}
               startContent={item.icon}
-              href={item.href || ''}
+              href={item.href || '/'}
               classNames={{
                 title: 'text-base',
                 base: cn(

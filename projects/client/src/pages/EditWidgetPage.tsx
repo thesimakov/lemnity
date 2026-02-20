@@ -19,7 +19,7 @@ import PreviewModal from '@/layouts/Widgets/Common/PreviewModal'
 import usePreviewRuntimeStore from '@/stores/previewRuntimeStore'
 import { usesStandardSurface } from '@/stores/widgetSettings/widgetDefinitions'
 import { getWidgetDefinition } from '@/layouts/Widgets/registry'
-import { WidgetTypeEnum } from '@lemnity/api-sdk'
+import { WidgetTypeEnum, type Widget } from '@lemnity/api-sdk'
 import { simulateWheelSpinResultFromSectors } from '@/layouts/Widgets/WheelOfFortune/actionHandlers'
 import type { WheelOfFortuneWidgetSettings } from '@/stores/widgetSettings/types'
 
@@ -135,7 +135,6 @@ const EditWidgetPage = () => {
     const res = useWidgetSettingsStore.getState().prepareForSave()
 
     if (!res.ok) {
-      console.warn(res.issues)
       alert('Исправьте ошибки перед сохранением')
       return
     }
@@ -150,27 +149,51 @@ const EditWidgetPage = () => {
       return
     }
 
+    if (!projectId) {
+      alert('Нет projectId')
+      return
+    }
+
+    let updated: Widget | undefined = undefined
     try {
-      if (!projectId) {
-        alert('Нет projectId')
-        return
-      }
       setSaving(true)
-      const updated = await useProjectsStore
+      updated = await useProjectsStore
         .getState()
         .saveWidgetConfig(projectId, widgetId, res.data)
-      // Re-init settings with server config
-      const base = useWidgetSettingsStore.getState().settings ?? buildDefaults(widgetId, widgetType)
-      const next = updated.config ? ({ ...base, ...updated.config } as typeof base) : undefined
-      useWidgetSettingsStore.getState().init(widgetId, widgetType, projectId, next)
-      alert('Сохранено')
-      useWidgetSettingsStore.getState().setValidationVisible(false)
     } catch (e) {
       console.error(e)
       alert('Ошибка сохранения')
-    } finally {
-      setSaving(false)
     }
+
+    if (!updated) {
+      alert('Ошибка сохранения')
+      setSaving(false)
+      return
+    }
+
+    // Re-init settings with server config
+    // 
+    // i do not know why he implemented it this way and honestly i have no
+    // desire to
+    // would be great to obliterate it altogether since it is very much
+    // redundant
+    const base =
+      useWidgetSettingsStore.getState().settings
+      ?? buildDefaults(widgetId, widgetType)
+    const next = updated.config
+      ? ({ ...base, ...updated.config } as typeof base)
+      : undefined
+
+    useWidgetSettingsStore
+      .getState()
+      .init(widgetId, widgetType, projectId, next)
+
+    alert('Сохранено')
+    useWidgetSettingsStore
+      .getState()
+      .setValidationVisible(false)
+
+    setSaving(false)
   }
 
   const handleSubmit = useCallback(() => {
@@ -304,7 +327,7 @@ const EditWidgetPage = () => {
             {/* <span className="text-[22px] leading-[26px] font-rubik">Настройка виджета</span> */}
             <div
               ref={scrollRef}
-              className="flex flex-col px-[15px] py-2.5 gap-2.5 flex-1 min-h-0 overflow-auto rounded-md"
+              className="flex flex-col py-2.5 gap-2.5 flex-1 min-h-0 overflow-auto rounded-md"
             >
               <div ref={topRef} aria-hidden="true" className="sentinelTop"></div>
               {tab === 'fields' && <FieldsSettingsTab />}

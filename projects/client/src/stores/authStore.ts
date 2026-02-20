@@ -6,7 +6,7 @@ import useUserStore from './userStore'
 
 type SessionStatus = 'unknown' | 'authenticated' | 'guest'
 
-interface AuthState {
+export interface AuthState {
   accessToken: string | null
   sessionStatus: SessionStatus
   setSession: (token: string) => void

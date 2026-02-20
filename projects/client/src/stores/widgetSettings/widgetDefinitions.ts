@@ -22,6 +22,12 @@ import {
   buildFABMenuDisplaySettings,
   buildFABMenuIntegrationSettings
 } from '@/layouts/Widgets/FABMenu/defaults'
+import {
+  buildAnnouncementWidgetSettings,
+  buildAnnouncementFieldsSettings,
+  buildAnnouncementDisplaySettings,
+  buildAnnouncementIntegrationSettings
+} from '@/layouts/Widgets/Announcement/defaults'
 import { resolveWidgetDefinition } from './resolveWidgetDefinition'
 
 type SettingsSurfaceMode = 'standard' | 'custom'
@@ -79,6 +85,17 @@ const implementedWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinit
     buildFieldsSettings: buildFABMenuFieldsSettings,
     buildDisplaySettings: buildFABMenuDisplaySettings,
     buildIntegrationSettings: buildFABMenuIntegrationSettings,
+    settingsSurfaces: {
+      fields: 'custom',
+      display: 'custom'
+    }
+  },
+  [WidgetTypeEnum.ANNOUNCEMENT]: {
+    type: WidgetTypeEnum.ANNOUNCEMENT,
+    buildWidgetSettings: buildAnnouncementWidgetSettings,
+    buildFieldsSettings: buildAnnouncementFieldsSettings,
+    buildDisplaySettings: buildAnnouncementDisplaySettings,
+    buildIntegrationSettings: buildAnnouncementIntegrationSettings,
     settingsSurfaces: {
       fields: 'custom',
       display: 'custom'
