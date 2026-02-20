@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import { Button } from '@heroui/button'
 import { Checkbox } from '@heroui/checkbox'
 import { Input } from '@heroui/input'
@@ -13,45 +14,26 @@ import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
-import type { Icon } from '@lemnity/widget-config/widgets/base'
 
-type FormScreenButtonProps = {
-  buttonStyle: CSSProperties
-  icon: Icon
-  buttonText: string
-  onFormScreenButtonPress?: () => void
+type CountdownForm = {
+  name: string
+  phone: string
+  email: string
+  agreementCheckbox: boolean
+  adsInfoCheckbox: boolean
 }
 
-const FormScreenButton = (props: FormScreenButtonProps) => {
-  const IconComponent = Icons[props.icon]
+// This one came straight from the developer of Zod so it should be fine
+// https://colinhacks.com/essays/reasonable-email-regex
+const emailRegexp = /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_'+\-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i
 
-  return (
-    <Button
-      className={cn(
-        'w-full h-10 rounded-[5px] bg-[#FFB400] text-[16px] leading-4.75',
-        'gap-2.25 transition-colors duration-250',
-      )}
-      style={props.buttonStyle}
-      onPress={props.onFormScreenButtonPress}
-    >
-      {/* Получить скидку */}
-      {props.icon !== 'HeartDislike' && (
-        <div className='w-3.75 h-3.75'>
-          <IconComponent />
-        </div>
-      )}
-      {props.buttonText}
-    </Button>
-  )
-}
-
-type CountdownformScreenProps = {
+type CountdownFormScreenProps = {
   companyLogoEnabled: boolean
   companyLogo?: string
   onFormScreenButtonPress?: () => void
 }
 
-const CountdownFormScreen = (props: CountdownformScreenProps) => {
+const CountdownFormScreen = (props: CountdownFormScreenProps) => {
   const {
     buttonText,
     buttonFontColor,
@@ -117,6 +99,8 @@ const CountdownFormScreen = (props: CountdownformScreenProps) => {
     backgroundColor: buttonBackgroundColor,
   }
 
+  const IconComponent = Icons[icon]
+
   const inputStyles = {
     inputWrapper: 'rounded-[5px] px-2.25 border border-[#9A9A9A] bg-white',
     input: 'placeholder:text-black text-[16px] leading-4.75',
@@ -127,8 +111,33 @@ const CountdownFormScreen = (props: CountdownformScreenProps) => {
       'w-4 h-4 before:border-1 before:border-white rounded-[4px]',
       'before:rounded-[4px] after:rounded-[4px] after:bg-transparent',
     ),
-    icon: 'w-3 h-3 group-hover:text-black',
+    icon: 'w-3 h-3 text-white group-hover/checkbox:text-black',
     base: 'self-start',
+  }
+
+  const {
+    handleSubmit,
+    control,
+  } = useForm<CountdownForm>({
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      name: '',
+      phone: '',
+      email: '',
+      agreementCheckbox: agreement.enabled,
+      adsInfoCheckbox: adsInfo.enabled,
+    }
+  })
+
+  const onSubmit: SubmitHandler<CountdownForm> = data => {
+    console.log('form data', data)
+    if (rewardScreenEnabled && props.onFormScreenButtonPress) {
+      props.onFormScreenButtonPress()
+    }
+    else if (link) {
+      window.open(link, '_blank')
+    }
   }
 
   return (
@@ -141,7 +150,8 @@ const CountdownFormScreen = (props: CountdownformScreenProps) => {
         )}
       </div>
 
-      <div
+      <form
+        onSubmit={handleSubmit(onSubmit)}
         className={cn(
           'w-full flex flex-col items-center justify-center mt-3.75 gap-3.75',
         )}
@@ -171,53 +181,104 @@ const CountdownFormScreen = (props: CountdownformScreenProps) => {
         {contactAcquisitionEnabled
           ? <>
               {nameFieldEnabled &&
-                <Input
-                  placeholder="Имя и Фамилия"
-                  classNames={inputStyles}
-                  isRequired={nameFieldRequired}
+                <Controller
+                  name="name"
+                  control={control}
+                  rules={{
+                    required: nameFieldRequired && 'Имя обязательно',
+                  }}
+                  render={({ field, fieldState }) => (
+                    <Input
+                      {...field}
+                      placeholder="Имя и Фамилия"
+                      classNames={inputStyles}
+                      isRequired={nameFieldRequired}
+                      isInvalid={fieldState.invalid}
+                      errorMessage={fieldState.error?.message}
+                    />
+                  )}
                 />}
               {phoneFieldEnabled &&
-                <Input
-                  placeholder="Ваш телефон"
-                  classNames={inputStyles}
-                  isRequired={phoneFieldRequired}
+                <Controller
+                  name="phone"
+                  control={control}
+                  rules={{
+                    required: phoneFieldRequired && 'Телефон обязателен',
+                  }}
+                  render={({ field, fieldState }) => (
+                    <Input
+                      {...field}
+                      placeholder="Ваш телефон"
+                      classNames={inputStyles}
+                      isRequired={phoneFieldRequired}
+                      isInvalid={fieldState.invalid}
+                      errorMessage={fieldState.error?.message}
+                    />
+                  )}
                 />}
               {emailFieldEnabled &&
-                <Input
-                  placeholder="Ваш email"
-                  classNames={inputStyles}
-                  isRequired={emailFieldRequired}
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={{
+                    required: emailFieldRequired && 'Email обязателен',
+                    pattern: {
+                      value: emailRegexp,
+                      // I will still leave the simple regexp here in case
+                      // the proper one breaks. This cute little thing should
+                      // allow any printable character to pass =w=
+                      // value: /\S+@\S+\.\S+/,
+                      message: 'Некорректный email',
+                    }
+                  }}
+                  render={({ field, fieldState }) => (
+                    <Input
+                      {...field}
+                      placeholder="Ваш email"
+                      classNames={inputStyles}
+                      isRequired={emailFieldRequired}
+                      isInvalid={fieldState.invalid}
+                      errorMessage={fieldState.error?.message}
+                    />
+                  )}
                 />}
             </>
           : <div className="w-full h-23.75 bg-transparent" />}
 
-        {rewardScreenEnabled
-          ? <FormScreenButton
-              buttonStyle={buttonStyle}
-              buttonText={buttonText}
-              icon={icon}
-              onFormScreenButtonPress={props.onFormScreenButtonPress}
-            />
-          : <a
-              href={link ?? 'about:blank'}
-              target="_blank"
-              className='w-full'
-            >
-              <FormScreenButton
-                buttonStyle={buttonStyle}
-                buttonText={buttonText}
-                icon={icon}
-              />
-            </a>
-        }
+        <Button
+          type='submit'
+          className={cn(
+            'w-full h-10 rounded-[5px] bg-[#FFB400] text-[16px] leading-4.75',
+            'gap-2.25 transition-colors duration-250',
+          )}
+          style={buttonStyle}
+        >
+          {/* Получить скидку */}
+          {icon !== 'HeartDislike' && (
+            <div className='w-3.75 h-3.75'>
+              <IconComponent />
+            </div>
+          )}
+          {buttonText}
+        </Button>
 
         {agreement.enabled && (
-          <div className='w-full flex flex-row'>
-            <Checkbox
-              classNames={checkboxStyles}
-              isRequired
-            >
-            </Checkbox>
+          <div className='w-full flex flex-row group/checkbox'>
+            <Controller
+              name="agreementCheckbox"
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, value, ...field }, fieldState }) => (
+                <Checkbox
+                  {...field}
+                  isRequired
+                  isSelected={value}
+                  onValueChange={onChange}
+                  classNames={checkboxStyles}
+                  isInvalid={fieldState.invalid}
+                />
+              )}
+            />
             <span
               className={cn(
                 'text-[9px] leading-2.75 text-white ml-1',
@@ -254,11 +315,20 @@ const CountdownFormScreen = (props: CountdownformScreenProps) => {
         )}
 
         {adsInfo.enabled && (
-          <div className='w-full flex flex-row'>
-            <Checkbox
-              classNames={checkboxStyles}
-            >
-            </Checkbox>
+          <div className='w-full flex flex-row group/checkbox'>
+            <Controller
+              name="adsInfoCheckbox"
+              control={control}
+              render={({ field: { onChange, value, ...field }, fieldState }) => (
+                <Checkbox
+                  {...field}
+                  isSelected={value}
+                  onValueChange={onChange}
+                  classNames={checkboxStyles}
+                  isInvalid={fieldState.invalid}
+                />
+              )}
+            />
             <span
               className={cn(
                 'text-[9px] leading-2.75 text-white ml-1',
@@ -281,7 +351,7 @@ const CountdownFormScreen = (props: CountdownformScreenProps) => {
             </span>
           </div>
         )}
-      </div>
+      </form>
     </>
   )
 }
