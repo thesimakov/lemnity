@@ -95,7 +95,10 @@ export const CountdownAnnouncementEmbedRuntime = () => {
   const handleAnnouncementButtonPress = () => setAnnouncementVariant('reward')
 
   return (
-    <div className="fixed bottom-6 right-6">
+    <div
+      data-lemnity-interactive
+      className="fixed bottom-6 right-6"
+    >
       {/* TODO: should i replace this with a switch statement? */}
         <>
           <div
