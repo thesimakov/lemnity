@@ -92,14 +92,24 @@ class EmbedManager {
   }
 
   private handleMessage = (event: MessageEvent) => {
-    const scopeOk = event.data && typeof event.data === 'object' && event.data.scope === 'lemnity-embed'
+    const scopeOk =
+      event.data
+      && typeof event.data === 'object'
+      && event.data.scope === 'lemnity-embed'
+
     if (!scopeOk) return
+
+    // console.log(event)
 
     const fromIframe = event.source === this.iframe?.contentWindow
 
     if (fromIframe) {
       this.handleChildMessage(event.data)
       return
+    }
+
+    if (event.data.type === 'interactive-region') {
+      this.handleChildMessage(event.data)
     }
 
     // Forward external messages with our scope into the iframe
@@ -110,6 +120,8 @@ class EmbedManager {
 
   private handleChildMessage(data: unknown) {
     if (!data || typeof data !== 'object') return
+    console.table(data)
+
     const message = data as {
       type?: string
       rect?: { left: number; top: number; width: number; height: number; padding?: number }
@@ -344,14 +356,24 @@ class EmbedManager {
               const schedule = () => {
                 if (scheduled) return
                 scheduled = true
+
+
                 requestAnimationFrame(() => {
                   scheduled = false
                   const lock = hasModal()
                   const scope = getScopeRoot()
                   const merged = mergeRects(Array.from(scope.querySelectorAll(selectors)).map(toRect))
+
                   const rect = lock
                     ? { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight }
                     : merged ?? fallbackRect()
+                  
+                  // const isStandalone = !!document.querySelector('[data-lemnity-standalone]')
+                  
+                  // if (isStandalone) {
+                  //   return
+                  // }
+
                   post(rect, lock)
                 })
               }
@@ -359,10 +381,37 @@ class EmbedManager {
               const mo = new MutationObserver(schedule)
               mo.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class', 'open', 'aria-hidden', 'aria-modal'] })
 
-              const ro = new ResizeObserver(schedule)
+              const ro = new ResizeObserver(() => {
+                const announcement = document.querySelector('[data-lemnity-announcement]')
+                const isAnnouncement = !!announcement
+
+                if (isAnnouncement) {
+                  const focused = announcement.getAttribute('data-lemnity-focused')
+
+                  if (focused === 'true') {
+                    post({
+                      left: window.innerWidth - 398 - 24,
+                      top: window.innerHeight - 518 - 24,
+                      width: 398,
+                      height: 518,
+                    }, false)
+                  }
+                  else {
+                    post({
+                      left: window.innerWidth - 161 - 24,
+                      top: window.innerHeight - 212 - 24,
+                      width: 161,
+                      height: 212,
+                    }, false)
+                  }
+                }
+                else {
+                  schedule()
+                }
+              })
               ro.observe(document.documentElement)
 
-              window.addEventListener('resize', schedule)
+              // window.addEventListener('resize', schedule)
               window.addEventListener('scroll', schedule, true)
               if (isIOS) {
                 document.addEventListener(
@@ -389,7 +438,7 @@ class EmbedManager {
                 )
               }
               if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', schedule)
+                // window.visualViewport.addEventListener('resize', schedule)
                 window.visualViewport.addEventListener('scroll', schedule)
               }
 

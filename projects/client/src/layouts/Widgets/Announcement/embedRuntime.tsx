@@ -1,4 +1,7 @@
-import { useRef, useState, type CSSProperties } from 'react'
+import { useRef, useState,
+  useEffect,
+  type CSSProperties, 
+  useCallback} from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { cn } from '@heroui/theme'
 
@@ -97,8 +100,19 @@ export const CountdownAnnouncementEmbedRuntime = (
   const [focused, setFocused] = useState(false)
   const containerRef = useRef(null)
 
+  const ref = useRef<HTMLDivElement | null>(null)
+  // const originalWidth = useRef('')
+  // const originalHeight = useRef('')
+
   useClickOutside(containerRef, () => {
     setFocused(false)
+
+    // if (ref.current) {
+    //   originalWidth.current = ref.current.style.width
+    //   originalHeight.current = ref.current.style.height
+    //   ref.current.style.width = '170px'
+    //   ref.current.style.width = '210px'
+    // }
 
     if (!widgetId || !projectId || props.isPreview) {
       return
@@ -116,6 +130,11 @@ export const CountdownAnnouncementEmbedRuntime = (
   /** Sets the widget to "focused" state on click while minified */
   const handleFocusClick = () => {
     setFocused(true)
+
+    // if (ref.current) {
+    //   ref.current.style.width = originalWidth.current
+    //   ref.current.style.height = originalHeight.current
+    // }
 
     if (!widgetId || !projectId || focused || props.isPreview) {
       return
@@ -202,26 +221,88 @@ export const CountdownAnnouncementEmbedRuntime = (
     })
   }
 
+  const postInteractiveRegion = useCallback(() => {
+    if (focused) {
+      window.parent.postMessage({
+        scope: 'lemnity-embed',
+        type: 'interactive-region',
+        lock: false,
+        rect: {
+          // left: 1258,
+          left: window.innerWidth - 398 - 24,
+          // top: 76,
+          top: window.innerHeight - 518 - 24,
+          width: 398,
+          height: 518,
+        },
+        args: focused,
+      })
+
+      return
+    }
+
+    setTimeout(() => {
+      window.parent.postMessage({
+        scope: 'lemnity-embed',
+        type: 'interactive-region',
+        lock: false,
+        rect: {
+          left: window.innerWidth - 161 - 24,
+          // left: 1484,
+          top: window.innerHeight - 212 - 24,
+          // top: 371,
+          width: 161,
+          height: 212,
+        },
+        args: focused,
+      }, '*')
+    }, 300)
+  }, [focused])
+
+  useEffect(() => {
+    postInteractiveRegion()
+  }, [postInteractiveRegion])
+
+  // useEffect(() => {
+  //   const observer = new ResizeObserver(() => {
+  //     setTimeout(postInteractiveRegion, 300)
+  //   })
+  //   observer.observe(document.documentElement)
+
+  //   return () => {
+  //     observer.disconnect()
+  //   }
+  // }, [postInteractiveRegion])
+
   return (
     <div
+      ref={ref}
+      // data-lemnity-interactive={focused ? true : undefined}
       data-lemnity-interactive
-      className="fixed bottom-6 right-6"
+      data-lemnity-announcement
+      data-lemnity-focused={focused}
+      className="fixed bottom-6 right-6 bg-pink-300/20 pointer-events-none"
     >
       {/* TODO: should i replace this with a switch statement? */}
         <>
           <div
             ref={containerRef}
+            // data-lemnity-interactive={!focused ? true : undefined}
+            // data-lemnity-interactive
             className={cn(
               'w-fit h-fit group',
-              // 'origin-bottom-right',
+              'origin-bottom-right',
 
               !focused && 'scale-40',
-              !focused && 'translate-x-[30%] translate-y-[30%]',
+              // !focused && 'translate-x-[30%] translate-y-[30%]',
               !focused && 'hover:scale-43',
-              !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
-              !focused && '*:pointer-events-none',
+              // !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
+              // !focused && '*:pointer-events-none',
+              'pointer-events-auto',
+              // 'pointer-events-none',
 
               'transition-transform duration-300',
+              'bg-blue-300',
             )}
             // ✨ Magic ✨
             style={{ willChange: 'transform' }}
