@@ -4,7 +4,9 @@ import { cn } from '@heroui/theme'
 
 import CompanyLogo from './CompanyLogo'
 import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
+
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { getFontWeightClass } from './utils/getFontWeightClass'
 
 import type {
   AnnouncementWidgetType,
@@ -21,18 +23,22 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
   const {
     title,
     titleFontSize,
+    titleFontWeight,
     titleFontColor,
 
     description,
     descriptionFontSize,
+    descriptionFontWeight,
     descriptionFontColor,
 
     discount,
     discountFontSize,
+    discountFontWeight,
     discountFontColor,
 
     promo,
     promoFontSize,
+    promoFontWeight,
     promoFontColor,
 
     customColorSchemeEnabled,
@@ -47,18 +53,22 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
       return  {
         title: settings.title,
         titleFontSize: settings.titleFontSize,
+        titleFontWeight: settings.titleFontWeight,
         titleFontColor: settings.titleFontColor,
         
         description: settings.description,
         descriptionFontSize: settings.descriptionFontSize,
+        descriptionFontWeight: settings.descriptionFontWeight,
         descriptionFontColor: settings.descriptionFontColor,
 
         discount: settings.discount,
         discountFontSize: settings.discountFontSize,
+        discountFontWeight: settings.discountFontWeight,
         discountFontColor: settings.discountFontColor,
 
         promo: settings.promo,
         promoFontSize: settings.promoFontSize,
+        promoFontWeight: settings.promoFontWeight,
         promoFontColor: settings.promoFontColor,
 
         customColorSchemeEnabled:settings.customColorSchemeEnabled,
@@ -119,8 +129,9 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
         <span
           className={cn(
             'font-semibold text-[40px] leading-11.75 ',
-            'transition-colors duration-250',
+            'transition-all duration-250',
             props.isAnnouncement ? 'text-black' : 'text-white',
+            getFontWeightClass(titleFontWeight),
           )}
           style={titleStyle}
         >
@@ -142,7 +153,8 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
           <span
             className={cn(
               'text-[20px] leading-6 text-black ',
-              'transition-colors duration-250',
+              'transition-all duration-250',
+              getFontWeightClass(discountFontWeight),
             )}
             style={discountStyle}
           >
@@ -154,8 +166,9 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
         <span
           className={cn(
             'text-[16px] leading-4.75 text-center',
-            'transition-colors duration-250',
+            'transition-all duration-250',
             props.isAnnouncement ? 'text-black' : 'text-white',
+            getFontWeightClass(descriptionFontWeight),
           )}
           style={descriptionStyle}
         >
@@ -188,8 +201,9 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
           <span
             className={cn(
               'font-semibold text-[25px] leading-7.5',
-              'transition-colors duration-250',
+              'transition-all duration-250',
               props.isAnnouncement ? 'text-black' : 'text-white',
+              getFontWeightClass(promoFontWeight),
             )}
             style={promoStyle}
           >

@@ -12,11 +12,13 @@ const WidgetType: WidgetTypeId = 'ANNOUNCEMENT'
 const FormatEnum = z.enum(['countdown', 'announcement'])
 const ContentEnum = z.enum(['imageOnTop', 'background', 'video'])
 const ContentAlignmentEnum = z.enum(['top', 'center', 'bottom'])
+const FontWeightEnum = z.enum(['regular', 'medium', 'bold'])
 
 export type Format = z.infer<typeof FormatEnum>
 export type Content = z.infer<typeof ContentEnum>
 export type ContentAlignment = z.infer<typeof ContentAlignmentEnum>
 export type Icon = z.infer<typeof IconEnum>
+export type FontWeight = z.infer<typeof FontWeightEnum>
 
 const WidgetAppearenceSchema = z.object({
   format: FormatEnum,
@@ -41,9 +43,11 @@ const InfoSettingsSchema = z.object({
     .optional(),
 
   title: z.string(),
+  titleFontWeight: FontWeightEnum,
   titleColor: z.string(),
   description: z.string(),
   descriptionColor: z.string(),
+  descriptionFontWeight: FontWeightEnum,
 
   countdownEnabled: z.boolean(),
   countdownDate: z.string(),
@@ -61,8 +65,10 @@ export type InfoSettings = z.infer<typeof InfoSettingsSchema>
 
 const FormSettingsSchema = z.object({
   title: z.string(),
+  titleFontWeight: FontWeightEnum,
   titleFontColor: z.string(),
   description: z.string(),
+  descriptionFontWeight: FontWeightEnum,
   descriptionFontColor: z.string(),
 
   contactAcquisitionEnabled: z.boolean(),
@@ -95,24 +101,28 @@ const RewardMessageSettingsSchema = z.object({
   titleFontSize: z
     .number()
     .nonnegative(),
+  titleFontWeight: FontWeightEnum,
   titleFontColor: z.string(),
 
   description: z.string(),
   descriptionFontSize: z
     .number()
     .nonnegative(),
+  descriptionFontWeight: FontWeightEnum,
   descriptionFontColor: z.string(),
 
   discount: z.string(),
   discountFontSize: z
     .number()
     .nonnegative(),
+  discountFontWeight: FontWeightEnum,
   discountFontColor: z.string(),
 
   promo: z.string(),
   promoFontSize: z
     .number()
     .nonnegative(),
+  promoFontWeight: FontWeightEnum,
   promoFontColor: z.string(),
 
   customColorSchemeEnabled: z.boolean(),
