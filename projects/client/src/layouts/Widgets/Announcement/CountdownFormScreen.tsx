@@ -8,6 +8,7 @@ import { Input } from '@heroui/input'
 import { cn } from '@heroui/theme'
 
 import CompanyLogo from './CompanyLogo'
+import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
 import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
@@ -153,7 +154,7 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
           style={{ color: titleFontColor }}
         >
           {/* Получите скидку */}
-          {title}
+          <BrTagsOnNewlines input={title} />
         </span>
         <span
           className={cn(
@@ -164,7 +165,7 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
         >
           {/* Укажите свой email и получите купон,
           который можно использовать при покупке */}
-          {description}
+          <BrTagsOnNewlines input={description} />
         </span>
 
         {contactAcquisitionEnabled

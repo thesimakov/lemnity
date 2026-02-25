@@ -99,12 +99,12 @@ const AnnouncementPreview = () => {
   }
 
   const previewWidgetCardStyle = cn(
-    'w-fit h-52.5 scale-40 origin-top-left ml-32.5',
+    'w-fit h-57 scale-40 origin-top-left ml-32.5',
     'pointer-events-none',
   )
 
   return (
-    // don't look at vertical margins =w=
+    // don't look at the vertical margins =w=
     // i was fed the fuck up with how much gaps were bitching at me
     <div className="w-full h-full flex flex-col overflow-hidden select-none">
       {format === 'announcement' && (

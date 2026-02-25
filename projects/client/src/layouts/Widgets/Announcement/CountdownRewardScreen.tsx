@@ -1,13 +1,14 @@
+import type { CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { cn } from '@heroui/theme'
 
 import CompanyLogo from './CompanyLogo'
+import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
-import type { CSSProperties } from 'react'
 import { announcementWidgetDefaults } from './defaults'
 
 type CountdownRewardScreenProps = {
@@ -124,7 +125,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
           style={titleStyle}
         >
           {/* Ваша скидка: */}
-          {title}
+          <BrTagsOnNewlines input={title} />
         </span>
 
         <div
@@ -159,7 +160,7 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
           style={descriptionStyle}
         >
           {/* Не забудьте использовать промокод во время оформления заказа! */}
-          {description}
+          <BrTagsOnNewlines input={description} />
         </span>
 
         <div
