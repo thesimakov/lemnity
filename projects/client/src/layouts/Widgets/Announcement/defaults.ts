@@ -26,8 +26,10 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
     contentUrl: undefined,
 
     title: 'Укажите заголовок',
+    titleFontWeight: 'medium',
     titleColor: '#000000',
     description: 'Напишите описание к действию или какое нибудь предложение',
+    descriptionFontWeight: 'regular',
     descriptionColor: '#000000',
 
     countdownDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -43,8 +45,10 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
   },
   formSettings: {
     title: 'Получите скидку',
+    titleFontWeight: 'medium',
     titleFontColor: '#000000',
     description: 'Укажите свой email и получите купон, который можно использовать при покупке',
+    descriptionFontWeight: 'regular',
     descriptionFontColor: '#000000',
 
     contactAcquisitionEnabled: true,
@@ -73,19 +77,23 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
 
     title: 'Ваша скидка:',
     titleFontSize: 40,
+    titleFontWeight: 'medium',
     titleFontColor: '#000000',
 
     description:
       'Не забудьте использовать промокод во время оформления заказа!',
     descriptionFontSize: 16,
+    descriptionFontWeight: 'regular',
     descriptionFontColor: '#000000',
 
     discount: 'Скидка 10%',
     discountFontSize: 20,
+    discountFontWeight: 'regular',
     discountFontColor: '#000000',
 
     promo: 'PROMO-10P',
     promoFontSize: 25,
+    promoFontWeight: 'bold',
     promoFontColor: '#FFFFFF',
 
     customColorSchemeEnabled: false,

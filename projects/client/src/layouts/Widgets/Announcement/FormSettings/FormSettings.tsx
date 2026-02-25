@@ -59,11 +59,17 @@ const FormSettings = () => {
   const setFormScreenTitle = useWidgetSettingsStore(
     s => s.setAnnouncementFormScreenTitle
   )
+  const setFormScreenTitleFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementFormScreenTitleFontWeight
+  )
   const setFormScreenTitleFontColor = useWidgetSettingsStore(
     s => s.setAnnouncementFormScreenTitleFontColor
   )
   const setFormScreenDescription = useWidgetSettingsStore(
     s => s.setAnnouncementFormScreenDescription
+  )
+  const setFormScreenDescriptionFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementFormScreenDescriptionFontWeight
   )
   const setFormScreenDescriptionFontColor = useWidgetSettingsStore(
     s => s.setAnnouncementFormScreenDescriptionFontColor
@@ -129,6 +135,7 @@ const FormSettings = () => {
               ?? announcementWidgetDefaults.formSettings!.title
             }
             onTextChange={setFormScreenTitle}
+            onFontWeightChange={setFormScreenTitleFontWeight}
             textColor={
               titleFontColor
               ?? announcementWidgetDefaults.formSettings!.titleFontColor
@@ -148,6 +155,7 @@ const FormSettings = () => {
               ?? announcementWidgetDefaults.formSettings!.description
             }
             onTextChange={setFormScreenDescription}
+            onFontWeightChange={setFormScreenDescriptionFontWeight}
             textColor={
               descriptionFontColor
               ?? announcementWidgetDefaults.formSettings!.descriptionFontColor

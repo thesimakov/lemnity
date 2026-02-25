@@ -5,11 +5,13 @@ import { cn } from '@heroui/theme'
 
 import CountdownRewardScreen from './CountdownRewardScreen'
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
+import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
 import SvgIcon from '@/components/SvgIcon'
 import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import useUrlImageOrDefault from './utils/useUrlImage'
+import { getFontWeightClass } from './utils/getFontWeightClass'
 
 import type {
   AnnouncementWidgetType,
@@ -36,7 +38,7 @@ const AnnouncementWidgetButton = (props: AnnouncementWidgetButtonProps) => {
     <Button
       className={cn(
         'w-full h-13.5 rounded-[13px] bg-[#FFB400]',
-        'text-black text-[20px] transition-colors duration-150'
+        'text-black text-[20px] transition-colors duration-250',
       )}
       style={props.buttonStyle}
       onPress={props.onButtonPress}
@@ -65,7 +67,9 @@ const AnnouncementWidgetContent = (
   const {
     title,
     titleColor,
+    titleFontWeight,
     description,
+    descriptionFontWeight,
     descriptionColor,
 
     buttonText,
@@ -84,8 +88,10 @@ const AnnouncementWidgetContent = (
 
       return  {
         title: infoSettings.title,
+        titleFontWeight: infoSettings.titleFontWeight,
         titleColor: infoSettings.titleColor,
         description: infoSettings.description,
+        descriptionFontWeight: infoSettings.descriptionFontWeight,
         descriptionColor: infoSettings.descriptionColor,
 
         buttonText: infoSettings.buttonText,
@@ -128,18 +134,24 @@ const AnnouncementWidgetContent = (
         : <div className='w-full h-67 bg-transparent' />}
 
       <span
-        className='text-3xl transition-colors duration-150'
+        className={cn(
+          'text-3xl transition-all duration-250',
+          getFontWeightClass(titleFontWeight),
+        )}
         style={{ color: titleColor }}
       >
         {/* Премьера «Я буду ЖИТЬ» */}
-        {title}
+        <BrTagsOnNewlines input={title} />
       </span>
       <span
-        className='text-[16px] transition-colors duration-150'
+        className={cn(
+          'text-[16px] transition-all duration-250',
+          getFontWeightClass(descriptionFontWeight),
+        )}
         style={{ color: descriptionColor }}
       >
         {/* по пьесе Н. Пинчука «На выписку», драматичекий ритуал в 1 дейстии, 16+ */}
-        {description}
+        <BrTagsOnNewlines input={description} />
       </span>
 
       <div className='w-full mt-auto mb-0'>
@@ -245,8 +257,8 @@ const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
   return (
     <div
       className={cn(
-        'w-99.5 h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
-        'flex flex-col items-center text-center transition-colors duration-150',
+        'w-99.5 min-h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
+        'flex flex-col items-center text-center transition-colors duration-250',
         hidden && 'hidden',
       )}
       style={containerStyle}

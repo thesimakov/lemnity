@@ -12,6 +12,7 @@ import type { IconName } from '@/components/IconPicker'
 import type {
   Content,
   ContentAlignment,
+  FontWeight,
   Format,
 } from '@lemnity/widget-config/widgets/announcement'
 import type { Icon } from '@lemnity/widget-config/widgets/base'
@@ -91,8 +92,14 @@ export type WidgetActions = {
   setAnnouncementInfoScreenTitleColor: (
     titleColor: string
   ) => void
+  setAnnouncementInfoScreenTitleFontWeight: (
+    weight: FontWeight
+  ) => void
   setAnnouncementInfoScreenDescription: (
     description: string
+  ) => void
+  setAnnouncementInfoScreenDescriptionFontWeight: (
+    weight: FontWeight
   ) => void
   setAnnouncementInfoScreenDescriptionColor: (
     descriptionColor: string
@@ -128,11 +135,17 @@ export type WidgetActions = {
   setAnnouncementFormScreenTitle: (
     title: string
   ) => void
+  setAnnouncementFormScreenTitleFontWeight: (
+    weight: FontWeight
+  ) => void
   setAnnouncementFormScreenTitleFontColor: (
     titleFontColor: string
   ) => void
   setAnnouncementFormScreenDescription: (
     description: string
+  ) => void
+  setAnnouncementFormScreenDescriptionFontWeight: (
+    weight: FontWeight
   ) => void
   setAnnouncementFormScreenDescriptionFontColor: (
     descriptionFontColor: string
@@ -189,6 +202,9 @@ export type WidgetActions = {
   setAnnouncementRewardScreenTitleFontSize: (
     titleFontSize: number
   ) => void
+  setAnnouncementRewardScreenTitleFontWeight: (
+    weight: FontWeight
+  ) => void
   setAnnouncementRewardScreenTitleFontColor: (
     titleFontColor: string
   ) => void
@@ -197,6 +213,9 @@ export type WidgetActions = {
   ) => void
   setAnnouncementRewardScreenDescriptionFontSize: (
     descriptionFontSize: number
+  ) => void
+  setAnnouncementRewardScreenDescriptionFontWeight: (
+    weight: FontWeight
   ) => void
   setAnnouncementRewardScreenDescriptionFontColor: (
     descriptionFontColor: string
@@ -207,6 +226,9 @@ export type WidgetActions = {
   setAnnouncementRewardScreenDiscountFontSize: (
     discountFontSize: number
   ) => void
+  setAnnouncementRewardScreenDiscountFontWeight: (
+    weight: FontWeight
+  ) => void
   setAnnouncementRewardScreenDiscountFontColor: (
     discountFontColor: string
   ) => void
@@ -215,6 +237,9 @@ export type WidgetActions = {
   ) => void
   setAnnouncementRewardScreenPromoFontSize: (
     promoFontSize: number
+  ) => void
+  setAnnouncementRewardScreenPromoFontWeight: (
+    weight: FontWeight
   ) => void
   setAnnouncementRewardScreenPromoFontColor: (
     promoFontColor: string

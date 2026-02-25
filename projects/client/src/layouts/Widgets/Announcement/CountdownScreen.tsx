@@ -6,9 +6,11 @@ import { DateTime } from 'luxon'
 
 import CompanyLogo from './CompanyLogo'
 import CountdownTimer from '@/components/CountdownTimer'
+import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
 import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { getFontWeightClass } from './utils/getFontWeightClass'
 
 import type {
   AnnouncementWidgetType,
@@ -23,8 +25,10 @@ type CountdownScreenProps = {
 const CountdownScreen = (props: CountdownScreenProps) => {
   const {
     title,
+    titleFontWeight,
     titleColor,
     description,
+    descriptionFontWeight,
     descriptionColor,
 
     countdownDate,
@@ -48,8 +52,10 @@ const CountdownScreen = (props: CountdownScreenProps) => {
 
       return {
         title: infoSettings.title,
+        titleFontWeight: infoSettings.titleFontWeight,
         titleColor: infoSettings.titleColor,
         description: infoSettings.description,
+        descriptionFontWeight: infoSettings.descriptionFontWeight,
         descriptionColor: infoSettings.descriptionColor,
         
         countdownEnabled: infoSettings.countdownEnabled,
@@ -118,22 +124,24 @@ const CountdownScreen = (props: CountdownScreenProps) => {
         <span
           className={cn(
             'text-white font-bold text-[40px] leading-12 text-center',
-            'transition-colors duration-250',
+            'transition-all duration-250',
+            getFontWeightClass(titleFontWeight),
           )}
           style={{ color: titleColor }}
         >
           {/* До Нового года осталось */}
-          {title}
+          <BrTagsOnNewlines input={title} />
         </span>
         <span
           className={cn(
             'text-white text-[16px] leading-4.75 text-center',
-            'transition-colors duration-250',
+            'transition-all duration-250',
+            getFontWeightClass(descriptionFontWeight),
           )}
           style={{ color: descriptionColor }}
         >
           {/* Вы можете разместить здесь описание */}
-          {description}
+          <BrTagsOnNewlines input={description} />
         </span>
 
         {countdownEnabled

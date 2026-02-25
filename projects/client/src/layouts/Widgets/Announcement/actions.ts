@@ -5,6 +5,7 @@ import {
   type AnnouncementWidgetType,
   type Content,
   type ContentAlignment,
+  type FontWeight,
   type Format,
 } from '@lemnity/widget-config/widgets/announcement'
 import { buildAnnouncementWidgetSettings } from './defaults'
@@ -97,6 +98,16 @@ export const createAnnouncementActions = (
         }
       }
     }),
+  setAnnouncementInfoScreenTitleFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        infoSettings: {
+          ...widget.infoSettings,
+          titleFontWeight: weight,
+        }
+      }
+    }),
   setAnnouncementInfoScreenTitleColor: (titleColor: string) =>
     updateWidget(widget => {
       return {
@@ -104,6 +115,16 @@ export const createAnnouncementActions = (
         infoSettings: {
           ...widget.infoSettings,
           titleColor,
+        }
+      }
+    }),
+  setAnnouncementInfoScreenDescriptionFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        infoSettings: {
+          ...widget.infoSettings,
+          descriptionFontWeight: weight,
         }
       }
     }),
@@ -224,46 +245,51 @@ export const createAnnouncementActions = (
   // FormSettingsSchema
   setAnnouncementFormScreenTitle: (title: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           title,
+        }
+      }
+    }),
+  setAnnouncementFormScreenTitleFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        formSettings: {
+          ...widget.formSettings,
+          titleFontWeight: weight,
         }
       }
     }),
   setAnnouncementFormScreenTitleFontColor: (titleFontColor: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           titleFontColor,
         }
       }
     }),
   setAnnouncementFormScreenDescription: (description: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           description,
+        }
+      }
+    }),
+  setAnnouncementFormScreenDescriptionFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        formSettings: {
+          ...widget.formSettings,
+          descriptionFontWeight: weight,
         }
       }
     }),
@@ -271,15 +297,10 @@ export const createAnnouncementActions = (
     descriptionFontColor: string
   ) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           descriptionFontColor,
         }
       }
@@ -288,122 +309,82 @@ export const createAnnouncementActions = (
     contactAcquisitionEnabled: boolean
   ) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           contactAcquisitionEnabled,
         }
       }
     }),
   setAnnouncementFormScreenNameFieldEnabled: (nameFieldEnabled: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           nameFieldEnabled,
         }
       }
     }),
   setAnnouncementFormScreenNameFieldRequired: (nameFieldRequired: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           nameFieldRequired,
         }
       }
     }),
   setAnnouncementFormScreenEmailFieldEnabled: (emailFieldEnabled: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           emailFieldEnabled,
         }
       }
     }),
   setAnnouncementFormScreenEmailFieldRequired: (emailFieldRequired: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           emailFieldRequired,
         }
       }
     }),
   setAnnouncementFormScreenPhoneFieldEnabled: (phoneFieldEnabled: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           phoneFieldEnabled,
         }
       }
     }),
   setAnnouncementFormScreenPhoneFieldRequired: (phoneFieldRequired: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           phoneFieldRequired,
         }
       }
     }),
   setAnnouncementFormScreenAgreementEnabled: (enabled: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           agreement: {
-            ...prevFormSettings.agreement,
+            ...widget.formSettings.agreement,
             enabled: enabled,
           }
         }
@@ -411,17 +392,12 @@ export const createAnnouncementActions = (
     }),
   setAnnouncementFormScreenAgreementPolicyUrl: (policyUrl: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           agreement: {
-            ...prevFormSettings.agreement,
+            ...widget.formSettings.agreement,
             policyUrl: policyUrl,
           }
         }
@@ -429,17 +405,12 @@ export const createAnnouncementActions = (
     }),
   setAnnouncementFormScreenAgreementUrl: (agreementUrl: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           agreement: {
-            ...prevFormSettings.agreement,
+            ...widget.formSettings.agreement,
             agreementUrl: agreementUrl,
           }
         }
@@ -447,17 +418,12 @@ export const createAnnouncementActions = (
     }),
   setAnnouncementFormScreenAgreementColor: (color: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           agreement: {
-            ...prevFormSettings.agreement,
+            ...widget.formSettings.agreement,
             color: color,
           }
         }
@@ -465,17 +431,12 @@ export const createAnnouncementActions = (
     }),
   setAnnouncementFormScreenAdsInfoEnabled: (enabled: boolean) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           adsInfo: {
-            ...prevFormSettings.adsInfo,
+            ...widget.formSettings.adsInfo,
             enabled: enabled,
           }
         }
@@ -483,17 +444,12 @@ export const createAnnouncementActions = (
     }),
   setAnnouncementFormScreenAdsInfoPolicyUrl: (policyUrl: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           adsInfo: {
-            ...prevFormSettings.adsInfo,
+            ...widget.formSettings.adsInfo,
             policyUrl: policyUrl,
           }
         }
@@ -501,17 +457,12 @@ export const createAnnouncementActions = (
     }),
   setAnnouncementFormScreenAdsInfoColor: (color: string) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           adsInfo: {
-            ...prevFormSettings.adsInfo,
+            ...widget.formSettings.adsInfo,
             color: color,
           }
         }
@@ -523,17 +474,12 @@ export const createAnnouncementActions = (
     color: string
   ) =>
     updateWidget(widget => {
-      const prevFormSettings =
-        widget.formSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().formSettings!
-
       return {
         ...widget,
         formSettings: {
-          ...prevFormSettings,
+          ...widget.formSettings,
           adsInfo: {
-            ...prevFormSettings.adsInfo,
+            ...widget.formSettings.adsInfo,
             enabled,
             policyUrl,
             color,
@@ -544,76 +490,71 @@ export const createAnnouncementActions = (
   // RewardMessageSettingsSchema
   setAnnouncementRewardScreenEnabled: (enabled: boolean) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           rewardScreenEnabled: enabled,
         }
       }
     }),
   setAnnouncementRewardScreenTitle: (title: string) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           title,
+        }
+      }
+    }),
+  setAnnouncementRewardScreenTitleFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        rewardMessageSettings: {
+          ...widget.rewardMessageSettings,
+          titleFontWeight: weight,
         }
       }
     }),
   setAnnouncementRewardScreenTitleFontSize: (titleFontSize: number) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           titleFontSize,
         }
       }
     }),
   setAnnouncementRewardScreenTitleFontColor: (titleFontColor: string) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           titleFontColor,
         }
       }
     }),
   setAnnouncementRewardScreenDescription: (description: string) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           description,
+        }
+      }
+    }),
+  setAnnouncementRewardScreenDescriptionFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        rewardMessageSettings: {
+          ...widget.rewardMessageSettings,
+          descriptionFontWeight: weight,
         }
       }
     }),
@@ -621,15 +562,10 @@ export const createAnnouncementActions = (
     descriptionFontSize: number
   ) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           descriptionFontSize,
         }
       }
@@ -638,105 +574,90 @@ export const createAnnouncementActions = (
     descriptionFontColor: string
   ) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
-      return {
+     return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           descriptionFontColor,
         }
       }
     }),
   setAnnouncementRewardScreenDiscount: (discount: string) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           discount,
+        }
+      }
+    }),
+  setAnnouncementRewardScreenDiscountFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        rewardMessageSettings: {
+          ...widget.rewardMessageSettings,
+          discountFontWeight: weight,
         }
       }
     }),
   setAnnouncementRewardScreenDiscountFontSize: (discountFontSize: number) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           discountFontSize,
         }
       }
     }),
   setAnnouncementRewardScreenDiscountFontColor: (discountFontColor: string) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           discountFontColor,
         }
       }
     }),
   setAnnouncementRewardScreenPromo: (promo: string) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           promo,
+        }
+      }
+    }),
+  setAnnouncementRewardScreenPromoFontWeight: (weight: FontWeight) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        rewardMessageSettings: {
+          ...widget.rewardMessageSettings,
+          promoFontWeight: weight,
         }
       }
     }),
   setAnnouncementRewardScreenPromoFontSize: (promoFontSize: number) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           promoFontSize,
         }
       }
     }),
   setAnnouncementRewardScreenPromoFontColor: (promoFontColor: string) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           promoFontColor,
         }
       }
@@ -745,15 +666,10 @@ export const createAnnouncementActions = (
     customColorSchemeEnabled: boolean
   ) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           customColorSchemeEnabled,
         }
       }
@@ -762,15 +678,10 @@ export const createAnnouncementActions = (
     customDiscountBackgroundColor: string
   ) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           customDiscountBackgroundColor,
         }
       }
@@ -779,15 +690,10 @@ export const createAnnouncementActions = (
     customPromoBackgroundColor: string
   ) =>
     updateWidget(widget => {
-      const prevRewardMessageSettings =
-        widget.rewardMessageSettings
-        // This function builds the defaults so every field is present
-        ?? buildAnnouncementWidgetSettings().rewardMessageSettings!
-
       return {
         ...widget,
         rewardMessageSettings: {
-          ...prevRewardMessageSettings,
+          ...widget.rewardMessageSettings,
           customPromoBackgroundColor,
         }
       }
