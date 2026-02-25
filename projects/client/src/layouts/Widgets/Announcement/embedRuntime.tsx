@@ -254,7 +254,7 @@ export const CountdownAnnouncementEmbedRuntime = (
       // a way to signal the change in widget's focused state
       // to the embedManager.tsx
       data-lemnity-focused={focused}
-      className='fixed bottom-6 right-6 bg-pink-300/20 pointer-events-none'
+      className='fixed bottom-6 right-6 pointer-events-none'
     >
       {/* TODO: should i replace this with a switch statement? */}
         <>
@@ -272,7 +272,6 @@ export const CountdownAnnouncementEmbedRuntime = (
               'pointer-events-auto cursor-pointer',
 
               'transition-transform duration-300',
-              'bg-blue-300',
             )}
             // ✨ Magic ✨
             style={{ willChange: 'transform' }}
