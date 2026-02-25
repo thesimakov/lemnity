@@ -71,8 +71,11 @@ const RewardMessageSettings = () => {
   const setRewardScreenTitle = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenTitle
   )
-  const setRewardScreentitleFontSize = useWidgetSettingsStore(
+  const setRewardScreenTitleFontSize = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenTitleFontSize
+  )
+  const setRewardScreenTitleFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementRewardScreenTitleFontWeight
   )
   const setRewardScreenTitleFontColor = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenTitleFontColor
@@ -84,6 +87,9 @@ const RewardMessageSettings = () => {
   const setRewardScreenDescriptionFontSize = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenDescriptionFontSize
   )
+  const setRewardScreenDescriptionFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementRewardScreenDescriptionFontWeight
+  )
   const setRewardScreenDescriptionFontColor = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenDescriptionFontColor
   )
@@ -94,6 +100,9 @@ const RewardMessageSettings = () => {
   const setRewardScreenDiscountFontSize = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenDiscountFontSize
   )
+  const setRewardScreenDiscountFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementRewardScreenDiscountFontWeight
+  )
   const setRewardScreenDiscountFontColor = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenDiscountFontColor
   )
@@ -103,6 +112,9 @@ const RewardMessageSettings = () => {
   )
   const setRewardScreenPromoFontSize = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenPromoFontSize
+  )
+  const setRewardScreenPromoFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementRewardScreenPromoFontWeight
   )
   const setRewardScreenPromoFontColor = useWidgetSettingsStore(
     s => s.setAnnouncementRewardScreenPromoFontColor
@@ -138,7 +150,8 @@ const RewardMessageSettings = () => {
             text={title}
             onTextChange={setRewardScreenTitle}
             fontSize={titleFontSize}
-            onFontSizeChange={setRewardScreentitleFontSize}
+            onFontSizeChange={setRewardScreenTitleFontSize}
+            onFontWeightChange={setRewardScreenTitleFontWeight}
             textColor={titleFontColor}
             onColorChange={setRewardScreenTitleFontColor}
             placeholder="Ура! Вы выиграли"
@@ -149,6 +162,7 @@ const RewardMessageSettings = () => {
             onTextChange={setRewardScreenDescription}
             fontSize={descriptionFontSize}
             onFontSizeChange={setRewardScreenDescriptionFontSize}
+            onFontWeightChange={setRewardScreenDescriptionFontWeight}
             textColor={descriptionFontColor}
             onColorChange={setRewardScreenDescriptionFontColor}
             placeholder="Поздравляем! Вы выиграли, заберите Ваш приз!"
@@ -159,6 +173,7 @@ const RewardMessageSettings = () => {
             onTextChange={setRewardScreenDiscount}
             fontSize={discountFontSize}
             onFontSizeChange={setRewardScreenDiscountFontSize}
+            onFontWeightChange={setRewardScreenDiscountFontWeight}
             textColor={discountFontColor}
             onColorChange={setRewardScreenDiscountFontColor}
             placeholder="Ваша скидка 10%"
@@ -169,6 +184,7 @@ const RewardMessageSettings = () => {
             onTextChange={setRewardScreenPromo}
             fontSize={promoFontSize}
             onFontSizeChange={setRewardScreenPromoFontSize}
+            onFontWeightChange={setRewardScreenPromoFontWeight}
             textColor={promoFontColor}
             onColorChange={setRewardScreenPromoFontColor}
             placeholder="TNF2026"

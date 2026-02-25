@@ -86,11 +86,17 @@ const InfoSettings = () => {
   const setInfoScreenTitle = useWidgetSettingsStore(
     s => s.setAnnouncementInfoScreenTitle
   )
+  const setInfoScreenTitleFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenTitleFontWeight
+  )
   const setInfoScreenTitleColor = useWidgetSettingsStore(
     s => s.setAnnouncementInfoScreenTitleColor
   )
   const setInfoScreenDescription = useWidgetSettingsStore(
     s => s.setAnnouncementInfoScreenDescription
+  )
+  const setInfoScreenDescriptionFontWeight = useWidgetSettingsStore(
+    s => s.setAnnouncementInfoScreenDescriptionFontWeight
   )
   const setInfoScreenDescriptionColor = useWidgetSettingsStore(
     s => s.setAnnouncementInfoScreenDescriptionColor
@@ -162,6 +168,7 @@ const InfoSettings = () => {
             title="Заголовок"
             placeholder="Укажите заголовок"
             onTextChange={setInfoScreenTitle}
+            onFontWeightChange={setInfoScreenTitleFontWeight}
             onColorChange={setInfoScreenTitleColor}
           />
         </div>
@@ -183,6 +190,7 @@ const InfoSettings = () => {
               "Получите супер скидку до 30 % на покупку билета в АРТ КАФЕ."
             }
             onTextChange={setInfoScreenDescription}
+            onFontWeightChange={setInfoScreenDescriptionFontWeight}
             onColorChange={setInfoScreenDescriptionColor}
           />
         </div>

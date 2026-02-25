@@ -12,6 +12,7 @@ import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
 import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { getFontWeightClass } from './utils/getFontWeightClass'
 
 import type {
   AnnouncementWidgetType,
@@ -44,8 +45,10 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
     icon,
 
     title,
+    titleFontWeight,
     titleFontColor,
     description,
+    descriptionFontWeight,
     descriptionFontColor,
 
     contactAcquisitionEnabled,
@@ -71,9 +74,11 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
         buttonBackgroundColor: infoSettings.buttonBackgroundColor,
         icon: infoSettings.icon,
 
-        title: formSettings?.title,
+        title: formSettings.title,
+        titleFontWeight: formSettings.titleFontWeight,
         titleFontColor: formSettings.titleFontColor,
         description: formSettings.description,
+        descriptionFontWeight: formSettings.descriptionFontWeight,
         descriptionFontColor: formSettings.descriptionFontColor,
 
         contactAcquisitionEnabled: formSettings.contactAcquisitionEnabled,
@@ -149,7 +154,8 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
         <span
           className={cn(
             'font-medium text-[35px] leading-10.25 text-white text-center',
-            'transition-colors duration-250',
+            'transition-all duration-250',
+            getFontWeightClass(titleFontWeight),
           )}
           style={{ color: titleFontColor }}
         >
@@ -159,7 +165,8 @@ const CountdownFormScreen = (props: CountdownFormScreenProps) => {
         <span
           className={cn(
             'text-[16px] leading-4.75 text-white text-center',
-            'transition-colors duration-250',
+            'transition-all duration-250',
+            getFontWeightClass(descriptionFontWeight),
           )}
           style={{ color: descriptionFontColor }}
         >
