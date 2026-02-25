@@ -5,7 +5,7 @@ type BrTagsOnNewlinesProps = {
 }
 
 export const BrTagsOnNewlines = (props: BrTagsOnNewlinesProps) => {
-  const lines = props.input.split('\\n')
+  const lines = props.input.split('\n')
 
   return (
     <>

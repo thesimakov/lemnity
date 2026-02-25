@@ -1,5 +1,5 @@
 import { Button } from '@heroui/button'
-import { Input } from '@heroui/input'
+import { Input, Textarea } from '@heroui/input'
 import { cn } from '@heroui/theme'
 
 import ColorPicker from '@/components/ColorPicker'
@@ -50,7 +50,7 @@ const FontSizeSettings = (props: FontSizeSettingsProps) => {
   return (
     <div
       className={cn(
-        'w-48 shrink-0 px-2.5',
+        'w-48 h-12.5 shrink-0 px-2.5',
         'flex flex-row gap-2.5 items-center',
         'border border-[#E5E5E5] rounded-[5px]',
       )}
@@ -102,15 +102,16 @@ const TextSettings = (props: MessageSettingsProps) => {
       </h3>
 
       <div className="flex flex-row flex-wrap gap-2.5">
-        <Input
+        <Textarea
           placeholder={props.placeholder || "Введите текст"}
           value={props.text}
           onValueChange={props.onTextChange}
+          minRows={1}
           classNames={{
             base: 'min-w-76 flex-1',
             inputWrapper: cn(
               'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
-              'shadow-none h-12.5 px-2.5',
+              'shadow-none min-h-12.5 px-2.5',
             ),
             input: 'placeholder:text-[#AAAAAA] text-base'
           }}
