@@ -6,6 +6,7 @@ import { DateTime } from 'luxon'
 
 import CompanyLogo from './CompanyLogo'
 import CountdownTimer from '@/components/CountdownTimer'
+import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
 import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
@@ -123,7 +124,7 @@ const CountdownScreen = (props: CountdownScreenProps) => {
           style={{ color: titleColor }}
         >
           {/* До Нового года осталось */}
-          {title}
+          <BrTagsOnNewlines input={title} />
         </span>
         <span
           className={cn(
@@ -133,7 +134,7 @@ const CountdownScreen = (props: CountdownScreenProps) => {
           style={{ color: descriptionColor }}
         >
           {/* Вы можете разместить здесь описание */}
-          {description}
+          <BrTagsOnNewlines input={description} />
         </span>
 
         {countdownEnabled

@@ -5,6 +5,7 @@ import { cn } from '@heroui/theme'
 
 import CountdownRewardScreen from './CountdownRewardScreen'
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
+import { BrTagsOnNewlines } from './utils/BrTagsOnNewlines'
 import SvgIcon from '@/components/SvgIcon'
 import * as Icons from '@/components/Icons'
 
@@ -132,14 +133,14 @@ const AnnouncementWidgetContent = (
         style={{ color: titleColor }}
       >
         {/* Премьера «Я буду ЖИТЬ» */}
-        {title}
+        <BrTagsOnNewlines input={title} />
       </span>
       <span
         className='text-[16px] transition-colors duration-150'
         style={{ color: descriptionColor }}
       >
         {/* по пьесе Н. Пинчука «На выписку», драматичекий ритуал в 1 дейстии, 16+ */}
-        {description}
+        <BrTagsOnNewlines input={description} />
       </span>
 
       <div className='w-full mt-auto mb-0'>
@@ -245,7 +246,7 @@ const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
   return (
     <div
       className={cn(
-        'w-99.5 h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
+        'w-99.5 min-h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
         'flex flex-col items-center text-center transition-colors duration-150',
         hidden && 'hidden',
       )}
