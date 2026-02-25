@@ -46,7 +46,7 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
   },
   {
     type: WidgetTypes.ANNOUNCEMENT,
-    title: 'Анонс',
+    title: 'Таймер событий',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'
