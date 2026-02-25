@@ -99,8 +99,6 @@ class EmbedManager {
 
     if (!scopeOk) return
 
-    // console.log(event)
-
     const fromIframe = event.source === this.iframe?.contentWindow
 
     if (fromIframe) {
@@ -120,7 +118,6 @@ class EmbedManager {
 
   private handleChildMessage(data: unknown) {
     if (!data || typeof data !== 'object') return
-    console.table(data)
 
     const message = data as {
       type?: string
@@ -357,7 +354,6 @@ class EmbedManager {
                 if (scheduled) return
                 scheduled = true
 
-
                 requestAnimationFrame(() => {
                   scheduled = false
                   const lock = hasModal()
@@ -367,12 +363,6 @@ class EmbedManager {
                   const rect = lock
                     ? { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight }
                     : merged ?? fallbackRect()
-                  
-                  // const isStandalone = !!document.querySelector('[data-lemnity-standalone]')
-                  
-                  // if (isStandalone) {
-                  //   return
-                  // }
 
                   post(rect, lock)
                 })
@@ -381,7 +371,7 @@ class EmbedManager {
               const mo = new MutationObserver(schedule)
               mo.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class', 'open', 'aria-hidden', 'aria-modal'] })
 
-              const ro = new ResizeObserver(() => {
+              const handleIframeResize = () => {
                 const announcement = document.querySelector('[data-lemnity-announcement]')
                 const isAnnouncement = !!announcement
 
@@ -408,10 +398,12 @@ class EmbedManager {
                 else {
                   schedule()
                 }
-              })
+              }
+
+              const ro = new ResizeObserver(handleIframeResize)
               ro.observe(document.documentElement)
 
-              // window.addEventListener('resize', schedule)
+              window.addEventListener('resize', handleIframeResize)
               window.addEventListener('scroll', schedule, true)
               if (isIOS) {
                 document.addEventListener(
@@ -438,7 +430,7 @@ class EmbedManager {
                 )
               }
               if (window.visualViewport) {
-                // window.visualViewport.addEventListener('resize', schedule)
+                window.visualViewport.addEventListener('resize', handleIframeResize)
                 window.visualViewport.addEventListener('scroll', schedule)
               }
 

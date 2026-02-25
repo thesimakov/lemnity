@@ -1,7 +1,9 @@
-import { useRef, useState,
+import {
+  useRef,
+  useState,
   useEffect,
   type CSSProperties, 
-  useCallback} from 'react'
+} from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { cn } from '@heroui/theme'
 
@@ -100,19 +102,8 @@ export const CountdownAnnouncementEmbedRuntime = (
   const [focused, setFocused] = useState(false)
   const containerRef = useRef(null)
 
-  const ref = useRef<HTMLDivElement | null>(null)
-  // const originalWidth = useRef('')
-  // const originalHeight = useRef('')
-
   useClickOutside(containerRef, () => {
     setFocused(false)
-
-    // if (ref.current) {
-    //   originalWidth.current = ref.current.style.width
-    //   originalHeight.current = ref.current.style.height
-    //   ref.current.style.width = '170px'
-    //   ref.current.style.width = '210px'
-    // }
 
     if (!widgetId || !projectId || props.isPreview) {
       return
@@ -130,11 +121,6 @@ export const CountdownAnnouncementEmbedRuntime = (
   /** Sets the widget to "focused" state on click while minified */
   const handleFocusClick = () => {
     setFocused(true)
-
-    // if (ref.current) {
-    //   ref.current.style.width = originalWidth.current
-    //   ref.current.style.height = originalHeight.current
-    // }
 
     if (!widgetId || !projectId || focused || props.isPreview) {
       return
@@ -169,9 +155,9 @@ export const CountdownAnnouncementEmbedRuntime = (
       project_id: projectId,
     })
   }
+
   const handleFormScreenButtonPress = (formData: CountdownForm) => {
     setCountdownVariant('reward')
-  
 
     if (!widgetId || !projectId || format !== 'countdown' || props.isPreview) {
       return
@@ -197,7 +183,7 @@ export const CountdownAnnouncementEmbedRuntime = (
 
   const [announementVariant, setAnnouncementVariant] =
     useState<AnnouncementWidgetVariant>('announcement')
-  
+
   const handleAnnouncementButtonPress = () => {
     if (rewardScreenEnabled) {
       setAnnouncementVariant('reward')
@@ -221,21 +207,20 @@ export const CountdownAnnouncementEmbedRuntime = (
     })
   }
 
-  const postInteractiveRegion = useCallback(() => {
+  useEffect(() => {
     if (focused) {
       window.parent.postMessage({
         scope: 'lemnity-embed',
         type: 'interactive-region',
         lock: false,
         rect: {
-          // left: 1258,
+          // approximate height and width of the widget in its focused state
+          // + bootom-6 right-6
           left: window.innerWidth - 398 - 24,
-          // top: 76,
           top: window.innerHeight - 518 - 24,
           width: 398,
           height: 518,
         },
-        args: focused,
       })
 
       return
@@ -247,59 +232,44 @@ export const CountdownAnnouncementEmbedRuntime = (
         type: 'interactive-region',
         lock: false,
         rect: {
+          // approximate height and width of the widget in its unfocused state
+          // + bootom-6 right-6
           left: window.innerWidth - 161 - 24,
-          // left: 1484,
           top: window.innerHeight - 212 - 24,
-          // top: 371,
           width: 161,
           height: 212,
         },
-        args: focused,
       }, '*')
-    }, 300)
+    }, 300) // 300 ms delay due to 'duration-300'
   }, [focused])
-
-  useEffect(() => {
-    postInteractiveRegion()
-  }, [postInteractiveRegion])
-
-  // useEffect(() => {
-  //   const observer = new ResizeObserver(() => {
-  //     setTimeout(postInteractiveRegion, 300)
-  //   })
-  //   observer.observe(document.documentElement)
-
-  //   return () => {
-  //     observer.disconnect()
-  //   }
-  // }, [postInteractiveRegion])
 
   return (
     <div
-      ref={ref}
-      // data-lemnity-interactive={focused ? true : undefined}
       data-lemnity-interactive
+      // this isn't exatly the cleanest solution
+      // but i am content with it for now
+      // 
+      // a marker to apply custom logic to in embedManager.tsx
       data-lemnity-announcement
+      // a way to signal the change in widget's focused state
+      // to the embedManager.tsx
       data-lemnity-focused={focused}
-      className="fixed bottom-6 right-6 bg-pink-300/20 pointer-events-none"
+      className='fixed bottom-6 right-6 bg-pink-300/20 pointer-events-none'
     >
       {/* TODO: should i replace this with a switch statement? */}
         <>
           <div
             ref={containerRef}
-            // data-lemnity-interactive={!focused ? true : undefined}
-            // data-lemnity-interactive
             className={cn(
               'w-fit h-fit group',
-              'origin-bottom-right',
+              // 'origin-bottom-right',
 
               !focused && 'scale-40',
-              // !focused && 'translate-x-[30%] translate-y-[30%]',
+              !focused && 'translate-x-[30%] translate-y-[30%]',
               !focused && 'hover:scale-43',
-              // !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
-              // !focused && '*:pointer-events-none',
-              'pointer-events-auto',
-              // 'pointer-events-none',
+              !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
+              !focused && '*:pointer-events-none',
+              'pointer-events-auto cursor-pointer',
 
               'transition-transform duration-300',
               'bg-blue-300',
