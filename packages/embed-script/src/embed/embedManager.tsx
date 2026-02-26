@@ -377,6 +377,7 @@ class EmbedManager {
 
                 if (!isAnnouncement) {
                   schedule()
+                  return
                 }
 
                 const boundingRect = announcement
@@ -384,8 +385,8 @@ class EmbedManager {
                   ?.getBoundingClientRect()
 
                 post({
-                  left: window.innerWidth - boundingRect.width - 24,
-                  top: window.innerHeight - boundingRect.height - 24,
+                  left: window.innerWidth - boundingRect.width - 3,
+                  top: window.innerHeight - boundingRect.height - 3,
                   width: boundingRect.width,
                   height: boundingRect.height,
                 }, false)

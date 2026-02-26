@@ -2,7 +2,6 @@ import {
   useRef,
   useState,
   useEffect,
-  useCallback,
   type CSSProperties,
 } from 'react'
 import { useShallow } from 'zustand/react/shallow'
@@ -212,27 +211,45 @@ export const CountdownAnnouncementEmbedRuntime = (
 
   const initialBoundingRect = useRef<DOMRect | null>(null)
 
-  const sendBoundingRectToIframe = useCallback(() => {
+  const sendBoundingRectToIframe = (rect: DOMRect, offset: number) => {
+    window.parent.postMessage({
+      scope: 'lemnity-embed',
+      type: 'interactive-region',
+      lock: false,
+      rect: {
+        left: window.innerWidth - rect.width - offset,
+        top: window.innerHeight - rect.height - offset,
+        width: rect.width,
+        height: rect.height,
+      },
+    })
+  }
+
+  const handleMouseEnter = () => {
+    if (focused || !initialBoundingRect.current) {
+      return
+    }
+    sendBoundingRectToIframe(initialBoundingRect.current, 24)
+  }
+
+  const handleMouseLeave = () => {
+    setTimeout(() => {
+      if (focused || !initialBoundingRect.current) {
+        return
+      }
+      sendBoundingRectToIframe(initialBoundingRect.current, 3)
+    }, 250) // 300 ms delay due to 'duration-300'
+  }
+
+  useEffect(() => {
     if (!widgetRef.current) {
       return
     }
 
     const boundingRect = widgetRef.current.getBoundingClientRect()
-    
+  
     if (focused) {
-      window.parent.postMessage({
-        scope: 'lemnity-embed',
-        type: 'interactive-region',
-        lock: false,
-        rect: {
-          // height and width + bootom-6 right-6
-          left: window.innerWidth - boundingRect.width - 24,
-          top: window.innerHeight - boundingRect.height - 24,
-          width: boundingRect.width,
-          height: boundingRect.height,
-        },
-      })
-
+      sendBoundingRectToIframe(boundingRect, 24)
       return
     }
 
@@ -241,19 +258,8 @@ export const CountdownAnnouncementEmbedRuntime = (
         return
       }
 
-      window.parent.postMessage({
-        scope: 'lemnity-embed',
-        type: 'interactive-region',
-        lock: false,
-        rect: {
-          // height and width + bootom-6 right-6
-          left: window.innerWidth - initialBoundingRect.current.width - 24,
-          top: window.innerHeight - initialBoundingRect.current.height - 24,
-          width: boundingRect.width,
-          height: boundingRect.height,
-        },
-      }, '*')
-    }, 300) // 300 ms delay due to 'duration-300'
+      sendBoundingRectToIframe(initialBoundingRect.current, 3)
+    }, 250) // 300 ms delay due to 'duration-300'
   }, [focused])
 
   useEffect(() => {
@@ -265,8 +271,6 @@ export const CountdownAnnouncementEmbedRuntime = (
     initialBoundingRect.current = boundingRect
   }, [])
 
-  useEffect(sendBoundingRectToIframe, [focused])
-
   return (
     <div
       data-lemnity-interactive
@@ -275,7 +279,9 @@ export const CountdownAnnouncementEmbedRuntime = (
       // 
       // a marker to apply custom logic to in embedManager.tsx
       data-lemnity-announcement
-      className='fixed bottom-6 right-6 pointer-events-none bg-pink-300/20'
+      className='fixed bottom-6 right-6 pointer-events-none'
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* TODO: should i replace this with a switch statement? */}
         <>
@@ -292,8 +298,7 @@ export const CountdownAnnouncementEmbedRuntime = (
               !focused && '*:pointer-events-none',
               'pointer-events-auto cursor-pointer',
 
-              'transition-transform duration-300',
-              'bg-blue-300/20',
+              'transition-transform duration-250',
             )}
             // ✨ Magic ✨
             style={{ willChange: 'transform' }}
