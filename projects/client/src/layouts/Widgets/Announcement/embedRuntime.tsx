@@ -2,7 +2,8 @@ import {
   useRef,
   useState,
   useEffect,
-  type CSSProperties, 
+  useCallback,
+  type CSSProperties,
 } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { cn } from '@heroui/theme'
@@ -100,7 +101,9 @@ export const CountdownAnnouncementEmbedRuntime = (
   }
 
   const [focused, setFocused] = useState(false)
-  const containerRef = useRef(null)
+
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const widgetRef = useRef<HTMLDivElement | null>(null)
 
   useClickOutside(containerRef, () => {
     setFocused(false)
@@ -207,19 +210,26 @@ export const CountdownAnnouncementEmbedRuntime = (
     })
   }
 
-  useEffect(() => {
+  const initialBoundingRect = useRef<DOMRect | null>(null)
+
+  const sendBoundingRectToIframe = useCallback(() => {
+    if (!widgetRef.current) {
+      return
+    }
+
+    const boundingRect = widgetRef.current.getBoundingClientRect()
+    
     if (focused) {
       window.parent.postMessage({
         scope: 'lemnity-embed',
         type: 'interactive-region',
         lock: false,
         rect: {
-          // approximate height and width of the widget in its focused state
-          // + bootom-6 right-6
-          left: window.innerWidth - 398 - 24,
-          top: window.innerHeight - 518 - 24,
-          width: 398,
-          height: 518,
+          // height and width + bootom-6 right-6
+          left: window.innerWidth - boundingRect.width - 24,
+          top: window.innerHeight - boundingRect.height - 24,
+          width: boundingRect.width,
+          height: boundingRect.height,
         },
       })
 
@@ -227,21 +237,35 @@ export const CountdownAnnouncementEmbedRuntime = (
     }
 
     setTimeout(() => {
+      if (!initialBoundingRect.current) {
+        return
+      }
+
       window.parent.postMessage({
         scope: 'lemnity-embed',
         type: 'interactive-region',
         lock: false,
         rect: {
-          // approximate height and width of the widget in its unfocused state
-          // + bootom-6 right-6
-          left: window.innerWidth - 161 - 24,
-          top: window.innerHeight - 212 - 24,
-          width: 161,
-          height: 212,
+          // height and width + bootom-6 right-6
+          left: window.innerWidth - initialBoundingRect.current.width - 24,
+          top: window.innerHeight - initialBoundingRect.current.height - 24,
+          width: boundingRect.width,
+          height: boundingRect.height,
         },
       }, '*')
     }, 300) // 300 ms delay due to 'duration-300'
   }, [focused])
+
+  useEffect(() => {
+    if (!widgetRef.current) {
+      return
+    }
+
+    const boundingRect = widgetRef.current.getBoundingClientRect()
+    initialBoundingRect.current = boundingRect
+  }, [])
+
+  useEffect(sendBoundingRectToIframe, [focused])
 
   return (
     <div
@@ -251,10 +275,7 @@ export const CountdownAnnouncementEmbedRuntime = (
       // 
       // a marker to apply custom logic to in embedManager.tsx
       data-lemnity-announcement
-      // a way to signal the change in widget's focused state
-      // to the embedManager.tsx
-      data-lemnity-focused={focused}
-      className='fixed bottom-6 right-6 pointer-events-none'
+      className='fixed bottom-6 right-6 pointer-events-none bg-pink-300/20'
     >
       {/* TODO: should i replace this with a switch statement? */}
         <>
@@ -262,16 +283,17 @@ export const CountdownAnnouncementEmbedRuntime = (
             ref={containerRef}
             className={cn(
               'w-fit h-fit group',
-              // 'origin-bottom-right',
+              'origin-bottom-right',
 
               !focused && 'scale-40',
-              !focused && 'translate-x-[30%] translate-y-[30%]',
+              // !focused && 'translate-x-[30%] translate-y-[30%]',
               !focused && 'hover:scale-43',
-              !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
+              // !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
               !focused && '*:pointer-events-none',
               'pointer-events-auto cursor-pointer',
 
               'transition-transform duration-300',
+              'bg-blue-300/20',
             )}
             // ✨ Magic ✨
             style={{ willChange: 'transform' }}
@@ -279,6 +301,7 @@ export const CountdownAnnouncementEmbedRuntime = (
           >
             {format === 'countdown' && (
               <CountdownAnnouncementWidget
+                ref={widgetRef}
                 variant={countdownVariant}
                 focused={focused}
                 containerStyle={containerStyle}
@@ -288,6 +311,7 @@ export const CountdownAnnouncementEmbedRuntime = (
             )}
             {format === 'announcement' && (
               <AnnouncementWidget
+                ref={widgetRef}
                 variant={announementVariant}
                 focused={focused}
                 onButtonPress={handleAnnouncementButtonPress}

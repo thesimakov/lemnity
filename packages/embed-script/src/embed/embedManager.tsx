@@ -375,29 +375,20 @@ class EmbedManager {
                 const announcement = document.querySelector('[data-lemnity-announcement]')
                 const isAnnouncement = !!announcement
 
-                if (isAnnouncement) {
-                  const focused = announcement.getAttribute('data-lemnity-focused')
-
-                  if (focused === 'true') {
-                    post({
-                      left: window.innerWidth - 398 - 24,
-                      top: window.innerHeight - 518 - 24,
-                      width: 398,
-                      height: 518,
-                    }, false)
-                  }
-                  else {
-                    post({
-                      left: window.innerWidth - 161 - 24,
-                      top: window.innerHeight - 212 - 24,
-                      width: 161,
-                      height: 212,
-                    }, false)
-                  }
-                }
-                else {
+                if (!isAnnouncement) {
                   schedule()
                 }
+
+                const boundingRect = announcement
+                  ?.firstElementChild
+                  ?.getBoundingClientRect()
+
+                post({
+                  left: window.innerWidth - boundingRect.width - 24,
+                  top: window.innerHeight - boundingRect.height - 24,
+                  width: boundingRect.width,
+                  height: boundingRect.height,
+                }, false)
               }
 
               const ro = new ResizeObserver(handleIframeResize)
