@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@heroui/theme'
@@ -99,41 +99,158 @@ const AnnouncementPreview = () => {
   }
 
   const previewWidgetCardStyle = cn(
-    'w-fit h-57 scale-40 origin-top-left ml-32.5',
+    'w-fit scale-40 origin-top-left ml-32.5',
     'pointer-events-none',
+    // 'h-57',
   )
+
+  const annInfoScreenRef = useRef<HTMLDivElement | null>(null)
+  const annRewardScreenRef = useRef<HTMLDivElement | null>(null)
+
+  const countdownInfoScreenRef = useRef<HTMLDivElement | null>(null)
+  const countdownFormScreenRef = useRef<HTMLDivElement | null>(null)
+  const countdownRewardScreenRef = useRef<HTMLDivElement | null>(null)
+
+  const [annInfoScreenRect, setAnnInfoScreenRect] =
+    useState<DOMRect | null>(null)
+  const [annRewardScreenRect, setAnnRewardScreenRect] =
+    useState<DOMRect | null>(null)
+
+  const [countdownInfoScreenRect, setCountdownInfoScreenRect] =
+    useState<DOMRect | null>(null)
+  const [countdownFormScreenRect, setCountdownFormScreen] =
+    useState<DOMRect | null>(null)
+  const [countdownRewardScreenRect, setCountdownRewardScreen] =
+    useState<DOMRect | null>(null)
+
+  useEffect(() => {
+    if (!annInfoScreenRef.current || !annRewardScreenRef.current) {
+      return
+    }
+
+    const annInfoScreenObserver = new ResizeObserver(() => {
+      if (!annInfoScreenRef.current) return
+      setAnnInfoScreenRect(
+        annInfoScreenRef.current.getBoundingClientRect()
+      )
+    })
+    annInfoScreenObserver.observe(annInfoScreenRef.current)
+
+    const annRewardScreenObserver = new ResizeObserver(() => {
+      if (!annRewardScreenRef.current) return
+      setAnnRewardScreenRect(
+        annRewardScreenRef.current.getBoundingClientRect()
+      )
+    })
+    annRewardScreenObserver.observe(annRewardScreenRef.current)
+
+    return () => {
+      annInfoScreenObserver.disconnect()
+      annRewardScreenObserver.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (
+      !countdownInfoScreenRef.current
+      || !countdownFormScreenRef.current
+      || !countdownRewardScreenRef.current
+    ) {
+      return
+    }
+
+    const countdownInfoScreenObserver = new ResizeObserver(() => {
+      if (!countdownInfoScreenRef.current) return
+      setCountdownInfoScreenRect(
+        countdownInfoScreenRef.current.getBoundingClientRect()
+      )
+    })
+    countdownInfoScreenObserver.observe(countdownInfoScreenRef.current)
+
+    const countdownFormScreenObserver = new ResizeObserver(() => {
+      if (!countdownFormScreenRef.current) return
+      setCountdownFormScreen(
+        countdownFormScreenRef.current.getBoundingClientRect()
+      )
+    })
+    countdownFormScreenObserver.observe(countdownFormScreenRef.current)
+
+    const countdownRewardScreenObserver = new ResizeObserver(() => {
+      if (!countdownRewardScreenRef.current) return
+      setCountdownRewardScreen(
+        countdownRewardScreenRef.current.getBoundingClientRect()
+      )
+    })
+    countdownRewardScreenObserver.observe(countdownRewardScreenRef.current)
+
+    return () => {
+      countdownInfoScreenObserver.disconnect()
+      countdownFormScreenObserver.disconnect()
+      countdownRewardScreenObserver.disconnect()
+    }
+  }, [])
 
   return (
     // don't look at the vertical margins =w=
     // i was fed the fuck up with how much gaps were bitching at me
-    <div className="w-full h-full flex flex-col overflow-hidden select-none">
+    <div className="w-full h-full flex flex-col overflow-auto select-none">
       {format === 'announcement' && (
         <div className="flex flex-col gap-1 h-full">
           <span className="text-xs self-center">
             Главный экран
           </span>
-          <div className={previewWidgetCardStyle}>
-            <AnnouncementWidget variant='announcement' focused />
+          <div
+            className={previewWidgetCardStyle}
+            style={{
+              height: annInfoScreenRect
+                ? `${annInfoScreenRect.height}px`
+                : '228px'
+            }}
+          >
+            <AnnouncementWidget
+              ref={annInfoScreenRef}
+              variant='announcement'
+              focused
+            />
           </div>
 
           <FadeInOut visible={rewardScreenEnabled}>
             <span className="text-xs self-center mb-1">
               Экран выигрыша
             </span>
-            <div className={previewWidgetCardStyle}>
-              <AnnouncementWidget variant="reward" focused />
+            <div
+              className={previewWidgetCardStyle}
+              style={{
+                height: annRewardScreenRect
+                  ? `${annRewardScreenRect.height}px`
+                  : '228px'
+              }}
+            >
+              <AnnouncementWidget
+                ref={annRewardScreenRef}
+                variant="reward"
+                focused
+              />
             </div>
           </FadeInOut>
         </div>
       )}
 
       {format === 'countdown' && (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col gap-1 h-full">
           <span className="text-xs self-center mb-2">
             Главный экран
           </span>
-          <div className={previewWidgetCardStyle}>
+          <div
+            className={previewWidgetCardStyle}
+            style={{
+              height: countdownInfoScreenRect
+                ? `${countdownInfoScreenRect.height}px`
+                : '228px'
+            }}
+          >
             <CountdownAnnouncementWidget
+              ref={countdownInfoScreenRef}
               variant="countdown"
               focused
               containerStyle={containerStyle}
@@ -144,8 +261,16 @@ const AnnouncementPreview = () => {
             <span className="text-xs self-center mt-1 mb-1">
               Экран формы
             </span>
-            <div className={previewWidgetCardStyle}>
+            <div
+              className={previewWidgetCardStyle}
+              style={{
+                height: countdownFormScreenRect
+                  ? `${countdownFormScreenRect.height}px`
+                  : '228px'
+              }}
+            >
               <CountdownAnnouncementWidget
+                ref={countdownFormScreenRef}
                 variant="form"
                 focused
                 containerStyle={containerStyle}
@@ -155,8 +280,16 @@ const AnnouncementPreview = () => {
             <span className="text-xs self-center mb-1">
               Экран выигрыша
             </span>
-            <div className={previewWidgetCardStyle}>
+            <div
+              className={previewWidgetCardStyle}
+              style={{
+                height: countdownRewardScreenRect
+                  ? `${countdownRewardScreenRect.height}px`
+                  : '228px'
+              }}
+            >
               <CountdownAnnouncementWidget
+                ref={countdownRewardScreenRef}
                 variant="reward"
                 focused
                 containerStyle={containerStyle}
