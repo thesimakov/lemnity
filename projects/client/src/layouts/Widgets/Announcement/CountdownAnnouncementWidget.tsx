@@ -1,4 +1,8 @@
-import { useState, type CSSProperties } from 'react'
+import {
+  useState,
+  type CSSProperties,
+  type Ref,
+} from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
@@ -19,6 +23,7 @@ import useUrlImageOrDefault from './utils/useUrlImage'
 export type CountdownWidgetVariant = 'countdown' | 'form' | 'reward'
 
 type CountdownWidgetProps = {
+  ref?: Ref<HTMLDivElement>
   variant?: CountdownWidgetVariant
   focused?: boolean
   containerStyle: CSSProperties
@@ -26,7 +31,9 @@ type CountdownWidgetProps = {
   onFormScreenButtonPress?: (formData: CountdownForm) => void
 }
 
-const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
+const CountdownAnnouncementWidget = (
+  { ref, ...props }: CountdownWidgetProps
+) => {
   const {
     companyLogoEnabled,
     companyLogoUrl,
@@ -61,6 +68,7 @@ const CountdownAnnouncementWidget = (props: CountdownWidgetProps) => {
 
   return (
     <div
+      ref={ref}
       className={cn(
         'w-99.5 min-h-129.5 px-9 rounded-2xl',
         'flex flex-col items-center relative',
