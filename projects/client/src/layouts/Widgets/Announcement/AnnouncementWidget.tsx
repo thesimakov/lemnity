@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useState, type CSSProperties, type Ref } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
@@ -169,12 +169,13 @@ const AnnouncementWidgetContent = (
 export type AnnouncementWidgetVariant = 'announcement' | 'reward'
 
 type AnnouncementWidgetProps = {
+  ref?: Ref<HTMLDivElement>
   variant: AnnouncementWidgetVariant
   focused?: boolean
   onButtonPress?: () => void
 }
 
-const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
+const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
   const {
     colorScheme,
     backgroundColor,
@@ -256,6 +257,7 @@ const AnnouncementWidget = (props: AnnouncementWidgetProps) => {
 
   return (
     <div
+      ref={ref}
       className={cn(
         'w-99.5 min-h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
         'flex flex-col items-center text-center transition-colors duration-250',

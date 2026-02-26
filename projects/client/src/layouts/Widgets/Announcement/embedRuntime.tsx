@@ -2,7 +2,7 @@ import {
   useRef,
   useState,
   useEffect,
-  type CSSProperties, 
+  type CSSProperties,
 } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { cn } from '@heroui/theme'
@@ -100,7 +100,9 @@ export const CountdownAnnouncementEmbedRuntime = (
   }
 
   const [focused, setFocused] = useState(false)
-  const containerRef = useRef(null)
+
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const widgetRef = useRef<HTMLDivElement | null>(null)
 
   useClickOutside(containerRef, () => {
     setFocused(false)
@@ -207,41 +209,67 @@ export const CountdownAnnouncementEmbedRuntime = (
     })
   }
 
-  useEffect(() => {
-    if (focused) {
-      window.parent.postMessage({
-        scope: 'lemnity-embed',
-        type: 'interactive-region',
-        lock: false,
-        rect: {
-          // approximate height and width of the widget in its focused state
-          // + bootom-6 right-6
-          left: window.innerWidth - 398 - 24,
-          top: window.innerHeight - 518 - 24,
-          width: 398,
-          height: 518,
-        },
-      })
+  const initialBoundingRect = useRef<DOMRect | null>(null)
 
+  const sendBoundingRectToIframe = (rect: DOMRect, offset: number) => {
+    window.parent.postMessage({
+      scope: 'lemnity-embed',
+      type: 'interactive-region',
+      lock: false,
+      rect: {
+        left: window.innerWidth - rect.width - offset,
+        top: window.innerHeight - rect.height - offset,
+        width: rect.width,
+        height: rect.height,
+      },
+    })
+  }
+
+  const handleMouseEnter = () => {
+    if (focused || !initialBoundingRect.current) {
+      return
+    }
+    sendBoundingRectToIframe(initialBoundingRect.current, 24)
+  }
+
+  const handleMouseLeave = () => {
+    setTimeout(() => {
+      if (focused || !initialBoundingRect.current) {
+        return
+      }
+      sendBoundingRectToIframe(initialBoundingRect.current, 3)
+    }, 250) // 300 ms delay due to 'duration-300'
+  }
+
+  useEffect(() => {
+    if (!widgetRef.current) {
+      return
+    }
+
+    const boundingRect = widgetRef.current.getBoundingClientRect()
+  
+    if (focused) {
+      sendBoundingRectToIframe(boundingRect, 24)
       return
     }
 
     setTimeout(() => {
-      window.parent.postMessage({
-        scope: 'lemnity-embed',
-        type: 'interactive-region',
-        lock: false,
-        rect: {
-          // approximate height and width of the widget in its unfocused state
-          // + bootom-6 right-6
-          left: window.innerWidth - 161 - 24,
-          top: window.innerHeight - 212 - 24,
-          width: 161,
-          height: 212,
-        },
-      }, '*')
-    }, 300) // 300 ms delay due to 'duration-300'
+      if (!initialBoundingRect.current) {
+        return
+      }
+
+      sendBoundingRectToIframe(initialBoundingRect.current, 3)
+    }, 250) // 300 ms delay due to 'duration-300'
   }, [focused])
+
+  useEffect(() => {
+    if (!widgetRef.current) {
+      return
+    }
+
+    const boundingRect = widgetRef.current.getBoundingClientRect()
+    initialBoundingRect.current = boundingRect
+  }, [])
 
   return (
     <div
@@ -251,10 +279,9 @@ export const CountdownAnnouncementEmbedRuntime = (
       // 
       // a marker to apply custom logic to in embedManager.tsx
       data-lemnity-announcement
-      // a way to signal the change in widget's focused state
-      // to the embedManager.tsx
-      data-lemnity-focused={focused}
       className='fixed bottom-6 right-6 pointer-events-none'
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* TODO: should i replace this with a switch statement? */}
         <>
@@ -262,16 +289,16 @@ export const CountdownAnnouncementEmbedRuntime = (
             ref={containerRef}
             className={cn(
               'w-fit h-fit group',
-              // 'origin-bottom-right',
+              'origin-bottom-right',
 
               !focused && 'scale-40',
-              !focused && 'translate-x-[30%] translate-y-[30%]',
+              // !focused && 'translate-x-[30%] translate-y-[30%]',
               !focused && 'hover:scale-43',
-              !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
+              // !focused && 'hover:translate-x-[28%] hover:translate-y-[28%]',
               !focused && '*:pointer-events-none',
               'pointer-events-auto cursor-pointer',
 
-              'transition-transform duration-300',
+              'transition-transform duration-250',
             )}
             // ✨ Magic ✨
             style={{ willChange: 'transform' }}
@@ -279,6 +306,7 @@ export const CountdownAnnouncementEmbedRuntime = (
           >
             {format === 'countdown' && (
               <CountdownAnnouncementWidget
+                ref={widgetRef}
                 variant={countdownVariant}
                 focused={focused}
                 containerStyle={containerStyle}
@@ -288,6 +316,7 @@ export const CountdownAnnouncementEmbedRuntime = (
             )}
             {format === 'announcement' && (
               <AnnouncementWidget
+                ref={widgetRef}
                 variant={announementVariant}
                 focused={focused}
                 onButtonPress={handleAnnouncementButtonPress}
