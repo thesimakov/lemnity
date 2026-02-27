@@ -209,8 +209,6 @@ export const CountdownAnnouncementEmbedRuntime = (
     })
   }
 
-  const initialBoundingRect = useRef<DOMRect | null>(null)
-
   const sendBoundingRectToIframe = (rect: DOMRect, offset: number) => {
     window.parent.postMessage({
       scope: 'lemnity-embed',
@@ -226,18 +224,18 @@ export const CountdownAnnouncementEmbedRuntime = (
   }
 
   const handleMouseEnter = () => {
-    if (focused || !initialBoundingRect.current) {
+    if (focused || !containerRef.current) {
       return
     }
-    sendBoundingRectToIframe(initialBoundingRect.current, 24)
+    sendBoundingRectToIframe(containerRef.current.getBoundingClientRect(), 24)
   }
 
   const handleMouseLeave = () => {
     setTimeout(() => {
-      if (focused || !initialBoundingRect.current) {
+      if (focused || !containerRef.current) {
         return
       }
-      sendBoundingRectToIframe(initialBoundingRect.current, 3)
+      sendBoundingRectToIframe(containerRef.current.getBoundingClientRect(), 3)
     }, 250) // 300 ms delay due to 'duration-300'
   }
 
@@ -254,22 +252,13 @@ export const CountdownAnnouncementEmbedRuntime = (
     }
 
     setTimeout(() => {
-      if (!initialBoundingRect.current) {
+      if (!containerRef.current) {
         return
       }
 
-      sendBoundingRectToIframe(initialBoundingRect.current, 3)
+      sendBoundingRectToIframe(containerRef.current.getBoundingClientRect(), 3)
     }, 250) // 300 ms delay due to 'duration-300'
   }, [focused])
-
-  useEffect(() => {
-    if (!widgetRef.current) {
-      return
-    }
-
-    const boundingRect = widgetRef.current.getBoundingClientRect()
-    initialBoundingRect.current = boundingRect
-  }, [])
 
   return (
     <div
