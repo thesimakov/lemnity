@@ -7,6 +7,7 @@ import {
   type ContentAlignment,
   type FontWeight,
   type Format,
+  type MobileTrigger,
 } from '@lemnity/widget-config/widgets/announcement'
 import { buildAnnouncementWidgetSettings } from './defaults'
 import type { ColorScheme, Icon } from '@lemnity/widget-config/widgets/base'
@@ -698,6 +699,80 @@ export const createAnnouncementActions = (
         }
       }
     }),
+  // Mobile
+  setAnnouncementMobileEnabled: (
+    mobileEnabled: boolean
+  ) => 
+    updateWidget(widget => {
+      return {
+        ...widget,
+        mobileSettings: {
+          ...widget.mobileSettings,
+          mobileEnabled,
+        }
+      }
+    }),
+  setAnnouncementMobileTriggerType: (
+    triggerType: MobileTrigger
+  ) => 
+    updateWidget(widget => {
+      return {
+        ...widget,
+        mobileSettings: {
+          ...widget.mobileSettings,
+          triggerType,
+        }
+      }
+    }),
+  setAnnouncementMobileImageUrl: (
+    imageUrl: string | undefined
+  ) => 
+    updateWidget(widget => {
+      return {
+        ...widget,
+        mobileSettings: {
+          ...widget.mobileSettings,
+          imageUrl,
+        }
+      }
+    }),
+  setAnnouncementMobileTriggerText: (
+    triggerText: string
+  ) => 
+    updateWidget(widget => {
+      return {
+        ...widget,
+        mobileSettings: {
+          ...widget.mobileSettings,
+          triggerText,
+        }
+      }
+    }),
+  setAnnouncementMobileTriggerFontColor: (
+    triggerFontColor: string
+  ) => 
+    updateWidget(widget => {
+      return {
+        ...widget,
+        mobileSettings: {
+          ...widget.mobileSettings,
+          triggerFontColor,
+        }
+      }
+    }),
+  setAnnouncementMobileTriggerBackgroundColor: (
+    triggerBackgroundColor: string
+  ) => 
+    updateWidget(widget => {
+      return {
+        ...widget,
+        mobileSettings: {
+          ...widget.mobileSettings,
+          triggerBackgroundColor,
+        }
+      }
+    }),
+  // General
   setAnnouncementBrandingEnabled: (
     brandingEnabled: boolean
   ) => 

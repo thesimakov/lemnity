@@ -100,6 +100,13 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
     customDiscountBackgroundColor: '#FFF57F',
     customPromoBackgroundColor: '#0F3095',
   },
+  mobileSettings: {
+    mobileEnabled: true,
+    triggerType: 'button',
+    triggerText: 'Подарок для вас',
+    triggerBackgroundColor: '#FFB34F',
+    triggerFontColor: '#000000',
+  },
   brandingEnabled: true,
 }
 

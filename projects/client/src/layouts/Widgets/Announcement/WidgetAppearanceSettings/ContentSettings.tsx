@@ -27,18 +27,19 @@ type ContentAlignmentOptions = {
   value: ContentAlignment
 }
 
-const Settings = (props: ContentSettingsProps) => {
-  const contentTypeOptions: CustomRadioGroupOption[] = [
-    { label: 'Картинка сверху', value: 'imageOnTop' },
-    { label: 'Фон всего окна', value: 'background' },
-    { label: 'Видео', value: 'video', disabled: true },
-  ]
+const contentTypeOptions: CustomRadioGroupOption[] = [
+  { label: 'Картинка сверху', value: 'imageOnTop' },
+  { label: 'Фон всего окна', value: 'background' },
+  { label: 'Видео', value: 'video', disabled: true },
+]
 
-  const contentAlignmentOptions: ContentAlignmentOptions[] = [
-    { label: 'Сверху', value: 'top' },
-    { label: 'По центру', value: 'center' },
-    { label: 'Снизу', value: 'bottom' },
-  ]
+const contentAlignmentOptions: ContentAlignmentOptions[] = [
+  { label: 'Сверху', value: 'top' },
+  { label: 'По центру', value: 'center' },
+  { label: 'Снизу', value: 'bottom' },
+]
+
+const Settings = (props: ContentSettingsProps) => {
 
   const handleContentTypeChange = (value: string) => {
     // because generics are for loosers apparently

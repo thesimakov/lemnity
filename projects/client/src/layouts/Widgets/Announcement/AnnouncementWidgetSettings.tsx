@@ -10,18 +10,58 @@ import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
+import MobileVersionSettings from './MobileVersionSettings'
 
 const AnnouncementWidgetSettings = () => {
-  const { format, brandingEnabled } = useWidgetSettingsStore(
+  const {
+    format,
+
+    mobileEnabled,
+    triggerType,
+    imageUrl,
+    triggerText,
+    triggerFontColor,
+    triggerBackgroundColor,
+
+    brandingEnabled,
+  } = useWidgetSettingsStore(
     useShallow(s => {
       const widget = s.settings?.widget as AnnouncementWidgetType
-      const settings = widget.appearence
+      const appearence = widget.appearence
+      const mobile = widget.mobileSettings
 
       return {
-        format: settings.format,
+        format: appearence.format,
+
+        mobileEnabled: mobile.mobileEnabled,
+        triggerType: mobile.triggerType,
+        imageUrl: mobile.imageUrl,
+        triggerText: mobile.triggerText,
+        triggerFontColor: mobile.triggerFontColor,
+        triggerBackgroundColor: mobile.triggerBackgroundColor,
+
         brandingEnabled: widget.brandingEnabled,
       }
     })
+  )
+
+  const setMobileEnabled = useWidgetSettingsStore(
+    s => s.setAnnouncementMobileEnabled
+  )
+  const setMobileTriggerType = useWidgetSettingsStore(
+    s => s.setAnnouncementMobileTriggerType
+  )
+  const setMobileImageUrl = useWidgetSettingsStore(
+    s => s.setAnnouncementMobileImageUrl
+  )
+  const setMobileTriggerText = useWidgetSettingsStore(
+    s => s.setAnnouncementMobileTriggerText
+  )
+  const setMobileTriggerFontColor = useWidgetSettingsStore(
+    s => s.setAnnouncementMobileTriggerFontColor
+  )
+  const setMobileTriggerBackgroundColor = useWidgetSettingsStore(
+    s => s.setAnnouncementMobileTriggerBackgroundColor
   )
 
   const setBrandingEnabled = useWidgetSettingsStore(
@@ -34,6 +74,20 @@ const AnnouncementWidgetSettings = () => {
       <InfoSettings />
       {format === 'countdown' && <FormSettings />}
       <RewardMessageSettings />
+      <MobileVersionSettings
+        enabled={mobileEnabled}
+        triggerType={triggerType}
+        imageUrl={imageUrl}
+        triggerText={triggerText}
+        triggerFontColor={triggerFontColor}
+        triggerBackgroundColor={triggerBackgroundColor}
+        onToggle={setMobileEnabled}
+        onTriggerTypeChange={setMobileTriggerType}
+        onImageUrlChange={setMobileImageUrl}
+        onTriggerTextChange={setMobileTriggerText}
+        onTriggerFontColorChange={setMobileTriggerFontColor}
+        onTriggerBackgroundColorChange={setMobileTriggerBackgroundColor}
+      />
       <DisableBranding
         enabled={brandingEnabled}
         onBrandingEnabledToggle={setBrandingEnabled}
