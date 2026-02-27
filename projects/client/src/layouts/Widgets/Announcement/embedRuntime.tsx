@@ -260,6 +260,13 @@ export const CountdownAnnouncementEmbedRuntime = (
     }, 250) // 300 ms delay due to 'duration-300'
   }, [focused])
 
+  useEffect(() => {
+    if (!containerRef.current) {
+      return
+    }
+    sendBoundingRectToIframe(containerRef.current.getBoundingClientRect(), 16)
+  }, [])
+
   return (
     <div
       data-lemnity-interactive
