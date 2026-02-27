@@ -256,7 +256,7 @@ export const CountdownAnnouncementEmbedRuntime = (
         return
       }
 
-      sendBoundingRectToIframe(containerRef.current.getBoundingClientRect(), 3)
+      sendBoundingRectToIframe(containerRef.current.getBoundingClientRect(), 16)
     }, 250) // 300 ms delay due to 'duration-300'
   }, [focused])
 
