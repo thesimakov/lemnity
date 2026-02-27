@@ -1,9 +1,11 @@
 import { lazy } from 'react'
 import type { WidgetDefinition } from '@/layouts/Widgets/registry'
 
-export const announcementWidgetMetadata: Pick<WidgetDefinition, 'preview' | 'settings'> = {
+type MetadataType = Pick<WidgetDefinition, 'preview' | 'settings'>
+
+export const announcementWidgetMetadata: MetadataType = {
   preview: {
-    panel: lazy(() => import('./AnnouncementPreview')),
+    panel: lazy(() => import('./WidgetPreview')),
     desktopScreens: {},
     mobile: null,
     inline: lazy(() => import('./AnnouncementFloatingPreview')),
