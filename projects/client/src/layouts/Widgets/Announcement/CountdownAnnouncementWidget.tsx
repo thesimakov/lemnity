@@ -16,6 +16,7 @@ import CountdownFormScreen, { type CountdownForm } from './CountdownFormScreen'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import useUrlImageOrDefault from './utils/useUrlImage'
 import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { useViewportWidth } from '@/hooks/useViewportWidth'
 import { useMobileContext } from './embedRuntime/useMobileContext'
 
 import crossIcon from '@/assets/icons/cross.svg'
@@ -71,6 +72,14 @@ const CountdownAnnouncementWidget = (
 
   const mobile = useIsMobileViewport()
   const mobileContext = useMobileContext()
+  const width = useViewportWidth()
+
+  const mobileScale = width >= 398
+    ? undefined
+    // 2 20 px margins on x axis = 40 px
+    // the width of the widget is w-99.5 = 398
+    // 1% of 398 = 3.98
+    : Math.floor((width - 40) / 3.98)
 
   const handleCloseButtonPress = () => {
     if (mobile && mobileContext) {
@@ -84,14 +93,17 @@ const CountdownAnnouncementWidget = (
     <div
       ref={ref}
       className={cn(
-        mobile
-          ? 'w-full h-full p-4 pt-20'
-          : 'w-99.5 min-h-129.5 px-9 rounded-2xl',
+        'w-99.5 min-h-129.5 px-9 rounded-2xl',
         'flex flex-col items-center relative',
         'bg-[#725DFF] transition-colors duration-150',
         hidden && 'hidden',
       )}
-      style={props.containerStyle}
+      style={{
+        ...props.containerStyle,
+        transform: mobile && mobileScale
+          ? `scale(${mobileScale}%)`
+          : undefined,
+      }}
     >
       <Button
         className={cn(
@@ -131,20 +143,14 @@ const CountdownAnnouncementWidget = (
       {brandingEnabled
         ? <div
             className={cn(
-              mobile
-                ? 'fixed bottom-4'
-                : 'mt-auto mb-4',
-              'pt-4 flex',
+              'mt-auto mb-4 pt-4 flex',
             )}
           >
             <FreePlanBrandingLink color="#FFFFFF" />
           </div>
         : <div
           className={cn(
-            mobile
-              ? 'h-3 fixed bottom-4'
-              : 'h-3 mt-auto mb-4',
-            'pt-4 bg-transparent',
+            'h-3 mt-auto mb-4 pt-4 bg-transparent',
           )}
         />
       }

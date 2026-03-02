@@ -11,6 +11,9 @@ import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import useUrlImageOrDefault from './utils/useUrlImage'
+import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { useMobileContext } from './embedRuntime/useMobileContext'
+import { useViewportWidth } from '@/hooks/useViewportWidth'
 import { getFontWeightClass } from './utils/getFontWeightClass'
 
 import type {
@@ -21,8 +24,6 @@ import type {
 import type { Icon } from '@lemnity/widget-config/widgets/base'
 import { announcementWidgetDefaults } from './defaults'
 import crossIcon from '@/assets/icons/cross.svg'
-import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
-import { useMobileContext } from './embedRuntime/useMobileContext'
 
 const noBackgroundImageUrl = 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp'
 
@@ -234,9 +235,8 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
       : backgroundColor && backgroundColor.length !== 0
           ? backgroundColor
           : announcementWidgetDefaults.appearence.backgroundColor,
-    borderRadius: mobile
-      ? undefined
-      : borderRadius ?? announcementWidgetDefaults.appearence.borderRadius,
+    borderRadius: borderRadius
+      ?? announcementWidgetDefaults.appearence.borderRadius,
   }
 
   const backgroundImage = contentUrl && !isLoading
@@ -258,6 +258,14 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
   const companyLogo = companyLogoUrl && !isCompanyLogoLoading
     ? companyBase64Logo as string
     : undefined
+  
+  const width = useViewportWidth()
+  const mobileScale = width >= 398
+    ? undefined
+    // 2 20 px margins on x axis = 40 px
+    // the width of the widget is w-99.5 = 398
+    // 1% of 398 = 3.98
+    : Math.floor((width - 40) / 3.98)
 
   const [hidden, setHidden] = useState(false)
 
@@ -273,13 +281,16 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
     <div
       ref={ref}
       className={cn(
-        mobile
-          ? 'w-full h-full p-4 pt-20 gap-3.75 relative'
-          : 'w-99.5 min-h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
+        'w-99.5 min-h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
         'flex flex-col items-center text-center transition-colors duration-250',
         hidden && 'hidden',
       )}
-      style={containerStyle}
+      style={{
+        ...containerStyle,
+        transform: mobile && mobileScale
+          ? `scale(${mobileScale}%)`
+          : undefined,
+      }}
     >
       <Button
         className={cn(
@@ -288,14 +299,10 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
           'pointer-events-auto',
           props.focused || mobile ? 'flex' : 'hidden group-hover:flex',
         )}
-        style={
-          mobile
-            ? { borderBottomLeftRadius: borderRadius }
-            : {
-                borderTopRightRadius: borderRadius,
-                borderBottomLeftRadius: borderRadius,
-              }
-        }
+        style={{
+          borderTopRightRadius: borderRadius,
+          borderBottomLeftRadius: borderRadius,
+        }}
         onPress={handleCloseButtonPress}
       >
         <div className="w-4 h-4 fill-black">

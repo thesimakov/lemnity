@@ -313,14 +313,14 @@ const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
           role="dialog"
           aria-modal="true"
           style={{
-            // ...overlayStyle,
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
             touchAction: 'pan-y'
           }}
           className={cn(
             'fixed left-0 top-0 w-full h-full z-2147483646 overflow-hidden',
-            'bg-blue-300',
+            'flex flex-col items-center justify-center',
+            'bg-black/20 backdrop-blur-sm',
           )}
         >
           <Widget
