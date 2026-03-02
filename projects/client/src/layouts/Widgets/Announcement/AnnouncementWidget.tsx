@@ -21,6 +21,8 @@ import type {
 import type { Icon } from '@lemnity/widget-config/widgets/base'
 import { announcementWidgetDefaults } from './defaults'
 import crossIcon from '@/assets/icons/cross.svg'
+import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { useMobileContext } from './embedRuntime/useMobileContext'
 
 const noBackgroundImageUrl = 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp'
 
@@ -126,12 +128,12 @@ const AnnouncementWidgetContent = (
         ? <img
             src={props.contentUrl}
             alt="Announcement Widget Image"
-            className="w-full h-67 object-cover rounded-[10px]"
+            className="w-full max-w-99.5 h-67 object-cover rounded-[10px]"
             style={{
               objectPosition: props.contentAlignment
             }}
           />
-        : <div className='w-full h-67 bg-transparent' />}
+        : <div className='w-full max-w-99.5 h-67 bg-transparent' />}
 
       <span
         className={cn(
@@ -154,7 +156,7 @@ const AnnouncementWidgetContent = (
         <BrTagsOnNewlines input={description} />
       </span>
 
-      <div className='w-full mt-auto mb-0'>
+      <div className='w-full max-w-99.5 mt-auto mb-0'>
         <AnnouncementWidgetButton
           buttonStyle={buttonStyle}
           buttonText={buttonText}
@@ -223,14 +225,18 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
     isLoading,
   } = useUrlImageOrDefault(contentUrl)
 
+  const mobile = useIsMobileViewport()
+  const mobileContext = useMobileContext()
+
   const containerStyle: CSSProperties = {
     backgroundColor: colorScheme === 'primary'
       ? '#FFFFFF'
       : backgroundColor && backgroundColor.length !== 0
           ? backgroundColor
           : announcementWidgetDefaults.appearence.backgroundColor,
-    borderRadius: borderRadius
-      ?? announcementWidgetDefaults.appearence.borderRadius,
+    borderRadius: mobile
+      ? undefined
+      : borderRadius ?? announcementWidgetDefaults.appearence.borderRadius,
   }
 
   const backgroundImage = contentUrl && !isLoading
@@ -252,14 +258,24 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
   const companyLogo = companyLogoUrl && !isCompanyLogoLoading
     ? companyBase64Logo as string
     : undefined
-  
+
   const [hidden, setHidden] = useState(false)
+
+  const handleCloseButtonPress = () => {
+    if (mobile && mobileContext) {
+      mobileContext.dispatch({ type: 'close' })
+      return
+    }
+    setHidden(true)
+  }
 
   return (
     <div
       ref={ref}
       className={cn(
-        'w-99.5 min-h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
+        mobile
+          ? 'w-full h-full p-4 pt-20 gap-3.75 relative'
+          : 'w-99.5 min-h-129.5 p-3.75 pb-0 gap-3.75 border border-black relative',
         'flex flex-col items-center text-center transition-colors duration-250',
         hidden && 'hidden',
       )}
@@ -270,13 +286,17 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
           'min-w-12 w-12 h-8.5 top-0 right-0 rounded-none',
           'bg-white px-0 absolute justify-center items-center',
           'pointer-events-auto',
-          props.focused ? 'flex' : 'hidden group-hover:flex',
+          props.focused || mobile ? 'flex' : 'hidden group-hover:flex',
         )}
-        style={{
-          borderTopRightRadius: borderRadius,
-          borderBottomLeftRadius: borderRadius,
-        }}
-        onPress={() => setHidden(true)}
+        style={
+          mobile
+            ? { borderBottomLeftRadius: borderRadius }
+            : {
+                borderTopRightRadius: borderRadius,
+                borderBottomLeftRadius: borderRadius,
+              }
+        }
+        onPress={handleCloseButtonPress}
       >
         <div className="w-4 h-4 fill-black">
           <SvgIcon src={crossIcon} alt="Close" />

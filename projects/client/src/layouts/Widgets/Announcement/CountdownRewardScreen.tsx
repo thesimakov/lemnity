@@ -123,7 +123,8 @@ const CountdownRewardScreen = (props: CountdownRewardScreenProps) => {
 
       <div
         className={cn(
-          'w-full flex flex-col items-center justify-center mt-3.75 gap-3.75',
+          'w-full max-w-99.5 flex flex-col items-center justify-center',
+          'mt-3.75 gap-3.75',
         )}
       >
         <span

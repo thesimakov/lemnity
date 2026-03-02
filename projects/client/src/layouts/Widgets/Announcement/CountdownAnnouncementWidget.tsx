@@ -14,11 +14,14 @@ import CountdownRewardScreen from './CountdownRewardScreen'
 import CountdownFormScreen, { type CountdownForm } from './CountdownFormScreen'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import useUrlImageOrDefault from './utils/useUrlImage'
+import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { useMobileContext } from './embedRuntime/useMobileContext'
+
 import crossIcon from '@/assets/icons/cross.svg'
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
-import useUrlImageOrDefault from './utils/useUrlImage'
 
 export type CountdownWidgetVariant = 'countdown' | 'form' | 'reward'
 
@@ -66,11 +69,24 @@ const CountdownAnnouncementWidget = (
   
   const [hidden, setHidden] = useState(false)
 
+  const mobile = useIsMobileViewport()
+  const mobileContext = useMobileContext()
+
+  const handleCloseButtonPress = () => {
+    if (mobile && mobileContext) {
+      mobileContext.dispatch({ type: 'close' })
+      return
+    }
+    setHidden(true)
+  }
+
   return (
     <div
       ref={ref}
       className={cn(
-        'w-99.5 min-h-129.5 px-9 rounded-2xl',
+        mobile
+          ? 'w-full h-full p-4 pt-20'
+          : 'w-99.5 min-h-129.5 px-9 rounded-2xl',
         'flex flex-col items-center relative',
         'bg-[#725DFF] transition-colors duration-150',
         hidden && 'hidden',
@@ -82,9 +98,9 @@ const CountdownAnnouncementWidget = (
           'min-w-12 w-12 h-8.5 top-4.5 right-4.5 rounded-[5px]',
           'bg-white px-0 absolute justify-center items-center',
           'pointer-events-auto',
-          props.focused ? 'flex' : 'hidden group-hover:flex',
+          props.focused || mobile ? 'flex' : 'hidden group-hover:flex',
         )}
-        onPress={() => setHidden(true)}
+        onPress={handleCloseButtonPress}
       >
         <div className="w-4 h-4 fill-black">
           <SvgIcon src={crossIcon} alt="Close" />
@@ -113,10 +129,24 @@ const CountdownAnnouncementWidget = (
       )}
 
       {brandingEnabled
-        ? <div className="mt-auto mb-4 pt-4 flex">
+        ? <div
+            className={cn(
+              mobile
+                ? 'fixed bottom-4'
+                : 'mt-auto mb-4',
+              'pt-4 flex',
+            )}
+          >
             <FreePlanBrandingLink color="#FFFFFF" />
           </div>
-        : <div className="h-3 mt-auto mb-4 pt-4 bg-transparent" />
+        : <div
+          className={cn(
+            mobile
+              ? 'h-3 fixed bottom-4'
+              : 'h-3 mt-auto mb-4',
+            'pt-4 bg-transparent',
+          )}
+        />
       }
     </div>
   )

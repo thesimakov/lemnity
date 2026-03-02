@@ -12,23 +12,25 @@ import { cn } from '@heroui/theme'
 
 import AnnouncementWidget, {
   type AnnouncementWidgetVariant,
-} from './AnnouncementWidget'
+} from '../AnnouncementWidget'
 import CountdownAnnouncementWidget, {
   type CountdownWidgetVariant,
-} from './CountdownAnnouncementWidget'
+} from '../CountdownAnnouncementWidget'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import useUrlImageOrDefault from './utils/useUrlImage'
+import useUrlImageOrDefault from '../utils/useUrlImage'
 import useClickOutside from '@/hooks/useClickOutside'
 import { sendEvent, sendPublicRequest } from '@/common/api/publicApi'
 
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
-import type { CountdownForm } from './CountdownFormScreen'
-import { announcementWidgetDefaults } from './defaults'
+import type { CountdownForm } from '../CountdownFormScreen'
+import { announcementWidgetDefaults } from '../defaults'
 import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
 import { Button } from '@heroui/button'
+import MobileProvider from './MobileProvider'
+import { useMobileContext } from './useMobileContext'
 
 const noBackgroundImageUrl = 'https://app.lemnity.ru/uploads/images/2026/01/2f539d8a-e1a6-4ced-a863-8e4aa37242d9-lemnity-pic.webp'
 
@@ -77,14 +79,17 @@ const Widget = ({ref, ...props}: WidgetProps) => {
     isLoading,
   } = useUrlImageOrDefault(contentUrl)
 
+  const mobile = useIsMobileViewport()
+
   const containerStyle: CSSProperties = {
     backgroundColor: colorScheme === 'primary'
       ? format === 'announcement' ? '#FFFFFF' : '#725DFF'
       : backgroundColor && backgroundColor.length !== 0
           ? backgroundColor
           : announcementWidgetDefaults.appearence.backgroundColor,
-    borderRadius: borderRadius
-      ?? announcementWidgetDefaults.appearence.borderRadius,
+    borderRadius: mobile
+      ? undefined
+      : borderRadius ?? announcementWidgetDefaults.appearence.borderRadius,
   }
 
   const backgroundImage = contentUrl && !isLoading
@@ -232,9 +237,7 @@ const DesktopWidgetTrigger = ({
 //   // imageUrl?: string
 // }
 
-const MobileWidgetTrigger = (
-  // props: MobileWidgetTriggerProps
-) => {
+const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
   const {
     imageUrl,
     triggerType,
@@ -261,8 +264,23 @@ const MobileWidgetTrigger = (
     isLoading,
   } = useUrlImageOrDefault(imageUrl)
 
+  const mobileContext = useMobileContext()
+
+  if (!mobileContext) {
+    return
+  }
+
+  const { state: context, dispatch } = mobileContext
+
+  const handleTriggerPress = () => {
+    dispatch({ type: context.open ? 'close' : 'open' })
+  }
+
   return (
-    <>
+    <div
+      data-lemnity-interactive
+      className='fixed bottom-6 right-6 bg-pink-300/20'
+    >
       {triggerType === 'image'
         ? (
           !isLoading && imageUrl && (
@@ -270,24 +288,53 @@ const MobileWidgetTrigger = (
               src={base64Image as string}
               alt='image'
               className={cn(
-                'fixed bottom-6 right-6',
                 'w-21.25 h-21.25 object-cover rounded-[5px]',
               )}
+              onClick={handleTriggerPress}
             />
           )
         )
         : (
           <Button
-            className='fixed bottom-6 right-6 rounded-full'
+            className='rounded-full'
             style={{
               color: triggerFontColor,
               backgroundColor: triggerBackgroundColor,
             }}
+            onPress={handleTriggerPress}
           >
             {triggerText}
           </Button>
         )}
-    </>
+      
+      {context.open && (
+        <div
+          data-lemnity-modal
+          role="dialog"
+          aria-modal="true"
+          style={{
+            // ...overlayStyle,
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            touchAction: 'pan-y'
+          }}
+          className={cn(
+            'fixed left-0 top-0 w-full h-full z-2147483646 overflow-hidden',
+            'bg-blue-300',
+          )}
+        >
+          <Widget
+            ref={ref}
+            announementVariant={props.announementVariant}
+            countdownVariant={props.countdownVariant}
+            focused={props.focused}
+            onAnnouncementButtonPress={props.onAnnouncementButtonPress}
+            onCountdownScreenButtonPress={props.onCountdownScreenButtonPress}
+            onFormScreenButtonPress={props.onFormScreenButtonPress}
+          />
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -449,9 +496,18 @@ export const CountdownAnnouncementEmbedRuntime = (
   return (
     <>
       {isMobile
-        ? <MobileWidgetTrigger />
-        : (
-          <DesktopWidgetTrigger
+        ? <MobileProvider>
+            <MobileWidgetTrigger
+              ref={widgetRef}
+              announementVariant={announementVariant}
+              countdownVariant={countdownVariant}
+              focused={focused}
+              onAnnouncementButtonPress={handleAnnouncementButtonPress}
+              onCountdownScreenButtonPress={handleCountdownScreenButtonPress}
+              onFormScreenButtonPress={handleFormScreenButtonPress}
+            />
+          </MobileProvider>
+        : <DesktopWidgetTrigger
             widgetRef={widgetRef}
             focused={focused}
             onClickOutside={handleClickOutside}
@@ -468,7 +524,7 @@ export const CountdownAnnouncementEmbedRuntime = (
               onFormScreenButtonPress={handleFormScreenButtonPress}
             />
           </DesktopWidgetTrigger>
-        )}
+        }
     </> 
   )
 }
