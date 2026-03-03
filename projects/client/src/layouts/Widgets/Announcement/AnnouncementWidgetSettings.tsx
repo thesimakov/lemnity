@@ -11,6 +11,7 @@ import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
 import MobileVersionSettings from './MobileVersionSettings'
+import { announcementWidgetDefaults } from './defaults'
 
 const AnnouncementWidgetSettings = () => {
   const {
@@ -45,6 +46,8 @@ const AnnouncementWidgetSettings = () => {
     })
   )
 
+  const defaults = announcementWidgetDefaults.mobileSettings
+
   const setMobileEnabled = useWidgetSettingsStore(
     s => s.setAnnouncementMobileEnabled
   )
@@ -75,12 +78,14 @@ const AnnouncementWidgetSettings = () => {
       {format === 'countdown' && <FormSettings />}
       <RewardMessageSettings />
       <MobileVersionSettings
-        enabled={mobileEnabled}
-        triggerType={triggerType}
-        imageUrl={imageUrl}
-        triggerText={triggerText}
-        triggerFontColor={triggerFontColor}
-        triggerBackgroundColor={triggerBackgroundColor}
+        enabled={mobileEnabled ?? defaults.mobileEnabled}
+        triggerType={triggerType ?? defaults.triggerType}
+        imageUrl={imageUrl ?? defaults.imageUrl}
+        triggerText={triggerText ?? defaults.triggerText}
+        triggerFontColor={triggerFontColor ?? defaults.triggerFontColor}
+        triggerBackgroundColor={
+          triggerBackgroundColor ?? defaults.triggerBackgroundColor
+        }
         onToggle={setMobileEnabled}
         onTriggerTypeChange={setMobileTriggerType}
         onImageUrlChange={setMobileImageUrl}

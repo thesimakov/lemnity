@@ -106,6 +106,7 @@ export const announcementWidgetDefaults: AnnouncementWidgetType = {
     triggerText: 'Подарок для вас',
     triggerBackgroundColor: '#FFB34F',
     triggerFontColor: '#000000',
+    imageUrl: 'https://app.lemnity.ru/uploads/images/2026/01/57534833-dc83-4a33-9108-79c952ca1940-sparkles.svg',
   },
   brandingEnabled: true,
 }
