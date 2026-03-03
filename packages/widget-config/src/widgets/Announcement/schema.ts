@@ -13,12 +13,14 @@ const FormatEnum = z.enum(['countdown', 'announcement'])
 const ContentEnum = z.enum(['imageOnTop', 'background', 'video'])
 const ContentAlignmentEnum = z.enum(['top', 'center', 'bottom'])
 const FontWeightEnum = z.enum(['regular', 'medium', 'bold'])
+const MobileTriggerEnum = z.enum(['image', 'button'])
 
 export type Format = z.infer<typeof FormatEnum>
 export type Content = z.infer<typeof ContentEnum>
 export type ContentAlignment = z.infer<typeof ContentAlignmentEnum>
 export type Icon = z.infer<typeof IconEnum>
 export type FontWeight = z.infer<typeof FontWeightEnum>
+export type MobileTrigger = z.infer<typeof MobileTriggerEnum>
 
 const WidgetAppearenceSchema = z.object({
   format: FormatEnum,
@@ -132,12 +134,22 @@ const RewardMessageSettingsSchema = z.object({
 
 export type RewardMessageSettings = z.infer<typeof RewardMessageSettingsSchema>
 
+const MobileSchema = z.object({
+  mobileEnabled: z.boolean(),
+  triggerType: MobileTriggerEnum,
+  imageUrl: z.string().optional(),
+  triggerText: z.string(),
+  triggerFontColor: z.string(),
+  triggerBackgroundColor: z.string(),
+})
+
 const AnnouncementWidgetSchema = z.object({
   type: z.literal(WidgetType),
   appearence: WidgetAppearenceSchema,
   infoSettings: InfoSettingsSchema,
   formSettings: FormSettingsSchema,
   rewardMessageSettings: RewardMessageSettingsSchema,
+  mobileSettings: MobileSchema,
   brandingEnabled: z.boolean(),
 })
 

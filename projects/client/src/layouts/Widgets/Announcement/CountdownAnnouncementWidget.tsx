@@ -14,11 +14,15 @@ import CountdownRewardScreen from './CountdownRewardScreen'
 import CountdownFormScreen, { type CountdownForm } from './CountdownFormScreen'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import useUrlImageOrDefault from './utils/useUrlImage'
+import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { useViewportWidth } from '@/hooks/useViewportWidth'
+import { useMobileContext } from './embedded/MobileContext'
+
 import crossIcon from '@/assets/icons/cross.svg'
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
-import useUrlImageOrDefault from './utils/useUrlImage'
 
 export type CountdownWidgetVariant = 'countdown' | 'form' | 'reward'
 
@@ -66,6 +70,25 @@ const CountdownAnnouncementWidget = (
   
   const [hidden, setHidden] = useState(false)
 
+  const mobile = useIsMobileViewport()
+  const mobileContext = useMobileContext()
+  const width = useViewportWidth()
+
+  const mobileScale = width >= 398
+    ? undefined
+    // 2 20 px margins on x axis = 40 px
+    // the width of the widget is w-99.5 = 398
+    // 1% of 398 = 3.98
+    : Math.floor((width - 40) / 3.98)
+
+  const handleCloseButtonPress = () => {
+    if (mobile && mobileContext) {
+      mobileContext.dispatch({ type: 'close' })
+      return
+    }
+    setHidden(true)
+  }
+
   return (
     <div
       ref={ref}
@@ -75,16 +98,21 @@ const CountdownAnnouncementWidget = (
         'bg-[#725DFF] transition-colors duration-150',
         hidden && 'hidden',
       )}
-      style={props.containerStyle}
+      style={{
+        ...props.containerStyle,
+        transform: mobile && mobileScale
+          ? `scale(${mobileScale}%)`
+          : undefined,
+      }}
     >
       <Button
         className={cn(
           'min-w-12 w-12 h-8.5 top-4.5 right-4.5 rounded-[5px]',
           'bg-white px-0 absolute justify-center items-center',
           'pointer-events-auto',
-          props.focused ? 'flex' : 'hidden group-hover:flex',
+          props.focused || mobile ? 'flex' : 'hidden group-hover:flex',
         )}
-        onPress={() => setHidden(true)}
+        onPress={handleCloseButtonPress}
       >
         <div className="w-4 h-4 fill-black">
           <SvgIcon src={crossIcon} alt="Close" />
@@ -113,10 +141,18 @@ const CountdownAnnouncementWidget = (
       )}
 
       {brandingEnabled
-        ? <div className="mt-auto mb-4 pt-4 flex">
+        ? <div
+            className={cn(
+              'mt-auto mb-4 pt-4 flex',
+            )}
+          >
             <FreePlanBrandingLink color="#FFFFFF" />
           </div>
-        : <div className="h-3 mt-auto mb-4 pt-4 bg-transparent" />
+        : <div
+          className={cn(
+            'h-3 mt-auto mb-4 pt-4 bg-transparent',
+          )}
+        />
       }
     </div>
   )

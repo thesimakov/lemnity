@@ -14,6 +14,7 @@ import type {
   ContentAlignment,
   FontWeight,
   Format,
+  MobileTrigger,
 } from '@lemnity/widget-config/widgets/announcement'
 import type { Icon } from '@lemnity/widget-config/widgets/base'
 
@@ -252,6 +253,24 @@ export type WidgetActions = {
   ) => void
   setAnnouncementRewardScreenPromoBackgroundColor: (
     customPromoBackgroundColor: string
+  ) => void
+  setAnnouncementMobileEnabled: (
+    mobileEnabled: boolean
+  ) => void
+  setAnnouncementMobileTriggerType: (
+    triggerType: MobileTrigger
+  ) => void
+  setAnnouncementMobileImageUrl: (
+    imageUrl: string | undefined
+  ) => void
+  setAnnouncementMobileTriggerText: (
+    triggerText: string
+  ) => void
+  setAnnouncementMobileTriggerFontColor: (
+    triggerFontColor: string
+  ) => void
+  setAnnouncementMobileTriggerBackgroundColor: (
+    triggerBackgroundColor: string
   ) => void
   setAnnouncementBrandingEnabled: (
     brandingEnabled: boolean
