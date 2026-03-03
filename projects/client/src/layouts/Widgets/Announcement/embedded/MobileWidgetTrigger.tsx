@@ -26,15 +26,15 @@ const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
       const defaults = announcementWidgetDefaults.mobileSettings
 
       return {
-        imageUrl: widget.mobileSettings.imageUrl
+        imageUrl: widget.mobileSettings?.imageUrl
           ?? defaults.imageUrl,
-        triggerType: widget.mobileSettings.triggerType
+        triggerType: widget.mobileSettings?.triggerType
           ?? defaults.triggerType,
-        triggerText: widget.mobileSettings.triggerText
+        triggerText: widget.mobileSettings?.triggerText
           ?? defaults.triggerText,
-        triggerFontColor: widget.mobileSettings.triggerFontColor
+        triggerFontColor: widget.mobileSettings?.triggerFontColor
           ?? defaults.triggerFontColor,
-        triggerBackgroundColor: widget.mobileSettings.triggerBackgroundColor
+        triggerBackgroundColor: widget.mobileSettings?.triggerBackgroundColor
           ?? defaults.triggerBackgroundColor,
       }
     })

@@ -30,23 +30,23 @@ const AnnouncementWidgetSettings = () => {
       const widget = s.settings?.widget as AnnouncementWidgetType
       const appearence = widget.appearence
       const mobile = widget.mobileSettings
+      const defaults = announcementWidgetDefaults.mobileSettings
 
       return {
         format: appearence.format,
 
-        mobileEnabled: mobile.mobileEnabled,
-        triggerType: mobile.triggerType,
-        imageUrl: mobile.imageUrl,
-        triggerText: mobile.triggerText,
-        triggerFontColor: mobile.triggerFontColor,
-        triggerBackgroundColor: mobile.triggerBackgroundColor,
+        mobileEnabled: mobile?.mobileEnabled ?? defaults.mobileEnabled,
+        triggerType: mobile?.triggerType ?? defaults.triggerType,
+        imageUrl: mobile?.imageUrl ?? defaults.imageUrl,
+        triggerText: mobile?.triggerText ?? defaults.triggerText,
+        triggerFontColor: mobile?.triggerFontColor ?? defaults.triggerFontColor,
+        triggerBackgroundColor: mobile?.triggerBackgroundColor
+          ?? defaults.triggerBackgroundColor,
 
         brandingEnabled: widget.brandingEnabled,
       }
     })
   )
-
-  const defaults = announcementWidgetDefaults.mobileSettings
 
   const setMobileEnabled = useWidgetSettingsStore(
     s => s.setAnnouncementMobileEnabled
@@ -78,13 +78,13 @@ const AnnouncementWidgetSettings = () => {
       {format === 'countdown' && <FormSettings />}
       <RewardMessageSettings />
       <MobileVersionSettings
-        enabled={mobileEnabled ?? defaults.mobileEnabled}
-        triggerType={triggerType ?? defaults.triggerType}
-        imageUrl={imageUrl ?? defaults.imageUrl}
-        triggerText={triggerText ?? defaults.triggerText}
-        triggerFontColor={triggerFontColor ?? defaults.triggerFontColor}
+        enabled={mobileEnabled}
+        triggerType={triggerType}
+        imageUrl={imageUrl}
+        triggerText={triggerText}
+        triggerFontColor={triggerFontColor}
         triggerBackgroundColor={
-          triggerBackgroundColor ?? defaults.triggerBackgroundColor
+          triggerBackgroundColor
         }
         onToggle={setMobileEnabled}
         onTriggerTypeChange={setMobileTriggerType}
