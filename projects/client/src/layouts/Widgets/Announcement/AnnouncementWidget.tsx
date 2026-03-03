@@ -12,7 +12,7 @@ import * as Icons from '@/components/Icons'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import useUrlImageOrDefault from './utils/useUrlImage'
 import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
-import { useMobileContext } from './embedRuntime/useMobileContext'
+import { useMobileContext } from './embedded/MobileContext'
 import { useViewportWidth } from '@/hooks/useViewportWidth'
 import { getFontWeightClass } from './utils/getFontWeightClass'
 
