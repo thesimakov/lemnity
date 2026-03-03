@@ -296,9 +296,6 @@ importers:
       framer-motion:
         specifier: ^12.23.12
         version: 12.23.26(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      immer:
-        specifier: ^11.1.4
-        version: 11.1.4
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
