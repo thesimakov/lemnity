@@ -54,8 +54,15 @@ type IconPickerProps = {
 }
 
 const IconPicker = (props: IconPickerProps) => {
-  const [selectedIconName, setSelectedIconName] = useState<IconName | undefined>(props.initialIcon)
+  const [selectedIconName, setSelectedIconName] =
+    useState<IconName | undefined>(props.initialIcon)
   const SelectedIcon = selectedIconName ? Icons[selectedIconName] : null
+  
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  const handlePopoverOpenChange = () => {
+    setSettingsOpen(!settingsOpen)
+  }
 
   const handleIconChange = (icon: IconName) => {
     setSelectedIconName(icon)
@@ -66,16 +73,21 @@ const IconPicker = (props: IconPickerProps) => {
     <Popover
       placement="bottom-start"
       classNames={{
-        base: cn('bg-white rounded-[10px]', 'shadow-[0px_8px_15px_6px_rgba(0,0,0,0.15)]'),
-        content: cn('w-104 h-47 flex-row flex-wrap gap-2 p-4 justify-start')
+        base: cn(
+          'bg-white rounded-[10px]',
+          'shadow-[0px_8px_15px_6px_rgba(0,0,0,0.15)]',
+        ),
+        content: 'w-104 h-47 flex-row flex-wrap gap-2 p-4 justify-start',
       }}
+      onOpenChange={handlePopoverOpenChange}
     >
       <PopoverTrigger>
         <Button
           className={cn(
-            'rounded-[5px] w-18 grow @min-[270px]:shrink-0 @min-[270px]:grow-0 h-12.75 bg-white',
+            'rounded-[5px] w-18 h-12.75 bg-white',
             'border border-[#E4E4E7] p-3.75',
-            'flex items-center justify-center gap-1.25'
+            'flex items-center justify-center gap-1.25 grow',
+            '@min-[270px]:shrink-0 @min-[270px]:grow-0',
           )}
         >
           {SelectedIcon && (
@@ -96,7 +108,11 @@ const IconPicker = (props: IconPickerProps) => {
             strokeWidth="1.5"
             viewBox="0 0 24 24"
             width="1em"
-            className="w-4 h-4 shrink-0 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
+            data-open={settingsOpen}
+            className={cn(
+              'w-4 h-4 transition-transform duration-150 ease',
+              'motion-reduce:transition-none data-[open=true]:rotate-180',
+            )}
           >
             <path d="m6 9 6 6 6-6"></path>
           </svg>

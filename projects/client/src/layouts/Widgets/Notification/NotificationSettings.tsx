@@ -1,0 +1,226 @@
+import { useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { Button } from '@heroui/button'
+import { Input } from '@heroui/input'
+import { cn } from '@heroui/theme'
+
+import EditableList, { type EditableListItem } from '@/components/EditableList'
+import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+
+import type {
+  NotificationWidgetType,
+  Notification,
+} from '@lemnity/widget-config/widgets/notification'
+import gearIcon from '@/assets/icons/gear.svg'
+import SvgIcon from '@/components/SvgIcon'
+import { notificationWidgetDefaults } from './defaults'
+import { uuidv4 } from '@/common/utils/uuidv4'
+
+type NotificationItemProps = {
+  notification: Notification
+  pendingItemId: string | null
+  setPendingItemId: (id: string | null) => void
+}
+
+const NotificationItem = (props: NotificationItemProps) => {
+  // const [settingsOpen, setSettingsOpen] = useState(false)
+
+  const handleButtonPress = () => {
+    if (
+      typeof props.pendingItemId === 'string'
+      && props.pendingItemId !== props.notification.id
+    ) {
+      props.setPendingItemId(null)
+      // setSettingsOpen(false)
+      // https://stackoverflow.com/a/75403839/21210000
+      // https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout#late_timeouts
+      setTimeout(() => {
+        props.setPendingItemId(props.notification.id)
+      })
+      return
+    }
+
+    props.setPendingItemId(
+      props.notification.id === props.pendingItemId
+        ? null
+        : props.notification.id
+      )
+  }
+
+  return (
+    <div className='flex flex-row gap-2.5'>
+      <Input
+        value={props.notification.text}
+        classNames={{
+          base: 'min-w-76 flex-1',
+          inputWrapper: cn(
+            'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
+            'shadow-none min-h-12.5 px-2.5',
+          ),
+          input: 'placeholder:text-[#AAAAAA] text-base'
+        }}
+      />
+      <Button
+        className={cn(
+          'rounded-[5px] h-12.75',
+          'border border-[#E4E4E7] px-2.5',
+          'flex items-center justify-center gap-2.5',
+          props.notification.id === props.pendingItemId
+            ? 'bg-[#E8E8E8]'
+            : 'bg-white',
+        )}
+        onPress={handleButtonPress}
+      >
+        <div className='w-4 h-4'>
+          <SvgIcon src={gearIcon} preserveOriginalColors />
+        </div>
+        <svg
+          aria-hidden='true'
+          fill='none'
+          focusable='false'
+          height='1em'
+          role='presentation'
+          stroke='currentColor'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          strokeWidth='1.5'
+          viewBox='0 0 24 24'
+          width='1em'
+          data-open={props.notification.id === props.pendingItemId}
+          className={cn(
+            'w-4 h-4 transition-transform duration-150 ease',
+            'motion-reduce:transition-none data-[open=true]:rotate-180',
+          )}
+        >
+          <path d='m6 9 6 6 6-6'></path>
+        </svg>
+      </Button>
+    </div>
+  )
+}
+
+const NotificationItemSettings = () => {
+  return (
+    <div
+      className='w-full p-3 flex flex-col gap-2.5 bg-[#E8E8E8] rounded-[5px]'
+    >
+      <span className='text-[16px] leading-3.75 text-[#3D3D3B]'>
+        Настройка кнопки
+      </span>      
+
+      <div className='w-full flex flex-row gap-2.5'>
+        <Input
+          value={'Перейти к анкете'}
+          classNames={{
+            base: 'min-w-76 flex-1',
+            inputWrapper: cn(
+              'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
+              'shadow-none min-h-12.5 px-2.5',
+            ),
+            input: 'placeholder:text-[#AAAAAA] text-base'
+          }}
+        />
+        <Input
+          value={'lemnity.ru/about'}
+          classNames={{
+            base: 'min-w-76 flex-1',
+            inputWrapper: cn(
+              'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
+              'shadow-none min-h-12.5 px-2.5',
+            ),
+            input: 'placeholder:text-[#AAAAAA] text-base'
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+const NotificationSettings = () => {
+  const {
+    notifications,
+  } = useWidgetSettingsStore(
+    useShallow(s => {
+      // a crutch because the store just works this way apparently
+      const settings = (s.settings?.widget as NotificationWidgetType)
+
+      return  {
+        notifications: settings.notifications,
+      }
+    })
+  )
+
+  console.log(notifications)
+
+  const [pendingItemId, setPendingItemId] = useState<string | null>(null)
+
+  const setNotifications = useWidgetSettingsStore(
+    s => s.setNotifications
+  )
+  const addNotification = useWidgetSettingsStore(
+    s => s.addNotification
+  )
+  const deleteNotification = useWidgetSettingsStore(
+    s => s.deleteNotification
+  )
+
+  const handleAdd = () => {
+    addNotification({
+      ...notificationWidgetDefaults.notifications[0],
+      id: uuidv4()
+    })
+  }
+
+  const handleDelete = (item: EditableListItem<Notification>) => {
+    deleteNotification(item.id)
+  }
+
+  return (
+    <BorderedContainer>
+      <div className='w-full flex flex-col gap-6'>
+        <div className='h-9.25 shrink-0 flex justify-between'>
+          <span className='text-lg leading-5.25 font-medium'>
+            Секторы
+          </span>
+          <span className='text-lg text-[#C0C0C0] leading-5.25'>
+            Максимум 5
+          </span>
+        </div>
+
+        <div className='w-full flex flex-col gap-2.5'>
+          {notifications && (
+            <EditableList
+              showIndex={false}
+              items={notifications}
+              maxItems={5}
+              onItemsChange={setNotifications}
+              canReorder
+              classNames={{
+                index: 'min-w-[40px]',
+                delete: 'h-12.75',
+              }}
+              renderItem={item => (
+                <NotificationItem
+                  notification={item}
+                  pendingItemId={pendingItemId}
+                  setPendingItemId={setPendingItemId}
+                />
+              )}
+              renderBelow={item => (
+                item.id === pendingItemId && <NotificationItemSettings />
+              )}
+              onDelete={handleDelete}
+              onAdd={handleAdd}
+              addButtonLabel='Добавить сектор'
+              // disabledReorderIds={pendingItemId ? [pendingItemId] : []}
+            />
+          )}
+        </div>
+      </div>
+    </BorderedContainer>
+  )
+}
+
+export default NotificationSettings

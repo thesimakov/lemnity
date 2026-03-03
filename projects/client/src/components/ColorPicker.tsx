@@ -87,6 +87,11 @@ const defaultColors: ColorPickerItem[] = [
 const ColorPicker = (props: ColorPickerProps) => {
   const [selectedColor, setSelectedColor] = useState(() => props.initialColor)
   const [inputValue, setInputValue] = useState(() => props.initialColor)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  const handlePopoverOpenChange = () => {
+    setSettingsOpen(!settingsOpen)
+  }
 
   // for now - a crutch
   // the color was supposed to be *inital* for the fabmenu
@@ -135,6 +140,7 @@ const ColorPicker = (props: ColorPickerProps) => {
           'w-149.5 h-30.5 flex-row flex-wrap gap-0.75 p-4 justify-start',
         )
       }}
+      onOpenChange={handlePopoverOpenChange}
     >
       <PopoverTrigger>
         <Button
@@ -166,7 +172,11 @@ const ColorPicker = (props: ColorPickerProps) => {
             strokeWidth="1.5"
             viewBox="0 0 24 24"
             width="1em"
-            className="w-4 h-4 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
+            data-open={settingsOpen}
+            className={cn(
+              'w-4 h-4 transition-transform duration-150 ease',
+              'motion-reduce:transition-none data-[open=true]:rotate-180',
+            )}
           >
             <path d="m6 9 6 6 6-6"></path>
           </svg>
