@@ -7,12 +7,13 @@ import IconPicker, { type IconName } from '@/components/IconPicker'
 
 type ButtonAppearenceSettingsProps = {
   onTriggerTextChange: (value: string) => void
-  onTriggerIconChange: (icon: IconName) => void
+  onTriggerIconChange?: (icon: IconName) => void
   onFontColorChange: (color: string) => void
   onBackgroundColorChange: (color: string) => void
   buttonText?: string
   buttonTextColor: string
   buttonBackgroundColor: string
+  noIcon?: boolean
   buttonIcon?: IconName
 }
 
@@ -31,7 +32,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
   }
 
   const handleTriggerIconChange = (icon: IconName) => {
-    props.onTriggerIconChange(icon)
+    props.onTriggerIconChange?.(icon)
   }
 
   return (
@@ -57,10 +58,12 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         triggerText="Цвет шрифта"
       />
 
-      <IconPicker
-        initialIcon={props.buttonIcon}
-        onIconChange={handleTriggerIconChange}
-      />
+      {!props.noIcon && (
+        <IconPicker
+          initialIcon={props.buttonIcon}
+          onIconChange={handleTriggerIconChange}
+        />
+      )}
 
       <ColorPicker
         initialColor={props.buttonBackgroundColor}

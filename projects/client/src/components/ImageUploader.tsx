@@ -110,7 +110,7 @@ const ImageUploader = ({
         {!hidePreview && <img
           src={previewUrl || imageUpload}
           alt="image"
-          className="w-14 h-14 object-cover rounded-md"
+          className="w-14 h-14 object-cover rounded-[5px]"
         />}
         <label
           htmlFor={inputId}

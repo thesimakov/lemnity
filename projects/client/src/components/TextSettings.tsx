@@ -130,18 +130,20 @@ const TextSettings = (props: MessageSettingsProps) => {
               onChange={props.onFontSizeChange}
             />
           )}
-          <FontWeightButton
-            variant='regular'
-            onPress={props.onFontWeightChange}
-          />
-          <FontWeightButton
-            variant='medium'
-            onPress={props.onFontWeightChange}
-          />
-          <FontWeightButton
-            variant='bold'
-            onPress={props.onFontWeightChange}
-          />
+          <div className='flex flex-row flex-nowrap gap-2.5'>
+            <FontWeightButton
+              variant='regular'
+              onPress={props.onFontWeightChange}
+            />
+            <FontWeightButton
+              variant='medium'
+              onPress={props.onFontWeightChange}
+            />
+            <FontWeightButton
+              variant='bold'
+              onPress={props.onFontWeightChange}
+            />
+          </div>
           <ColorPicker
             initialColor={props.textColor}
             onColorChange={props.onColorChange}

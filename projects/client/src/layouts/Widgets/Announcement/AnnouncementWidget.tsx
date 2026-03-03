@@ -11,6 +11,9 @@ import * as Icons from '@/components/Icons'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import useUrlImageOrDefault from './utils/useUrlImage'
+import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { useMobileContext } from './embedded/MobileContext'
+import { useViewportWidth } from '@/hooks/useViewportWidth'
 import { getFontWeightClass } from './utils/getFontWeightClass'
 
 import type {
@@ -126,12 +129,12 @@ const AnnouncementWidgetContent = (
         ? <img
             src={props.contentUrl}
             alt="Announcement Widget Image"
-            className="w-full h-67 object-cover rounded-[10px]"
+            className="w-full max-w-99.5 h-67 object-cover rounded-[10px]"
             style={{
               objectPosition: props.contentAlignment
             }}
           />
-        : <div className='w-full h-67 bg-transparent' />}
+        : <div className='w-full max-w-99.5 h-67 bg-transparent' />}
 
       <span
         className={cn(
@@ -154,7 +157,7 @@ const AnnouncementWidgetContent = (
         <BrTagsOnNewlines input={description} />
       </span>
 
-      <div className='w-full mt-auto mb-0'>
+      <div className='w-full max-w-99.5 mt-auto mb-0'>
         <AnnouncementWidgetButton
           buttonStyle={buttonStyle}
           buttonText={buttonText}
@@ -223,6 +226,9 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
     isLoading,
   } = useUrlImageOrDefault(contentUrl)
 
+  const mobile = useIsMobileViewport()
+  const mobileContext = useMobileContext()
+
   const containerStyle: CSSProperties = {
     backgroundColor: colorScheme === 'primary'
       ? '#FFFFFF'
@@ -253,7 +259,23 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
     ? companyBase64Logo as string
     : undefined
   
+  const width = useViewportWidth()
+  const mobileScale = width >= 398
+    ? undefined
+    // 2 20 px margins on x axis = 40 px
+    // the width of the widget is w-99.5 = 398
+    // 1% of 398 = 3.98
+    : Math.floor((width - 40) / 3.98)
+
   const [hidden, setHidden] = useState(false)
+
+  const handleCloseButtonPress = () => {
+    if (mobile && mobileContext) {
+      mobileContext.dispatch({ type: 'close' })
+      return
+    }
+    setHidden(true)
+  }
 
   return (
     <div
@@ -263,20 +285,25 @@ const AnnouncementWidget = ({ ref, ...props }: AnnouncementWidgetProps) => {
         'flex flex-col items-center text-center transition-colors duration-250',
         hidden && 'hidden',
       )}
-      style={containerStyle}
+      style={{
+        ...containerStyle,
+        transform: mobile && mobileScale
+          ? `scale(${mobileScale}%)`
+          : undefined,
+      }}
     >
       <Button
         className={cn(
           'min-w-12 w-12 h-8.5 top-0 right-0 rounded-none',
           'bg-white px-0 absolute justify-center items-center',
           'pointer-events-auto',
-          props.focused ? 'flex' : 'hidden group-hover:flex',
+          props.focused || mobile ? 'flex' : 'hidden group-hover:flex',
         )}
         style={{
           borderTopRightRadius: borderRadius,
           borderBottomLeftRadius: borderRadius,
         }}
-        onPress={() => setHidden(true)}
+        onPress={handleCloseButtonPress}
       >
         <div className="w-4 h-4 fill-black">
           <SvgIcon src={crossIcon} alt="Close" />

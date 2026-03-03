@@ -136,7 +136,7 @@ const CountdownTimer = ({
   }, [initialTime])
 
   return (
-    <div className="w-full flex flex-row">
+    <div className="w-full flex flex-row justify-center">
       <CountdownSection
         value={[days.charAt(0), days.charAt(1)]}
         label="дней"
