@@ -1,5 +1,6 @@
 import { WidgetTypeEnum } from '@lemnity/api-sdk'
 
+// ... ?
 export const WidgetTypes = {
   WHEEL_OF_FORTUNE: WidgetTypeEnum.WHEEL_OF_FORTUNE,
   CONVEYOR_OF_GIFTS: WidgetTypeEnum.CONVEYOR_OF_GIFTS,
@@ -9,7 +10,8 @@ export const WidgetTypes = {
   CHEST_WITH_ACTION: WidgetTypeEnum.CHEST_WITH_ACTION,
   ADVENT_CALENDAR: WidgetTypeEnum.ADVENT_CALENDAR,
   TEASER: WidgetTypeEnum.TEASER,
-  ANNOUNCEMENT: WidgetTypeEnum.ANNOUNCEMENT
+  ANNOUNCEMENT: WidgetTypeEnum.ANNOUNCEMENT,
+  NOTIFICATION: WidgetTypeEnum.NOTIFICATION,
 } as const
 
 export type WidgetType = (typeof WidgetTypes)[keyof typeof WidgetTypes]
@@ -47,6 +49,13 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
   {
     type: WidgetTypes.ANNOUNCEMENT,
     title: 'Таймер событий',
+    description: 'Лиды, вовлечение, вознаграждение',
+    isAvailable: true,
+    badge: 'new'
+  },
+  {
+    type: WidgetTypes.NOTIFICATION,
+    title: 'Уведомления',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'

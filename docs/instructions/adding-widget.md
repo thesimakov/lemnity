@@ -4,6 +4,7 @@
 1. Добавь новое значение в `projects/server/prisma/schema/widget.prisma` → `enum WidgetType`.
 2. Прогони миграцию (боевые/поддерживаемые ветки):
    ```bash
+   # docker exec server pnpm --filter @lemnity/database exec prisma migrate dev --name add-notification
    pnpm --filter server exec npx prisma migrate dev --name add-<widget>
    pnpm --filter server exec npx prisma db push
    pnpm --filter server exec npx prisma generate

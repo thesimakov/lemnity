@@ -28,6 +28,12 @@ import {
   buildAnnouncementDisplaySettings,
   buildAnnouncementIntegrationSettings
 } from '@/layouts/Widgets/Announcement/defaults'
+import {
+  buildNotificationWidgetSettings,
+  buildNotificationFieldsSettings,
+  buildNotificationDisplaySettings,
+  buildNotificationIntegrationSettings
+} from '@/layouts/Widgets/Notification/defaults'
 import { resolveWidgetDefinition } from './resolveWidgetDefinition'
 
 type SettingsSurfaceMode = 'standard' | 'custom'
@@ -72,12 +78,12 @@ const implementedWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinit
   [WidgetTypeEnum.WHEEL_OF_FORTUNE]: {
     type: WidgetTypeEnum.WHEEL_OF_FORTUNE,
     buildWidgetSettings: buildWheelWidgetSettings,
-    buildFieldsSettings: buildWheelFieldsSettings
+    buildFieldsSettings: buildWheelFieldsSettings,
   },
   [WidgetTypeEnum.ACTION_TIMER]: {
     type: WidgetTypeEnum.ACTION_TIMER,
     buildWidgetSettings: buildActionTimerWidgetSettings,
-    buildFieldsSettings: buildActionTimerFieldsSettings
+    buildFieldsSettings: buildActionTimerFieldsSettings,
   },
   [WidgetTypeEnum.FAB_MENU]: {
     type: WidgetTypeEnum.FAB_MENU,
@@ -87,7 +93,7 @@ const implementedWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinit
     buildIntegrationSettings: buildFABMenuIntegrationSettings,
     settingsSurfaces: {
       fields: 'custom',
-      display: 'custom'
+      display: 'custom',
     }
   },
   [WidgetTypeEnum.ANNOUNCEMENT]: {
@@ -98,9 +104,20 @@ const implementedWidgetDefinitions: Partial<Record<WidgetTypeEnum, WidgetDefinit
     buildIntegrationSettings: buildAnnouncementIntegrationSettings,
     settingsSurfaces: {
       fields: 'custom',
-      display: 'custom'
+      display: 'custom',
     }
-  }
+  },
+  [WidgetTypeEnum.NOTIFICATION]: {
+    type: WidgetTypeEnum.NOTIFICATION,
+    buildWidgetSettings: buildNotificationWidgetSettings,
+    buildFieldsSettings: buildNotificationFieldsSettings,
+    buildDisplaySettings: buildNotificationDisplaySettings,
+    buildIntegrationSettings: buildNotificationIntegrationSettings,
+    settingsSurfaces: {
+      fields: 'custom',
+      display: 'custom',
+    }
+  },
 }
 
 /**

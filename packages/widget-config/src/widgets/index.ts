@@ -4,6 +4,7 @@ import { wheelOfFortuneSchema } from './WheelOfFortune/schema.js'
 import { actionTimerSchema } from './ActionTimer/schema.js'
 import { fabMenuSchema } from './FABMenu/schema.js'
 import { announcementSchema } from './Announcement/schema.js'
+import { notificationSchema } from './Notification/schema.js'
 
 export type WidgetSchemaAdapter = {
   type: WidgetTypeId
@@ -14,7 +15,8 @@ const adapters: WidgetSchemaAdapter[] = [
   { type: 'WHEEL_OF_FORTUNE', schema: wheelOfFortuneSchema },
   { type: 'ACTION_TIMER', schema: actionTimerSchema },
   { type: 'FAB_MENU', schema: fabMenuSchema },
-  { type: 'ANNOUNCEMENT', schema: announcementSchema }
+  { type: 'ANNOUNCEMENT', schema: announcementSchema },
+  { type: 'NOTIFICATION', schema: notificationSchema },
 ]
 
 export const widgetSchemaAdapters: Record<WidgetTypeId, WidgetSchemaAdapter> =
