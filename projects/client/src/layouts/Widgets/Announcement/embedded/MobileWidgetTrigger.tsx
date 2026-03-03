@@ -11,6 +11,7 @@ import { useMobileContext } from './MobileContext'
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
+import { announcementWidgetDefaults } from '../defaults'
 
 const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
   const {
@@ -22,13 +23,19 @@ const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
   } = useWidgetSettingsStore(
     useShallow(s => {
       const widget = s.settings?.widget as AnnouncementWidgetType
+      const defaults = announcementWidgetDefaults.mobileSettings
 
       return {
-        imageUrl: widget.mobileSettings.imageUrl,
-        triggerType: widget.mobileSettings.triggerType,
-        triggerText: widget.mobileSettings.triggerText,
-        triggerFontColor: widget.mobileSettings.triggerFontColor,
-        triggerBackgroundColor: widget.mobileSettings.triggerBackgroundColor,
+        imageUrl: widget.mobileSettings.imageUrl
+          ?? defaults.imageUrl,
+        triggerType: widget.mobileSettings.triggerType
+          ?? defaults.triggerType,
+        triggerText: widget.mobileSettings.triggerText
+          ?? defaults.triggerText,
+        triggerFontColor: widget.mobileSettings.triggerFontColor
+          ?? defaults.triggerFontColor,
+        triggerBackgroundColor: widget.mobileSettings.triggerBackgroundColor
+          ?? defaults.triggerBackgroundColor,
       }
     })
   )

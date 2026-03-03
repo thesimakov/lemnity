@@ -9,7 +9,7 @@ import {
   type Format,
   type MobileTrigger,
 } from '@lemnity/widget-config/widgets/announcement'
-import { buildAnnouncementWidgetSettings } from './defaults'
+import { announcementWidgetDefaults, buildAnnouncementWidgetSettings } from './defaults'
 import type { ColorScheme, Icon } from '@lemnity/widget-config/widgets/base'
 
 export const createAnnouncementActions = (
@@ -704,10 +704,13 @@ export const createAnnouncementActions = (
     mobileEnabled: boolean
   ) => 
     updateWidget(widget => {
+      const previousSettings = widget.mobileSettings
+        ?? announcementWidgetDefaults.mobileSettings
+
       return {
         ...widget,
         mobileSettings: {
-          ...widget.mobileSettings,
+          ...previousSettings,
           mobileEnabled,
         }
       }
@@ -716,10 +719,13 @@ export const createAnnouncementActions = (
     triggerType: MobileTrigger
   ) => 
     updateWidget(widget => {
+      const previousSettings = widget.mobileSettings
+        ?? announcementWidgetDefaults.mobileSettings
+
       return {
         ...widget,
         mobileSettings: {
-          ...widget.mobileSettings,
+          ...previousSettings,
           triggerType,
         }
       }
@@ -728,10 +734,13 @@ export const createAnnouncementActions = (
     imageUrl: string | undefined
   ) => 
     updateWidget(widget => {
+      const previousSettings = widget.mobileSettings
+        ?? announcementWidgetDefaults.mobileSettings
+
       return {
         ...widget,
         mobileSettings: {
-          ...widget.mobileSettings,
+          ...previousSettings,
           imageUrl,
         }
       }
@@ -740,10 +749,13 @@ export const createAnnouncementActions = (
     triggerText: string
   ) => 
     updateWidget(widget => {
+      const previousSettings = widget.mobileSettings
+        ?? announcementWidgetDefaults.mobileSettings
+
       return {
         ...widget,
         mobileSettings: {
-          ...widget.mobileSettings,
+          ...previousSettings,
           triggerText,
         }
       }
@@ -752,10 +764,13 @@ export const createAnnouncementActions = (
     triggerFontColor: string
   ) => 
     updateWidget(widget => {
+      const previousSettings = widget.mobileSettings
+        ?? announcementWidgetDefaults.mobileSettings
+
       return {
         ...widget,
         mobileSettings: {
-          ...widget.mobileSettings,
+          ...previousSettings,
           triggerFontColor,
         }
       }
@@ -764,10 +779,13 @@ export const createAnnouncementActions = (
     triggerBackgroundColor: string
   ) => 
     updateWidget(widget => {
+      const previousSettings = widget.mobileSettings
+        ?? announcementWidgetDefaults.mobileSettings
+
       return {
         ...widget,
         mobileSettings: {
-          ...widget.mobileSettings,
+          ...previousSettings,
           triggerBackgroundColor,
         }
       }

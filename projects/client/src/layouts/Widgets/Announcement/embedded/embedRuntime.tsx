@@ -43,7 +43,6 @@ export const CountdownAnnouncementEmbedRuntime = (
         projectId: s.projectId,
         format: appearence.format,
         rewardScreenEnabled: rewardMessageSettings.rewardScreenEnabled,
-        imageUrl: widget.mobileSettings.imageUrl,
       }
     })
   )
