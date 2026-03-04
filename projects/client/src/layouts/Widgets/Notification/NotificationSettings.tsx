@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 // import { Button } from '@heroui/button'
-import { Input, Button, ButtonChevron } from '@/components'
+import { Input, Button, ButtonChevron, Popover } from '@/components'
 import { cn } from '@heroui/theme'
 
 import EditableList, { type EditableListItem } from '@/components/EditableList'
@@ -14,9 +14,11 @@ import { uuidv4 } from '@/common/utils/uuidv4'
 import type {
   NotificationWidgetType,
   Notification,
+  Expiration,
 } from '@lemnity/widget-config/widgets/notification'
 import gearIcon from '@/assets/icons/gear.svg'
 import { notificationWidgetDefaults } from './defaults'
+import { PopoverContent, PopoverTrigger } from '@heroui/popover'
 
 type NotificationItemProps = {
   notification: Notification
@@ -70,10 +72,64 @@ const NotificationItem = (props: NotificationItemProps) => {
   )
 }
 
+type ExpirationPopoverProps = {
+  expiration: Expiration
+  pendingItemId: string | null
+  onExpirationChange: (expiration: Expiration) => void
+}
+
+const ExpirationPopover = (props: ExpirationPopoverProps) => {
+  const [open, setOpen] = useState(false)
+
+  const expirationVariants: Expiration[] = ['6', '12', '24', '48']
+  const popoverClassNames = {
+    base: 'rounded-[5px]',
+    content: 'w-32.5 p-2.5 flex-col rounded-[5px]',
+  }
+
+  const handleTriggerPress = () => {
+    setOpen(!open)
+  }
+
+  return (
+    <Popover placement='right-end' classNames={popoverClassNames}>
+      <PopoverTrigger>
+        <Button onPress={handleTriggerPress}>
+          <ButtonChevron open={open} />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <span className='text-[11px] leading-3.25'>
+          Выберите, как долго уведомление будет видно
+        </span>
+
+        {expirationVariants.map(variant => (
+          <Button
+            key={uuidv4()}
+            className={cn(
+              'w-full h-[unset] px-4 py-2.5',
+              props.expiration === variant
+                ? 'border-[#915DC0]'
+                : 'border-[#E8E8E8]',
+            )}
+            onPress={() => props.onExpirationChange(variant)}
+          >
+            <span className='text-base leading-3.75'>
+              {`${variant} ${variant === '24' ? 'часа' : 'часов'}`}
+            </span>
+          </Button>
+        ))}
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 type NotificationItemSettingsProps = {
   notification: Notification
+  pendingItemId: string | null
   onUrlTextChange: (urlText: string) => void
   onUrlChange: (urlText: string) => void
+  onExpirationChange: (expiration: Expiration) => void
 }
 
 const NotificationItemSettings = (props: NotificationItemSettingsProps) => {
@@ -93,6 +149,11 @@ const NotificationItemSettings = (props: NotificationItemSettingsProps) => {
         <Input
           value={props.notification.url}
           onValueChange={props.onUrlChange}
+        />
+        <ExpirationPopover
+          expiration={props.notification.expiration}
+          pendingItemId={props.pendingItemId}
+          onExpirationChange={props.onExpirationChange}
         />
       </div>
     </div>
@@ -149,6 +210,9 @@ const NotificationSettings = () => {
   const handleUrlChange = (index: number, url: string) => {
     updateNotification(index, { url })
   }
+  const handleExpirationChange = (index: number, expiration: Expiration) => {
+    updateNotification(index, { expiration })
+  }
 
   const renderItem = (item: Notification, index: number) => (
     <NotificationItem
@@ -163,8 +227,10 @@ const NotificationSettings = () => {
     item.id === pendingItemId && (
       <NotificationItemSettings
         notification={item}
+        pendingItemId={pendingItemId}
         onUrlTextChange={value => handleUrlTextChange(index, value)}
         onUrlChange={value => handleUrlChange(index, value)}
+        onExpirationChange={value => handleExpirationChange(index, value)}
       />
     )
   )
