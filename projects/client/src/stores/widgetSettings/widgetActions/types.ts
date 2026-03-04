@@ -290,6 +290,10 @@ export type WidgetActions = {
   deleteNotification: (
     id: string
   ) => void
+  updateNotification: (
+    index: number,
+    updates: Partial<Notification>
+  ) => void
   setNotificationBrandingEnabled: (
     brandingEnabled: boolean
   ) => void

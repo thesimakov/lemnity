@@ -6,26 +6,28 @@ import { cn } from '@heroui/theme'
 
 import EditableList, { type EditableListItem } from '@/components/EditableList'
 import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import SvgIcon from '@/components/SvgIcon'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { uuidv4 } from '@/common/utils/uuidv4'
 
 import type {
   NotificationWidgetType,
   Notification,
 } from '@lemnity/widget-config/widgets/notification'
 import gearIcon from '@/assets/icons/gear.svg'
-import SvgIcon from '@/components/SvgIcon'
 import { notificationWidgetDefaults } from './defaults'
-import { uuidv4 } from '@/common/utils/uuidv4'
 
 type NotificationItemProps = {
   notification: Notification
+  index: number
   pendingItemId: string | null
   setPendingItemId: (id: string | null) => void
+  onTextChange: (text: string) => void
 }
 
 const NotificationItem = (props: NotificationItemProps) => {
-  // const [settingsOpen, setSettingsOpen] = useState(false)
+  const isActive = props.notification.id === props.pendingItemId
 
   const handleButtonPress = () => {
     if (
@@ -33,7 +35,7 @@ const NotificationItem = (props: NotificationItemProps) => {
       && props.pendingItemId !== props.notification.id
     ) {
       props.setPendingItemId(null)
-      // setSettingsOpen(false)
+      // костыль. я пока не знаю, как сделать правильно
       // https://stackoverflow.com/a/75403839/21210000
       // https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout#late_timeouts
       setTimeout(() => {
@@ -43,7 +45,7 @@ const NotificationItem = (props: NotificationItemProps) => {
     }
 
     props.setPendingItemId(
-      props.notification.id === props.pendingItemId
+      isActive
         ? null
         : props.notification.id
       )
@@ -53,6 +55,7 @@ const NotificationItem = (props: NotificationItemProps) => {
     <div className='flex flex-row gap-2.5'>
       <Input
         value={props.notification.text}
+        onValueChange={props.onTextChange}
         classNames={{
           base: 'min-w-76 flex-1',
           inputWrapper: cn(
@@ -67,9 +70,7 @@ const NotificationItem = (props: NotificationItemProps) => {
           'rounded-[5px] h-12.75',
           'border border-[#E4E4E7] px-2.5',
           'flex items-center justify-center gap-2.5',
-          props.notification.id === props.pendingItemId
-            ? 'bg-[#E8E8E8]'
-            : 'bg-white',
+          isActive ? 'bg-[#E8E8E8]' : 'bg-white',
         )}
         onPress={handleButtonPress}
       >
@@ -88,7 +89,7 @@ const NotificationItem = (props: NotificationItemProps) => {
           strokeWidth='1.5'
           viewBox='0 0 24 24'
           width='1em'
-          data-open={props.notification.id === props.pendingItemId}
+          data-open={isActive}
           className={cn(
             'w-4 h-4 transition-transform duration-150 ease',
             'motion-reduce:transition-none data-[open=true]:rotate-180',
@@ -101,7 +102,13 @@ const NotificationItem = (props: NotificationItemProps) => {
   )
 }
 
-const NotificationItemSettings = () => {
+type NotificationItemSettingsProps = {
+  notification: Notification
+  onUrlTextChange: (urlText: string) => void
+  onUrlChange: (urlText: string) => void
+}
+
+const NotificationItemSettings = (props: NotificationItemSettingsProps) => {
   return (
     <div
       className='w-full p-3 flex flex-col gap-2.5 bg-[#E8E8E8] rounded-[5px]'
@@ -110,9 +117,10 @@ const NotificationItemSettings = () => {
         Настройка кнопки
       </span>      
 
-      <div className='w-full flex flex-row gap-2.5'>
+      <div className='w-full flex flex-row flex-wrap gap-2.5'>
         <Input
-          value={'Перейти к анкете'}
+          value={props.notification.urlText}
+          onValueChange={props.onUrlTextChange}
           classNames={{
             base: 'min-w-76 flex-1',
             inputWrapper: cn(
@@ -123,7 +131,8 @@ const NotificationItemSettings = () => {
           }}
         />
         <Input
-          value={'lemnity.ru/about'}
+          value={props.notification.url}
+          onValueChange={props.onUrlChange}
           classNames={{
             base: 'min-w-76 flex-1',
             inputWrapper: cn(
@@ -146,13 +155,13 @@ const NotificationSettings = () => {
       // a crutch because the store just works this way apparently
       const settings = (s.settings?.widget as NotificationWidgetType)
 
-      return  {
+      return {
         notifications: settings.notifications,
       }
     })
   )
 
-  console.log(notifications)
+  // console.log(notifications)
 
   const [pendingItemId, setPendingItemId] = useState<string | null>(null)
 
@@ -165,6 +174,9 @@ const NotificationSettings = () => {
   const deleteNotification = useWidgetSettingsStore(
     s => s.deleteNotification
   )
+  const updateNotification = useWidgetSettingsStore(
+    s => s.updateNotification
+  )
 
   const handleAdd = () => {
     addNotification({
@@ -172,9 +184,42 @@ const NotificationSettings = () => {
       id: uuidv4()
     })
   }
-
   const handleDelete = (item: EditableListItem<Notification>) => {
     deleteNotification(item.id)
+  }
+
+  const handleTextChange = (index: number, text: string) => {
+    updateNotification(index, { text })
+  }
+  const handleUrlTextChange = (index: number, urlText: string) => {
+    updateNotification(index, { urlText })
+  }
+  const handleUrlChange = (index: number, url: string) => {
+    updateNotification(index, { url })
+  }
+
+  const renderItem = (item: Notification, index: number) => (
+    <NotificationItem
+      notification={item}
+      index={index}
+      pendingItemId={pendingItemId}
+      setPendingItemId={setPendingItemId}
+      onTextChange={value => handleTextChange(index, value)}
+    />
+  )
+  const renderBelow = (item: Notification, index: number) => (
+    item.id === pendingItemId && (
+      <NotificationItemSettings
+        notification={item}
+        onUrlTextChange={value => handleUrlTextChange(index, value)}
+        onUrlChange={value => handleUrlChange(index, value)}
+      />
+    )
+  )
+
+  const classNames = {
+    index: 'min-w-[40px]',
+    delete: 'h-12.75',
   }
 
   return (
@@ -197,20 +242,9 @@ const NotificationSettings = () => {
               maxItems={5}
               onItemsChange={setNotifications}
               canReorder
-              classNames={{
-                index: 'min-w-[40px]',
-                delete: 'h-12.75',
-              }}
-              renderItem={item => (
-                <NotificationItem
-                  notification={item}
-                  pendingItemId={pendingItemId}
-                  setPendingItemId={setPendingItemId}
-                />
-              )}
-              renderBelow={item => (
-                item.id === pendingItemId && <NotificationItemSettings />
-              )}
+              classNames={classNames}
+              renderItem={renderItem}
+              renderBelow={renderBelow}
               onDelete={handleDelete}
               onAdd={handleAdd}
               addButtonLabel='Добавить сектор'

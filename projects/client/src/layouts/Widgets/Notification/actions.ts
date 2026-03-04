@@ -41,6 +41,18 @@ export const createNotificationActions = (
         notifications: widget.notifications.filter(item => item.id !== id),
       }
     }),
+  updateNotification: (
+    index: number,
+    updates: Partial<Notification>
+  ) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        notifications: widget.notifications.map((item, i) => {
+          return i === index ? { ...item, ...updates } : item
+        }),
+      }
+    }),
   // General
   setNotificationBrandingEnabled: (
     brandingEnabled: boolean
