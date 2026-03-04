@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { Button } from '@heroui/button'
-import { Input } from '@heroui/input'
+// import { Button } from '@heroui/button'
+import { Input, Button, ButtonChevron } from '@/components'
 import { cn } from '@heroui/theme'
 
 import EditableList, { type EditableListItem } from '@/components/EditableList'
@@ -56,47 +56,15 @@ const NotificationItem = (props: NotificationItemProps) => {
       <Input
         value={props.notification.text}
         onValueChange={props.onTextChange}
-        classNames={{
-          base: 'min-w-76 flex-1',
-          inputWrapper: cn(
-            'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
-            'shadow-none min-h-12.5 px-2.5',
-          ),
-          input: 'placeholder:text-[#AAAAAA] text-base'
-        }}
       />
       <Button
-        className={cn(
-          'rounded-[5px] h-12.75',
-          'border border-[#E4E4E7] px-2.5',
-          'flex items-center justify-center gap-2.5',
-          isActive ? 'bg-[#E8E8E8]' : 'bg-white',
-        )}
+        className={isActive ? 'bg-[#E8E8E8]' : 'bg-white'}
         onPress={handleButtonPress}
       >
         <div className='w-4 h-4'>
           <SvgIcon src={gearIcon} preserveOriginalColors />
         </div>
-        <svg
-          aria-hidden='true'
-          fill='none'
-          focusable='false'
-          height='1em'
-          role='presentation'
-          stroke='currentColor'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-          strokeWidth='1.5'
-          viewBox='0 0 24 24'
-          width='1em'
-          data-open={isActive}
-          className={cn(
-            'w-4 h-4 transition-transform duration-150 ease',
-            'motion-reduce:transition-none data-[open=true]:rotate-180',
-          )}
-        >
-          <path d='m6 9 6 6 6-6'></path>
-        </svg>
+        <ButtonChevron open={isActive} />
       </Button>
     </div>
   )
@@ -121,26 +89,10 @@ const NotificationItemSettings = (props: NotificationItemSettingsProps) => {
         <Input
           value={props.notification.urlText}
           onValueChange={props.onUrlTextChange}
-          classNames={{
-            base: 'min-w-76 flex-1',
-            inputWrapper: cn(
-              'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
-              'shadow-none min-h-12.5 px-2.5',
-            ),
-            input: 'placeholder:text-[#AAAAAA] text-base'
-          }}
         />
         <Input
           value={props.notification.url}
           onValueChange={props.onUrlChange}
-          classNames={{
-            base: 'min-w-76 flex-1',
-            inputWrapper: cn(
-              'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
-              'shadow-none min-h-12.5 px-2.5',
-            ),
-            input: 'placeholder:text-[#AAAAAA] text-base'
-          }}
         />
       </div>
     </div>
