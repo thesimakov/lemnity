@@ -1,8 +1,9 @@
 import { Button } from '@heroui/button'
-import { Input, Textarea } from '@heroui/input'
+import { Textarea } from '@heroui/input'
 import { cn } from '@heroui/theme'
 
 import ColorPicker from '@/components/ColorPicker'
+import FontSizeSettings from './FontSizeSettings'
 
 import { getFontWeightClass } from '@/layouts/Widgets/Announcement/utils/getFontWeightClass'
 import type { FontWeight } from '@lemnity/widget-config/widgets/announcement'
@@ -34,51 +35,6 @@ const FontWeightButton = (props: FontWeightButtonProps) => {
               : null}
       </span>
     </Button>
-  )
-}
-
-type FontSizeSettingsProps = {
-  value: number
-  onChange?: (value: number) => void
-}
-
-const FontSizeSettings = (props: FontSizeSettingsProps) => {
-  const handleInputChange = (value: string) => {
-    return props.onChange && props.onChange(Number(value))
-  }
-
-  return (
-    <div
-      className={cn(
-        'w-48 h-12.5 shrink-0 px-2.5',
-        'flex flex-row gap-2.5 items-center',
-        'border border-[#E5E5E5] rounded-[5px]',
-      )}
-    >
-      <span className="text-[16px] leading-4.75">
-        Размер текста
-      </span>
-
-      <Input
-        type="number"
-        value={props.value.toString()}
-        onValueChange={handleInputChange}
-        min={0}
-        classNames={{
-          base: 'max-w-11.75',
-          inputWrapper: cn(
-            'rounded-md border bg-white border-[#E8E8E8] rounded-[5px]',
-            'shadow-none h-10.5 px-2.5',
-          ),
-          input: cn(
-            'text-base text-center',
-            '[&::-webkit-outer-spin-button]:appearance-none',
-            '[&::-webkit-inner-spin-button]:appearance-none',
-            '[&]:remove-spin-buttons'
-          )
-        }}
-      />
-    </div>
   )
 }
 

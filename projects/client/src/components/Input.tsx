@@ -14,7 +14,7 @@ const Input = (props: HeroInputProps) => {
     inputWrapper: cn(
       'rounded-md bg-white border border-[#E8E8E8] rounded-[5px]',
       'shadow-none min-h-12.5 px-2.5',
-      props.classNames?.innerWrapper,
+      props.classNames?.inputWrapper,
     ),
     input: cn(
       'placeholder:text-[#AAAAAA] text-base',

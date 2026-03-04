@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-// import { Button } from '@heroui/button'
-import { Input, Button, ButtonChevron, Popover } from '@/components'
+import {
+  Input,
+  Button,
+  ButtonChevron,
+  Popover,
+  FontSizeSettings,
+} from '@/components'
 import { cn } from '@heroui/theme'
 
 import EditableList, { type EditableListItem } from '@/components/EditableList'
@@ -53,20 +58,30 @@ const NotificationItem = (props: NotificationItemProps) => {
       )
   }
 
+  const inputClassNames = {
+    inputWrapper: 'min-h-10',
+  }
+
   return (
     <div className='flex flex-row gap-2.5'>
       <Input
+        classNames={inputClassNames}
         value={props.notification.text}
         onValueChange={props.onTextChange}
       />
       <Button
-        className={isActive ? 'bg-[#E8E8E8]' : 'bg-white'}
+        className={cn(
+          'min-w-14.25 h-10 px-0',
+          isActive ? 'bg-[#E8E8E8]' : 'bg-white',
+        )}
         onPress={handleButtonPress}
       >
-        <div className='w-4 h-4'>
-          <SvgIcon src={gearIcon} preserveOriginalColors />
+        <div className='flex flex-row w-fit gap-1'>
+          <div className='w-4 h-4'>
+            <SvgIcon src={gearIcon} preserveOriginalColors />
+          </div>
+          <ButtonChevron open={isActive} />
         </div>
-        <ButtonChevron open={isActive} />
       </Button>
     </div>
   )
@@ -94,8 +109,16 @@ const ExpirationPopover = (props: ExpirationPopoverProps) => {
   return (
     <Popover placement='right-end' classNames={popoverClassNames}>
       <PopoverTrigger>
-        <Button onPress={handleTriggerPress}>
-          <ButtonChevron open={open} />
+        <Button
+          className='min-w-16.75 h-10 px-0'
+          onPress={handleTriggerPress}
+        >
+          <div className='flex flex-row gap-1.25'>
+            <span className='text-base leading-3.75'>
+              {props.expiration}
+            </span>
+            <ButtonChevron open={open} />
+          </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -130,9 +153,15 @@ type NotificationItemSettingsProps = {
   onUrlTextChange: (urlText: string) => void
   onUrlChange: (urlText: string) => void
   onExpirationChange: (expiration: Expiration) => void
+  onUrlFontSizeChange: (size: number) => void
 }
 
 const NotificationItemSettings = (props: NotificationItemSettingsProps) => {
+  const inputClassNames = {
+    inputWrapper: 'min-h-10',
+    base: 'min-w-60',
+  }
+
   return (
     <div
       className='w-full p-3 flex flex-col gap-2.5 bg-[#E8E8E8] rounded-[5px]'
@@ -141,20 +170,34 @@ const NotificationItemSettings = (props: NotificationItemSettingsProps) => {
         Настройка кнопки
       </span>      
 
-      <div className='w-full flex flex-row flex-wrap gap-2.5'>
+      <div className='w-full flex flex-row flex-wrap gap-2.5 @container'>
         <Input
+          classNames={inputClassNames}
           value={props.notification.urlText}
           onValueChange={props.onUrlTextChange}
         />
         <Input
+          classNames={inputClassNames}
           value={props.notification.url}
           onValueChange={props.onUrlChange}
         />
-        <ExpirationPopover
-          expiration={props.notification.expiration}
-          pendingItemId={props.pendingItemId}
-          onExpirationChange={props.onExpirationChange}
-        />
+        <div
+          className={cn(
+            'w-full flex flex-row justify-between gap-2.5',
+            '@min-[700px]:justify-start @min-[700px]:max-w-fit',
+          )}
+        >
+          <FontSizeSettings
+            xs
+            value={props.notification.urlFontSize}
+            onChange={props.onUrlFontSizeChange}
+          />
+          <ExpirationPopover
+            expiration={props.notification.expiration}
+            pendingItemId={props.pendingItemId}
+            onExpirationChange={props.onExpirationChange}
+          />
+        </div>
       </div>
     </div>
   )
@@ -213,6 +256,9 @@ const NotificationSettings = () => {
   const handleExpirationChange = (index: number, expiration: Expiration) => {
     updateNotification(index, { expiration })
   }
+  const handleUrlFontSizeChange = (index: number, urlFontSize: number) => {
+    updateNotification(index, { urlFontSize })
+  }
 
   const renderItem = (item: Notification, index: number) => (
     <NotificationItem
@@ -231,13 +277,14 @@ const NotificationSettings = () => {
         onUrlTextChange={value => handleUrlTextChange(index, value)}
         onUrlChange={value => handleUrlChange(index, value)}
         onExpirationChange={value => handleExpirationChange(index, value)}
+        onUrlFontSizeChange={value => handleUrlFontSizeChange(index, value)}
       />
     )
   )
 
   const classNames = {
     index: 'min-w-[40px]',
-    delete: 'h-12.75',
+    // delete: 'h-12.75',
   }
 
   return (
@@ -266,7 +313,6 @@ const NotificationSettings = () => {
               onDelete={handleDelete}
               onAdd={handleAdd}
               addButtonLabel='Добавить сектор'
-              // disabledReorderIds={pendingItemId ? [pendingItemId] : []}
             />
           )}
         </div>
