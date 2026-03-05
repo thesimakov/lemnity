@@ -26,7 +26,7 @@ export const notificationWidgetDefaults: NotificationWidgetType = {
     {
       id: uuidv4(),
       expiration: '24',
-      text: 'Вам доступен сервис «Подбор персонала». Бесплатно размещайте вакансии и получайте отклики в приложение',
+      text: 'Вам доступен сервис «Подбор персонала». Бесплатно размещайте вакансии и получайте отклики в приложении',
       url: 'https://google.ru',
       urlFontSize: 16,
       urlText: 'Подробнее >',

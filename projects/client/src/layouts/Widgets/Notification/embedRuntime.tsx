@@ -140,6 +140,11 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const closeIconStyle: CSSProperties = {
     color: triggerFontColor,
   }
+  const triggerHoverTextStyle: CSSProperties = {
+    backgroundColor:
+      `color-mix(in oklab, ${triggerBackgroundColor} 14%, transparent)`,
+    color: triggerBackgroundColor,
+  }
 
   const motionInitial = { opacity: 0, translateY: '12px' }
   const motionAnimate = { opacity: 1, translateY: '0' }
@@ -170,6 +175,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
             {liveNotifications && liveNotifications.length > 0
               ? liveNotifications.map((notification, index) => (
                   <NotificationListItem
+                    key={notification.id}
                     notification={notification}
                     showSeparator={index !== (liveNotifications.length - 1)}
                   />
@@ -190,11 +196,12 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         type='button'
         onClick={toggleOpen}
         className={cn(
-          'flex items-center justify-center rounded-full',
+          'group flex items-center justify-center rounded-full',
           'text-white ring-1 ring-white/20',
           'transition-transform motion-reduce:transition-none duration-250',
-          'h-15.5 min-w-15.5 w-fit gap-2.5 px-4 hover:scale-105 relative',
+          'h-15.5 min-w-15.5 w-fit gap-2.5 px-4 hover:scale-105',
           triggerPosition === 'bottom-right' && 'self-end',
+          'relative -z-10',
         )}
         style={triggerStyle}
         aria-label={open ? 'Скрыть уведомления' : 'Показать уведомления'}
@@ -224,17 +231,43 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         )}
 
         {liveNotifications.length > 0 && (
-          // <div className='relative'>
+          <div className='absolute top-0 right-0'>
+            <span className='relative flex size-4.5'>
+              <span
+                className={cn(
+                  'absolute inline-flex h-full w-full rounded-full',
+                  'animate-ping bg-[#FF4646] opacity-75',
+                )}
+              />
+              <span
+                className={cn(
+                  'relative inline-flex size-4.5 rounded-full bg-[#FF4646]',
+                  'text-white text-xs items-center justify-center',
+                )}
+              >
+                {liveNotifications.length}
+              </span>
+            </span>
+          </div>
+        )}
+
+        {(!triggerText || triggerText.length === 0) && (
+          <div
+            className={cn(
+              'bg-white',
+              'rounded-full absolute opacity-0 transition-all duration-300',
+              'group-hover:opacity-100 group-hover:-translate-x-[73%]',
+            )}
+            >
             <div
               className={cn(
-                'absolute top-0 right-0 w-4.5 h-4.5 bg-[#FF4646]',
-                'flex items-center justify-center z-10 rounded-full',
-                'text-white text-xs',
+                'w-full h-full rounded-full text-[20px] leading-5 p-4',
               )}
+              style={triggerHoverTextStyle}
             >
-              {liveNotifications.length}
+              Уведомления
             </div>
-          // </div>
+          </div>
         )}
       </button>
     </div>
