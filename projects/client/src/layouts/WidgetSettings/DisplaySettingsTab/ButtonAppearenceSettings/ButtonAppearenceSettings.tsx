@@ -52,6 +52,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
       />
 
       <ColorPicker
+        popoverPlacement='bottom'
         initialColor={props.buttonTextColor}
         onColorChange={props.onFontColorChange}
         triggerText="Цвет шрифта"
@@ -59,12 +60,14 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
 
       {props.buttonIcon && (
         <IconPicker
+          popoverPlacement='bottom'
           initialIcon={props.buttonIcon}
           onIconChange={handleTriggerIconChange}
         />
       )}
 
       <ColorPicker
+        popoverPlacement='bottom-end'
         initialColor={props.buttonBackgroundColor}
         onColorChange={props.onBackgroundColorChange}
         triggerText="Цвет кнопки"

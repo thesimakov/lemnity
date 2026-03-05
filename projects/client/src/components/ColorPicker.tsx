@@ -50,10 +50,33 @@ type ColorPickerItem = {
   stroke?: string
 }
 
+// copied from
+// (property) placement?: OverlayPlacement | undefined
+// The placement of the element with respect to its anchor element.
+// 
+// ..because i have not figured out how to import/extract this type
+// without installing an extra package
+type PopoverPlacement = (
+  | "bottom-start"
+  | "top"
+  | "bottom"
+  | "right"
+  | "left"
+  | "top-start"
+  | "top-end"
+  | "bottom-end"
+  | "left-start"
+  | "left-end"
+  | "right-start"
+  | "right-end"
+) | undefined
+
 type ColorPickerProps = {
   initialColor: string
   triggerText?: string
   disabled?: boolean
+  // popoverPlacement?: Pick<PopoverProps, 'placement'>
+  popoverPlacement?: PopoverPlacement
   classNames?: {
     triggerButton?: string
   }
@@ -130,7 +153,7 @@ const ColorPicker = (props: ColorPickerProps) => {
 
   return (
     <Popover
-      placement="bottom-start"
+      placement={props.popoverPlacement ?? 'bottom-start'}
       classNames={{
         base: cn(
           'bg-white rounded-[10px]',

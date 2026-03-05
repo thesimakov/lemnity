@@ -48,8 +48,31 @@ const icons: IconName[] = [
   'Basket'
 ]
 
+// copied from
+// (property) placement?: OverlayPlacement | undefined
+// The placement of the element with respect to its anchor element.
+// 
+// ..because i have not figured out how to import/extract this type
+// without installing an extra package
+type PopoverPlacement = (
+  | "bottom-start"
+  | "top"
+  | "bottom"
+  | "right"
+  | "left"
+  | "top-start"
+  | "top-end"
+  | "bottom-end"
+  | "left-start"
+  | "left-end"
+  | "right-start"
+  | "right-end"
+) | undefined
+
 type IconPickerProps = {
   initialIcon?: IconName
+  // popoverPlacement?: Pick<PopoverProps, 'placement'>
+  popoverPlacement?: PopoverPlacement
   onIconChange: (icon: IconName) => void
 }
 
@@ -71,7 +94,7 @@ const IconPicker = (props: IconPickerProps) => {
 
   return (
     <Popover
-      placement="bottom-start"
+      placement={props.popoverPlacement ?? 'bottom-start'}
       classNames={{
         base: cn(
           'bg-white rounded-[10px]',

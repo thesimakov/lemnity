@@ -327,6 +327,7 @@ const NotificationSettings = () => {
             Укажите задержку перед показом уведомлений
           </span>
         </div>
+
         <hr className='border-[#E1E1E1] my-2.5' />
 
         <div className='w-full flex flex-col gap-2.5'>
