@@ -196,12 +196,11 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         type='button'
         onClick={toggleOpen}
         className={cn(
-          'group flex items-center justify-center rounded-full',
-          'text-white ring-1 ring-white/20',
+          'peer flex items-center justify-center rounded-full',
+          'text-white ring-1 ring-white/20 relative z-10',
           'transition-transform motion-reduce:transition-none duration-250',
           'h-15.5 min-w-15.5 w-fit gap-2.5 px-4 hover:scale-105',
           triggerPosition === 'bottom-right' && 'self-end',
-          'relative -z-10',
         )}
         style={triggerStyle}
         aria-label={open ? 'Скрыть уведомления' : 'Показать уведомления'}
@@ -250,26 +249,27 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
             </span>
           </div>
         )}
+      </button>
 
-        {(!triggerText || triggerText.length === 0) && (
+      {(!triggerText || triggerText.length === 0) && (
+        <div
+          className={cn(
+            'bg-white',
+            'rounded-full absolute opacity-0 transition-all duration-300',
+            'peer-hover:opacity-100 peer-hover:-translate-x-[105%]',
+            '-z-10',
+          )}
+          >
           <div
             className={cn(
-              'bg-white',
-              'rounded-full absolute opacity-0 transition-all duration-300',
-              'group-hover:opacity-100 group-hover:-translate-x-[73%]',
+              'w-full h-full rounded-full text-[20px] leading-5 p-4',
             )}
-            >
-            <div
-              className={cn(
-                'w-full h-full rounded-full text-[20px] leading-5 p-4',
-              )}
-              style={triggerHoverTextStyle}
-            >
-              Уведомления
-            </div>
+            style={triggerHoverTextStyle}
+          >
+            Уведомления
           </div>
-        )}
-      </button>
+        </div>
+      )}
     </div>
   )
 }
