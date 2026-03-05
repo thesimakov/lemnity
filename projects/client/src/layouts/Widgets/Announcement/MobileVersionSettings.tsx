@@ -99,7 +99,6 @@ const MobileVersionSettings = (props: MobileVersionSettingsProps) => {
           )
           : (
             <ButtonAppearenceSettings
-              noIcon
               buttonText={props.triggerText}
               buttonBackgroundColor={props.triggerBackgroundColor}
               buttonTextColor={props.triggerFontColor}

@@ -1,5 +1,11 @@
 import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { cn } from '@heroui/theme'
+import { PopoverContent, PopoverTrigger } from '@heroui/popover'
+
+import EditableList, { type EditableListItem } from '@/components/EditableList'
+import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
+import SvgIcon from '@/components/SvgIcon'
 import {
   Input,
   Button,
@@ -7,11 +13,6 @@ import {
   Popover,
   FontSizeSettings,
 } from '@/components'
-import { cn } from '@heroui/theme'
-
-import EditableList, { type EditableListItem } from '@/components/EditableList'
-import BorderedContainer from '@/layouts/BorderedContainer/BorderedContainer'
-import SvgIcon from '@/components/SvgIcon'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { uuidv4 } from '@/common/utils/uuidv4'
@@ -22,8 +23,7 @@ import type {
   Expiration,
 } from '@lemnity/widget-config/widgets/notification'
 import gearIcon from '@/assets/icons/gear.svg'
-import { notificationWidgetDefaults } from './defaults'
-import { PopoverContent, PopoverTrigger } from '@heroui/popover'
+import { notificationWidgetDefaults as defaults } from './defaults'
 
 type NotificationItemProps = {
   notification: Notification
@@ -204,23 +204,25 @@ const NotificationItemSettings = (props: NotificationItemSettingsProps) => {
 }
 
 const NotificationSettings = () => {
-  const {
-    notifications,
-  } = useWidgetSettingsStore(
+  const { delay, notifications } = useWidgetSettingsStore(
     useShallow(s => {
       // a crutch because the store just works this way apparently
       const settings = (s.settings?.widget as NotificationWidgetType)
 
       return {
-        notifications: settings.notifications,
+        delay: settings.delay
+          ?? defaults.delay,
+        notifications: settings.notifications
+          ?? defaults.notifications,
       }
     })
   )
 
-  // console.log(notifications)
-
   const [pendingItemId, setPendingItemId] = useState<string | null>(null)
 
+  const setNotificationDelay = useWidgetSettingsStore(
+    s => s.setNotificationDelay
+  )
   const setNotifications = useWidgetSettingsStore(
     s => s.setNotifications
   )
@@ -236,7 +238,7 @@ const NotificationSettings = () => {
 
   const handleAdd = () => {
     addNotification({
-      ...notificationWidgetDefaults.notifications[0],
+      ...defaults.notifications[0],
       id: uuidv4()
     })
   }
@@ -282,14 +284,27 @@ const NotificationSettings = () => {
     )
   )
 
-  const classNames = {
+  const listClassNames = {
     index: 'min-w-[40px]',
     // delete: 'h-12.75',
+  }
+  const inputClassNames = {
+    base: 'min-w-[unset] max-w-19',
+    inputWrapper: 'min-h-10',
+    input: cn(
+      '[&::-webkit-outer-spin-button]:appearance-none',
+      '[&::-webkit-inner-spin-button]:appearance-none',
+      '[&]:remove-spin-buttons',
+    )
+  }
+
+  const handleDelayChange = (value: string) => {
+    setNotificationDelay(+value)
   }
 
   return (
     <BorderedContainer>
-      <div className='w-full flex flex-col gap-6'>
+      <div className='w-full flex flex-col'>
         <div className='h-9.25 shrink-0 flex justify-between'>
           <span className='text-lg leading-5.25 font-medium'>
             Секторы
@@ -299,6 +314,21 @@ const NotificationSettings = () => {
           </span>
         </div>
 
+        <div className='flex flex-row gap-2.5 items-center'>
+          <Input
+            type='number'
+            value={delay.toString()}
+            min={0}
+            classNames={inputClassNames}
+            onValueChange={handleDelayChange}
+            endContent='сек'
+          />
+          <span className='text-base leading-3.75'>
+            Укажите задержку перед показом уведомлений
+          </span>
+        </div>
+        <hr className='border-[#E1E1E1] my-2.5' />
+
         <div className='w-full flex flex-col gap-2.5'>
           {notifications && (
             <EditableList
@@ -307,7 +337,7 @@ const NotificationSettings = () => {
               maxItems={5}
               onItemsChange={setNotifications}
               canReorder
-              classNames={classNames}
+              classNames={listClassNames}
               renderItem={renderItem}
               renderBelow={renderBelow}
               onDelete={handleDelete}

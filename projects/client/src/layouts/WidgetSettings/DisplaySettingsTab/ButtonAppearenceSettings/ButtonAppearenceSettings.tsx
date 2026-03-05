@@ -13,7 +13,6 @@ type ButtonAppearenceSettingsProps = {
   buttonText?: string
   buttonTextColor: string
   buttonBackgroundColor: string
-  noIcon?: boolean
   buttonIcon?: IconName
 }
 
@@ -58,7 +57,7 @@ const ButtonAppearenceSettings = (props: ButtonAppearenceSettingsProps) => {
         triggerText="Цвет шрифта"
       />
 
-      {!props.noIcon && (
+      {props.buttonIcon && (
         <IconPicker
           initialIcon={props.buttonIcon}
           onIconChange={handleTriggerIconChange}

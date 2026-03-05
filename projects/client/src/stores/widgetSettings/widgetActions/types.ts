@@ -19,6 +19,7 @@ import type {
 import type { Icon } from '@lemnity/widget-config/widgets/base'
 import type {
   Notification,
+  Position,
 } from '@lemnity/widget-config/widgets/notification'
 
 export type WidgetUpdater = (
@@ -281,6 +282,24 @@ export type WidgetActions = {
   resetAnnouncementColors: () => void
   // ---------------------------------------------------------------------------
   // Notification actions
+  setNotificationTriggerText: (
+   triggerText: string
+  ) => void
+  setNotificationTriggerFontColor: (
+   triggerFontColor: string
+  ) => void
+  setNotificationTriggerIcon: (
+   triggerIcon: Icon
+  ) => void
+  setNotificationTriggerBackgroundColor: (
+   triggerBackgroundColor: string
+  ) => void
+  setNotificationTriggerPosition: (
+    triggerPosition: Position
+  ) => void
+  setNotificationDelay: (
+   delay: number
+  ) => void
   setNotifications: (
     notifications: Notification[]
   ) => void

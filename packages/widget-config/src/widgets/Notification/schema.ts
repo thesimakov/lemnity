@@ -9,8 +9,10 @@ import {
 const WidgetType: WidgetTypeId = 'NOTIFICATION'
 
 const ExpirationEnum = z.enum(['6', '12', '24', '48'])
+const PositionEnum = z.enum(['bottom-left', 'bottom-right'])
 
 export type Expiration = z.infer<typeof ExpirationEnum>
+export type Position = z.infer<typeof PositionEnum>
 
 const NotificationSchema = z.object({
   id: z.string(),
@@ -34,7 +36,7 @@ const NotificationWidgetSchema = z.object({
   triggerText: z
     .string()
     .max(25, 'Текст должен быть не длиннее 25 символов'),
-  triggerTextColor: z
+  triggerFontColor: z
     .string()
     .regex(
       /^#[0-9A-F]{6}$/i,
@@ -47,6 +49,7 @@ const NotificationWidgetSchema = z.object({
       /^#[0-9A-F]{6}$/i,
       'Цвет должен быть в HEX формате'
     ),
+  triggerPosition: PositionEnum,
 
   delay: z
     .number()

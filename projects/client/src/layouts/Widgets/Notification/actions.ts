@@ -1,14 +1,70 @@
  import type {
   TypedWidgetUpdater,
 } from '@/stores/widgetSettings/widgetActions/types'
+import type { Icon } from '@lemnity/widget-config/widgets/base'
 import type {
   NotificationWidgetType,
   Notification,
+  Position,
 } from '@lemnity/widget-config/widgets/notification'
 
 export const createNotificationActions = (
   updateWidget: TypedWidgetUpdater<NotificationWidgetType>
 ) => ({
+  setNotificationTriggerText: (
+   triggerText: string
+  ) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        triggerText,
+      }
+    }),
+  setNotificationTriggerFontColor: (
+   triggerFontColor: string
+  ) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        triggerFontColor,
+      }
+    }),
+  setNotificationTriggerIcon: (
+   triggerIcon: Icon
+  ) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        triggerIcon,
+      }
+    }),
+  setNotificationTriggerBackgroundColor: (
+   triggerBackgroundColor: string
+  ) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        triggerBackgroundColor,
+      }
+    }),
+  setNotificationTriggerPosition: (
+   triggerPosition: Position
+  ) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        triggerPosition,
+      }
+    }),
+  setNotificationDelay: (
+   delay: number
+  ) =>
+    updateWidget(widget => {
+      return {
+        ...widget,
+        delay,
+      }
+    }),
   setNotifications: (
     notifications: Notification[]
   ) =>

@@ -3,6 +3,7 @@ import Button from './Button'
 import ButtonChevron from './ButtonChevron'
 import Popover from './Popover'
 import FontSizeSettings from './FontSizeSettings'
+import TriggerSettings from './TriggerSettings'
 
 export {
   Input,
@@ -10,4 +11,5 @@ export {
   ButtonChevron,
   Popover,
   FontSizeSettings,
+  TriggerSettings,
 }

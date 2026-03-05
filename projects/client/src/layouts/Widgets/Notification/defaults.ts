@@ -16,8 +16,9 @@ export const notificationWidgetDefaults: NotificationWidgetType = {
 
   triggerText: '',
   triggerBackgroundColor: '#5951E5',
-  triggerTextColor: '#FFFFFF',
+  triggerFontColor: '#FFFFFF',
   triggerIcon: 'Sparkles',
+  triggerPosition: 'bottom-right',
 
   delay: 30000,
 
