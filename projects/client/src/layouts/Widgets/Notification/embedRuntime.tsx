@@ -164,8 +164,11 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     color: triggerBackgroundColor,
   }
   const triggerHoverDivStyle = {
-    // group-hover:-translate-x-[73%]
-    clipPath: 'polygon(-73% 0%, 30% 0%, 30% 100%, -73% 100%)',
+    clipPath: triggerPosition === 'bottom-right'
+      // group-hover:-translate-x-[73%]
+      ? 'polygon(-73% 0%, 30% 0%, 30% 100%, -73% 100%)'
+      // group-hover:translate-x-[73%]
+      : 'polygon(73% 0%, 173% 0%, 173% 100%, 73% 100%)',
   }
 
   const motionInitial = { opacity: 0, translateY: '12px' }
@@ -279,7 +282,10 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
               className={cn(
                 'bg-white',
                 'rounded-full opacity-0 transition-all duration-300',
-                'group-hover:opacity-100 group-hover:-translate-x-[73%]',
+                'group-hover:opacity-100',
+                triggerPosition === 'bottom-right'
+                  ? 'group-hover:-translate-x-[73%]'
+                  : 'group-hover:translate-x-[73%]',
               )}
             >
               <div
