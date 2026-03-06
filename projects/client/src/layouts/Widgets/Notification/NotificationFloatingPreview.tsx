@@ -1,15 +1,29 @@
 import { useEffect, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { createPortal } from 'react-dom'
 import { cn } from '@heroui/theme'
 
 import NotificationEmbedRuntime from './embedRuntime'
+import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
+import type {
+  NotificationWidgetType,
+} from '@lemnity/widget-config/widgets/notification'
+import { notificationWidgetDefaults as defaults } from './defaults'
 type FloatingPreviewProps = {
   onClose: () => void
 }
 
 const NotificationFloatingPreview = ({ onClose }: FloatingPreviewProps) => {
   const [mounted, setMounted] = useState(false)
+
+  const triggerPosition = useWidgetSettingsStore(
+    useShallow(s => {
+      const settings = (s.settings?.widget as NotificationWidgetType)
+      return settings.triggerPosition
+          ?? defaults.triggerPosition
+    })
+  )
 
   useEffect(() => {
     setMounted(true)
@@ -19,7 +33,7 @@ const NotificationFloatingPreview = ({ onClose }: FloatingPreviewProps) => {
   if (typeof document === 'undefined' || !mounted) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-1200 bg-black/20 backdrop-blur-sm">
+    <div className="fixed inset-0 z-1200 bg-black/20 backdrop-blur-sm flex">
       <button
         type="button"
         onClick={onClose}
@@ -31,7 +45,14 @@ const NotificationFloatingPreview = ({ onClose }: FloatingPreviewProps) => {
       >
         Закрыть
       </button>
-      <NotificationEmbedRuntime isPreview />
+      <div className={cn(
+        'mt-auto mb-6',
+        triggerPosition === 'bottom-right'
+          ? 'ml-auto mr-0'
+          : 'mr-auto ml-0',
+      )}>
+        <NotificationEmbedRuntime preview />
+      </div>
     </div>,
     document.body
   )

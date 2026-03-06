@@ -15,6 +15,8 @@ import iconBell from '@/assets/icons/bell-filled.svg'
 
 import type { Notification, NotificationWidgetType } from '@lemnity/widget-config/widgets/notification'
 import { notificationWidgetDefaults as defaults } from './defaults'
+// import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+// import { useViewportWidth } from '@/hooks/useViewportWidth'
 
 const EmptyNotificationList = () => {
   return (
@@ -66,11 +68,9 @@ const NotificationListItem = (props: NotificationListItemProps) => {
 }
 
 type NotificationEmbedRuntimeProps = {
-  isPreview?: boolean
+  preview?: boolean
 }
 
-// @ts-expect-error i have no use for props *yet*
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const {
     triggerText,
@@ -135,6 +135,22 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     return () => timers.forEach(timer => clearTimeout(timer))
   }, [notifications, delay])
 
+  // const isMobileViewport = useIsMobileViewport()
+  // const viewportWidth = useViewportWidth()
+
+  // const mobileScale = width >= 357
+  //   ? undefined
+  //   // 2 20 px margins on x axis = 40 px
+  //   // the width of the widget is w-89.25 = 357
+  //   // 1% of 357 = 3.57
+  //   : Math.floor((width - 40) / 3.57)
+
+  // const mobileStyle: CSSProperties = {
+  //   transform: mobile && mobileScale
+  //     ? `scale(${mobileScale}%)`
+  //     : undefined,
+  // }
+
   const triggerStyle: CSSProperties = {
     color: triggerFontColor,
     backgroundColor: triggerBackgroundColor,
@@ -160,7 +176,8 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   return (
     <div
       className={cn(
-        'flex flex-col gap-3 fixed bottom-6',
+        'flex flex-col gap-3',
+        props.preview ? 'relative' : 'fixed bottom-6',
         triggerPosition === 'bottom-right' ? 'right-6' : 'left-6',
       )}
     >
