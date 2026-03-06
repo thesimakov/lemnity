@@ -69,6 +69,8 @@ type NotificationEmbedRuntimeProps = {
   isPreview?: boolean
 }
 
+// @ts-expect-error i have no use for props *yet*
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const {
     triggerText,
@@ -82,7 +84,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   } = useWidgetSettingsStore(
     useShallow(s => {
       const settings = (s.settings?.widget as NotificationWidgetType)
-      
+
       return {
         triggerText: settings.triggerText
           ?? defaults.triggerText,
@@ -97,7 +99,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
 
         delay: settings.delay
           ?? defaults.delay,
-        
+
         notifications: settings.notifications,
 
         brandingEnabled: settings.brandingEnabled
@@ -105,9 +107,9 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
       }
     })
   )
-  
+
   const TriggerIcon = triggerIcon ? Icons[triggerIcon] : null
-  
+
   const [open, setOpen] = useState(false)
 
   const toggleOpen = () => {
@@ -116,7 +118,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   }
 
   const notificationListRef = useRef<HTMLDivElement | null>(null)
-  
+
   useClickOutside(notificationListRef, () => {
     setOpen(false)
   })
@@ -132,7 +134,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
 
     return () => timers.forEach(timer => clearTimeout(timer))
   }, [notifications, delay])
-  
+
   const triggerStyle: CSSProperties = {
     color: triggerFontColor,
     backgroundColor: triggerBackgroundColor,
@@ -144,6 +146,10 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     backgroundColor:
       `color-mix(in oklab, ${triggerBackgroundColor} 14%, transparent)`,
     color: triggerBackgroundColor,
+  }
+  const triggerHoverDivStyle = {
+    // group-hover:-translate-x-[73%]
+    clipPath: 'polygon(-73% 0%, 30% 0%, 30% 100%, -73% 100%)',
   }
 
   const motionInitial = { opacity: 0, translateY: '12px' }
@@ -196,8 +202,8 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         type='button'
         onClick={toggleOpen}
         className={cn(
-          'peer flex items-center justify-center rounded-full',
-          'text-white ring-1 ring-white/20 relative z-10',
+          'group flex items-center justify-center rounded-full',
+          'text-white ring-1 ring-white/20 relative',
           'transition-transform motion-reduce:transition-none duration-250',
           'h-15.5 min-w-15.5 w-fit gap-2.5 px-4 hover:scale-105',
           triggerPosition === 'bottom-right' && 'self-end',
@@ -219,7 +225,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
             </div>
           )
           : (triggerIcon !== 'HeartDislike' && TriggerIcon && (
-              <div className={`w-7.5 h-7.5`}>
+              <div className='w-7.5 h-7.5'>
                 <TriggerIcon />
               </div>
             ))
@@ -249,27 +255,26 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
             </span>
           </div>
         )}
-      </button>
 
-      {(!triggerText || triggerText.length === 0) && (
-        <div
-          className={cn(
-            'bg-white',
-            'rounded-full absolute opacity-0 transition-all duration-300',
-            'peer-hover:opacity-100 peer-hover:-translate-x-[105%]',
-            '-z-10',
-          )}
-          >
-          <div
-            className={cn(
-              'w-full h-full rounded-full text-[20px] leading-5 p-4',
-            )}
-            style={triggerHoverTextStyle}
-          >
-            Уведомления
+        {(!triggerText || triggerText.length === 0) && (
+          <div className='absolute' style={triggerHoverDivStyle}>
+            <div
+              className={cn(
+                'bg-white',
+                'rounded-full opacity-0 transition-all duration-300',
+                'group-hover:opacity-100 group-hover:-translate-x-[73%]',
+              )}
+            >
+              <div
+                className='w-full h-full rounded-full text-[20px] leading-5 p-4'
+                style={triggerHoverTextStyle}
+              >
+                Уведомления
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </button>
     </div>
   )
 }
