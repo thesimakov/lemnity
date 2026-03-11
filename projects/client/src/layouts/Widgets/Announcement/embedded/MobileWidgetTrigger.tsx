@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { Button } from '@heroui/button'
 import { cn } from '@heroui/theme'
@@ -58,6 +59,12 @@ const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
     dispatch({ type: context.open ? 'close' : 'open' })
   }
 
+  const modalStyles: CSSProperties = {
+    WebkitOverflowScrolling: 'touch',
+    overscrollBehavior: 'contain',
+    touchAction: 'pan-y',
+  }
+
   return (
     <div
       data-lemnity-interactive
@@ -94,11 +101,7 @@ const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
           data-lemnity-modal
           role='dialog'
           aria-modal='true'
-          style={{
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
-            touchAction: 'pan-y'
-          }}
+          style={modalStyles}
           className={cn(
             'fixed left-0 top-0 w-full h-full z-2147483646 overflow-hidden',
             'flex flex-col items-center justify-center',

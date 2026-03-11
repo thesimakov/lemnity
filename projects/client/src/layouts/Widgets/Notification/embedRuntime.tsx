@@ -102,7 +102,8 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         delay: settings.delay
           ?? defaults.delay,
 
-        notifications: settings.notifications,
+        notifications: settings.notifications
+          ?? [],
 
         brandingEnabled: settings.brandingEnabled
           ?? defaults.brandingEnabled,
@@ -111,6 +112,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   )
 
   const [open, setOpen] = useState(false)
+  const [isHoveringOnTrigger, setIsHoveringOnTrigger] = useState(false)
   const [liveNotifications, setLiveNotifications] = useState<Notification[]>([])
 
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -150,15 +152,15 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
       top = window.innerHeight - boundingRect.height - offset
     }
     else {
-      const width = clipOnlyTrigger
+      const width = clipOnlyTrigger && !isHoveringOnTrigger
         ? 70 + offset   // show just the trigger
         : 233 + offset  // allow enough space for both trigger and hover label
 
       left = isBottomRight
         ? window.innerWidth - width
-        : offset
-      // 70 instead of 62 to accomodate for hover:scale-105
-      top = window.innerHeight - 70
+        : 0
+      // 72 instead of 62 to accomodate for hover:scale-105
+      top = window.innerHeight - 72
     }
 
     window.parent.postMessage({
@@ -170,29 +172,51 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         top: top,
         width: open
           ? boundingRect.width + offset
-          : clipOnlyTrigger
+          : clipOnlyTrigger && !isHoveringOnTrigger
             ? 70    // show just the trigger
-            : 233,  // allow enough space for both trigger and hover label,
-        height: open ? boundingRect.height + offset : 70,
+            : 233,  // allow enough space for both trigger and hover label
+        height: open ? boundingRect.height + offset : 72,
       },
     })
   }
 
   const hadleTriggerMouseEnter = () => {
     sendBoundingRectToIframe()
+    setIsHoveringOnTrigger(true)
   }
 
   const handleTriggerMouseLeave = () => {
+    setIsHoveringOnTrigger(false)
+  }
+
+  useEffect(() => {
+    if (isHoveringOnTrigger) {
+      return
+    }
+
     setTimeout(() => {
       sendBoundingRectToIframe(true)
     }, 300)
-  }
+  }, [isHoveringOnTrigger])
 
   useEffect(sendBoundingRectToIframe, [open])
-  useEffect(() => sendBoundingRectToIframe(!open), [open, liveNotifications])
+  useEffect(() => sendBoundingRectToIframe(true), [liveNotifications])
   useEffect(() => sendBoundingRectToIframe(true), [])
 
   // const isMobileViewport = useIsMobileViewport()
+
+  // const containerClassnames = isMobileViewport
+  //   ? cn(
+  //       'fixed left-0 top-0 w-full h-full z-2147483646 overflow-hidden',
+  //       'flex flex-col items-center justify-center',
+  //       'bg-black/20 backdrop-blur-sm',
+  //     )
+  //   : cn(
+  //       'flex flex-col gap-3',
+  //       props.preview ? 'relative' : 'fixed bottom-6',
+  //       triggerPosition === 'bottom-right' ? 'right-6' : 'left-6',
+  //     )
+
   // const viewportWidth = useViewportWidth()
 
   // const mobileScale = width >= 357
