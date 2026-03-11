@@ -14,7 +14,7 @@ import type {
 } from '@lemnity/widget-config/widgets/announcement'
 import { announcementWidgetDefaults } from '../defaults'
 
-const MobileWidgetTrigger = ({ ref, ...props}: WidgetProps) => {
+const MobileWidgetTrigger = ({ ref, ...props }: WidgetProps) => {
   const {
     imageUrl,
     triggerType,
