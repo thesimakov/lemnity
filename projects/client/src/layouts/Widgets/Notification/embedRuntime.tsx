@@ -8,12 +8,14 @@ import SvgIcon from '@/components/SvgIcon'
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
-import useClickOutside from '@/hooks/useClickOutside'
 
 import iconAdd from '@/assets/icons/add.svg'
 import iconBell from '@/assets/icons/bell-filled.svg'
 
-import type { Notification, NotificationWidgetType } from '@lemnity/widget-config/widgets/notification'
+import type {
+  Notification,
+  NotificationWidgetType,
+} from '@lemnity/widget-config/widgets/notification'
 import { notificationWidgetDefaults as defaults } from './defaults'
 // import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
 // import { useViewportWidth } from '@/hooks/useViewportWidth'
@@ -108,22 +110,10 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     })
   )
 
-  const TriggerIcon = triggerIcon ? Icons[triggerIcon] : null
-
   const [open, setOpen] = useState(false)
-
-  const toggleOpen = () => {
-    if (open) return
-    setOpen(!open)
-  }
-
-  const notificationListRef = useRef<HTMLDivElement | null>(null)
-
-  useClickOutside(notificationListRef, () => {
-    setOpen(false)
-  })
-
   const [liveNotifications, setLiveNotifications] = useState<Notification[]>([])
+
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const timers = notifications.map((notification, index) => {
@@ -134,6 +124,73 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
 
     return () => timers.forEach(timer => clearTimeout(timer))
   }, [notifications, delay])
+
+  const TriggerIcon = triggerIcon ? Icons[triggerIcon] : null
+
+  const toggleOpen = () => {
+    setOpen(!open)
+  }
+
+  const sendBoundingRectToIframe = (clipOnlyTrigger?: boolean) => {
+    if (!containerRef.current) {
+      return
+    }
+
+    const isBottomRight = triggerPosition === 'bottom-right'
+    const offset = 24  // left-6 / right-6 / bottom-6
+    const boundingRect = containerRef.current.getBoundingClientRect()
+
+    let left: number
+    let top: number
+
+    if (open) {
+      left = isBottomRight
+        ? window.innerWidth - boundingRect.width - offset
+        : 0
+      top = window.innerHeight - boundingRect.height - offset
+    }
+    else {
+      const width = clipOnlyTrigger
+        ? 70 + offset   // show just the trigger
+        : 233 + offset  // allow enough space for both trigger and hover label
+
+      left = isBottomRight
+        ? window.innerWidth - width
+        : offset
+      // 70 instead of 62 to accomodate for hover:scale-105
+      top = window.innerHeight - 70
+    }
+
+    window.parent.postMessage({
+      scope: 'lemnity-embed',
+      type: 'interactive-region',
+      lock: false,
+      rect: {
+        left: left,
+        top: top,
+        width: open
+          ? boundingRect.width + offset
+          : clipOnlyTrigger
+            ? 70    // show just the trigger
+            : 233,  // allow enough space for both trigger and hover label,
+        height: open ? boundingRect.height + offset : 70,
+      },
+    })
+  }
+
+  const hadleTriggerMouseEnter = () => {
+    sendBoundingRectToIframe()
+  }
+
+  const handleTriggerMouseLeave = () => {
+    setTimeout(() => {
+      sendBoundingRectToIframe(true)
+    }, 300)
+  }
+
+  useEffect(sendBoundingRectToIframe, [open])
+  useEffect(() => sendBoundingRectToIframe(!open), [open, liveNotifications])
+  useEffect(() => sendBoundingRectToIframe(true), [])
 
   // const isMobileViewport = useIsMobileViewport()
   // const viewportWidth = useViewportWidth()
@@ -154,6 +211,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const triggerStyle: CSSProperties = {
     color: triggerFontColor,
     backgroundColor: triggerBackgroundColor,
+    willChange: 'transform',
   }
   const closeIconStyle: CSSProperties = {
     color: triggerFontColor,
@@ -178,6 +236,9 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
 
   return (
     <div
+      ref={containerRef}
+      data-lemnity-interactive
+      data-lemnity-notification
       className={cn(
         'flex flex-col gap-3',
         props.preview ? 'relative' : 'fixed bottom-6',
@@ -187,7 +248,6 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
       <AnimatePresence>
         {open && (
           <motion.div
-            ref={notificationListRef}
             initial={motionInitial}
             animate={motionAnimate}
             exit={motionExit}
@@ -230,6 +290,8 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         )}
         style={triggerStyle}
         aria-label={open ? 'Скрыть уведомления' : 'Показать уведомления'}
+        onMouseEnter={hadleTriggerMouseEnter}
+        onMouseLeave={handleTriggerMouseLeave}
       >
         {triggerPosition === 'bottom-right' && triggerText && (
           <span>{triggerText}</span>
@@ -276,7 +338,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
           </div>
         )}
 
-        {(!triggerText || triggerText.length === 0) && (
+        {(!triggerText || triggerText.length === 0) && !open && (
           <div className='absolute' style={triggerHoverDivStyle}>
             <div
               className={cn(
