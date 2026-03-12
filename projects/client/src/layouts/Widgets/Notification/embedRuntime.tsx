@@ -14,6 +14,8 @@ import SvgIcon from '@/components/SvgIcon'
 import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
+import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
+import { useViewportWidth } from '@/hooks/useViewportWidth'
 
 import iconAdd from '@/assets/icons/add.svg'
 import iconBell from '@/assets/icons/bell-filled.svg'
@@ -26,8 +28,6 @@ import type {
 import { notificationWidgetDefaults as defaults } from './defaults'
 import type { Icon } from '@lemnity/widget-config/widgets/base'
 
-import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
-import { useViewportWidth } from '@/hooks/useViewportWidth'
 
 const EmptyNotificationList = () => {
   return (
@@ -92,7 +92,9 @@ const Widget = (props: WidgetProps) => {
     // 2 20 px margins on x axis = 40 px
     // the width of the widget is w-89.25 = 357
     // 1% of 357 = 3.57
-    Math.floor((viewportWidth - 20) / 3.57)
+    viewportWidth >= 357
+      ? undefined
+      : Math.floor((viewportWidth - 20) / 3.57)
   // console.log('[Widget] mobileScale', mobileScale)
 
   const mobileHeight = window.innerHeight
@@ -110,14 +112,9 @@ const Widget = (props: WidgetProps) => {
         overflowY: 'auto',
         backgroundColor: 'transparent',
         borderRadius: '10px',
-        // marginBlock: '20px',
         overflow: 'hidden',
-        // display: 'flex',
-        // flexDirection: 'column',
-        // justifyContent: 'center',
       }
     : undefined
-  // console.log('[Widget] mobileStyle', mobileStyle)
 
   const motionInitial = { opacity: 0, translateY: '12px' }
   const motionAnimate = { opacity: 1, translateY: '0' }
@@ -137,7 +134,6 @@ const Widget = (props: WidgetProps) => {
               'w-89.25 shrink-0 p-4 flex flex-col',
               'bg-white rounded-[10px]',
               'shadow-[0px_8px_15px_6px_rgba(0,0,0,0.15)]',
-              // props.mobile && 'overflow-y-auto',
             )}
           >
             <div
@@ -145,7 +141,11 @@ const Widget = (props: WidgetProps) => {
                 'w-full mt-4 mb-0',
                 props.mobile && 'overflow-y-auto',
               )}
-              style={{ height: mobileHeight - 32 - 12 - 10 - 10 - 4 }}
+              style={
+                props.mobile
+                  ? { height: mobileHeight - 32 - 12 - 10 - 10 - 4 }
+                  : undefined
+              }
             >
               {props.liveNotifications && props.liveNotifications.length > 0
                 ? props.liveNotifications.map((notification, index) => (
@@ -408,6 +408,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const [liveNotifications, setLiveNotifications] = useState<Notification[]>([])
 
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const isMobileViewport = useIsMobileViewport()
 
   useEffect(() => {
     const timers = notifications.map((notification, index) => {
@@ -490,10 +491,13 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   }, [isHoveringOnTrigger])
 
   useEffect(sendBoundingRectToIframe, [open])
-  useEffect(() => sendBoundingRectToIframe(true), [liveNotifications])
+  useEffect(() => {
+    if (isMobileViewport) {
+      return
+    }
+    sendBoundingRectToIframe(true)
+  }, [liveNotifications, isMobileViewport])
   useEffect(() => sendBoundingRectToIframe(true), [])
-
-  const isMobileViewport = useIsMobileViewport()
 
   const triggerStyle: CSSProperties = {
     color: triggerFontColor,
