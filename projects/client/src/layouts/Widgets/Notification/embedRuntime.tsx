@@ -17,9 +17,11 @@ import FreePlanBrandingLink from '@/components/FreePlanBrandingLink'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import { useIsMobileViewport } from '@/hooks/useIsMobileViewport'
 import { useViewportWidth } from '@/hooks/useViewportWidth'
+import { sendEvent } from '@/common/api/publicApi'
 
 import iconAdd from '@/assets/icons/add.svg'
 import iconBell from '@/assets/icons/bell-filled.svg'
+import iconCross from '@/assets/icons/cross.svg'
 
 import type {
   Notification,
@@ -28,7 +30,6 @@ import type {
 } from '@lemnity/widget-config/widgets/notification'
 import { notificationWidgetDefaults as defaults } from './defaults'
 import type { Icon } from '@lemnity/widget-config/widgets/base'
-import crossIcon from '@/assets/icons/cross.svg'
 
 const EmptyNotificationList = () => {
   return (
@@ -54,8 +55,37 @@ type NotificationListItemProps = {
 }
 
 const NotificationListItem = (props: NotificationListItemProps) => {
+  const {
+    widgetId,
+    projectId,
+  } = useWidgetSettingsStore(
+    useShallow(s => {
+      return {
+        widgetId: s.settings?.id,
+        projectId: s.projectId,
+      }
+    })
+  )
+
   const urlStyle: CSSProperties = {
     fontSize: props.notification.urlFontSize,
+  }
+
+  const handleUrlClick = () => {
+    window.open(props.notification.url, '_blank')
+
+    if (!widgetId || !projectId) {
+      return
+    }
+
+    void sendEvent({
+      event_name: 'notification.link_opened',
+      widget_id: widgetId,
+      project_id: projectId,
+      payload: {
+        url: props.notification.url,
+      }
+    })
   }
 
   return (
@@ -64,14 +94,13 @@ const NotificationListItem = (props: NotificationListItemProps) => {
         {props.notification.text}
       </span>
       <span className='text-base leading-5 mt-1'>
-        <a
-          href={props.notification.url}
-          target='_blank'
+        <span
           className='text-[#5951E5]'
           style={urlStyle}
+          onClick={handleUrlClick}
         >
           {props.notification.urlText}
-        </a>
+        </span>
       </span>
 
       {props.showSeparator && <hr className='border-[#E8E8E8] my-2.5' />}
@@ -356,7 +385,7 @@ const MobileWidgetTrigger = ({ ref, ...props }: MobileWidgetTriggerProps) => {
             className='fixed top-3 right-3 w-5.5 h-5.5 fill-[#797979]'
             onClick={props.toggleOpen}
           >
-            <SvgIcon src={crossIcon} alt='Close' />
+            <SvgIcon src={iconCross} alt='Close' />
           </div>
         </div>
       )}
@@ -370,6 +399,8 @@ type NotificationEmbedRuntimeProps = {
 
 const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const {
+    widgetId,
+    projectId,
     triggerText,
     triggerFontColor,
     triggerIcon,
@@ -383,6 +414,9 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
       const settings = (s.settings?.widget as NotificationWidgetType)
 
       return {
+        widgetId: s.settings?.id,
+        projectId: s.projectId,
+
         triggerText: settings.triggerText
           ?? defaults.triggerText,
         triggerFontColor: settings.triggerFontColor
@@ -492,6 +526,16 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
 
   const toggleOpen = () => {
     setOpen(!open)
+
+    if (!widgetId || !projectId) {
+      return
+    }
+
+    void sendEvent({
+      event_name: !open ? 'notification.open' : 'notification.close',
+      widget_id: widgetId,
+      project_id: projectId,
+    })
   }
 
   const handleTriggerMouseEnter = () => {
@@ -546,7 +590,6 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     sendBoundingRectToIframe(true)
     firstMountCrutchRef.current = true
   }, [])
-
 
   const triggerStyle: CSSProperties = {
     color: triggerFontColor,
