@@ -1,4 +1,4 @@
 import type { WidgetCanonicalizer } from '../../canonicalizer.types.js'
 
-export const canonicalizeAnnouncement: WidgetCanonicalizer =
+export const canonicalizeNotification: WidgetCanonicalizer =
   settings => settings

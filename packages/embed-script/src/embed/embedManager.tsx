@@ -7,6 +7,7 @@ import { FABMenuEmbedRuntime } from '@/layouts/Widgets/FABMenu/embedRuntime'
 import { WheelEmbedRuntime } from '@/layouts/Widgets/WheelOfFortune/embedRuntime'
 import { ActionTimerEmbedRuntime } from '@/layouts/Widgets/CountDown/embedRuntime'
 import { CountdownAnnouncementEmbedRuntime } from '@/layouts/Widgets/Announcement/embedded'
+import NotificationEmbedRuntime from '@/layouts/Widgets/Notification/embedded/embedRuntime'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 import type { InitOptions } from './types'
 import { ensureContainer, ensureElement, fetchPublicWidget } from './utils'
@@ -25,6 +26,8 @@ const EmbedRuntime = ({ widgetType }: { widgetType: WidgetTypeEnum }) => {
       return <ActionTimerEmbedRuntime />
     case WidgetTypeEnum.ANNOUNCEMENT:
       return <CountdownAnnouncementEmbedRuntime />
+    case WidgetTypeEnum.NOTIFICATION:
+      return <NotificationEmbedRuntime />
     default:
       return <EmbeddedWidget widgetType={widgetType} />
   }
@@ -92,6 +95,10 @@ class EmbedManager {
   }
 
   private handleMessage = (event: MessageEvent) => {
+    // if (event.data?.scope?.startsWith('lemnity')) {
+    //   console.table('[EmbedManager]', event.data)
+    // }
+
     const scopeOk =
       event.data
       && typeof event.data === 'object'
@@ -130,21 +137,6 @@ class EmbedManager {
       this.interactiveRect = message.rect ?? null
       this.pointerLock = Boolean(message.lock)
       this.syncFrameInteractivity(true)
-    }
-    if (message.type === 'console') {
-      const level = message.level ?? 'log'
-      const args = Array.isArray(message.args) ? message.args : []
-      const fn: (...args: unknown[]) => void =
-        level === 'debug'
-          ? console.debug
-          : level === 'info'
-            ? console.info
-            : level === 'warn'
-              ? console.warn
-              : level === 'error'
-                ? console.error
-                : console.log
-      fn('[lemnity-embed/iframe]', ...args)
     }
   }
 
@@ -279,17 +271,7 @@ class EmbedManager {
                   }
                 }
               }
-              ;(() => {
-                const levels = ['log', 'info', 'warn', 'error', 'debug']
-                const original = {}
-                for (const level of levels) {
-                  original[level] = console[level] ? console[level].bind(console) : () => {}
-                  console[level] = (...args) => {
-                    postMessage({ type: 'console', level, args: args.map(safeStringify) })
-                    original[level](...args)
-                  }
-                }
-              })()
+
               const selectors = [
                 'button',
                 'a[href]',
@@ -368,7 +350,15 @@ class EmbedManager {
                 })
               }
 
-              const mo = new MutationObserver(schedule)
+              const mo = new MutationObserver(() => {
+                const notification = document.querySelector('[data-lemnity-notification]')
+                const isNotification = !!notification
+              
+                if (!isNotification) {
+                  schedule()
+                  return
+                }
+              })
               mo.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'class', 'open', 'aria-hidden', 'aria-modal'] })
 
               const handleIframeResize = () => {

@@ -13,6 +13,9 @@ import {
 import {
   createAnnouncementActions,
 } from '@/layouts/Widgets/Announcement/actions'
+import {
+  createNotificationActions,
+} from '@/layouts/Widgets/Notification/actions'
 
 import type {
   ActionTimerWidgetSettings,
@@ -33,6 +36,9 @@ import type {
 import type {
   AnnouncementWidgetType,
 } from '@lemnity/widget-config/widgets/announcement'
+import type {
+  NotificationWidgetType,
+} from '@lemnity/widget-config/widgets/notification'
 
 export const createWidgetSlice = (updateWidget: WidgetUpdater): WidgetSlice => {
   const createTypedUpdater = <T extends WidgetSpecificSettings>(
@@ -71,11 +77,18 @@ export const createWidgetSlice = (updateWidget: WidgetUpdater): WidgetSlice => {
           widget.type === WidgetTypeEnum.ANNOUNCEMENT
     )
 
+  const notificationUpdater: TypedWidgetUpdater<NotificationWidgetType> =
+    createTypedUpdater(
+      (widget): widget is NotificationWidgetType =>
+          widget.type === WidgetTypeEnum.NOTIFICATION
+    )
+
   const specificActions = {
     ...createWheelActions(wheelUpdater),
     ...createActionTimerActions(actionTimerUpdater),
     ...createFABMenuActions(fabMenuUpdater),
-    ...createAnnouncementActions(announcementUpdater)
+    ...createAnnouncementActions(announcementUpdater),
+    ...createNotificationActions(notificationUpdater),
   } as Omit<WidgetActions, 'setWidgetType'>
 
   return {

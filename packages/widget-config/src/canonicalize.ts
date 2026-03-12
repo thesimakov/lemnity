@@ -2,6 +2,7 @@ import { canonicalizeWheelOfFortune } from './widgets/WheelOfFortune/canonicaliz
 import { canonicalizeActionTimer } from './widgets/ActionTimer/canonicalize.js'
 import { canonicalizeFABMenu } from './widgets/FABMenu/canonicalize.js'
 import { canonicalizeAnnouncement } from './widgets/Announcement/canonicalize.js'
+import { canonicalizeNotification } from './widgets/Notification/canonicalize.js'
 import { widgetSchemaAdapters } from './widgets/index.js'
 import type {
   CanonicalizerMap,
@@ -36,7 +37,8 @@ const canonicalizers: CanonicalizerMap = {
   WHEEL_OF_FORTUNE: canonicalizeWheelOfFortune,
   ACTION_TIMER: canonicalizeActionTimer,
   FAB_MENU: canonicalizeFABMenu,
-  ANNOUNCEMENT: canonicalizeAnnouncement
+  ANNOUNCEMENT: canonicalizeAnnouncement,
+  NOTIFICATION: canonicalizeNotification,
 }
 
 const resolveCanonicalizer = (type: WidgetTypeId): WidgetCanonicalizer =>

@@ -1,6 +1,11 @@
 import { z } from 'zod'
 
-export type WidgetTypeId = 'WHEEL_OF_FORTUNE' | 'ACTION_TIMER' | 'FAB_MENU' | 'ANNOUNCEMENT'
+export type WidgetTypeId =
+  | 'WHEEL_OF_FORTUNE'
+  | 'ACTION_TIMER'
+  | 'FAB_MENU'
+  | 'ANNOUNCEMENT'
+  | 'NOTIFICATION'
 
 export const IconButtonSchema = z.object({
   text: z.string().min(1, 'Текст обязателен'),
