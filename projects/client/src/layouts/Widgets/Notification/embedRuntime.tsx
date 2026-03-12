@@ -420,6 +420,9 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const mouseLeaveTimeoutRef = useRef<number | null>(null)
   const widgetOpenTimeoutRef = useRef<number | null>(null)
+  // i am going insane
+  // embedManagerr needs to go, man, what the hell is this
+  const firstMountCrutchRef = useRef(false)
 
   const isMobileViewport = useIsMobileViewport()
 
@@ -433,7 +436,10 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     return () => timers.forEach(timer => clearTimeout(timer))
   }, [notifications, delay])
 
-  const sendBoundingRectToIframe = useCallback((clipOnlyTrigger?: boolean) => {
+  const sendBoundingRectToIframe = useCallback((
+    clipOnlyTrigger?: boolean,
+    hoveringOnTrigger?: boolean
+  ) => {
     if (!containerRef.current || !triggerRef.current) {
       return
     }
@@ -454,7 +460,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
       top = window.innerHeight - boundingRect.height - offset
     }
     else {
-      const width = clipOnlyTrigger && !isHoveringOnTrigger
+      const width = clipOnlyTrigger && !hoveringOnTrigger
         // ? 70 + offset   // show just the trigger
         ? triggerWidth + 8 + offset   // show just the trigger
         : 233 + offset  // allow enough space for both trigger and hover label
@@ -467,7 +473,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
       top = window.innerHeight - triggerHeight - 10
     }
 
-    window.parent.postMessage({
+    const message = {
       scope: 'lemnity-embed',
       type: 'interactive-region',
       lock: false,
@@ -476,15 +482,19 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         top: top,
         width: open
           ? boundingRect.width + offset
-          : clipOnlyTrigger && !isHoveringOnTrigger
+          : clipOnlyTrigger && !hoveringOnTrigger
             // ? 70    // show just the trigger
             ? triggerWidth + 8    // show just the trigger
             : 233,  // allow enough space for both trigger and hover label
         // height: open ? boundingRect.height + offset : 72,
         height: open ? boundingRect.height + offset : triggerHeight + 10,
       },
-    })
-  }, [isHoveringOnTrigger, open, triggerPosition])
+    }
+
+    window.parent.postMessage(message)
+    // console.log(message.rect)
+    // console.log(`open ${open} clipOnlyTrigger ${clipOnlyTrigger} hoveringOnTrigger ${hoveringOnTrigger} clipOnlyTrigger && !hoveringOnTrigger ${clipOnlyTrigger && !hoveringOnTrigger}`)
+  }, [open, triggerPosition])
 
   const toggleOpen = () => {
     setOpen(!open)
@@ -495,8 +505,9 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
       clearTimeout(mouseLeaveTimeoutRef.current)
     }
 
-    sendBoundingRectToIframe()
+    sendBoundingRectToIframe(undefined, false)
     setIsHoveringOnTrigger(true)
+    console.log(isHoveringOnTrigger)
   }
 
   const handleTriggerMouseLeave = () => {
@@ -509,6 +520,10 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   }
 
   useEffect(() => {
+    if (!firstMountCrutchRef.current) {
+      return
+    }
+
     if (isMobileViewport) {
       return
     }
@@ -531,7 +546,12 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     }
     sendBoundingRectToIframe(true)
   }, [liveNotifications, isMobileViewport])
-  useEffect(() => sendBoundingRectToIframe(true), [])
+
+  useEffect(() => {
+    sendBoundingRectToIframe(true)
+    firstMountCrutchRef.current = true
+  }, [])
+
 
   const triggerStyle: CSSProperties = {
     color: triggerFontColor,
