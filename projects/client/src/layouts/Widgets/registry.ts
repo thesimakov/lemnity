@@ -4,6 +4,7 @@ import { wheelWidgetMetadata } from './WheelOfFortune/metadata'
 import { actionTimerWidgetMetadata } from './CountDown/metadata'
 import { fabMenuWidgetMetadata } from './FABMenu/metadata'
 import { announcementWidgetMetadata } from './Announcement/metadata'
+import { notificationWidgetMetadata } from './Notification/metadata'
 import {
   StubWidgetPanelPreview,
   StubDesktopScreen,
@@ -114,7 +115,8 @@ const widgetMetadata: Partial<
   [WidgetTypeEnum.WHEEL_OF_FORTUNE]: wheelWidgetMetadata,
   [WidgetTypeEnum.ACTION_TIMER]: actionTimerWidgetMetadata,
   [WidgetTypeEnum.FAB_MENU]: fabMenuWidgetMetadata,
-  [WidgetTypeEnum.ANNOUNCEMENT]: announcementWidgetMetadata
+  [WidgetTypeEnum.ANNOUNCEMENT]: announcementWidgetMetadata,
+  [WidgetTypeEnum.NOTIFICATION]: notificationWidgetMetadata,
 }
 
 const definitions: Record<WidgetTypeEnum, WidgetDefinition> = Object.fromEntries(

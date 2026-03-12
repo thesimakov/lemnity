@@ -17,6 +17,10 @@ import type {
   MobileTrigger,
 } from '@lemnity/widget-config/widgets/announcement'
 import type { Icon } from '@lemnity/widget-config/widgets/base'
+import type {
+  Notification,
+  Position,
+} from '@lemnity/widget-config/widgets/notification'
 
 export type WidgetUpdater = (
   mutator: (settings: WidgetSpecificSettings) => WidgetSpecificSettings
@@ -276,6 +280,42 @@ export type WidgetActions = {
     brandingEnabled: boolean
   ) => void
   resetAnnouncementColors: () => void
+  // ---------------------------------------------------------------------------
+  // Notification actions
+  setNotificationTriggerText: (
+   triggerText: string
+  ) => void
+  setNotificationTriggerFontColor: (
+   triggerFontColor: string
+  ) => void
+  setNotificationTriggerIcon: (
+   triggerIcon: Icon
+  ) => void
+  setNotificationTriggerBackgroundColor: (
+   triggerBackgroundColor: string
+  ) => void
+  setNotificationTriggerPosition: (
+    triggerPosition: Position
+  ) => void
+  setNotificationDelay: (
+   delay: number
+  ) => void
+  setNotifications: (
+    notifications: Notification[]
+  ) => void
+  addNotification: (
+    notification: Notification
+  ) => void
+  deleteNotification: (
+    id: string
+  ) => void
+  updateNotification: (
+    index: number,
+    updates: Partial<Notification>
+  ) => void
+  setNotificationBrandingEnabled: (
+    brandingEnabled: boolean
+  ) => void
 }
 
 export type WidgetSlice = {

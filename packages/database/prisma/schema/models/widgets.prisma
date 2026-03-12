@@ -30,4 +30,5 @@ enum WidgetType {
   TEASER
   FAB_MENU
   ANNOUNCEMENT
+  NOTIFICATION
 }

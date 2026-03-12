@@ -1,11 +1,46 @@
 import { Button } from '@heroui/button'
 import { type ReactNode } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, type Transition } from 'framer-motion'
 import SvgIcon from './SvgIcon'
 import iconBin from '@/assets/icons/bin.svg'
 import iconAdd from '@/assets/icons/add.svg'
 import iconArrowDown from '@/assets/icons/arrow-down.svg'
 import iconArrowUp from '@/assets/icons/arrow-up.svg'
+
+type MoveUpButtonProps = {
+  index: number
+  disabled?: boolean
+  handleMove: (index: number) => void
+  ariaLabel: string
+  iconSrc: string
+}
+
+const ItemMoveButton = (props: MoveUpButtonProps) => {
+  const handleClick = () => {
+    props.handleMove(props.index)
+  }
+
+  const whileHover = { scale: 1.15 }
+  const whileTap = { scale: 0.95 }
+  const transition: Transition = { type: 'spring', stiffness: 400, damping: 30 }
+
+  return (
+    <motion.button
+      type="button"
+      onClick={handleClick}
+      disabled={props.disabled}
+      className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
+      aria-label={props.ariaLabel}
+      whileHover={whileHover}
+      whileTap={whileTap}
+      transition={transition}
+    >
+      {/* <div className='w-2 h-1.5'> */}
+      <SvgIcon src={props.iconSrc} size={9} className="text-current" />
+      {/* </div> */}
+    </motion.button>
+  )
+}
 
 export type EditableListItem<T> = T & {
   id: string
@@ -99,34 +134,20 @@ const EditableList = <T,>({
               )}
               {canReorder && (
                 <div className={`flex flex-col ${classNames?.reorder || ''}`}>
-                  <motion.button
-                    type="button"
-                    onClick={() => handleMoveUp(index)}
+                  <ItemMoveButton
+                    ariaLabel='Переместить вверх'
+                    handleMove={handleMoveUp}
+                    iconSrc={iconArrowUp}
                     disabled={index === 0 || disabledReorderIds?.includes(item.id)}
-                    className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                    aria-label="Переместить вверх"
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  >
-                    {/* <div className='w-2 h-1.5'> */}
-                    <SvgIcon src={iconArrowUp} size={9} className="text-current" />
-                    {/* </div> */}
-                  </motion.button>
-                  <motion.button
-                    type="button"
-                    onClick={() => handleMoveDown(index)}
+                    index={index}
+                  />
+                  <ItemMoveButton
+                    ariaLabel='Переместить вниз'
+                    handleMove={handleMoveDown}
+                    iconSrc={iconArrowDown}
                     disabled={index === items.length - 1 || disabledReorderIds?.includes(item.id)}
-                    className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                    aria-label="Переместить вниз"
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  >
-                    {/* <div className='w-2 h-1.5'> */}
-                    <SvgIcon src={iconArrowDown} size={9} className="text-current" />
-                    {/* </div> */}
-                  </motion.button>
+                    index={index}
+                  />
                 </div>
               )}
               <div className="flex-1 h-full">{renderItem(item, index)}</div>

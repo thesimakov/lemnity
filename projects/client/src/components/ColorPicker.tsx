@@ -50,10 +50,33 @@ type ColorPickerItem = {
   stroke?: string
 }
 
+// copied from
+// (property) placement?: OverlayPlacement | undefined
+// The placement of the element with respect to its anchor element.
+// 
+// ..because i have not figured out how to import/extract this type
+// without installing an extra package
+type PopoverPlacement = (
+  | "bottom-start"
+  | "top"
+  | "bottom"
+  | "right"
+  | "left"
+  | "top-start"
+  | "top-end"
+  | "bottom-end"
+  | "left-start"
+  | "left-end"
+  | "right-start"
+  | "right-end"
+) | undefined
+
 type ColorPickerProps = {
   initialColor: string
   triggerText?: string
   disabled?: boolean
+  // popoverPlacement?: Pick<PopoverProps, 'placement'>
+  popoverPlacement?: PopoverPlacement
   classNames?: {
     triggerButton?: string
   }
@@ -87,6 +110,11 @@ const defaultColors: ColorPickerItem[] = [
 const ColorPicker = (props: ColorPickerProps) => {
   const [selectedColor, setSelectedColor] = useState(() => props.initialColor)
   const [inputValue, setInputValue] = useState(() => props.initialColor)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  const handlePopoverOpenChange = () => {
+    setSettingsOpen(!settingsOpen)
+  }
 
   // for now - a crutch
   // the color was supposed to be *inital* for the fabmenu
@@ -125,7 +153,7 @@ const ColorPicker = (props: ColorPickerProps) => {
 
   return (
     <Popover
-      placement="bottom-start"
+      placement={props.popoverPlacement ?? 'bottom-start'}
       classNames={{
         base: cn(
           'bg-white rounded-[10px]',
@@ -135,6 +163,7 @@ const ColorPicker = (props: ColorPickerProps) => {
           'w-149.5 h-30.5 flex-row flex-wrap gap-0.75 p-4 justify-start',
         )
       }}
+      onOpenChange={handlePopoverOpenChange}
     >
       <PopoverTrigger>
         <Button
@@ -166,7 +195,11 @@ const ColorPicker = (props: ColorPickerProps) => {
             strokeWidth="1.5"
             viewBox="0 0 24 24"
             width="1em"
-            className="w-4 h-4 transition-transform duration-150 ease motion-reduce:transition-none data-[open=true]:rotate-180"
+            data-open={settingsOpen}
+            className={cn(
+              'w-4 h-4 transition-transform duration-150 ease',
+              'motion-reduce:transition-none data-[open=true]:rotate-180',
+            )}
           >
             <path d="m6 9 6 6 6-6"></path>
           </svg>
