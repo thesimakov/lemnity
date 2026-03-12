@@ -28,7 +28,7 @@ import type {
 } from '@lemnity/widget-config/widgets/notification'
 import { notificationWidgetDefaults as defaults } from './defaults'
 import type { Icon } from '@lemnity/widget-config/widgets/base'
-
+import crossIcon from '@/assets/icons/cross.svg'
 
 const EmptyNotificationList = () => {
   return (
@@ -350,20 +350,14 @@ const MobileWidgetTrigger = ({ ref, ...props }: MobileWidgetTriggerProps) => {
             'bg-black/20 backdrop-blur-sm py-5',
           )}
         >
-          {/* <div className='w-full h-full relative'> */}
-            {props.children}
+          {props.children}
 
-            {/* <button
-              className={cn(
-                'absolute rounded-full min-h-13.5 min-w-15.5 w-fit px-4',
-                'bottom-3 right-3',
-              )}
-              style={props.triggerStyle}
-              onClick={handleButtonPress}
-            >
-              {triggerText}
-            </button>
-          </div> */}
+          <div
+            className='fixed top-3 right-3 w-5.5 h-5.5 fill-[#797979]'
+            onClick={props.toggleOpen}
+          >
+            <SvgIcon src={crossIcon} alt='Close' />
+          </div>
         </div>
       )}
     </>
@@ -520,6 +514,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   }
 
   useEffect(() => {
+    // at this point keeping it as an effect was more readable
     if (!firstMountCrutchRef.current) {
       return
     }
