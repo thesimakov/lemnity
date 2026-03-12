@@ -3,7 +3,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { createPortal } from 'react-dom'
 import { cn } from '@heroui/theme'
 
-import NotificationEmbedRuntime from './embedRuntime'
+import NotificationEmbedRuntime from './embedded/embedRuntime'
 import useWidgetSettingsStore from '@/stores/widgetSettingsStore'
 
 import type {
