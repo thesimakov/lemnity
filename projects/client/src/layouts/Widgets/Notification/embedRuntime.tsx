@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -171,22 +172,25 @@ const Widget = (props: WidgetProps) => {
   )
 }
 
-type DesktopWidgetTriggerProps = Pick<HTMLProps<HTMLElement>, 'children'> & {
-  open: boolean
-  triggerStyle: CSSProperties
-  triggerHoverDivStyle: CSSProperties
-  triggerHoverTextStyle: CSSProperties
-  closeIconStyle: CSSProperties
-  triggerIcon: Icon
-  triggerText: string
-  triggerPosition: Position
-  numberOfNotifications: number
-  onMouseEnter: () => void
-  onMouseLeave: () => void
-  toggleOpen: () => void
-}
+type DesktopWidgetTriggerProps =
+  Pick<HTMLProps<HTMLElement>, 'children'>
+  & Pick<HTMLProps<HTMLButtonElement>, 'ref'>
+  & {
+      open: boolean
+      triggerStyle: CSSProperties
+      triggerHoverDivStyle: CSSProperties
+      triggerHoverTextStyle: CSSProperties
+      closeIconStyle: CSSProperties
+      triggerIcon: Icon
+      triggerText: string
+      triggerPosition: Position
+      numberOfNotifications: number
+      onMouseEnter: () => void
+      onMouseLeave: () => void
+      toggleOpen: () => void
+    }
 
-const DesktopWidgetTrigger = (props: DesktopWidgetTriggerProps) => {
+const DesktopWidgetTrigger = ({ ref, ...props }: DesktopWidgetTriggerProps) => {
   const TriggerIcon = props.triggerIcon ? Icons[props.triggerIcon] : null
   const shouldShowHoverLabel =
     (!props.triggerText || props.triggerText.length === 0) && !props.open
@@ -196,6 +200,7 @@ const DesktopWidgetTrigger = (props: DesktopWidgetTriggerProps) => {
       {props.children}
 
       <button
+        ref={ref}
         type='button'
         onClick={props.toggleOpen}
         className={cn(
@@ -281,14 +286,17 @@ const DesktopWidgetTrigger = (props: DesktopWidgetTriggerProps) => {
   )
 }
 
-type MobileWidgetTriggerProps = Pick<HTMLProps<HTMLElement>, 'children'> & {
-  open: boolean
-  triggerStyle: CSSProperties
-  triggerText: string
-  toggleOpen: () => void
-}
+type MobileWidgetTriggerProps =
+  Pick<HTMLProps<HTMLElement>, 'children'>
+  & Pick<HTMLProps<HTMLButtonElement>, 'ref'>
+  & {
+      open: boolean
+      triggerStyle: CSSProperties
+      triggerText: string
+      toggleOpen: () => void
+    }
 
-const MobileWidgetTrigger = (props: MobileWidgetTriggerProps) => {
+const MobileWidgetTrigger = ({ ref, ...props }: MobileWidgetTriggerProps) => {
   const modalStyles: CSSProperties = {
     WebkitOverflowScrolling: 'touch',
     overscrollBehavior: 'contain',
@@ -322,6 +330,7 @@ const MobileWidgetTrigger = (props: MobileWidgetTriggerProps) => {
   return (
     <>
       <button
+        ref={ref}
         className='rounded-full h-13.5 min-w-13.5 w-fit px-4 self-end'
         style={props.triggerStyle}
         onClick={handleButtonPress}
@@ -408,6 +417,10 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const [liveNotifications, setLiveNotifications] = useState<Notification[]>([])
 
   const containerRef = useRef<HTMLDivElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const mouseLeaveTimeoutRef = useRef<number | null>(null)
+  const widgetOpenTimeoutRef = useRef<number | null>(null)
+
   const isMobileViewport = useIsMobileViewport()
 
   useEffect(() => {
@@ -420,18 +433,16 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     return () => timers.forEach(timer => clearTimeout(timer))
   }, [notifications, delay])
 
-  const toggleOpen = () => {
-    setOpen(!open)
-  }
-
-  const sendBoundingRectToIframe = (clipOnlyTrigger?: boolean) => {
-    if (!containerRef.current) {
+  const sendBoundingRectToIframe = useCallback((clipOnlyTrigger?: boolean) => {
+    if (!containerRef.current || !triggerRef.current) {
       return
     }
 
     const isBottomRight = triggerPosition === 'bottom-right'
     const offset = 24  // left-6 / right-6 / bottom-6
     const boundingRect = containerRef.current.getBoundingClientRect()
+    const triggerWidth = triggerRef.current.clientWidth
+    const triggerHeight = triggerRef.current.clientHeight
 
     let left: number
     let top: number
@@ -444,14 +455,16 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     }
     else {
       const width = clipOnlyTrigger && !isHoveringOnTrigger
-        ? 70 + offset   // show just the trigger
+        // ? 70 + offset   // show just the trigger
+        ? triggerWidth + 8 + offset   // show just the trigger
         : 233 + offset  // allow enough space for both trigger and hover label
 
       left = isBottomRight
         ? window.innerWidth - width
         : 0
       // 72 instead of 62 to accomodate for hover:scale-105
-      top = window.innerHeight - 72
+      // top = window.innerHeight - 72
+      top = window.innerHeight - triggerHeight - 10
     }
 
     window.parent.postMessage({
@@ -464,33 +477,54 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
         width: open
           ? boundingRect.width + offset
           : clipOnlyTrigger && !isHoveringOnTrigger
-            ? 70    // show just the trigger
+            // ? 70    // show just the trigger
+            ? triggerWidth + 8    // show just the trigger
             : 233,  // allow enough space for both trigger and hover label
-        height: open ? boundingRect.height + offset : 72,
+        // height: open ? boundingRect.height + offset : 72,
+        height: open ? boundingRect.height + offset : triggerHeight + 10,
       },
     })
+  }, [isHoveringOnTrigger, open, triggerPosition])
+
+  const toggleOpen = () => {
+    setOpen(!open)
   }
 
   const handleTriggerMouseEnter = () => {
+    if (mouseLeaveTimeoutRef.current) {
+      clearTimeout(mouseLeaveTimeoutRef.current)
+    }
+
     sendBoundingRectToIframe()
     setIsHoveringOnTrigger(true)
   }
 
   const handleTriggerMouseLeave = () => {
     setIsHoveringOnTrigger(false)
+
+    mouseLeaveTimeoutRef.current = setTimeout(() => {
+      sendBoundingRectToIframe(true)
+      mouseLeaveTimeoutRef.current = null
+    }, 300)
   }
 
   useEffect(() => {
-    if (isHoveringOnTrigger) {
+    if (isMobileViewport) {
       return
     }
 
-    setTimeout(() => {
-      sendBoundingRectToIframe(true)
-    }, 300)
-  }, [isHoveringOnTrigger])
+    if (!open) {
+      widgetOpenTimeoutRef.current = setTimeout(sendBoundingRectToIframe, 300)
+      return
+    }
+    
+    if (widgetOpenTimeoutRef.current) {
+      clearTimeout(widgetOpenTimeoutRef.current)
+    }
 
-  useEffect(sendBoundingRectToIframe, [open])
+    sendBoundingRectToIframe()
+  }, [open])
+
   useEffect(() => {
     if (isMobileViewport) {
       return
@@ -533,6 +567,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
     >
       {isMobileViewport
         ? <MobileWidgetTrigger
+            ref={triggerRef}
             open={open}
             toggleOpen={toggleOpen}
             triggerStyle={triggerStyle}
@@ -546,6 +581,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
             />
           </MobileWidgetTrigger>
         : <DesktopWidgetTrigger
+            ref={triggerRef}
             closeIconStyle={closeIconStyle}
             numberOfNotifications={liveNotifications.length}
             onMouseEnter={handleTriggerMouseEnter}
