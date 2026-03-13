@@ -96,7 +96,7 @@ type ExpirationPopoverProps = {
 const ExpirationPopover = (props: ExpirationPopoverProps) => {
   const [open, setOpen] = useState(false)
 
-  const expirationVariants: Expiration[] = ['6', '12', '24', '48']
+  const expirationVariants: Expiration[] = ['6', '12', '24', '48', 'indefinite']
   const popoverClassNames = {
     base: 'rounded-[5px]',
     content: 'w-32.5 p-2.5 flex-col rounded-[5px]',
@@ -115,7 +115,10 @@ const ExpirationPopover = (props: ExpirationPopoverProps) => {
         >
           <div className='flex flex-row gap-1.25'>
             <span className='text-base leading-3.75'>
-              {props.expiration}
+              {props.expiration === 'indefinite'
+                ? '∞'
+                : props.expiration
+              }
             </span>
             <ButtonChevron open={open} />
           </div>
@@ -138,7 +141,10 @@ const ExpirationPopover = (props: ExpirationPopoverProps) => {
             onPress={() => props.onExpirationChange(variant)}
           >
             <span className='text-base leading-3.75'>
-              {`${variant} ${variant === '24' ? 'часа' : 'часов'}`}
+              {variant === 'indefinite'
+                ? 'Постоянно'
+                : `${variant} ${variant === '24' ? 'часа' : 'часов'}`
+              }
             </span>
           </Button>
         ))}
