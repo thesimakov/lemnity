@@ -21,6 +21,10 @@ import type {
   NotificationWidgetType,
 } from '@lemnity/widget-config/widgets/notification'
 import { notificationWidgetDefaults as defaults } from '../defaults'
+import { DateTime } from 'luxon'
+
+type LocalStorageData = { [key: string]: Date }
+const localStorageKey = 'lemnity-notifications'
 
 type NotificationEmbedRuntimeProps = {
   preview?: boolean
@@ -77,6 +81,7 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const mouseLeaveTimeoutRef = useRef<number | null>(null)
   const widgetOpenTimeoutRef = useRef<number | null>(null)
+  const newNotificationIndexRef = useRef<number | null>(null)
   // i am going insane
   // embedManager needs to go, man, what the hell is this
   const firstMountCrutchRef = useRef(false)
@@ -84,11 +89,91 @@ const NotificationEmbedRuntime = (props: NotificationEmbedRuntimeProps) => {
   const isMobileViewport = useIsMobileViewport()
 
   useEffect(() => {
-    const timers = notifications.map((notification, index) => {
-      return setTimeout(() => {
-        setLiveNotifications(prev => [...prev, notification])
-      }, (index + 1) * delay * 1000)
-    })
+    setLiveNotifications([])
+
+    let localStorageData: LocalStorageData | undefined
+
+    if (!props.preview) {
+      try {
+        const storage = localStorage.getItem(localStorageKey)
+        if (storage) localStorageData = JSON.parse(storage)
+      }
+      // eslint-disable-next-line no-empty
+      catch {}
+
+      const now = new Date(Date.now())
+
+      if (!localStorageData) {
+        const storage: LocalStorageData = {}
+  
+        notifications.forEach((notification) => {
+          storage[notification.id] = now
+        })
+  
+        localStorage.setItem(localStorageKey, JSON.stringify(storage))
+      }
+    }
+
+    const timers = notifications
+      .filter((notification) => {
+        // skip the expiration mechanic in preview
+        if (props.preview || notification.expiration === 'indefinite') {
+          return notification
+        }
+
+        if (!localStorageData) {
+          return notification
+        }
+
+        const firstShown = DateTime.fromJSDate(
+          new Date(localStorageData[notification.id])
+        )
+        const now = DateTime.now()
+
+        if (!firstShown) {
+          return
+        }
+
+        const diff = now.diff(firstShown, 'hours').hours
+        const expiration = parseInt(notification.expiration)
+        
+        // stale notifications are filtered out
+        if (diff > expiration) {
+          return
+        }
+
+        return notification
+      })
+      .map((notification, index) => {
+        let timeout: number| undefined = undefined
+
+        if (localStorageData) {
+          const firstShown = localStorageData[notification.id]
+
+          if (firstShown) {
+            timeout = 0
+          }
+          else {
+            if (!newNotificationIndexRef.current) {
+              newNotificationIndexRef.current = index
+            }
+
+            timeout = (index - newNotificationIndexRef.current + 1) * delay * 1000
+            localStorageData![notification.id] = new Date(Date.now())
+            localStorage.setItem(
+              localStorageKey,
+              JSON.stringify(localStorageData)
+            )
+          }
+        }
+        else {
+          timeout = (index + 1) * delay * 1000
+        }
+
+        return setTimeout(() => {
+          setLiveNotifications(prev => [...prev, notification])
+        }, timeout)
+      })
 
     return () => timers.forEach(timer => clearTimeout(timer))
   }, [notifications, delay])

@@ -8,7 +8,7 @@ import {
 
 const WidgetType: WidgetTypeId = 'NOTIFICATION'
 
-const ExpirationEnum = z.enum(['6', '12', '24', '48'])
+const ExpirationEnum = z.enum(['6', '12', '24', '48', 'indefinite'])
 const PositionEnum = z.enum(['bottom-left', 'bottom-right'])
 
 export type Expiration = z.infer<typeof ExpirationEnum>

@@ -20,30 +20,14 @@ export const notificationWidgetDefaults: NotificationWidgetType = {
   triggerIcon: 'Sparkles',
   triggerPosition: 'bottom-right',
 
-  delay: 30000,
+  delay: 10,
 
   notifications: [
     {
       id: uuidv4(),
       expiration: '24',
-      text: 'Вам доступен сервис «Подбор персонала». Бесплатно размещайте вакансии и получайте отклики в приложении',
-      url: 'https://google.ru',
-      urlFontSize: 16,
-      urlText: 'Подробнее >',
-    },
-    {
-      id: uuidv4(),
-      expiration: '24',
-      text: 'Внимание! у нас скоро будет распродажа 11.11. Скидки до 90%. Вам нужно заполнить анкету чтобы не пропустить начало акции',
-      url: 'https://google.ru',
-      urlFontSize: 16,
-      urlText: 'Перейти к анкете >',
-    },
-    {
-      id: uuidv4(),
-      expiration: '24',
-      text: 'Внимание! у нас скоро будет распродажа 11.11. Скидки до 90%',
-      url: 'https://google.ru',
+      text: 'Добавить поле',
+      url: 'https://lemnity.ru',
       urlFontSize: 16,
       urlText: 'Подробнее >',
     },
