@@ -11,6 +11,7 @@ export const WidgetTypes = {
   ADVENT_CALENDAR: WidgetTypeEnum.ADVENT_CALENDAR,
   TEASER: WidgetTypeEnum.TEASER,
   ANNOUNCEMENT: WidgetTypeEnum.ANNOUNCEMENT,
+  EVENT_TIMER: WidgetTypeEnum.EVENT_TIMER,
   NOTIFICATION: WidgetTypeEnum.NOTIFICATION,
 } as const
 
@@ -47,8 +48,15 @@ export const AVAILABLE_WIDGETS: AvailableWidget[] = [
     badge: 'new'
   },
   {
-    type: WidgetTypes.ANNOUNCEMENT,
+    type: WidgetTypes.EVENT_TIMER,
     title: 'Таймер событий',
+    description: 'Лиды, вовлечение, вознаграждение',
+    isAvailable: true,
+    badge: 'new'
+  },
+  {
+    type: WidgetTypes.ANNOUNCEMENT,
+    title: 'Анонс',
     description: 'Лиды, вовлечение, вознаграждение',
     isAvailable: true,
     badge: 'new'
